@@ -1,0 +1,1655 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Engine - B2B Revenue Pipeline for MENA | SalesMfast</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    #sm-engine {
+      --bg: #000000;
+      --bg-alt: #0A0A0A;
+      --bg-card: rgba(255,255,255,0.04);
+      --accent: #FF6600;
+      --accent-hover: #CC5200;
+      --accent-light: #FFF3E6;
+      --accent-glow: rgba(255,102,0,0.15);
+      --text: #FFFFFF;
+      --text-muted: #A3A3A3;
+      --text-dark: #171717;
+      --text-dark-muted: #525252;
+      --border: rgba(255,255,255,0.08);
+      --border-light: #E5E5E5;
+      --success: #22C55E;
+      --error: #EF4444;
+      --font: 'Inter', system-ui, -apple-system, sans-serif;
+    }
+
+    #sm-engine {
+      font-family: var(--font);
+      color: var(--text);
+      background-color: var(--bg);
+      overflow-x: hidden;
+    }
+
+    /* NAVIGATION */
+    #sm-engine .sm-nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      background: rgba(0, 0, 0, 0.9);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    #sm-engine .sm-nav-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      height: 4rem;
+    }
+
+    #sm-engine .sm-logo {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+      font-size: 1.3rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+
+    #sm-engine .sm-logo span:first-child {
+      color: var(--text);
+    }
+
+    #sm-engine .sm-logo span:last-child {
+      color: var(--accent);
+    }
+
+    #sm-engine .sm-nav-links {
+      display: flex;
+      gap: 2.5rem;
+      align-items: center;
+    }
+
+    #sm-engine .sm-nav-link {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.3s ease;
+      cursor: pointer;
+    }
+
+    #sm-engine .sm-nav-link:hover {
+      color: var(--accent);
+    }
+
+    #sm-engine .sm-nav-btn {
+      background-color: var(--accent);
+      color: var(--text-dark);
+      border: none;
+      padding: 0.6rem 1.4rem;
+      border-radius: 0.375rem;
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 0 20px var(--accent-glow);
+    }
+
+    #sm-engine .sm-nav-btn:hover {
+      background-color: var(--accent-hover);
+      transform: scale(1.05);
+      box-shadow: 0 0 30px var(--accent-glow);
+    }
+
+    #sm-engine .sm-hamburger {
+      display: none;
+      flex-direction: column;
+      cursor: pointer;
+      gap: 0.375rem;
+    }
+
+    #sm-engine .sm-hamburger span {
+      width: 24px;
+      height: 2px;
+      background-color: var(--text);
+      transition: all 0.3s ease;
+    }
+
+    #sm-engine .sm-mobile-menu {
+      display: none;
+      position: absolute;
+      top: 4rem;
+      left: 0;
+      right: 0;
+      background: rgba(0, 0, 0, 0.95);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      flex-direction: column;
+      gap: 1rem;
+      padding: 2rem;
+    }
+
+    /* HERO SECTION */
+    #sm-engine .sm-hero {
+      position: relative;
+      min-height: 100vh;
+      background-color: var(--bg);
+      padding: 7rem 2rem 4rem;
+      margin-top: 0;
+      overflow: hidden;
+    }
+
+    #sm-engine .sm-hero::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-image:
+        radial-gradient(circle, rgba(255,255,255,0.03) 1px, transparent 1px);
+      background-size: 50px 50px;
+      pointer-events: none;
+    }
+
+    #sm-engine .sm-hero-content {
+      position: relative;
+      z-index: 2;
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      min-height: calc(100vh - 9rem);
+    }
+
+    #sm-engine .sm-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.75rem;
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      padding: 0.6rem 1.2rem;
+      border-radius: 50px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 2rem;
+      width: fit-content;
+    }
+
+    #sm-engine .sm-pill::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      background-color: var(--accent);
+      border-radius: 50%;
+    }
+
+    #sm-engine .sm-hero h1 {
+      font-size: clamp(2.8rem, 7vw, 5rem);
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      line-height: 1.1;
+      margin-bottom: 1.5rem;
+      max-width: 900px;
+    }
+
+    #sm-engine .sm-hero h1 .sm-accent {
+      color: var(--accent);
+    }
+
+    #sm-engine .sm-hero-subtitle {
+      font-size: 1.1rem;
+      line-height: 1.7;
+      color: var(--text-muted);
+      max-width: 700px;
+      margin-bottom: 2.5rem;
+    }
+
+    #sm-engine .sm-hero-buttons {
+      display: flex;
+      gap: 1.5rem;
+      align-items: center;
+      margin-bottom: 3rem;
+      flex-wrap: wrap;
+    }
+
+    #sm-engine .sm-btn {
+      padding: 0.85rem 1.8rem;
+      border: none;
+      border-radius: 0.375rem;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-block;
+      font-family: var(--font);
+    }
+
+    #sm-engine .sm-btn-primary {
+      background-color: var(--accent);
+      color: var(--text-dark);
+      box-shadow: 0 0 25px var(--accent-glow);
+    }
+
+    #sm-engine .sm-btn-primary:hover {
+      background-color: var(--accent-hover);
+      transform: scale(1.05);
+      box-shadow: 0 0 35px var(--accent-glow);
+    }
+
+    #sm-engine .sm-btn-ghost {
+      background: transparent;
+      color: var(--text);
+      border-bottom: 2px solid var(--text);
+      padding: 0.85rem 0;
+      border-radius: 0;
+    }
+
+    #sm-engine .sm-btn-ghost:hover {
+      border-bottom-color: var(--accent);
+      color: var(--accent);
+    }
+
+    #sm-engine .sm-hero-divider {
+      max-width: 600px;
+      padding-top: 2rem;
+      border-top: 1px solid var(--border);
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+    }
+
+    /* STATS BAR */
+    #sm-engine .sm-stats {
+      background-color: var(--bg-alt);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 3rem 2rem;
+    }
+
+    #sm-engine .sm-stats-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 2rem;
+    }
+
+    #sm-engine .sm-stat {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    #sm-engine .sm-stat-number {
+      font-size: clamp(2.5rem, 8vw, 4rem);
+      font-weight: 800;
+      color: var(--accent);
+      font-family: 'Courier New', monospace;
+      line-height: 1;
+      margin-bottom: 0.5rem;
+    }
+
+    #sm-engine .sm-stat-label {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* THE PROBLEM SECTION */
+    #sm-engine .sm-problem {
+      background-color: #FFFFFF;
+      color: var(--text-dark);
+      padding: 5rem 2rem;
+    }
+
+    #sm-engine .sm-section {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    #sm-engine .sm-eyebrow {
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 1rem;
+    }
+
+    #sm-engine .sm-section h2 {
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin-bottom: 0.5rem;
+      line-height: 1.15;
+    }
+
+    #sm-engine .sm-section-subtitle {
+      font-size: 1.1rem;
+      color: var(--text-dark-muted);
+      margin-bottom: 3rem;
+      line-height: 1.6;
+    }
+
+    #sm-engine .sm-cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2rem;
+    }
+
+    #sm-engine .sm-card {
+      background: #FFFFFF;
+      border: 1px solid var(--border-light);
+      border-radius: 0.5rem;
+      padding: 2rem;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    #sm-engine .sm-problem .sm-card {
+      border-top: 4px solid var(--error);
+    }
+
+    #sm-engine .sm-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    }
+
+    #sm-engine .sm-card-number {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background-color: var(--error);
+      color: #FFFFFF;
+      font-size: 1.5rem;
+      font-weight: 800;
+      margin-bottom: 1.5rem;
+    }
+
+    #sm-engine .sm-card-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      color: var(--text-dark);
+    }
+
+    #sm-engine .sm-card-text {
+      font-size: 0.95rem;
+      line-height: 1.6;
+      color: var(--text-dark-muted);
+    }
+
+    /* HOW IT WORKS SECTION */
+    #sm-engine .sm-solution {
+      background-color: var(--bg);
+      padding: 5rem 2rem;
+    }
+
+    #sm-engine .sm-solution h2 {
+      color: var(--text);
+    }
+
+    #sm-engine .sm-steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 2rem;
+      margin-top: 3rem;
+      position: relative;
+    }
+
+    #sm-engine .sm-step {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    #sm-engine .sm-step-number {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background-color: transparent;
+      border: 2px solid var(--accent);
+      color: var(--accent);
+      font-size: 1.5rem;
+      font-weight: 800;
+    }
+
+    #sm-engine .sm-step-icon {
+      width: 100%;
+      height: 80px;
+      display: flex;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+
+    #sm-engine .sm-step svg {
+      width: 50px;
+      height: 50px;
+      stroke: var(--accent);
+      fill: none;
+      stroke-width: 2;
+    }
+
+    #sm-engine .sm-step-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    #sm-engine .sm-step-description {
+      font-size: 0.95rem;
+      line-height: 1.6;
+      color: var(--text-muted);
+    }
+
+    #sm-engine .sm-solution-note {
+      margin-top: 3rem;
+      padding: 1.5rem;
+      background-color: var(--bg-card);
+      border-left: 3px solid var(--accent);
+      border-radius: 0.375rem;
+    }
+
+    #sm-engine .sm-solution-note p {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    /* SIGNALS SECTION */
+    #sm-engine .sm-signals {
+      background-color: var(--bg-alt);
+      padding: 5rem 2rem;
+    }
+
+    #sm-engine .sm-signals h2 {
+      color: var(--text);
+      margin-bottom: 3rem;
+    }
+
+    #sm-engine .sm-signals-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+    }
+
+    #sm-engine .sm-signal-card {
+      background-color: var(--bg);
+      border-left: 3px solid var(--accent);
+      padding: 1.5rem;
+      border-radius: 0.375rem;
+      transition: all 0.3s ease;
+    }
+
+    #sm-engine .sm-signal-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 30px var(--accent-glow);
+    }
+
+    #sm-engine .sm-signal-card svg {
+      width: 32px;
+      height: 32px;
+      stroke: var(--accent);
+      fill: none;
+      stroke-width: 1.5;
+      margin-bottom: 1rem;
+    }
+
+    #sm-engine .sm-signal-card-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 0.5rem;
+    }
+
+    #sm-engine .sm-signal-card-description {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* THREE CHANNELS SECTION */
+    #sm-engine .sm-channels {
+      background-color: #FFFFFF;
+      padding: 5rem 2rem;
+      color: var(--text-dark);
+    }
+
+    #sm-engine .sm-channels h2 {
+      color: var(--text-dark);
+      margin-bottom: 3rem;
+    }
+
+    #sm-engine .sm-channels-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+    }
+
+    #sm-engine .sm-channel-card {
+      background: #FFFFFF;
+      border: 1px solid var(--border-light);
+      border-radius: 0.5rem;
+      padding: 2rem;
+      transition: all 0.3s ease;
+      border-top: 4px solid #999;
+    }
+
+    #sm-engine .sm-channel-card.whatsapp {
+      border-top-color: #25D366;
+    }
+
+    #sm-engine .sm-channel-card.email {
+      border-top-color: #3B82F6;
+    }
+
+    #sm-engine .sm-channel-card.linkedin {
+      border-top-color: #0A66C2;
+    }
+
+    #sm-engine .sm-channel-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    }
+
+    #sm-engine .sm-channel-icon {
+      width: 50px;
+      height: 50px;
+      margin-bottom: 1.5rem;
+    }
+
+    #sm-engine .sm-channel-icon svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    #sm-engine .sm-channel-stat {
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: var(--accent);
+      margin-bottom: 0.5rem;
+    }
+
+    #sm-engine .sm-channel-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text-dark);
+      margin-bottom: 1rem;
+    }
+
+    #sm-engine .sm-channel-description {
+      font-size: 0.95rem;
+      line-height: 1.6;
+      color: var(--text-dark-muted);
+    }
+
+    /* RESULTS SECTION */
+    #sm-engine .sm-results {
+      background-color: var(--bg);
+      padding: 5rem 2rem;
+    }
+
+    #sm-engine .sm-results h2 {
+      color: var(--text);
+      margin-bottom: 3rem;
+    }
+
+    #sm-engine .sm-results-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2.5rem;
+      margin-bottom: 3rem;
+    }
+
+    #sm-engine .sm-result-item {
+      display: flex;
+      flex-direction: column;
+    }
+
+    #sm-engine .sm-result-number {
+      font-size: clamp(3rem, 8vw, 5rem);
+      font-weight: 800;
+      color: var(--accent);
+      font-family: 'Courier New', monospace;
+      line-height: 1;
+      margin-bottom: 1rem;
+    }
+
+    #sm-engine .sm-result-label {
+      font-size: 1.1rem;
+      line-height: 1.6;
+      color: var(--text-muted);
+    }
+
+    #sm-engine .sm-case-study {
+      background-color: var(--bg-alt);
+      border-left: 4px solid var(--accent);
+      padding: 2rem;
+      border-radius: 0.375rem;
+      margin-top: 2rem;
+    }
+
+    #sm-engine .sm-case-study p {
+      font-size: 1rem;
+      line-height: 1.7;
+      color: var(--text-muted);
+    }
+
+    /* PRICING SECTION */
+    #sm-engine .sm-pricing {
+      background-color: #FFFFFF;
+      padding: 5rem 2rem;
+      color: var(--text-dark);
+    }
+
+    #sm-engine .sm-pricing h2 {
+      color: var(--text-dark);
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    #sm-engine .sm-pricing-container {
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    #sm-engine .sm-pricing-card {
+      background: #FFFFFF;
+      border: 1px solid var(--border-light);
+      border-top: 4px solid var(--accent);
+      border-radius: 0.5rem;
+      padding: 2.5rem;
+      text-align: center;
+    }
+
+    #sm-engine .sm-pricing-title {
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      color: var(--text-dark);
+    }
+
+    #sm-engine .sm-pricing-price {
+      margin-bottom: 1.5rem;
+    }
+
+    #sm-engine .sm-price-main {
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: var(--accent);
+      display: flex;
+      align-items: baseline;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    #sm-engine .sm-price-monthly {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: var(--accent);
+    }
+
+    #sm-engine .sm-price-period {
+      font-size: 0.9rem;
+      color: var(--text-dark-muted);
+      margin-bottom: 1rem;
+    }
+
+    #sm-engine .sm-price-note {
+      font-size: 0.85rem;
+      color: var(--text-dark-muted);
+      margin-bottom: 1.5rem;
+    }
+
+    #sm-engine .sm-pricing-divider {
+      border-top: 1px solid var(--border-light);
+      margin: 1.5rem 0;
+    }
+
+    #sm-engine .sm-pricing-features {
+      text-align: left;
+      margin: 1.5rem 0;
+    }
+
+    #sm-engine .sm-pricing-label {
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--text-dark-muted);
+      margin-bottom: 1rem;
+      display: block;
+    }
+
+    #sm-engine .sm-feature {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      margin-bottom: 0.75rem;
+      font-size: 0.95rem;
+      color: var(--text-dark);
+      line-height: 1.5;
+    }
+
+    #sm-engine .sm-feature::before {
+      content: '✓';
+      color: var(--success);
+      font-weight: 800;
+      flex-shrink: 0;
+      width: 20px;
+    }
+
+    #sm-engine .sm-pricing-kicker {
+      font-size: 0.9rem;
+      color: var(--text-dark-muted);
+      margin: 1.5rem 0;
+      padding: 1rem;
+      background-color: var(--accent-light);
+      border-radius: 0.375rem;
+      border-left: 3px solid var(--accent);
+    }
+
+    #sm-engine .sm-pricing-card .sm-btn {
+      width: 100%;
+      margin-top: 1.5rem;
+    }
+
+    /* QUALIFIER SECTION */
+    #sm-engine .sm-qualifier {
+      background-color: var(--bg);
+      padding: 5rem 2rem;
+    }
+
+    #sm-engine .sm-qualifier h2 {
+      color: var(--text);
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    #sm-engine .sm-qualifier-columns {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    #sm-engine .sm-qualifier-column {
+      padding: 2rem;
+      border-left: 4px solid;
+      background-color: var(--bg-alt);
+      border-radius: 0.375rem;
+    }
+
+    #sm-engine .sm-qualifier-column.positive {
+      border-left-color: var(--success);
+    }
+
+    #sm-engine .sm-qualifier-column.negative {
+      border-left-color: var(--error);
+    }
+
+    #sm-engine .sm-qualifier-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      color: var(--text);
+    }
+
+    #sm-engine .sm-qualifier-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    #sm-engine .sm-qualifier-column.positive .sm-qualifier-item::before {
+      content: '✓';
+      color: var(--success);
+      font-weight: 800;
+      flex-shrink: 0;
+      width: 20px;
+    }
+
+    #sm-engine .sm-qualifier-column.negative .sm-qualifier-item::before {
+      content: '✗';
+      color: var(--error);
+      font-weight: 800;
+      flex-shrink: 0;
+      width: 20px;
+    }
+
+    /* FAQ SECTION */
+    #sm-engine .sm-faq {
+      background-color: #FFFFFF;
+      padding: 5rem 2rem;
+      color: var(--text-dark);
+    }
+
+    #sm-engine .sm-faq h2 {
+      color: var(--text-dark);
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    #sm-engine .sm-faq-container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    #sm-engine .sm-accordion {
+      border: 1px solid var(--border-light);
+      border-radius: 0.5rem;
+      overflow: hidden;
+    }
+
+    #sm-engine .sm-accordion-item {
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    #sm-engine .sm-accordion-item:last-child {
+      border-bottom: none;
+    }
+
+    #sm-engine .sm-accordion-header {
+      padding: 1.5rem;
+      background-color: #FFFFFF;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text-dark);
+      transition: all 0.3s ease;
+    }
+
+    #sm-engine .sm-accordion-header:hover {
+      background-color: var(--accent-light);
+    }
+
+    #sm-engine .sm-accordion-header::after {
+      content: '▼';
+      font-size: 0.75rem;
+      color: var(--text-dark-muted);
+      transition: transform 0.3s ease;
+    }
+
+    #sm-engine .sm-accordion-item.active .sm-accordion-header {
+      background-color: var(--accent-light);
+    }
+
+    #sm-engine .sm-accordion-item.active .sm-accordion-header::after {
+      transform: rotate(180deg);
+    }
+
+    #sm-engine .sm-accordion-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease;
+    }
+
+    #sm-engine .sm-accordion-item.active .sm-accordion-content {
+      max-height: 500px;
+    }
+
+    #sm-engine .sm-accordion-body {
+      padding: 0 1.5rem 1.5rem;
+      font-size: 0.95rem;
+      line-height: 1.7;
+      color: var(--text-dark-muted);
+    }
+
+    /* FINAL CTA SECTION */
+    #sm-engine .sm-final-cta {
+      background-color: var(--bg);
+      padding: 5rem 2rem;
+      text-align: center;
+    }
+
+    #sm-engine .sm-final-cta h2 {
+      color: var(--text);
+      margin-bottom: 1rem;
+    }
+
+    #sm-engine .sm-final-subtitle {
+      font-size: 1.1rem;
+      color: var(--text-muted);
+      margin-bottom: 2.5rem;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+      line-height: 1.7;
+    }
+
+    #sm-engine .sm-final-btn {
+      margin-bottom: 1.5rem;
+    }
+
+    #sm-engine .sm-footer-credit {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    /* FOOTER */
+    #sm-engine .sm-footer {
+      background-color: var(--bg-alt);
+      border-top: 1px solid var(--border);
+      padding: 3rem 2rem;
+      text-align: center;
+    }
+
+    #sm-engine .sm-footer-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    #sm-engine .sm-footer-logo {
+      font-size: 1.2rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+
+    #sm-engine .sm-footer-logo span:first-child {
+      color: var(--text);
+    }
+
+    #sm-engine .sm-footer-logo span:last-child {
+      color: var(--accent);
+    }
+
+    #sm-engine .sm-footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      flex-wrap: wrap;
+    }
+
+    #sm-engine .sm-footer-link {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: color 0.3s ease;
+      cursor: pointer;
+    }
+
+    #sm-engine .sm-footer-link:hover {
+      color: var(--accent);
+    }
+
+    #sm-engine .sm-footer-copyright {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+    }
+
+    /* ANIMATIONS */
+    #sm-engine .sm-animate {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+
+    #sm-engine .sm-animate.sm-visible {
+      opacity: 1;
+      transform: translateY(0);
+      transition: opacity 0.7s ease-out, transform 0.7s ease-out;
+    }
+
+    /* MOBILE RESPONSIVE */
+    @media (max-width: 768px) {
+      #sm-engine .sm-nav-links {
+        display: none;
+      }
+
+      #sm-engine .sm-hamburger {
+        display: flex;
+      }
+
+      #sm-engine .sm-hamburger.active span:nth-child(1) {
+        transform: rotate(45deg) translate(8px, 8px);
+      }
+
+      #sm-engine .sm-hamburger.active span:nth-child(2) {
+        opacity: 0;
+      }
+
+      #sm-engine .sm-hamburger.active span:nth-child(3) {
+        transform: rotate(-45deg) translate(7px, -7px);
+      }
+
+      #sm-engine .sm-mobile-menu.active {
+        display: flex;
+      }
+
+      #sm-engine .sm-hero-buttons {
+        flex-direction: column;
+        gap: 1rem;
+        width: 100%;
+      }
+
+      #sm-engine .sm-hero-buttons .sm-btn {
+        width: 100%;
+        text-align: center;
+      }
+
+      #sm-engine .sm-stats-content {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      #sm-engine .sm-cards-grid {
+        grid-template-columns: 1fr;
+      }
+
+      #sm-engine .sm-channels-grid {
+        grid-template-columns: 1fr;
+      }
+
+      #sm-engine .sm-qualifier-columns {
+        grid-template-columns: 1fr;
+      }
+
+      #sm-engine .sm-hero {
+        padding: 7rem 1.5rem 3rem;
+      }
+
+      #sm-engine .sm-section {
+        padding: 0;
+      }
+    }
+
+    @media (max-width: 480px) {
+      #sm-engine .sm-nav-content {
+        padding: 0 1rem;
+      }
+
+      #sm-engine .sm-logo {
+        font-size: 1rem;
+      }
+
+      #sm-engine .sm-stats-content {
+        grid-template-columns: 1fr;
+      }
+
+      #sm-engine .sm-hero h1 {
+        font-size: clamp(1.8rem, 6vw, 2.5rem);
+      }
+
+      #sm-engine .sm-section h2 {
+        font-size: clamp(1.5rem, 4vw, 2.2rem);
+      }
+
+      #sm-engine .sm-hero-subtitle {
+        font-size: 1rem;
+      }
+
+      #sm-engine .sm-pricing-card {
+        padding: 1.5rem;
+      }
+
+      #sm-engine .sm-footer-links {
+        gap: 1rem;
+        font-size: 0.85rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="sm-engine">
+    <!-- NAVIGATION -->
+    <nav class="sm-nav">
+      <div class="sm-nav-content">
+        <div class="sm-logo">
+          <span>Sales</span>
+          <span>Mfast</span>
+        </div>
+        <div class="sm-nav-links">
+          <a class="sm-nav-link" onclick="smoothScroll('how-it-works')">How It Works</a>
+          <a class="sm-nav-link" onclick="smoothScroll('results')">Results</a>
+          <a class="sm-nav-link" onclick="smoothScroll('pricing')">Pricing</a>
+          <button class="sm-nav-btn" onclick="scrollToElement('final-cta')">Apply Now</button>
+        </div>
+        <div class="sm-hamburger" onclick="toggleMenu()">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+        <div class="sm-mobile-menu" id="mobile-menu">
+          <a class="sm-nav-link" onclick="smoothScroll('how-it-works'); toggleMenu()">How It Works</a>
+          <a class="sm-nav-link" onclick="smoothScroll('results'); toggleMenu()">Results</a>
+          <a class="sm-nav-link" onclick="smoothScroll('pricing'); toggleMenu()">Pricing</a>
+          <button class="sm-nav-btn" onclick="scrollToElement('final-cta'); toggleMenu()">Apply Now</button>
+        </div>
+      </div>
+    </nav>
+
+    <!-- HERO SECTION -->
+    <section class="sm-hero" id="hero">
+      <div class="sm-hero-content">
+        <div class="sm-pill sm-animate">
+          SIGNAL-BASED PIPELINE FOR MENA
+        </div>
+        <h1 class="sm-animate">
+          The B2B Revenue Engine
+          <br>Built for How
+          <br><span class="sm-accent">MENA Actually Buys.</span>
+        </h1>
+        <p class="sm-hero-subtitle sm-animate">
+          We fill your pipeline with qualified meetings in 30 days — in Arabic and English, across WhatsApp, email, and LinkedIn — using the same AI systems that $100M US companies use, but built for how business actually works in the Gulf.
+        </p>
+        <div class="sm-hero-buttons sm-animate">
+          <button class="sm-btn sm-btn-primary" onclick="scrollToElement('final-cta')">Apply for Signal Sprint →</button>
+          <button class="sm-btn sm-btn-ghost" onclick="smoothScroll('how-it-works')">See How It Works ↓</button>
+        </div>
+        <div class="sm-hero-divider sm-animate">
+          For B2B tech companies doing $100K+ MRR
+        </div>
+      </div>
+    </section>
+
+    <!-- STATS BAR -->
+    <section class="sm-stats">
+      <div class="sm-stats-content">
+        <div class="sm-stat sm-animate">
+          <div class="sm-stat-number">180+</div>
+          <div class="sm-stat-label">Meetings Booked</div>
+        </div>
+        <div class="sm-stat sm-animate">
+          <div class="sm-stat-number">34%</div>
+          <div class="sm-stat-label">WhatsApp Response Rate</div>
+        </div>
+        <div class="sm-stat sm-animate">
+          <div class="sm-stat-number">11 Days</div>
+          <div class="sm-stat-label">To First Meeting</div>
+        </div>
+        <div class="sm-stat sm-animate">
+          <div class="sm-stat-number">5-10x</div>
+          <div class="sm-stat-label">Average ROI</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- THE PROBLEM SECTION -->
+    <section class="sm-problem">
+      <div class="sm-section">
+        <span class="sm-eyebrow">THE PROBLEM</span>
+        <h2 class="sm-animate">Your Pipeline is Broken.</h2>
+        <p class="sm-section-subtitle sm-animate">Sound familiar?</p>
+        <div class="sm-cards-grid">
+          <div class="sm-card sm-animate">
+            <div class="sm-card-number">01</div>
+            <h3 class="sm-card-title">Spray-and-Pray Outbound</h3>
+            <p class="sm-card-text">You blasted 10,000 cold emails. Generic templates. No context. No timing. Result? 1-2% response rate. Your sales team spent more time chasing ghosts than talking to buyers.</p>
+          </div>
+          <div class="sm-card sm-animate">
+            <div class="sm-card-number">02</div>
+            <h3 class="sm-card-title">English-Only Agencies</h3>
+            <p class="sm-card-text">Global agencies sent English-only emails to Arabic-speaking procurement directors in Riyadh. They tried LinkedIn on execs who live on WhatsApp. Their data tools barely cover MENA.</p>
+          </div>
+          <div class="sm-card sm-animate">
+            <div class="sm-card-number">03</div>
+            <h3 class="sm-card-title">The Referral Trap</h3>
+            <p class="sm-card-text">Your best clients came from introductions. But referrals don't scale. You can't build a revenue plan on "maybe Ahmed will introduce us at the conference." That's not pipeline. That's a prayer.</p>
+          </div>
+          <div class="sm-card sm-animate">
+            <div class="sm-card-number">04</div>
+            <h3 class="sm-card-title">Hope-Based Demos</h3>
+            <p class="sm-card-text">You're running demos for people who aren't ready to buy. They took the call out of curiosity, not budget. Your close rate sits between 5-10%, and every lost deal cost two weeks of founder time.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- HOW IT WORKS SECTION -->
+    <section class="sm-solution" id="how-it-works">
+      <div class="sm-section">
+        <span class="sm-eyebrow">THE SOLUTION</span>
+        <h2 class="sm-animate">How The Engine Works</h2>
+        <div class="sm-steps">
+          <div class="sm-step sm-animate">
+            <div class="sm-step-number">01</div>
+            <div class="sm-step-icon">
+              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="12" cy="12" r="10"></circle>
+                <path d="M12 8v8M16 12h-8" stroke-linecap="round"></path>
+              </svg>
+            </div>
+            <h3 class="sm-step-title">Signal Detection</h3>
+            <p class="sm-step-description">Custom scrapers monitor your market 24/7. Job changes, funding rounds, tech stack shifts, competitor reviews. 500+ signals per month, scored by AI.</p>
+          </div>
+          <div class="sm-step sm-animate">
+            <div class="sm-step-number">02</div>
+            <div class="sm-step-icon">
+              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <rect x="2" y="3" width="20" height="18" rx="2"></rect>
+                <line x1="6" y1="9" x2="18" y2="9"></line>
+                <line x1="6" y1="15" x2="18" y2="15"></line>
+              </svg>
+            </div>
+            <h3 class="sm-step-title">Data Enrichment</h3>
+            <p class="sm-step-description">Every signal enriched with contact data, company context, and buying intent scores. Live data from 15+ MENA-specific sources, not stale global databases.</p>
+          </div>
+          <div class="sm-step sm-animate">
+            <div class="sm-step-number">03</div>
+            <div class="sm-step-icon">
+              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M3 12l8-8 10 10M17 7v8h6"></path>
+              </svg>
+            </div>
+            <h3 class="sm-step-title">Multi-Channel Outreach</h3>
+            <p class="sm-step-description">Personalized sequences across email, LinkedIn, and WhatsApp — in Arabic and English. Every message references the specific signal we detected.</p>
+          </div>
+          <div class="sm-step sm-animate">
+            <div class="sm-step-number">04</div>
+            <div class="sm-step-icon">
+              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <rect x="3" y="4" width="18" height="18" rx="2"></rect>
+                <line x1="16" y1="2" x2="16" y2="6"></line>
+                <line x1="8" y1="2" x2="8" y2="6"></line>
+                <line x1="3" y1="10" x2="21" y2="10"></line>
+              </svg>
+            </div>
+            <h3 class="sm-step-title">Qualified Meetings</h3>
+            <p class="sm-step-description">We handle replies, qualify interest, and book meetings directly on your calendar. Your closer wakes up to warm prospects who've already engaged.</p>
+          </div>
+        </div>
+        <div class="sm-solution-note sm-animate">
+          <p>✓ Full transparency via live PowerBI dashboard. You see everything we see.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SIGNALS SECTION -->
+    <section class="sm-signals">
+      <div class="sm-section">
+        <h2 class="sm-animate">Signals We Turn Into Pipeline</h2>
+        <div class="sm-signals-grid">
+          <div class="sm-signal-card sm-animate">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+            <h3 class="sm-signal-card-title">New VP Hired</h3>
+            <p class="sm-signal-card-description">New stack evaluation incoming</p>
+          </div>
+          <div class="sm-signal-card sm-animate">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="12" cy="12" r="1"></circle>
+              <path d="M12 1v6M12 17v6M4.22 4.22l4.24 4.24M15.54 15.54l4.24 4.24M1 12h6M17 12h6M4.22 19.78l4.24-4.24M15.54 8.46l4.24-4.24"></path>
+            </svg>
+            <h3 class="sm-signal-card-title">Funding Round</h3>
+            <p class="sm-signal-card-description">Fresh budget allocated</p>
+          </div>
+          <div class="sm-signal-card sm-animate">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <polyline points="21 8 21 21 3 21 3 8"></polyline>
+              <line x1="1" y1="8" x2="23" y2="8"></line>
+              <path d="M10 4h4M7 8v4M17 8v4"></path>
+            </svg>
+            <h3 class="sm-signal-card-title">Competitor Review</h3>
+            <p class="sm-signal-card-description">Active switching window</p>
+          </div>
+          <div class="sm-signal-card sm-animate">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <polyline points="16 18 22 12 16 6"></polyline>
+              <polyline points="8 6 2 12 8 18"></polyline>
+            </svg>
+            <h3 class="sm-signal-card-title">Tech Stack Change</h3>
+            <p class="sm-signal-card-description">Integration opportunity</p>
+          </div>
+          <div class="sm-signal-card sm-animate">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M2 7.5a2.5 2.5 0 0 1 5 0v9a2.5 2.5 0 1 1-5 0v-9z"></path>
+              <path d="M9 2.5a2.5 2.5 0 0 1 5 0v9a2.5 2.5 0 1 1-5 0V2.5z"></path>
+              <path d="M16 5.5a2.5 2.5 0 0 1 5 0v6a2.5 2.5 0 1 1-5 0v-6z"></path>
+            </svg>
+            <h3 class="sm-signal-card-title">Conference Registration</h3>
+            <p class="sm-signal-card-description">Buying intent confirmed</p>
+          </div>
+          <div class="sm-signal-card sm-animate">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"></path>
+            </svg>
+            <h3 class="sm-signal-card-title">Government Tender</h3>
+            <p class="sm-signal-card-description">Budget already approved</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- THREE CHANNELS SECTION -->
+    <section class="sm-channels">
+      <div class="sm-section">
+        <h2 class="sm-animate">Three Channels. Two Languages. One Engine.</h2>
+        <div class="sm-channels-grid">
+          <div class="sm-channel-card whatsapp sm-animate">
+            <div class="sm-channel-icon">
+              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="stroke: #25D366; fill: none;">
+                <path d="M17.6 6.4C15.8 4.6 13.4 3.5 11 3.5 6.6 3.5 3 7.1 3 11.5c0 1.9.5 3.7 1.5 5.3L3 21l5.5-1.4c1.5.8 3.2 1.3 5 1.3 4.4 0 8-3.6 8-8 0-2.1-.8-4.1-2.4-5.9z"></path>
+              </svg>
+            </div>
+            <div class="sm-channel-stat">34% Response Rate</div>
+            <h3 class="sm-channel-title">WhatsApp</h3>
+            <p class="sm-channel-description">Gulf executives actually read WhatsApp. We don't just send — we build conversational sequences that mirror real business chat.</p>
+          </div>
+          <div class="sm-channel-card email sm-animate">
+            <div class="sm-channel-icon">
+              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="stroke: #3B82F6; fill: none;">
+                <rect x="2" y="4" width="20" height="16" rx="2"></rect>
+                <path d="M2 6l10 7 10-7"></path>
+              </svg>
+            </div>
+            <div class="sm-channel-stat">Signal-Triggered</div>
+            <h3 class="sm-channel-title">Email</h3>
+            <p class="sm-channel-description">Arabic + English templates triggered by real buying signals. Not "Hi [First Name]" spam from a purchased list.</p>
+          </div>
+          <div class="sm-channel-card linkedin sm-animate">
+            <div class="sm-channel-icon">
+              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="stroke: #0A66C2; fill: none;">
+                <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"></path>
+                <circle cx="4" cy="4" r="2"></circle>
+              </svg>
+            </div>
+            <div class="sm-channel-stat">Precision Targeting</div>
+            <h3 class="sm-channel-title">LinkedIn</h3>
+            <p class="sm-channel-description">Connection requests and InMails that reference specific signals. Because "I noticed your company recently..." works.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- RESULTS SECTION -->
+    <section class="sm-results" id="results">
+      <div class="sm-section">
+        <span class="sm-eyebrow">PROOF</span>
+        <h2 class="sm-animate">Results That Speak</h2>
+        <div class="sm-results-grid">
+          <div class="sm-result-item sm-animate">
+            <div class="sm-result-number">22</div>
+            <div class="sm-result-label">Qualified meetings in first 30-day sprint</div>
+          </div>
+          <div class="sm-result-item sm-animate">
+            <div class="sm-result-number">5.5%</div>
+            <div class="sm-result-label">Meeting-to-prospect rate (vs 0.5% industry average)</div>
+          </div>
+          <div class="sm-result-item sm-animate">
+            <div class="sm-result-number">34%</div>
+            <div class="sm-result-label">WhatsApp response rate across campaigns</div>
+          </div>
+          <div class="sm-result-item sm-animate">
+            <div class="sm-result-number">11</div>
+            <div class="sm-result-label">Days from launch to first qualified meeting</div>
+          </div>
+        </div>
+        <div class="sm-case-study sm-animate">
+          <p><strong>UAE-based SaaS company selling to Gulf enterprises:</strong> 22 qualified meetings from 400 signal-matched prospects in their first 30-day sprint. All meetings booked in Arabic and English across WhatsApp, email, and LinkedIn.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- PRICING SECTION -->
+    <section class="sm-pricing" id="pricing">
+      <div class="sm-section">
+        <h2 class="sm-animate">Simple, Transparent Pricing</h2>
+        <div class="sm-pricing-container">
+          <div class="sm-pricing-card sm-animate">
+            <h3 class="sm-pricing-title">The 30-Day Signal Sprint</h3>
+            <div class="sm-pricing-price">
+              <div>
+                <div class="sm-price-main"><span class="sm-price-monthly">$2,500</span></div>
+                <div class="sm-price-period">one-time setup</div>
+              </div>
+            </div>
+            <div class="sm-pricing-price">
+              <div>
+                <div class="sm-price-main"><span class="sm-price-monthly">$3,500</span><span style="font-size: 1rem; color: var(--text-dark-muted);">/mo</span></div>
+                <div class="sm-price-period">3-month minimum</div>
+              </div>
+            </div>
+            <p class="sm-price-note">Total first engagement: ~$13,000 · Less than one underperforming SDR hire</p>
+            <div class="sm-pricing-divider"></div>
+            <div class="sm-pricing-features">
+              <span class="sm-pricing-label">What's included:</span>
+              <div class="sm-feature">Signal infrastructure deployment</div>
+              <div class="sm-feature">3-5 campaign sequences (email + LinkedIn + WhatsApp)</div>
+              <div class="sm-feature">Bilingual templates (Arabic + English)</div>
+              <div class="sm-feature">WhatsApp Business API setup</div>
+              <div class="sm-feature">Domain warming & deliverability optimization</div>
+              <div class="sm-feature">Daily monitoring & optimization</div>
+              <div class="sm-feature">Weekly performance reports</div>
+              <div class="sm-feature">Live PowerBI dashboard</div>
+            </div>
+            <div class="sm-pricing-divider"></div>
+            <div class="sm-pricing-kicker">Performance kicker: $200 per meeting beyond your baseline</div>
+            <button class="sm-btn sm-btn-primary" onclick="scrollToElement('final-cta')">Apply for Your Signal Sprint →</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- QUALIFIER SECTION -->
+    <section class="sm-qualifier">
+      <div class="sm-section">
+        <h2 class="sm-animate">Is This Right For You?</h2>
+        <div class="sm-qualifier-columns">
+          <div class="sm-qualifier-column positive sm-animate">
+            <h3 class="sm-qualifier-title">This IS for you if:</h3>
+            <div class="sm-qualifier-item">B2B tech company operating in MENA</div>
+            <div class="sm-qualifier-item">$100K+ in monthly recurring revenue</div>
+            <div class="sm-qualifier-item">You have a closer (founder, AE, or VP Sales)</div>
+            <div class="sm-qualifier-item">Ready to invest $3.5-6K/month in pipeline</div>
+          </div>
+          <div class="sm-qualifier-column negative sm-animate">
+            <h3 class="sm-qualifier-title">This is NOT for you if:</h3>
+            <div class="sm-qualifier-item">Below $100K MRR</div>
+            <div class="sm-qualifier-item">No one available to take qualified meetings</div>
+            <div class="sm-qualifier-item">Looking for "try before you buy"</div>
+            <div class="sm-qualifier-item">Not selling B2B products or services</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ SECTION -->
+    <section class="sm-faq">
+      <div class="sm-section">
+        <h2 class="sm-animate">Frequently Asked Questions</h2>
+        <div class="sm-faq-container">
+          <div class="sm-accordion">
+            <div class="sm-accordion-item">
+              <button class="sm-accordion-header sm-animate" onclick="toggleAccordion(this)">How quickly will I see results?</button>
+              <div class="sm-accordion-content">
+                <div class="sm-accordion-body">Most clients see their first qualified meeting within 11 days of campaign launch. The full 30-day sprint typically delivers 8-22 qualified meetings depending on your market and ICP.</div>
+              </div>
+            </div>
+            <div class="sm-accordion-item">
+              <button class="sm-accordion-header sm-animate" onclick="toggleAccordion(this)">Why a 3-month minimum?</button>
+              <div class="sm-accordion-content">
+                <div class="sm-accordion-body">Signal-based outbound compounds over time. Month 1 calibrates your signal filters and tests messaging. Month 2 optimizes based on response data. Month 3 scales what's working. Breaking early means missing the best returns.</div>
+              </div>
+            </div>
+            <div class="sm-accordion-item">
+              <button class="sm-accordion-header sm-animate" onclick="toggleAccordion(this)">What if your tools don't cover my market?</button>
+              <div class="sm-accordion-content">
+                <div class="sm-accordion-body">We built custom scrapers specifically for MENA. Unlike Apollo or ZoomInfo, our data covers Gulf companies, Arabic-language signals, and regional business events that global tools miss entirely.</div>
+              </div>
+            </div>
+            <div class="sm-accordion-item">
+              <button class="sm-accordion-header sm-animate" onclick="toggleAccordion(this)">Do I need to provide leads?</button>
+              <div class="sm-accordion-content">
+                <div class="sm-accordion-body">No. We source everything through signal detection. You tell us your ICP, we find the people showing buying intent right now. No purchased lists, no stale databases.</div>
+              </div>
+            </div>
+            <div class="sm-accordion-item">
+              <button class="sm-accordion-header sm-animate" onclick="toggleAccordion(this)">How are you different from a lead gen agency?</button>
+              <div class="sm-accordion-content">
+                <div class="sm-accordion-body">Agencies send bulk emails from purchased lists. We detect real-time buying signals and trigger personalized outreach across three channels in two languages. It's a fundamentally different model — signal-driven, not volume-driven.</div>
+              </div>
+            </div>
+            <div class="sm-accordion-item">
+              <button class="sm-accordion-header sm-animate" onclick="toggleAccordion(this)">Can you work with my existing CRM?</button>
+              <div class="sm-accordion-content">
+                <div class="sm-accordion-body">Yes. We integrate with HubSpot, Salesforce, Pipedrive, and most major CRMs. Meetings are booked directly on your team's calendar with full context about the signal that triggered the outreach.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FINAL CTA SECTION -->
+    <section class="sm-final-cta" id="final-cta">
+      <div class="sm-section">
+        <h2 class="sm-animate">Ready to Fill Your Pipeline?</h2>
+        <p class="sm-final-subtitle sm-animate">We take on a limited number of clients each month. Every engine is custom-built for your market, your ICP, and your language.</p>
+        <div class="sm-animate">
+          <button class="sm-btn sm-btn-primary sm-final-btn" onclick="handleApply()">Apply for Your Signal Sprint →</button>
+        </div>
+        <p class="sm-footer-credit sm-animate">smorchestra.ai</p>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="sm-footer">
+      <div class="sm-footer-content">
+        <div class="sm-footer-logo">
+          <span>Sales</span>
+          <span>Mfast</span>
+        </div>
+        <div class="sm-footer-links">
+          <a class="sm-footer-link" onclick="smoothScroll('how-it-works')">How It Works</a>
+          <a class="sm-footer-link" onclick="smoothScroll('results')">Results</a>
+          <a class="sm-footer-link" onclick="smoothScroll('pricing')">Pricing</a>
+          <a class="sm-footer-link" onclick="scrollToElement('final-cta')">Apply</a>
+        </div>
+        <div class="sm-footer-copyright">
+          © 2025 SalesMfast by SMOrchestra.ai
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    // SMOOTH SCROLL
+    function smoothScroll(id) {
+      const element = document.getElementById(id);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+
+    function scrollToElement(id) {
+      const element = document.getElementById(id);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+
+    // HAMBURGER MENU
+    function toggleMenu() {
+      const hamburger = document.querySelector('.sm-hamburger');
+      const menu = document.getElementById('mobile-menu');
+      hamburger.classList.toggle('active');
+      menu.classList.toggle('active');
+    }
+
+    // ACCORDION
+    function toggleAccordion(button) {
+      const item = button.parentElement;
+      const isActive = item.classList.contains('active');
+
+      // Close all other items
+      document.querySelectorAll('.sm-accordion-item.active').forEach(el => {
+        if (el !== item) {
+          el.classList.remove('active');
+        }
+      });
+
+      // Toggle current item
+      item.classList.toggle('active');
+    }
+
+    // HANDLE APPLY
+    function handleApply() {
+      alert('Thank you for your interest! Please contact our team at smorchestra.ai to apply for the Signal Sprint.');
+    }
+
+    // INTERSECTION OBSERVER FOR ANIMATIONS
+    function initAnimations() {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry, index) => {
+          if (entry.isIntersecting) {
+            setTimeout(() => {
+              entry.target.classList.add('sm-visible');
+            }, index * 50);
+            observer.unobserve(entry.target);
+          }
+        });
+      }, {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+      });
+
+      document.querySelectorAll('.sm-animate').forEach(el => {
+        observer.observe(el);
+      });
+    }
+
+    // Initialize on load
+    document.addEventListener('DOMContentLoaded', () => {
+      initAnimations();
+    });
+
+    // Close mobile menu on link click
+    document.querySelectorAll('.sm-nav-link').forEach(link => {
+      link.addEventListener('click', () => {
+        const hamburger = document.querySelector('.sm-hamburger');
+        const menu = document.getElementById('mobile-menu');
+        if (hamburger.classList.contains('active')) {
+          hamburger.classList.remove('active');
+          menu.classList.remove('active');
+        }
+      });
+    });
+  </script>
+</body>
+</html>

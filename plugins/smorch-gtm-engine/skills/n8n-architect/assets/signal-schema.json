@@ -1,0 +1,159 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Signal Event Schema",
+  "description": "Standard schema for all signal events flowing through SMOrchestra n8n workflows. All platform-specific data should be normalized to this format before scoring and routing.",
+  "type": "object",
+  "required": ["signal_type", "source_platform", "contact_email", "signal_strength", "timestamp"],
+  "properties": {
+    "signal_type": {
+      "type": "string",
+      "enum": [
+        "email_open",
+        "link_click",
+        "reply",
+        "form_submit",
+        "linkedin_view",
+        "linkedin_connect",
+        "linkedin_message",
+        "website_visit",
+        "page_view",
+        "download",
+        "webinar_register",
+        "webinar_attend",
+        "meeting_booked",
+        "whatsapp_reply",
+        "ad_click",
+        "content_engage"
+      ],
+      "description": "Normalized signal type. Raw platform events should be mapped to these standard types."
+    },
+    "source_platform": {
+      "type": "string",
+      "enum": ["instantly", "heyreach", "ghl", "website", "linkedin", "clay", "manually_observed", "apify"],
+      "description": "Platform that originated this signal."
+    },
+    "contact_email": {
+      "type": "string",
+      "format": "email",
+      "description": "Primary contact email. Used as the dedup key across platforms."
+    },
+    "contact_name": {
+      "type": "string",
+      "description": "Contact full name. Optional but recommended for personalization."
+    },
+    "company": {
+      "type": "string",
+      "description": "Company name. Optional but needed for ICP fit scoring."
+    },
+    "phone": {
+      "type": "string",
+      "description": "Phone number in international format (e.g., +971501234567). Used for WhatsApp channel detection."
+    },
+    "linkedin_url": {
+      "type": "string",
+      "description": "LinkedIn profile URL. Used for HeyReach enrollment eligibility."
+    },
+    "signal_strength": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 10,
+      "description": "Signal strength score. 1=weakest (email open), 10=strongest (reply, meeting booked). Applied by the scoring Function node."
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp of when the signal was observed. Used for recency decay in scoring and 90-day staleness check."
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Platform-specific metadata. Structure varies by source.",
+      "properties": {
+        "campaign_id": {
+          "type": "string",
+          "description": "Source campaign ID (Instantly campaign, HeyReach campaign, etc.)"
+        },
+        "campaign_name": {
+          "type": "string",
+          "description": "Human-readable campaign name."
+        },
+        "raw_event": {
+          "type": "string",
+          "description": "Original event type string before normalization."
+        },
+        "sequence_step": {
+          "type": "integer",
+          "description": "Which step in the sequence triggered this signal (1, 2, 3...)."
+        },
+        "content_url": {
+          "type": "string",
+          "description": "URL of content that was engaged with (for link clicks, page views)."
+        },
+        "reply_text": {
+          "type": "string",
+          "description": "Text of the reply (for reply signals). Used for sentiment analysis."
+        },
+        "sentiment": {
+          "type": "string",
+          "enum": ["positive", "negative", "neutral", "question", "objection"],
+          "description": "Sentiment classification of reply. Applied by Claude API sentiment node."
+        },
+        "sentiment_score": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10,
+          "description": "Numeric sentiment score from Claude API analysis."
+        },
+        "enrichment_data": {
+          "type": "object",
+          "description": "Clay enrichment results (company size, industry, funding, tech stack)."
+        },
+        "fit_score": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10,
+          "description": "ICP fit score calculated from enrichment data."
+        },
+        "tags": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Tags to apply in GHL (e.g., ['hot-lead', 'week-1-campaign'])."
+        }
+      }
+    }
+  },
+  "examples": [
+    {
+      "signal_type": "reply",
+      "source_platform": "instantly",
+      "contact_email": "ahmed@example.ae",
+      "contact_name": "Ahmed Al Mansoori",
+      "company": "TechCorp MENA",
+      "phone": "+971501234567",
+      "linkedin_url": "https://linkedin.com/in/ahmed-almansoori",
+      "signal_strength": 9,
+      "timestamp": "2026-02-21T09:30:00Z",
+      "metadata": {
+        "campaign_id": "camp_123",
+        "campaign_name": "MENA SaaS - Proof Silence Q1",
+        "raw_event": "replied",
+        "sequence_step": 2,
+        "reply_text": "This sounds interesting, can we schedule a call?",
+        "sentiment": "positive",
+        "sentiment_score": 9
+      }
+    },
+    {
+      "signal_type": "linkedin_view",
+      "source_platform": "heyreach",
+      "contact_email": "sarah@startup.sa",
+      "contact_name": "Sarah Khan",
+      "company": "Startup Co",
+      "signal_strength": 4,
+      "timestamp": "2026-02-20T14:15:00Z",
+      "metadata": {
+        "campaign_id": "hr_456",
+        "raw_event": "profile_view"
+      }
+    }
+  ]
+}

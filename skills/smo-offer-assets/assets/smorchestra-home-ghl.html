@@ -1,0 +1,1729 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SalesMfast | Signal-Driven Revenue for MENA Markets</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--font);
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        #sm-home {
+            --bg: #000000;
+            --bg-alt: #0A0A0A;
+            --bg-card: rgba(255,255,255,0.04);
+            --accent: #FF6600;
+            --accent-hover: #CC5200;
+            --accent-light: #FFF3E6;
+            --accent-glow: rgba(255,102,0,0.15);
+            --text: #FFFFFF;
+            --text-muted: #A3A3A3;
+            --text-dark: #171717;
+            --text-dark-muted: #525252;
+            --border: rgba(255,255,255,0.08);
+            --border-light: #E5E5E5;
+            --success: #22C55E;
+            --error: #EF4444;
+            --font: 'Inter', system-ui, -apple-system, sans-serif;
+            color: #FFFFFF;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: #000000;
+        }
+
+        /* ========== NAVIGATION ========== */
+        #sm-home .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 70px;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+        }
+
+        #sm-home .nav-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        #sm-home .nav-logo {
+            font-size: 1.5rem;
+            font-weight: 900;
+            letter-spacing: -0.02em;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        #sm-home .nav-logo-sales {
+            color: var(--text);
+        }
+
+        #sm-home .nav-logo-mfast {
+            color: var(--accent);
+        }
+
+        #sm-home .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        #sm-home .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        #sm-home .nav-links a:hover {
+            color: var(--accent);
+        }
+
+        #sm-home .nav-cta {
+            background: var(--accent);
+            color: var(--text-dark);
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        #sm-home .nav-cta:hover {
+            background: var(--accent-hover);
+            transform: translateY(-2px);
+        }
+
+        #sm-home .hamburger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            gap: 5px;
+        }
+
+        #sm-home .hamburger span {
+            width: 25px;
+            height: 3px;
+            background: var(--text);
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+
+        /* ========== HERO SECTION ========== */
+        #sm-home .hero {
+            min-height: 100vh;
+            background: var(--bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 140px 2rem 80px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        #sm-home .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image:
+                linear-gradient(90deg, rgba(255,102,0,0.03) 1px, transparent 1px),
+                linear-gradient(rgba(255,102,0,0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            pointer-events: none;
+            opacity: 0.5;
+        }
+
+        #sm-home .hero::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(ellipse 800px 400px at 50% 0%, rgba(255,102,0,0.1) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        #sm-home .hero-content {
+            position: relative;
+            z-index: 10;
+            max-width: 1200px;
+            width: 100%;
+            text-align: center;
+        }
+
+        #sm-home .hero-accent {
+            width: 40px;
+            height: 4px;
+            background: var(--accent);
+            border-radius: 2px;
+            margin: 0 auto 2rem;
+            animation: slideInLeft 0.8s ease;
+        }
+
+        #sm-home .hero h1 {
+            font-size: clamp(3rem, 8vw, 6rem);
+            font-weight: 900;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            letter-spacing: -0.02em;
+            animation: slideInUp 0.8s ease 0.1s both;
+            color: #FFFFFF;
+        }
+
+        #sm-home .hero h1 .accent-text {
+            color: var(--accent);
+            background: linear-gradient(135deg, var(--accent) 0%, #FF8533 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        #sm-home .hero-subtitle {
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            line-height: 1.8;
+            margin: 0 auto 3rem;
+            max-width: 700px;
+            animation: slideInUp 0.8s ease 0.2s both;
+        }
+
+        #sm-home .hero-video {
+            position: relative;
+            max-width: 800px;
+            margin: 0 auto 3rem;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            animation: slideInUp 0.8s ease 0.25s both;
+            cursor: pointer;
+        }
+
+        #sm-home .hero-video-ratio {
+            position: relative;
+            padding-bottom: 56.25%;
+            background: linear-gradient(145deg, #0a0a0a, #111111);
+        }
+
+        #sm-home .hero-video-play {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80px;
+            height: 80px;
+            background: var(--accent);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 40px rgba(255, 102, 0, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        #sm-home .hero-video:hover .hero-video-play {
+            transform: translate(-50%, -50%) scale(1.1);
+            box-shadow: 0 0 60px rgba(255, 102, 0, 0.5);
+        }
+
+        #sm-home .hero-video-play::after {
+            content: '';
+            width: 0;
+            height: 0;
+            border-style: solid;
+            border-width: 12px 0 12px 22px;
+            border-color: transparent transparent transparent #000000;
+            margin-left: 4px;
+        }
+
+        #sm-home .hero-video-label {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        #sm-home .hero-cta-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 1.25rem;
+            animation: slideInUp 0.8s ease 0.3s both;
+        }
+
+        #sm-home .hero-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s ease;
+            cursor: pointer;
+            text-align: left;
+        }
+
+        #sm-home .hero-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--accent);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        #sm-home .hero-card.outline::before {
+            opacity: 0;
+            background: transparent;
+        }
+
+        #sm-home .hero-card.outline {
+            border: 2px solid var(--accent);
+        }
+
+        #sm-home .hero-card:hover {
+            transform: translateY(-8px);
+            background: rgba(255, 255, 255, 0.05);
+            box-shadow: 0 20px 60px rgba(255, 102, 0, 0.15);
+            border-color: var(--accent);
+        }
+
+        #sm-home .hero-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--accent);
+        }
+
+        #sm-home .hero-card.outline::before {
+            display: none;
+        }
+
+        #sm-home .hero-card-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--accent);
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+        }
+
+        #sm-home .hero-card-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            color: var(--text);
+        }
+
+        #sm-home .hero-card-desc {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        #sm-home .hero-card-cta {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            border: none;
+            background: none;
+            cursor: pointer;
+            padding: 0;
+        }
+
+        #sm-home .hero-card-cta:hover {
+            gap: 1rem;
+            color: var(--accent-hover);
+        }
+
+        #sm-home .hero-card-cta-btn {
+            display: inline-block;
+            background: var(--accent);
+            color: #000000;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(255, 102, 0, 0.25);
+        }
+
+        #sm-home .hero-card-cta-btn:hover {
+            background: var(--accent-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 102, 0, 0.35);
+        }
+
+        #sm-home .hero-card .flow-steps {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1.25rem;
+            flex-wrap: wrap;
+        }
+
+        #sm-home .hero-card .flow-step {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--accent);
+            background: rgba(255, 102, 0, 0.1);
+            padding: 0.3rem 0.75rem;
+            border-radius: 4px;
+        }
+
+        #sm-home .hero-card .flow-arrow {
+            color: var(--text-muted);
+            font-size: 0.75rem;
+        }
+
+        /* ========== STATS BAR ========== */
+        #sm-home .stats {
+            background: var(--bg-alt);
+            padding: 4rem 2rem;
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+        }
+
+        #sm-home .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        #sm-home .stat-item {
+            text-align: center;
+        }
+
+        #sm-home .stat-number {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 900;
+            color: var(--accent);
+            font-family: 'Courier New', monospace;
+            letter-spacing: 0.05em;
+            line-height: 1;
+            margin-bottom: 0.5rem;
+        }
+
+        #sm-home .stat-label {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        /* ========== THE PROBLEM SECTION ========== */
+        #sm-home .problem {
+            background: #FFFFFF;
+            color: var(--text-dark);
+            padding: 5rem 2rem;
+        }
+
+        #sm-home .problem h2 {
+            font-size: clamp(2rem, 5vw, 3rem);
+            font-weight: 900;
+            text-align: center;
+            margin-bottom: 3rem;
+            letter-spacing: -0.01em;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        #sm-home .problem-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        #sm-home .problem-card {
+            background: var(--text-dark);
+            color: var(--text);
+            padding: 2.5rem;
+            border-radius: 12px;
+            border-left: 4px solid #EF4444;
+            transition: all 0.4s ease;
+        }
+
+        #sm-home .problem-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        #sm-home .problem-card h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        #sm-home .problem-card p {
+            font-size: 1rem;
+            color: var(--text-muted);
+            line-height: 1.7;
+        }
+
+        /* ========== SIGNAL ENGINE DIAGRAM ========== */
+        #sm-home .engine-diagram {
+            background: #FFFFFF;
+            padding: 5rem 2rem;
+            text-align: center;
+        }
+
+        #sm-home .engine-diagram h2 {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 900;
+            color: #171717;
+            margin-bottom: 0.75rem;
+            letter-spacing: -0.02em;
+        }
+
+        #sm-home .engine-diagram .diagram-subtitle {
+            font-size: 1.1rem;
+            color: #525252;
+            margin-bottom: 3.5rem;
+        }
+
+        #sm-home .engine-diagram-wrapper {
+            position: relative;
+            max-width: 900px;
+            margin: 0 auto;
+            height: 480px;
+        }
+
+        /* Center circle */
+        #sm-home .engine-hub {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 180px;
+            height: 180px;
+            background: var(--accent);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            box-shadow: 0 10px 40px rgba(255, 102, 0, 0.35);
+        }
+
+        #sm-home .engine-hub span {
+            color: #FFFFFF;
+            font-size: 1.3rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            line-height: 1.3;
+            text-align: center;
+        }
+
+        /* Channel nodes */
+        #sm-home .channel-node {
+            position: absolute;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #FFFFFF;
+            text-align: center;
+            z-index: 10;
+            min-width: 140px;
+            line-height: 1.4;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        #sm-home .channel-node:hover {
+            transform: scale(1.08);
+        }
+
+        #sm-home .node-outbound {
+            top: 8%;
+            left: 2%;
+            background: #FF6600;
+        }
+
+        #sm-home .node-ads {
+            top: 8%;
+            right: 2%;
+            background: #0D9488;
+        }
+
+        #sm-home .node-events {
+            bottom: 12%;
+            left: 2%;
+            background: #8B5CF6;
+        }
+
+        #sm-home .node-abm {
+            bottom: 2%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #059669;
+        }
+
+        #sm-home .node-abm:hover {
+            transform: translateX(-50%) scale(1.08);
+        }
+
+        #sm-home .node-content {
+            bottom: 12%;
+            right: 2%;
+            background: #1E293B;
+        }
+
+        /* SVG dashed lines */
+        #sm-home .diagram-lines {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 5;
+        }
+
+        #sm-home .diagram-lines line {
+            stroke: #CBD5E1;
+            stroke-width: 2;
+            stroke-dasharray: 8, 6;
+        }
+
+        /* Responsive diagram */
+        @media (max-width: 768px) {
+            #sm-home .engine-diagram-wrapper {
+                height: auto;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 1rem;
+                padding: 1rem 0;
+            }
+
+            #sm-home .engine-hub {
+                position: relative;
+                top: auto;
+                left: auto;
+                transform: none;
+                width: 150px;
+                height: 150px;
+                margin: 1.5rem 0;
+            }
+
+            #sm-home .channel-node {
+                position: relative;
+                top: auto !important;
+                left: auto !important;
+                right: auto !important;
+                bottom: auto !important;
+                transform: none !important;
+                width: 80%;
+                max-width: 280px;
+            }
+
+            #sm-home .diagram-lines {
+                display: none;
+            }
+        }
+
+        /* ========== TWO OFFERS SECTION ========== */
+        #sm-home .offers {
+            background: var(--bg);
+            padding: 5rem 2rem;
+        }
+
+        #sm-home .offers h2 {
+            font-size: clamp(2rem, 5vw, 3rem);
+            font-weight: 900;
+            text-align: center;
+            margin-bottom: 4rem;
+            letter-spacing: -0.01em;
+        }
+
+        #sm-home .offers-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        #sm-home .offer-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 3rem;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #sm-home .offer-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--accent);
+            transition: all 0.4s ease;
+        }
+
+        #sm-home .offer-card.outline::before {
+            display: none;
+            background: transparent;
+        }
+
+        #sm-home .offer-card.outline {
+            border: 2px solid var(--accent);
+        }
+
+        #sm-home .offer-card:hover {
+            transform: translateY(-12px);
+            box-shadow: 0 30px 80px rgba(255, 102, 0, 0.2);
+            background: linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.04) 100%);
+        }
+
+        #sm-home .offer-tag {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--accent);
+            font-weight: 800;
+            margin-bottom: 1rem;
+        }
+
+        #sm-home .offer-title {
+            font-size: 2rem;
+            font-weight: 900;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.01em;
+        }
+
+        #sm-home .offer-subtitle {
+            font-size: 1rem;
+            color: var(--text-muted);
+            margin-bottom: 1.5rem;
+            font-weight: 500;
+        }
+
+        #sm-home .offer-metric {
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: var(--accent);
+            margin-bottom: 1rem;
+            font-family: 'Courier New', monospace;
+        }
+
+        #sm-home .offer-price {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+            font-weight: 600;
+        }
+
+        #sm-home .offer-features {
+            margin-bottom: 2.5rem;
+            flex-grow: 1;
+        }
+
+        #sm-home .offer-feature {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        #sm-home .offer-feature-check {
+            width: 20px;
+            height: 20px;
+            background: var(--accent-glow);
+            border: 1.5px solid var(--accent);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        #sm-home .offer-feature-check::after {
+            content: '✓';
+            color: var(--accent);
+            font-weight: 900;
+            font-size: 0.7rem;
+        }
+
+        #sm-home .offer-cta {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            border: none;
+            background: none;
+            cursor: pointer;
+            padding: 0;
+        }
+
+        #sm-home .offer-cta:hover {
+            gap: 1rem;
+            color: var(--accent-hover);
+        }
+
+        /* ========== WHY SALESMFAST SECTION ========== */
+        #sm-home .why {
+            background: #FFFFFF;
+            color: var(--text-dark);
+            padding: 5rem 2rem;
+        }
+
+        #sm-home .why h2 {
+            font-size: clamp(2rem, 5vw, 3rem);
+            font-weight: 900;
+            text-align: center;
+            margin-bottom: 4rem;
+            letter-spacing: -0.01em;
+        }
+
+        #sm-home .why-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        #sm-home .why-block {
+            padding: 2.5rem;
+            background: #F5F5F5;
+            border-radius: 12px;
+            border-left: 4px solid var(--accent);
+            transition: all 0.4s ease;
+        }
+
+        #sm-home .why-block:hover {
+            transform: translateY(-8px);
+            background: #EEEEEE;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        #sm-home .why-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--accent-light);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+
+        #sm-home .why-block h3 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            color: var(--text-dark);
+        }
+
+        #sm-home .why-block p {
+            font-size: 0.95rem;
+            color: var(--text-dark-muted);
+            line-height: 1.7;
+        }
+
+        /* ========== TRUST ENGINEERING SECTION ========== */
+        #sm-home .trust {
+            background: var(--bg);
+            padding: 6rem 2rem;
+            text-align: center;
+        }
+
+        #sm-home .trust h2 {
+            font-size: clamp(2rem, 5vw, 3rem);
+            font-weight: 900;
+            margin-bottom: 1rem;
+            letter-spacing: -0.01em;
+        }
+
+        #sm-home .trust-subtitle {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            margin-bottom: 3rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        #sm-home .trust-quote {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 3rem;
+            background: rgba(255, 102, 0, 0.1);
+            border-left: 6px solid var(--accent);
+            border-radius: 8px;
+        }
+
+        #sm-home .trust-quote p {
+            font-size: 1.5rem;
+            font-weight: 700;
+            line-height: 1.8;
+            color: var(--text);
+            letter-spacing: -0.01em;
+        }
+
+        /* ========== RESULTS SECTION ========== */
+        #sm-home .results {
+            background: #FFFFFF;
+            color: var(--text-dark);
+            padding: 5rem 2rem;
+        }
+
+        #sm-home .results h2 {
+            font-size: clamp(2rem, 5vw, 3rem);
+            font-weight: 900;
+            text-align: center;
+            margin-bottom: 4rem;
+            letter-spacing: -0.01em;
+        }
+
+        #sm-home .results-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            margin-bottom: 3rem;
+        }
+
+        #sm-home .result-card {
+            background: #F5F5F5;
+            padding: 2rem;
+            border-radius: 12px;
+            border-top: 4px solid var(--accent);
+            text-align: center;
+            transition: all 0.4s ease;
+        }
+
+        #sm-home .result-card:hover {
+            transform: translateY(-8px);
+            background: #EEEEEE;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        #sm-home .result-number {
+            font-size: 3rem;
+            font-weight: 900;
+            color: var(--accent);
+            font-family: 'Courier New', monospace;
+            line-height: 1;
+            margin-bottom: 0.5rem;
+        }
+
+        #sm-home .result-metric {
+            font-size: 0.95rem;
+            color: var(--text-dark-muted);
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        #sm-home .result-desc {
+            font-size: 0.85rem;
+            color: var(--text-dark-muted);
+            line-height: 1.6;
+        }
+
+        #sm-home .case-study {
+            background: linear-gradient(135deg, var(--accent) 0%, #FF8533 100%);
+            color: var(--text-dark);
+            padding: 2.5rem;
+            border-radius: 12px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        #sm-home .case-study p {
+            font-size: 1rem;
+            line-height: 1.8;
+            font-weight: 500;
+        }
+
+        /* ========== FINAL CTA SECTION ========== */
+        #sm-home .final-cta {
+            background: var(--bg);
+            padding: 4rem 2rem;
+            text-align: center;
+        }
+
+        #sm-home .final-cta h2 {
+            font-size: clamp(2rem, 5vw, 3rem);
+            font-weight: 900;
+            margin-bottom: 3rem;
+            letter-spacing: -0.01em;
+        }
+
+        #sm-home .final-cta-buttons {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        #sm-home .btn {
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #sm-home .btn-primary {
+            background: var(--accent);
+            color: var(--text-dark);
+        }
+
+        #sm-home .btn-primary:hover {
+            background: var(--accent-hover);
+            transform: translateY(-3px);
+        }
+
+        #sm-home .btn-outline {
+            border: 2px solid var(--accent);
+            color: var(--accent);
+            background: transparent;
+        }
+
+        #sm-home .btn-outline:hover {
+            background: var(--accent-glow);
+            color: var(--accent-hover);
+        }
+
+        #sm-home .final-cta-note {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        /* ========== FOOTER ========== */
+        #sm-home .footer {
+            background: #050505;
+            color: var(--text-muted);
+            padding: 3rem 2rem;
+            border-top: 1px solid var(--border);
+        }
+
+        #sm-home .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 3rem;
+            margin-bottom: 2rem;
+        }
+
+        #sm-home .footer-logo {
+            font-size: 1.3rem;
+            font-weight: 900;
+            margin-bottom: 1rem;
+        }
+
+        #sm-home .footer-logo-sales {
+            color: var(--text);
+        }
+
+        #sm-home .footer-logo-mfast {
+            color: var(--accent);
+        }
+
+        #sm-home .footer-desc {
+            font-size: 0.9rem;
+            line-height: 1.6;
+            color: var(--text-muted);
+        }
+
+        #sm-home .footer-column h4 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        #sm-home .footer-column ul {
+            list-style: none;
+        }
+
+        #sm-home .footer-column li {
+            margin-bottom: 0.75rem;
+        }
+
+        #sm-home .footer-column a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        #sm-home .footer-column a:hover {
+            color: var(--accent);
+        }
+
+        #sm-home .footer-bottom {
+            border-top: 1px solid var(--border);
+            padding-top: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 2rem;
+        }
+
+        #sm-home .footer-copyright {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        #sm-home .footer-by {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        #sm-home .footer-by a {
+            color: var(--accent);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        #sm-home .footer-by a:hover {
+            color: var(--accent-hover);
+        }
+
+        /* ========== ANIMATIONS ========== */
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ========== RESPONSIVE ========== */
+        @media (max-width: 1024px) {
+            #sm-home .hero-cta-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            #sm-home .hero-cta-grid .hero-card:last-child {
+                grid-column: 1 / -1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            #sm-home .nav {
+                padding: 0 1rem;
+            }
+
+            #sm-home .nav-links {
+                display: none;
+                position: absolute;
+                top: 70px;
+                left: 0;
+                right: 0;
+                flex-direction: column;
+                background: rgba(0, 0, 0, 0.95);
+                padding: 2rem;
+                gap: 1rem;
+                border-bottom: 1px solid var(--border);
+            }
+
+            #sm-home .nav-links.active {
+                display: flex;
+            }
+
+            #sm-home .hamburger {
+                display: flex;
+            }
+
+            #sm-home .nav-cta {
+                width: 100%;
+                text-align: center;
+            }
+
+            #sm-home .hero {
+                padding: 120px 1.5rem 60px;
+            }
+
+            #sm-home .hero-cta-grid {
+                grid-template-columns: 1fr;
+            }
+
+            #sm-home .hero-card {
+                padding: 1.5rem;
+            }
+
+            #sm-home .problem-grid {
+                grid-template-columns: 1fr;
+            }
+
+            #sm-home .offers-grid {
+                grid-template-columns: 1fr;
+            }
+
+            #sm-home .why-grid {
+                grid-template-columns: 1fr;
+            }
+
+            #sm-home .results-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            #sm-home .final-cta-buttons {
+                flex-direction: column;
+            }
+
+            #sm-home .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            #sm-home .footer-container {
+                grid-template-columns: 1fr;
+            }
+
+            #sm-home .footer-bottom {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            #sm-home .hero h1 {
+                font-size: 2rem;
+            }
+
+            #sm-home .hero-subtitle {
+                font-size: 1rem;
+            }
+
+            #sm-home .hero-card {
+                padding: 1.25rem;
+            }
+
+            #sm-home .hero-card-title {
+                font-size: 1.25rem;
+            }
+
+            #sm-home .stats-container {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            #sm-home .results-grid {
+                grid-template-columns: 1fr;
+            }
+
+            #sm-home .offer-card {
+                padding: 1.5rem;
+            }
+
+            #sm-home .offer-title {
+                font-size: 1.5rem;
+            }
+
+            #sm-home .problem,
+            #sm-home .offers,
+            #sm-home .why,
+            #sm-home .trust,
+            #sm-home .results,
+            #sm-home .final-cta {
+                padding: 3rem 1rem;
+            }
+
+            #sm-home h2 {
+                font-size: 1.75rem !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="sm-home">
+        <!-- NAVIGATION -->
+        <nav class="nav">
+            <div class="nav-container">
+                <div class="nav-logo">
+                    <span class="nav-logo-sales">Sales</span><span class="nav-logo-mfast">Mfast</span>
+                </div>
+                <ul class="nav-links">
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#engine">The Engine</a></li>
+                    <li><a href="#expansion">The Expansion</a></li>
+                    <li><a href="#results">Results</a></li>
+                </ul>
+                <button class="nav-cta" onclick="document.getElementById('final-cta').scrollIntoView({behavior: 'smooth'})">Get Started</button>
+                <div class="hamburger" id="hamburger">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+        </nav>
+
+        <!-- HERO SECTION -->
+        <section class="hero" id="hero">
+            <div class="hero-content">
+                <div class="hero-accent"></div>
+                <h1>
+                    Signal-Driven Revenue
+                    <br>for <span class="accent-text">MENA Markets.</span>
+                </h1>
+                <p class="hero-subtitle">
+                    The same AI-powered signal systems that fuel $100M US growth engines — rebuilt from the ground up for how business actually works in the Gulf. Arabic-first. WhatsApp-native. Culturally intelligent.
+                </p>
+                <!-- VSL Video -->
+                <div class="hero-video" onclick="this.innerHTML='<iframe src=\'https://www.youtube.com/embed/YOUR_VIDEO_ID?autoplay=1\' style=\'position:absolute;top:0;left:0;width:100%;height:100%;border:none;\' allow=\'autoplay; encrypted-media\' allowfullscreen></iframe><div style=\'padding-bottom:56.25%\'></div>'">
+                    <div class="hero-video-ratio">
+                        <div class="hero-video-play"></div>
+                        <div class="hero-video-label">Watch: How SalesMfast Works (3 min)</div>
+                    </div>
+                </div>
+
+                <!-- 3 Offer Boxes -->
+                <div class="hero-cta-grid">
+                    <div class="hero-card">
+                        <div class="hero-card-label">B2B Based in MENA</div>
+                        <h3 class="hero-card-title">You Need The Engine</h3>
+                        <p class="hero-card-desc">Signal-based outbound pipeline that fills your calendar with qualified meetings in 30 days — across WhatsApp, email, and LinkedIn in Arabic + English.</p>
+                        <a href="#engine" class="hero-card-cta">Explore The Engine <span>→</span></a>
+                    </div>
+                    <div class="hero-card outline">
+                        <div class="hero-card-label">B2B Scale-Up Expanding into MENA</div>
+                        <h3 class="hero-card-title">You Need The Expansion</h3>
+                        <p class="hero-card-desc">90-day market validation sprint that gives you a data-backed Go/No-Go on MENA — with real pipeline, not PowerPoint.</p>
+                        <a href="#expansion" class="hero-card-cta">Explore The Expansion <span>→</span></a>
+                    </div>
+                    <div class="hero-card">
+                        <div class="hero-card-label">SME Founder in MENA</div>
+                        <h3 class="hero-card-title">You Need a SalesEngine</h3>
+                        <p class="hero-card-desc">SalesMfast is not a software you configure. It's a sales engine you install.</p>
+                        <div class="flow-steps">
+                            <span class="flow-step">Lead Gen</span>
+                            <span class="flow-arrow">→</span>
+                            <span class="flow-step">Lead Capture</span>
+                            <span class="flow-arrow">→</span>
+                            <span class="flow-step">Lead Nurture</span>
+                        </div>
+                        <a href="#system" class="hero-card-cta-btn">Get the SalesMfast System</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- STATS BAR -->
+        <section class="stats">
+            <div class="stats-container">
+                <div class="stat-item">
+                    <div class="stat-number">180+</div>
+                    <div class="stat-label">Qualified Meetings Booked</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">34%</div>
+                    <div class="stat-label">WhatsApp Response Rate</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">11 Days</div>
+                    <div class="stat-label">To First Meeting</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">5-10x</div>
+                    <div class="stat-label">Average Client ROI</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- THE PROBLEM SECTION -->
+        <section class="problem" id="about">
+            <h2>MENA is the Biggest Untapped B2B Market. Everyone's Doing It Wrong.</h2>
+            <div class="problem-grid">
+                <div class="problem-card">
+                    <h3>If You're in MENA</h3>
+                    <p>Your pipeline depends on referrals, hope, and agencies that don't speak Arabic. Global tools don't work here. Global agencies don't understand here. You need a system built for how this market actually operates.</p>
+                </div>
+                <div class="problem-card">
+                    <h3>If You're Entering MENA</h3>
+                    <p>Your expansion playbook is wrong. The consultants charge $200K for PowerPoints. The channel partners optimize for their margins, not your success. And the learning curve kills 70% of entrants in 18 months.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SIGNAL-DRIVEN REVENUE ENGINE DIAGRAM -->
+        <section class="engine-diagram animate-on-scroll">
+            <h2>Signal-Driven Revenue Engine</h2>
+            <p class="diagram-subtitle">The Engine is your entry point. The system scales across every acquisition channel.</p>
+            <div class="engine-diagram-wrapper">
+                <!-- SVG dashed connector lines -->
+                <svg class="diagram-lines" viewBox="0 0 900 480" preserveAspectRatio="xMidYMid meet">
+                    <!-- Outbound to center -->
+                    <line x1="160" y1="95" x2="390" y2="220" />
+                    <!-- Ads to center -->
+                    <line x1="740" y1="95" x2="510" y2="220" />
+                    <!-- Events to center -->
+                    <line x1="160" y1="385" x2="390" y2="270" />
+                    <!-- ABM to center -->
+                    <line x1="450" y1="420" x2="450" y2="290" />
+                    <!-- Content to center -->
+                    <line x1="740" y1="385" x2="510" y2="270" />
+                </svg>
+
+                <!-- Center hub -->
+                <div class="engine-hub">
+                    <span>SIGNAL<br>ENGINE</span>
+                </div>
+
+                <!-- Channel nodes -->
+                <div class="channel-node node-outbound">Outbound<br>(Email+LI+WA)</div>
+                <div class="channel-node node-ads">Google Ads<br>SEO<br>LinkedIn Ads</div>
+                <div class="channel-node node-events">Events &<br>Webinars</div>
+                <div class="channel-node node-abm">ABM Campaigns<br>Dream 100/30/10</div>
+                <div class="channel-node node-content">Content &<br>Media</div>
+            </div>
+        </section>
+
+        <!-- TWO OFFERS SECTION -->
+        <section class="offers">
+            <h2>One Company. Two Revenue Weapons.</h2>
+            <div class="offers-grid">
+                <div class="offer-card" id="engine">
+                    <div class="offer-tag">For MENA-Based Companies</div>
+                    <h3 class="offer-title">The Engine</h3>
+                    <p class="offer-subtitle">Signal-based outbound pipeline</p>
+                    <div class="offer-metric">22 meetings in 30 days</div>
+                    <div class="offer-price">From $3,500/month</div>
+                    <div class="offer-features">
+                        <div class="offer-feature">
+                            <div class="offer-feature-check"></div>
+                            <span>Real-time signal detection across MENA</span>
+                        </div>
+                        <div class="offer-feature">
+                            <div class="offer-feature-check"></div>
+                            <span>Bilingual Arabic + English outreach</span>
+                        </div>
+                        <div class="offer-feature">
+                            <div class="offer-feature-check"></div>
+                            <span>WhatsApp + Email + LinkedIn execution</span>
+                        </div>
+                        <div class="offer-feature">
+                            <div class="offer-feature-check"></div>
+                            <span>Live PowerBI reporting dashboard</span>
+                        </div>
+                    </div>
+                    <a href="#final-cta" class="offer-cta">Learn About The Engine <span>→</span></a>
+                </div>
+
+                <div class="offer-card outline" id="expansion">
+                    <div class="offer-tag">For US/EU Companies</div>
+                    <h3 class="offer-title">The Expansion</h3>
+                    <p class="offer-subtitle">90-day market validation sprint</p>
+                    <div class="offer-metric">Go/No-Go in 90 days</div>
+                    <div class="offer-price">$15,000 total</div>
+                    <div class="offer-features">
+                        <div class="offer-feature">
+                            <div class="offer-feature-check"></div>
+                            <span>Deep market intelligence & TAM mapping</span>
+                        </div>
+                        <div class="offer-feature">
+                            <div class="offer-feature-check"></div>
+                            <span>Live campaign with real pipeline data</span>
+                        </div>
+                        <div class="offer-feature">
+                            <div class="offer-feature-check"></div>
+                            <span>Trust engineering framework</span>
+                        </div>
+                        <div class="offer-feature">
+                            <div class="offer-feature-check"></div>
+                            <span>Data-backed Go/No-Go recommendation</span>
+                        </div>
+                    </div>
+                    <a href="#final-cta" class="offer-cta">Learn About The Expansion <span>→</span></a>
+                </div>
+            </div>
+        </section>
+
+        <!-- WHY SALESMFAST SECTION -->
+        <section class="why">
+            <h2>Why SalesMfast</h2>
+            <div class="why-grid">
+                <div class="why-block">
+                    <div class="why-icon">🗣️</div>
+                    <h3>Arabic-First, Not Arabic-Translated</h3>
+                    <p>Our templates, sequences, and messaging are written natively in Arabic — not translated from English by someone who's never sold in the Gulf.</p>
+                </div>
+                <div class="why-block">
+                    <div class="why-icon">📱</div>
+                    <h3>WhatsApp is Not Optional</h3>
+                    <p>70% of Gulf business decisions involve WhatsApp. We're the only signal-based pipeline company that executes across WhatsApp, email, and LinkedIn simultaneously.</p>
+                </div>
+                <div class="why-block">
+                    <div class="why-icon">🎯</div>
+                    <h3>Signal Intelligence, Not Spray-and-Pray</h3>
+                    <p>We detect real-time buying signals — funding rounds, leadership changes, tech shifts — and reach prospects at the exact moment they enter a buying window.</p>
+                </div>
+                <div class="why-block">
+                    <div class="why-icon">🌍</div>
+                    <h3>20 Years in Gulf B2B</h3>
+                    <p>Our founder has spent two decades selling across GCC and Levant markets. This isn't theory. It's pattern recognition built on thousands of deals.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- TRUST ENGINEERING SECTION -->
+        <section class="trust">
+            <h2>The Trust Engineering Thesis</h2>
+            <p class="trust-subtitle">MENA is a trust-based market, not a relationship market. There's a critical difference.</p>
+            <div class="trust-quote">
+                <p>"You don't need wasta. You don't need 10 years of relationships. You need the right signal, at the right time, in the right language, on the right channel. That's trust engineering."</p>
+            </div>
+        </section>
+
+        <!-- RESULTS SECTION -->
+        <section class="results" id="results">
+            <h2>The Numbers Don't Lie</h2>
+            <div class="results-grid">
+                <div class="result-card">
+                    <div class="result-number">22</div>
+                    <div class="result-metric">meetings</div>
+                    <div class="result-desc">From 400 signal-matched prospects in 30 days</div>
+                </div>
+                <div class="result-card">
+                    <div class="result-number">5.5%</div>
+                    <div class="result-metric">meeting rate</div>
+                    <div class="result-desc">vs 0.5% industry average</div>
+                </div>
+                <div class="result-card">
+                    <div class="result-number">34%</div>
+                    <div class="result-metric">response rate</div>
+                    <div class="result-desc">On WhatsApp — across all campaigns</div>
+                </div>
+                <div class="result-card">
+                    <div class="result-number">11</div>
+                    <div class="result-metric">days</div>
+                    <div class="result-desc">From campaign launch to first qualified meeting</div>
+                </div>
+            </div>
+            <div class="case-study">
+                <p><strong>A UAE-based SaaS company selling into the Gulf:</strong> 22 qualified meetings from their first 30-day sprint using signal-triggered Arabic + English outreach across WhatsApp, email, and LinkedIn.</p>
+            </div>
+        </section>
+
+        <!-- FINAL CTA SECTION -->
+        <section class="final-cta" id="final-cta">
+            <h2>Ready to Build Real Pipeline in MENA?</h2>
+            <div class="final-cta-buttons">
+                <button class="btn btn-primary" onclick="alert('Engine CTA - Connect with form or calendar link')">
+                    I'm Based in MENA → The Engine
+                </button>
+                <button class="btn btn-outline" onclick="alert('Expansion CTA - Connect with form or calendar link')">
+                    I'm Expanding to MENA → The Expansion
+                </button>
+            </div>
+            <p class="final-cta-note">We take on a limited number of clients each month.</p>
+        </section>
+
+        <!-- FOOTER -->
+        <footer class="footer">
+            <div class="footer-container">
+                <div>
+                    <div class="footer-logo">
+                        <span class="footer-logo-sales">Sales</span><span class="footer-logo-mfast">Mfast</span>
+                    </div>
+                    <p class="footer-desc">Signal-driven revenue for MENA markets. Built for how business actually works in the Gulf.</p>
+                </div>
+                <div class="footer-column">
+                    <h4>Products</h4>
+                    <ul>
+                        <li><a href="#engine">The Engine</a></li>
+                        <li><a href="#expansion">The Expansion</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>Company</h4>
+                    <ul>
+                        <li><a href="#about">About</a></li>
+                        <li><a href="mailto:hello@smorchestra.ai">Contact</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <div class="footer-copyright">© 2025 SalesMfast. All rights reserved.</div>
+                <div class="footer-by">By <a href="https://smorchestra.ai">SMOrchestra.ai</a></div>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // Mobile menu toggle
+        const hamburger = document.getElementById('hamburger');
+        const navLinks = document.querySelector('.nav-links');
+
+        hamburger.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+        });
+
+        // Close menu when link is clicked
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', () => {
+                navLinks.classList.remove('active');
+            });
+        });
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Add scroll animation for elements
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        // Observe cards for animation
+        document.querySelectorAll('.problem-card, .offer-card, .why-block, .result-card').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(20px)';
+            el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(el);
+        });
+
+        // Active nav link highlighting
+        window.addEventListener('scroll', () => {
+            let current = '';
+            const sections = document.querySelectorAll('section');
+
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                if (scrollY >= (sectionTop - 200)) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            document.querySelectorAll('.nav-links a').forEach(link => {
+                link.style.color = 'var(--text-muted)';
+                if (link.getAttribute('href') === '#' + current) {
+                    link.style.color = 'var(--accent)';
+                }
+            });
+        });
+
+        // Fade in hero elements on load
+        window.addEventListener('load', () => {
+            document.querySelectorAll('.hero h1, .hero-subtitle, .hero-accent').forEach((el, index) => {
+                el.style.opacity = '0';
+                el.style.animation = `slideInUp 0.8s ease ${index * 0.1}s forwards`;
+            });
+        });
+    </script>
+</body>
+</html>

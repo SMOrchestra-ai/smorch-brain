@@ -1,0 +1,133 @@
+{
+  "version": "1.0",
+  "description": "Signal scoring rules for multi-channel outbound orchestration",
+
+  "base_signals": {
+    "email": {
+      "email_sent": { "points": 0, "channel": "instantly", "note": "Outbound action, not signal" },
+      "email_opened": { "points": 1, "channel": "instantly", "note": "Only first open per email counts" },
+      "email_link_clicked": { "points": 2, "channel": "instantly", "note": "Each unique link = +2" },
+      "email_replied": { "points": 8, "channel": "instantly", "note": "Check positive vs negative" },
+      "email_forwarded": { "points": 3, "channel": "instantly", "note": "Internal sharing signal" },
+      "email_bounced": { "points": -10, "channel": "instantly", "note": "Remove from all channels" },
+      "email_unsubscribed": { "points": "STOP", "channel": "instantly", "note": "Opt out ALL channels" }
+    },
+    "linkedin": {
+      "connection_request_sent": { "points": 0, "channel": "heyreach", "note": "Outbound action" },
+      "profile_viewed": { "points": 1, "channel": "heyreach", "event_type": "VIEWED_PROFILE" },
+      "connection_accepted": { "points": 3, "channel": "heyreach", "event_type": "CONNECTION_REQUEST_ACCEPTED" },
+      "connection_accepted_fast": { "points": 3, "channel": "heyreach", "note": "Bonus if <24hrs", "condition": "accepted_within_24hrs" },
+      "message_replied": { "points": 8, "channel": "heyreach", "event_type": "MESSAGE_REPLY_RECEIVED" },
+      "inmail_replied": { "points": 6, "channel": "heyreach", "event_type": "INMAIL_REPLY_RECEIVED" },
+      "post_liked": { "points": 2, "channel": "heyreach", "event_type": "LIKED_POST" },
+      "followed_profile": { "points": 2, "channel": "heyreach", "event_type": "FOLLOW_SENT" }
+    },
+    "whatsapp_sms": {
+      "whatsapp_delivered": { "points": 0, "channel": "ghl", "note": "Delivery only" },
+      "whatsapp_read": { "points": 1, "channel": "ghl" },
+      "whatsapp_replied": { "points": 8, "channel": "ghl" },
+      "sms_replied": { "points": 8, "channel": "ghl" },
+      "form_submitted": { "points": 10, "channel": "ghl", "note": "High intent" },
+      "meeting_booked": { "points": 10, "channel": "ghl", "note": "Highest intent, no decay" },
+      "inbound_call": { "points": 10, "channel": "ghl", "note": "Immediate human follow-up" }
+    },
+    "external": {
+      "website_visited": { "points": 2, "channel": "n8n", "note": "Requires tracking" },
+      "pricing_page_visited": { "points": 5, "channel": "n8n", "note": "High intent page" },
+      "content_downloaded": { "points": 3, "channel": "n8n", "note": "Lead magnet" },
+      "job_posting_published": { "points": 2, "channel": "n8n", "note": "Hiring = budget" },
+      "funding_announcement": { "points": 4, "channel": "n8n", "note": "Funding = spend trigger" }
+    }
+  },
+
+  "compound_rules": [
+    {
+      "signal_a": "email_opened",
+      "signal_b": "profile_viewed",
+      "window_hours": 48,
+      "bonus_points": 2,
+      "note": "Cross-channel awareness"
+    },
+    {
+      "signal_a": "email_opened",
+      "signal_b": "connection_accepted",
+      "window_hours": 48,
+      "bonus_points": 3,
+      "note": "Strong intent — auto-HOT candidate"
+    },
+    {
+      "signal_a": "connection_accepted",
+      "signal_b": "email_link_clicked",
+      "window_hours": 48,
+      "bonus_points": 3,
+      "note": "Deep engagement"
+    },
+    {
+      "signal_a": "email_opened",
+      "signal_b": "website_visited",
+      "window_hours": 48,
+      "bonus_points": 3,
+      "note": "Research behavior"
+    },
+    {
+      "signal_a": "profile_viewed",
+      "signal_b": "website_visited",
+      "window_hours": 48,
+      "bonus_points": 3,
+      "note": "Research behavior"
+    },
+    {
+      "signal_a": "any_outbound_touch",
+      "signal_b": "website_visited",
+      "window_hours": 6,
+      "bonus_points": 3,
+      "note": "Immediate research after touch — very high correlation"
+    },
+    {
+      "signal_a": "whatsapp_read",
+      "signal_b": "website_visited",
+      "window_hours": 24,
+      "bonus_points": 4,
+      "note": "WhatsApp drove investigation"
+    },
+    {
+      "signal_a": "email_replied",
+      "signal_b": "message_replied",
+      "window_hours": 48,
+      "bonus_points": 5,
+      "note": "Multi-channel reply — SUPER-HOT"
+    }
+  ],
+
+  "triple_channel_rule": {
+    "description": "Signals from 3+ different channels within 48 hours",
+    "action": "Automatic HOT regardless of score. Create opportunity immediately.",
+    "alert": "Triple-channel engagement detected"
+  },
+
+  "routing_thresholds": {
+    "super_hot": { "min_score": 10, "action": "Immediate human follow-up, pause all automation" },
+    "hot": { "min_score": 7, "action": "Pause cold sequences, create opportunity, warm channel escalation" },
+    "warm": { "min_score": 4, "action": "Activate secondary channel, increase content sharing" },
+    "cold": { "min_score": 1, "action": "Continue sequence, monitor for compound signals" },
+    "untouched": { "min_score": 0, "action": "Not yet in sequence" },
+    "invalid": { "max_score": -1, "action": "Remove from all campaigns, clean data" }
+  },
+
+  "decay_rules": {
+    "0_7_days": { "multiplier": 1.0, "label": "Fresh" },
+    "8_14_days": { "multiplier": 0.75, "label": "Recent" },
+    "15_30_days": { "multiplier": 0.5, "label": "Cooling" },
+    "31_60_days": { "multiplier": 0.25, "label": "Stale" },
+    "61_plus_days": { "multiplier": 0.0, "label": "Expired" },
+    "exceptions": ["meeting_booked", "form_submitted"]
+  },
+
+  "anti_signals": {
+    "email_bounce": { "points": -10, "action": "Remove from email, keep LinkedIn if active" },
+    "unsubscribe": { "points": "STOP_ALL", "action": "Respect across every channel" },
+    "linkedin_not_interested": { "points": -5, "action": "Pause LinkedIn, email only if engaged" },
+    "whatsapp_block": { "points": "STOP_ALL", "action": "Full opt-out" },
+    "no_engagement_full_sequence": { "points": 0, "action": "30-day cool-off, then rescue" }
+  }
+}
