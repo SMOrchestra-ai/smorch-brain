@@ -1,0 +1,15 @@
+{
+  "mcpServers": {
+    "playwright": {
+      "command": "npx",
+      "args": ["-y", "@anthropic-ai/mcp-playwright"]
+    },
+    "clay": {
+      "command": "npx",
+      "args": ["-y", "clay-mcp-server"],
+      "env": {
+        "CLAY_API_KEY": "${CLAY_API_KEY}"
+      }
+    }
+  }
+}

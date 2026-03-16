@@ -1,0 +1,2 @@
+smorch-gtm/*
+content/*

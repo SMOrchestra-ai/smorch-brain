@@ -1,0 +1,2 @@
+eo-training/*
+eo-scoring/*

@@ -1,0 +1,556 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# smorch — SMOrchestra Skill Registry CLI
+# Single tool for managing skills across all nodes
+# Repo: github.com/SMOrchestra-ai/smorch-brain
+
+VERSION="1.0.0"
+REPO_DIR="$HOME/smorch-brain"
+SKILLS_TARGET="$HOME/.claude/skills"
+MCP_TARGET="$HOME/.claude/.mcp.json"
+STATE_FILE="$REPO_DIR/.smorch-state"
+
+# Colors
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+CYAN='\033[0;36m'
+NC='\033[0m'
+
+usage() {
+    cat <<EOF
+smorch v${VERSION} — SMOrchestra Skill Registry
+
+Usage: smorch <command> [options]
+
+Commands:
+  push                    Export Cowork skills to registry + git push
+  pull                    Git pull + install current profile's skills
+  pull --profile <name>   Pull + install specific profile (saves as default)
+  install <path>          Install a category or single skill
+                          e.g., smorch install eo-training
+                          e.g., smorch install eo-training/eo-brain-ingestion
+  remove <path>           Remove a category or skill from this machine
+  list                    Show all skills in registry (by category)
+  list --installed        Show skills installed on this machine
+  list --available        Show skills in registry but NOT installed
+  list --profiles         Show available profiles
+  diff                    Show what changed since last pull
+  status                  Profile, last sync, skill counts
+  init --profile <name>   First-time setup on a new machine
+
+Registry: ${REPO_DIR}
+Skills:   ${SKILLS_TARGET}
+EOF
+}
+
+# Load state (current profile, last sync timestamp)
+load_state() {
+    CURRENT_PROFILE=""
+    LAST_SYNC=""
+    if [[ -f "$STATE_FILE" ]]; then
+        source "$STATE_FILE"
+    fi
+}
+
+save_state() {
+    cat > "$STATE_FILE" <<EOF
+CURRENT_PROFILE="${CURRENT_PROFILE}"
+LAST_SYNC="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+EOF
+}
+
+# Resolve profile lines to actual skill directories
+# Handles: *, category/*, category/specific-skill
+resolve_profile() {
+    local profile_file="$REPO_DIR/profiles/$1.txt"
+    if [[ ! -f "$profile_file" ]]; then
+        echo -e "${RED}ERROR: Profile '$1' not found at $profile_file${NC}" >&2
+        return 1
+    fi
+
+    local skills=()
+    while IFS= read -r line || [[ -n "$line" ]]; do
+        # Skip comments and empty lines
+        [[ -z "$line" || "$line" =~ ^# ]] && continue
+        line=$(echo "$line" | xargs)  # trim whitespace
+
+        if [[ "$line" == "*" ]]; then
+            # All skills
+            for cat_dir in "$REPO_DIR/skills"/*/; do
+                for skill_dir in "$cat_dir"*/; do
+                    [[ -d "$skill_dir" ]] && skills+=("${skill_dir#$REPO_DIR/skills/}")
+                done
+            done
+        elif [[ "$line" == *"/*" ]]; then
+            # Category wildcard: eo-training/*
+            local category="${line%/*}"
+            for skill_dir in "$REPO_DIR/skills/$category"/*/; do
+                [[ -d "$skill_dir" ]] && skills+=("${skill_dir#$REPO_DIR/skills/}")
+            done
+        else
+            # Specific skill: dev-meta/systematic-debugging
+            if [[ -d "$REPO_DIR/skills/$line" ]]; then
+                skills+=("$line/")
+            else
+                echo -e "${YELLOW}WARN: Skill '$line' not found in registry${NC}" >&2
+            fi
+        fi
+    done < "$profile_file"
+
+    printf '%s\n' "${skills[@]}"
+}
+
+cmd_push() {
+    echo -e "${CYAN}smorch push — Exporting Cowork skills to registry${NC}"
+
+    # Find Cowork session path
+    local sessions_base="$HOME/Library/Application Support/Claude/local-agent-mode-sessions"
+    if [[ ! -d "$sessions_base" ]]; then
+        echo -e "${RED}ERROR: Cowork sessions directory not found.${NC}"
+        echo "Expected: $sessions_base"
+        echo "Are you running this on the desktop with Claude Desktop installed?"
+        return 1
+    fi
+
+    # Find the session with skills
+    local skills_path=""
+    while IFS= read -r -d '' candidate; do
+        local count
+        count=$(find "$candidate" -maxdepth 1 -mindepth 1 -type d 2>/dev/null | wc -l | xargs)
+        if [[ "$count" -ge 40 ]]; then
+            skills_path="$candidate"
+            break
+        fi
+    done < <(find "$sessions_base" -path "*/skills/skills" -type d -print0 2>/dev/null)
+
+    if [[ -z "$skills_path" ]]; then
+        echo -e "${RED}ERROR: Could not find Cowork skills directory with 40+ skills${NC}"
+        return 1
+    fi
+
+    echo -e "Found Cowork skills at: ${GREEN}$skills_path${NC}"
+    echo "Skills found: $(find "$skills_path" -maxdepth 1 -mindepth 1 -type d | wc -l | xargs)"
+
+    # Anthropic built-in skills to skip
+    local -a SKIP=(
+        algorithmic-art brand-guidelines canvas-design doc-coauthoring
+        docx internal-comms mcp-builder pdf pptx schedule
+        skill-creator theme-factory web-artifacts-builder xlsx
+    )
+
+    # Category mapping
+    declare -A CATEGORIES
+    CATEGORIES[signal-to-trust-gtm]=smorch-gtm
+    CATEGORIES[signal-detector]=smorch-gtm
+    CATEGORIES[wedge-generator]=smorch-gtm
+    CATEGORIES[asset-factory]=smorch-gtm
+    CATEGORIES[campaign-strategist]=smorch-gtm
+    CATEGORIES[positioning-engine]=smorch-gtm
+    CATEGORIES[outbound-orchestrator]=smorch-gtm
+    CATEGORIES[ghl-operator]=smorch-gtm
+    CATEGORIES[instantly-operator]=smorch-gtm
+    CATEGORIES[heyreach-operator]=smorch-gtm
+    CATEGORIES[clay-operator]=smorch-gtm
+    CATEGORIES[n8n-architect]=smorch-gtm
+    CATEGORIES[scraper-layer]=smorch-gtm
+    CATEGORIES[smorch-salesnav-operator]=smorch-gtm
+    CATEGORIES[smorch-linkedin-intel]=smorch-gtm
+    CATEGORIES[eo-brain-ingestion]=eo-training
+    CATEGORIES[eo-gtm-asset-factory]=eo-training
+    CATEGORIES[eo-skill-extractor]=eo-training
+    CATEGORIES[eo-tech-architect]=eo-training
+    CATEGORIES[eo-microsaas-dev]=eo-training
+    CATEGORIES[eo-db-architect]=eo-training
+    CATEGORIES[eo-api-connector]=eo-training
+    CATEGORIES[eo-qa-testing]=eo-training
+    CATEGORIES[eo-security-hardener]=eo-training
+    CATEGORIES[eo-deploy-infra]=eo-training
+    CATEGORIES[eo-training-factory]=eo-training
+    CATEGORIES[project-definition-scoring-engine]=eo-scoring
+    CATEGORIES[icp-clarity-scoring-engine]=eo-scoring
+    CATEGORIES[market-attractiveness-scoring-engine]=eo-scoring
+    CATEGORIES[strategy-selector-engine]=eo-scoring
+    CATEGORIES[gtm-fitness-scoring-engine]=eo-scoring
+    CATEGORIES[eo-youtube-mamoun]=content
+    CATEGORIES[smorch-perfect-webinar]=content
+    CATEGORIES[smo-offer-assets]=content
+    CATEGORIES[content-systems]=content
+    CATEGORIES[movement-builder]=content
+    CATEGORIES[engagement-engine]=content
+    CATEGORIES[validation-sprint]=content
+    CATEGORIES[smo-skill-creator]=dev-meta
+    CATEGORIES[smorch-tool-super-admin-creator]=dev-meta
+    CATEGORIES[systematic-debugging]=dev-meta
+    CATEGORIES[requesting-code-review]=dev-meta
+    CATEGORIES[receiving-code-review]=dev-meta
+    CATEGORIES[using-superpowers]=dev-meta
+    CATEGORIES[frontend-design]=tools
+    CATEGORIES[webapp-testing]=tools
+    CATEGORIES[get-api-docs]=tools
+    CATEGORIES[lead-research-assistant]=tools
+
+    # Create category directories
+    for cat in smorch-gtm eo-training eo-scoring content dev-meta tools; do
+        mkdir -p "$REPO_DIR/skills/$cat"
+    done
+
+    local copied=0
+    local skipped=0
+    for skill_dir in "$skills_path"/*/; do
+        local skill_name
+        skill_name=$(basename "$skill_dir")
+
+        # Check manifest for creatorType
+        local manifest="$skill_dir/manifest.json"
+        if [[ -f "$manifest" ]]; then
+            local creator_type
+            creator_type=$(python3 -c "import json; print(json.load(open('$manifest')).get('creatorType',''))" 2>/dev/null || echo "")
+            if [[ "$creator_type" == "anthropic" ]]; then
+                skipped=$((skipped + 1))
+                continue
+            fi
+        fi
+
+        # Skip known Anthropic skills by name as fallback
+        local is_skip=false
+        for s in "${SKIP[@]}"; do
+            if [[ "$skill_name" == "$s" ]]; then
+                is_skip=true
+                break
+            fi
+        done
+        [[ "$is_skip" == true ]] && { skipped=$((skipped + 1)); continue; }
+
+        # Find category
+        local category="${CATEGORIES[$skill_name]:-}"
+        if [[ -z "$category" ]]; then
+            echo -e "${YELLOW}WARN: No category mapping for '$skill_name' — skipping${NC}"
+            continue
+        fi
+
+        # Copy skill
+        cp -a "$skill_dir" "$REPO_DIR/skills/$category/$skill_name"
+        copied=$((copied + 1))
+    done
+
+    echo -e "${GREEN}Exported: $copied skills | Skipped: $skipped Anthropic skills${NC}"
+
+    # Git operations
+    cd "$REPO_DIR"
+    git add skills/
+    if git diff --cached --quiet; then
+        echo -e "${YELLOW}No changes to commit.${NC}"
+    else
+        local changes
+        changes=$(git diff --cached --stat | tail -1)
+        git commit -m "skills: export from Cowork — $changes"
+        echo -e "${GREEN}Committed. Run 'git push' or 'smorch push' again to push.${NC}"
+        git push origin main 2>&1 && echo -e "${GREEN}Pushed to GitHub.${NC}" || echo -e "${YELLOW}Push failed. Run 'git push' manually.${NC}"
+    fi
+}
+
+cmd_pull() {
+    load_state
+    local profile="${CURRENT_PROFILE}"
+
+    # Parse --profile flag
+    while [[ $# -gt 0 ]]; do
+        case "$1" in
+            --profile) profile="$2"; shift 2 ;;
+            *) echo "Unknown option: $1"; return 1 ;;
+        esac
+    done
+
+    if [[ -z "$profile" ]]; then
+        echo -e "${RED}ERROR: No profile set. Run: smorch pull --profile <name>${NC}"
+        echo "Available profiles:"
+        ls "$REPO_DIR/profiles/"*.txt 2>/dev/null | xargs -I{} basename {} .txt | sed 's/^/  /'
+        return 1
+    fi
+
+    echo -e "${CYAN}smorch pull — Syncing profile: $profile${NC}"
+
+    # Git pull
+    cd "$REPO_DIR"
+    echo "Pulling latest from GitHub..."
+    git pull --rebase origin main 2>&1 || {
+        echo -e "${RED}Git pull failed. Resolve conflicts manually.${NC}"
+        return 1
+    }
+
+    # Backup current skills
+    if [[ -d "$SKILLS_TARGET" ]] && [[ "$(ls -A "$SKILLS_TARGET" 2>/dev/null)" ]]; then
+        local backup_dir="$HOME/.claude/skills.bak.$(date +%Y%m%d%H%M%S)"
+        cp -a "$SKILLS_TARGET" "$backup_dir"
+        echo -e "Backup: ${YELLOW}$backup_dir${NC}"
+    fi
+
+    # Clean and install
+    rm -rf "$SKILLS_TARGET"
+    mkdir -p "$SKILLS_TARGET"
+
+    local count=0
+    while IFS= read -r skill_path; do
+        [[ -z "$skill_path" ]] && continue
+        skill_path="${skill_path%/}"  # Remove trailing slash
+        local category="${skill_path%%/*}"
+        local skill_name="${skill_path#*/}"
+        skill_name="${skill_name%/}"
+
+        mkdir -p "$SKILLS_TARGET/$category"
+        cp -a "$REPO_DIR/skills/$skill_path" "$SKILLS_TARGET/$category/$skill_name"
+        count=$((count + 1))
+    done < <(resolve_profile "$profile")
+
+    # Install MCP config
+    local base_mcp="$REPO_DIR/mcp-configs/base.mcp.json"
+    local overlay_name="${profile%-agent}"  # smo-brain-agent -> smo-brain, mamoun -> mamoun
+    [[ "$overlay_name" == "mamoun" ]] && overlay_name="desktop"
+    local overlay_mcp="$REPO_DIR/mcp-configs/$overlay_name.mcp.json"
+
+    if [[ -f "$base_mcp" ]]; then
+        if [[ -f "$overlay_mcp" ]] && command -v jq &>/dev/null; then
+            jq -s '.[0].mcpServers * .[1].mcpServers | {mcpServers: .}' "$base_mcp" "$overlay_mcp" > "$MCP_TARGET"
+            echo -e "MCP: merged base + $overlay_name"
+        else
+            cp "$base_mcp" "$MCP_TARGET"
+            echo -e "MCP: base only (no overlay or jq)"
+        fi
+    fi
+
+    # Copy CLAUDE.md if exists
+    if [[ -f "$REPO_DIR/CLAUDE.md" ]]; then
+        cp "$REPO_DIR/CLAUDE.md" "$HOME/.claude/CLAUDE.md"
+    fi
+
+    # Save state
+    CURRENT_PROFILE="$profile"
+    save_state
+
+    echo -e "${GREEN}Installed $count skills (profile: $profile)${NC}"
+}
+
+cmd_install() {
+    local target="$1"
+
+    if [[ -z "$target" ]]; then
+        echo -e "${RED}Usage: smorch install <category> or smorch install <category/skill>${NC}"
+        return 1
+    fi
+
+    cd "$REPO_DIR"
+    git pull --rebase origin main 2>&1 >/dev/null
+
+    if [[ -d "$REPO_DIR/skills/$target" ]]; then
+        if [[ "$target" == *"/"* ]]; then
+            # Single skill: eo-training/eo-brain-ingestion
+            local category="${target%%/*}"
+            mkdir -p "$SKILLS_TARGET/$category"
+            cp -a "$REPO_DIR/skills/$target" "$SKILLS_TARGET/$target"
+            echo -e "${GREEN}Installed: $target${NC}"
+        else
+            # Category: eo-training (copy all skills in it)
+            mkdir -p "$SKILLS_TARGET/$target"
+            local count=0
+            for skill_dir in "$REPO_DIR/skills/$target"/*/; do
+                [[ -d "$skill_dir" ]] || continue
+                cp -a "$skill_dir" "$SKILLS_TARGET/$target/"
+                count=$((count + 1))
+            done
+            echo -e "${GREEN}Installed: $target ($count skills)${NC}"
+        fi
+    else
+        echo -e "${RED}Not found in registry: $target${NC}"
+        echo "Available categories:"
+        ls "$REPO_DIR/skills/" | sed 's/^/  /'
+        return 1
+    fi
+}
+
+cmd_remove() {
+    local target="$1"
+    if [[ -z "$target" ]]; then
+        echo -e "${RED}Usage: smorch remove <category> or smorch remove <category/skill>${NC}"
+        return 1
+    fi
+
+    if [[ -d "$SKILLS_TARGET/$target" ]]; then
+        rm -rf "$SKILLS_TARGET/$target"
+        echo -e "${GREEN}Removed: $target${NC}"
+    else
+        echo -e "${RED}Not installed: $target${NC}"
+        return 1
+    fi
+}
+
+cmd_list() {
+    local mode="registry"
+    while [[ $# -gt 0 ]]; do
+        case "$1" in
+            --installed) mode="installed"; shift ;;
+            --available) mode="available"; shift ;;
+            --profiles) mode="profiles"; shift ;;
+            *) shift ;;
+        esac
+    done
+
+    case "$mode" in
+        registry)
+            echo -e "${CYAN}Skills Registry (smorch-brain)${NC}"
+            for cat_dir in "$REPO_DIR/skills"/*/; do
+                [[ -d "$cat_dir" ]] || continue
+                local cat_name
+                cat_name=$(basename "$cat_dir")
+                local count
+                count=$(find "$cat_dir" -maxdepth 1 -mindepth 1 -type d | wc -l | xargs)
+                echo -e "\n${GREEN}$cat_name/ ($count skills)${NC}"
+                for skill_dir in "$cat_dir"*/; do
+                    [[ -d "$skill_dir" ]] || continue
+                    echo "  $(basename "$skill_dir")"
+                done
+            done
+            ;;
+        installed)
+            echo -e "${CYAN}Installed Skills ($SKILLS_TARGET)${NC}"
+            if [[ ! -d "$SKILLS_TARGET" ]]; then
+                echo "  (none)"
+                return
+            fi
+            local total=0
+            for cat_dir in "$SKILLS_TARGET"/*/; do
+                [[ -d "$cat_dir" ]] || continue
+                local cat_name
+                cat_name=$(basename "$cat_dir")
+                local count
+                count=$(find "$cat_dir" -maxdepth 1 -mindepth 1 -type d | wc -l | xargs)
+                total=$((total + count))
+                echo -e "\n${GREEN}$cat_name/ ($count skills)${NC}"
+                for skill_dir in "$cat_dir"*/; do
+                    [[ -d "$skill_dir" ]] || continue
+                    echo "  $(basename "$skill_dir")"
+                done
+            done
+            echo -e "\n${CYAN}Total: $total skills${NC}"
+            ;;
+        available)
+            echo -e "${CYAN}Available but NOT installed${NC}"
+            for cat_dir in "$REPO_DIR/skills"/*/; do
+                [[ -d "$cat_dir" ]] || continue
+                local cat_name
+                cat_name=$(basename "$cat_dir")
+                for skill_dir in "$cat_dir"*/; do
+                    [[ -d "$skill_dir" ]] || continue
+                    local skill_name
+                    skill_name=$(basename "$skill_dir")
+                    if [[ ! -d "$SKILLS_TARGET/$cat_name/$skill_name" ]]; then
+                        echo "  $cat_name/$skill_name"
+                    fi
+                done
+            done
+            ;;
+        profiles)
+            echo -e "${CYAN}Available Profiles${NC}"
+            for pf in "$REPO_DIR/profiles/"*.txt; do
+                [[ -f "$pf" ]] || continue
+                local name
+                name=$(basename "$pf" .txt)
+                local count
+                count=$(resolve_profile "$name" 2>/dev/null | wc -l | xargs)
+                echo -e "  ${GREEN}$name${NC} ($count skills)"
+            done
+            ;;
+    esac
+}
+
+cmd_diff() {
+    cd "$REPO_DIR"
+    git fetch origin main 2>/dev/null
+    local diff_output
+    diff_output=$(git diff HEAD..origin/main --stat -- skills/ 2>/dev/null)
+    if [[ -z "$diff_output" ]]; then
+        echo -e "${GREEN}No changes since last pull.${NC}"
+    else
+        echo -e "${CYAN}Changes on GitHub since last pull:${NC}"
+        echo "$diff_output"
+    fi
+}
+
+cmd_status() {
+    load_state
+    echo -e "${CYAN}smorch status${NC}"
+    echo "──────────────────────────────────"
+    echo -e "Profile:    ${GREEN}${CURRENT_PROFILE:-<not set>}${NC}"
+    echo -e "Last sync:  ${LAST_SYNC:-never}"
+    echo -e "Registry:   $REPO_DIR"
+    echo -e "Skills dir: $SKILLS_TARGET"
+
+    # Count installed
+    if [[ -d "$SKILLS_TARGET" ]]; then
+        local installed
+        installed=$(find "$SKILLS_TARGET" -maxdepth 2 -mindepth 2 -type d | wc -l | xargs)
+        echo -e "Installed:  ${GREEN}$installed skills${NC}"
+    else
+        echo -e "Installed:  ${RED}0 (no skills dir)${NC}"
+    fi
+
+    # Count in registry
+    local registry_count
+    registry_count=$(find "$REPO_DIR/skills" -maxdepth 2 -mindepth 2 -type d 2>/dev/null | wc -l | xargs)
+    echo -e "Registry:   $registry_count skills"
+
+    # Git status
+    cd "$REPO_DIR" 2>/dev/null
+    local branch
+    branch=$(git branch --show-current 2>/dev/null)
+    local behind
+    behind=$(git rev-list HEAD..origin/main --count 2>/dev/null || echo "?")
+    echo -e "Git branch: $branch (${behind} commits behind)"
+    echo "──────────────────────────────────"
+}
+
+cmd_init() {
+    local profile=""
+    while [[ $# -gt 0 ]]; do
+        case "$1" in
+            --profile) profile="$2"; shift 2 ;;
+            *) shift ;;
+        esac
+    done
+
+    if [[ -z "$profile" ]]; then
+        echo -e "${RED}Usage: smorch init --profile <name>${NC}"
+        echo "Available profiles:"
+        ls "$REPO_DIR/profiles/"*.txt 2>/dev/null | xargs -I{} basename {} .txt | sed 's/^/  /'
+        return 1
+    fi
+
+    echo -e "${CYAN}smorch init — First-time setup${NC}"
+
+    # Ensure repo is cloned
+    if [[ ! -d "$REPO_DIR" ]]; then
+        echo "Cloning smorch-brain..."
+        git clone git@github.com:SMOrchestra-ai/smorch-brain.git "$REPO_DIR"
+    fi
+
+    # Pull and install
+    cmd_pull --profile "$profile"
+
+    echo -e "${GREEN}Setup complete! Run 'smorch status' to verify.${NC}"
+}
+
+# Main dispatch
+case "${1:-}" in
+    push)       cmd_push ;;
+    pull)       shift; cmd_pull "$@" ;;
+    install)    shift; cmd_install "$@" ;;
+    remove)     shift; cmd_remove "$@" ;;
+    list)       shift; cmd_list "$@" ;;
+    diff)       cmd_diff ;;
+    status)     cmd_status ;;
+    init)       shift; cmd_init "$@" ;;
+    --version)  echo "smorch v${VERSION}" ;;
+    -h|--help|"") usage ;;
+    *)          echo "Unknown command: $1"; usage; exit 1 ;;
+esac

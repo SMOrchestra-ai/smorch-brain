@@ -1,0 +1,8 @@
+dev-meta/systematic-debugging
+dev-meta/requesting-code-review
+dev-meta/receiving-code-review
+eo-training/*
+eo-scoring/*
+smorch-gtm/n8n-architect
+tools/webapp-testing
+tools/get-api-docs
