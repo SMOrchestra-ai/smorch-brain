@@ -287,8 +287,11 @@ cmd_pull() {
         echo -e "Backup: ${YELLOW}$backup_dir${NC}"
     fi
 
-    # Clean and install
-    rm -rf "$SKILLS_TARGET"
+    # Clean only managed categories (preserve Anthropic/system skills)
+    local -a MANAGED_CATS=(smorch-gtm eo-training eo-scoring content dev-meta tools)
+    for cat in "${MANAGED_CATS[@]}"; do
+        rm -rf "$SKILLS_TARGET/$cat" 2>/dev/null
+    done
     mkdir -p "$SKILLS_TARGET"
 
     local count=0
