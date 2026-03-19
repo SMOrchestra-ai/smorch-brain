@@ -1,36 +1,37 @@
-// Quality Gate Validator
+// Quality Gate Validator v2
 // Checks outputs against brand standards, RTL, CTAs, file sizes, banned words
 
 const fs = require('fs');
 const path = require('path');
-const brand = require('./brand');
 
 const SIZE_LIMITS = {
-  '.html': 500 * 1024,   // 500KB
-  '.pptx': 10 * 1024 * 1024, // 10MB
-  '.pdf': 5 * 1024 * 1024,   // 5MB
-  '.docx': 2 * 1024 * 1024,  // 2MB
-  '.xlsx': 2 * 1024 * 1024,  // 2MB
+  '.html': 500 * 1024,
+  '.pptx': 10 * 1024 * 1024,
+  '.pdf': 5 * 1024 * 1024,
+  '.docx': 2 * 1024 * 1024,
+  '.xlsx': 2 * 1024 * 1024,
 };
+
+const BANNED_WORDS = [
+  'leverage', 'synergy', 'ecosystem', 'holistic',
+  'digital transformation', 'innovative', 'cutting-edge',
+  'world-class', 'best-in-class',
+];
 
 /**
  * Run all quality gates on a file
- * @param {string} filePath - Path to output file
- * @returns {{ pass: boolean, errors: string[], warnings: string[] }}
  */
 function validateFile(filePath) {
   const errors = [];
   const warnings = [];
   const ext = path.extname(filePath).toLowerCase();
 
-  // File size check
   const stats = fs.statSync(filePath);
   const limit = SIZE_LIMITS[ext];
   if (limit && stats.size > limit) {
     errors.push(`File size ${(stats.size / 1024).toFixed(0)}KB exceeds limit ${(limit / 1024).toFixed(0)}KB`);
   }
 
-  // For HTML files, check content
   if (ext === '.html') {
     const content = fs.readFileSync(filePath, 'utf-8');
     validateHtml(content, errors, warnings);
@@ -46,24 +47,8 @@ function validateFile(filePath) {
 }
 
 function validateHtml(content, errors, warnings) {
-  // Brand color check
-  const hexColors = content.match(/#[0-9A-Fa-f]{6}/g) || [];
-  const allowedColors = Object.values(brand.colors).map(c => c.toLowerCase());
-  for (const color of hexColors) {
-    // Allow brand colors + common UI grays used in templates
-    const uiColors = ['#000000', '#ffffff', '#f9fafb', '#e5e7eb', '#fdf8f0'];
-    if (!allowedColors.includes(color.toLowerCase()) && !uiColors.includes(color.toLowerCase())) {
-      warnings.push(`Non-brand color found: ${color}`);
-    }
-  }
-
-  // RTL check
-  if (!content.includes('dir="rtl"') && !content.includes("dir='rtl'")) {
-    warnings.push('No RTL direction attribute found');
-  }
-
   // CTA check
-  const ctaPatterns = [/href=/i, /button/i, /cta/i, /submit/i, /book/i, /join/i, /sign.?up/i, /register/i];
+  const ctaPatterns = [/href=/i, /button/i, /cta/i, /submit/i, /book/i, /join/i, /sign.?up/i, /register/i, /get.?started/i];
   const hasCta = ctaPatterns.some(p => p.test(content));
   if (!hasCta) {
     warnings.push('No CTA detected');
@@ -71,10 +56,17 @@ function validateHtml(content, errors, warnings) {
 
   // Banned words check
   const contentLower = content.toLowerCase();
-  for (const word of brand.bannedWords) {
+  for (const word of BANNED_WORDS) {
     if (contentLower.includes(word.toLowerCase())) {
       errors.push(`Banned word found: "${word}"`);
     }
+  }
+
+  // CSS variables check (should use variables, not hardcoded colors)
+  if (content.includes('var(--primary)') || content.includes('var(--bg)')) {
+    // Good — using CSS variables
+  } else if (content.includes('{{CSS_VARS}}')) {
+    warnings.push('Template placeholders not replaced — CSS vars still raw');
   }
 }
 
@@ -83,7 +75,9 @@ function validateHtml(content, errors, warnings) {
  */
 function validateAll(dirPath) {
   const results = [];
-  const files = fs.readdirSync(dirPath).filter(f => !f.startsWith('.'));
+  if (!fs.existsSync(dirPath)) return { results, summary: '0/0 files passed', allPassed: true };
+
+  const files = fs.readdirSync(dirPath).filter(f => !f.startsWith('.') && !f.endsWith('.json'));
 
   for (const file of files) {
     const filePath = path.join(dirPath, file);

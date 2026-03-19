@@ -1,5 +1,5 @@
-// PDF Builder - Lead magnets, checklists, guides
-// Renders MD → branded HTML → PDF via Puppeteer
+// PDF Builder v2 — Per-customer brand colors
+// Renders MD → branded HTML → PDF via Puppeteer (or print-ready HTML fallback)
 
 const fs = require('fs');
 const path = require('path');
@@ -8,11 +8,15 @@ const { parseBlueprint } = require('../utils/md-parser');
 
 /**
  * Build a PDF from a markdown blueprint
- * Uses Puppeteer to render branded HTML to PDF
+ * @param {string} inputPath - Path to MD file
+ * @param {string} outputDir - Output directory
+ * @param {string} baseTemplatePath - Path to HTML base template
+ * @param {object} brand - Brand config
  */
-async function buildPdf(inputPath, outputDir, baseTemplatePath) {
+async function buildPdf(inputPath, outputDir, baseTemplatePath, brand) {
   const blueprint = parseBlueprint(inputPath);
   const template = fs.readFileSync(baseTemplatePath, 'utf-8');
+  const colors = brand.colors;
 
   const contentHtml = marked(blueprint.raw);
 
@@ -21,7 +25,7 @@ async function buildPdf(inputPath, outputDir, baseTemplatePath) {
       @media print {
         body { font-size: 11pt; }
         .container { max-width: 100%; padding: 0; }
-        .cta-button { border: 2px solid #FF6B00; }
+        .cta-button { border: 2px solid ${colors.primary}; }
         .footer { position: fixed; bottom: 0; width: 100%; }
         @page { margin: 20mm; size: A4; }
       }
@@ -32,14 +36,14 @@ async function buildPdf(inputPath, outputDir, baseTemplatePath) {
     .replace('{{TITLE}}', blueprint.title)
     .replace('</head>', printCss + '</head>')
     .replace('{{CONTENT}}', `
-      <div class="badge">EO MENA</div>
-      <h1>${escapeHtml(blueprint.title)}</h1>
-      <div class="accent-line"></div>
+      <div class="badge" style="background:${colors.primary};color:#000;display:inline-block;padding:4px 12px;border-radius:4px;font-size:12px;font-weight:700;">EO MENA</div>
+      <h1 style="color:${colors.dark || '#1A1A2E'};margin:16px 0 8px;">${escapeHtml(blueprint.title)}</h1>
+      <div style="width:60px;height:4px;background:${colors.primary};margin-bottom:24px;"></div>
       ${contentHtml}
-      <div class="cta-section">
-        <h3>Ready to launch your product in MENA?</h3>
-        <p>Submit your product for the Triple Assessment and earn the Signal-Verified badge.</p>
-        <a href="#" class="cta-button">Submit Your Product</a>
+      <div style="margin-top:40px;padding:24px;background:${colors.primary}10;border-radius:8px;text-align:center;">
+        <h3 style="color:${colors.dark || '#1A1A2E'};">Ready to get started?</h3>
+        <p style="color:#6B7280;">Take the next step with confidence.</p>
+        <a href="#" style="display:inline-block;margin-top:12px;padding:10px 24px;background:${colors.primary};color:#000;border-radius:6px;text-decoration:none;font-weight:600;">Get Started</a>
       </div>
     `);
 
@@ -56,11 +60,10 @@ async function buildPdf(inputPath, outputDir, baseTemplatePath) {
       file: filename,
       type: 'pdf-ready-html',
       size: fs.statSync(outputPath).size,
-      note: 'Puppeteer not available. Open in browser, Cmd+P to save as PDF.',
+      warning: 'Puppeteer not available. Open in browser, Cmd+P to save as PDF.',
     };
   }
 
-  // Use PUPPETEER_EXECUTABLE_PATH env var, or find cached Chrome, or let Puppeteer find it
   const executablePath = process.env.PUPPETEER_EXECUTABLE_PATH || findCachedChrome();
   const launchOptions = { headless: true, args: ['--no-sandbox'] };
   if (executablePath) launchOptions.executablePath = executablePath;
@@ -79,19 +82,13 @@ async function buildPdf(inputPath, outputDir, baseTemplatePath) {
   });
 
   await browser.close();
-
   return { file: filename, type: 'pdf', size: fs.statSync(outputPath).size };
 }
 
 function findCachedChrome() {
-  const fs = require('fs');
-  const path = require('path');
-
-  // 1. Check for system Chrome (most reliable)
   const systemChrome = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
   if (fs.existsSync(systemChrome)) return systemChrome;
 
-  // 2. Check Puppeteer cache
   const cacheDir = path.join(require('os').homedir(), '.cache', 'puppeteer', 'chrome');
   if (!fs.existsSync(cacheDir)) return null;
   const versions = fs.readdirSync(cacheDir).filter(d => d.startsWith('mac_arm-') || d.startsWith('mac-'));

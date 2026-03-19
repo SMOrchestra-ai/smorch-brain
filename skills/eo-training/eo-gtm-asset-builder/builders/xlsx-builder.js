@@ -1,22 +1,25 @@
-// XLSX Builder - Target lists, content calendars, distribution matrices
+// XLSX Builder v2 — Per-customer brand colors
 // Reads MD blueprints, renders branded Excel spreadsheets
 
 const fs = require('fs');
 const path = require('path');
 const ExcelJS = require('exceljs');
 const { parseBlueprint } = require('../utils/md-parser');
-const brand = require('../utils/brand');
 
 /**
- * Build an XLSX from a markdown blueprint containing tables/lists
+ * Build an XLSX from a markdown blueprint
+ * @param {string} inputPath - Path to MD file
+ * @param {string} outputDir - Output directory
+ * @param {object} brand - Brand config with docxColors, fonts
  */
-async function buildXlsx(inputPath, outputDir) {
+async function buildXlsx(inputPath, outputDir, brand) {
   const blueprint = parseBlueprint(inputPath);
+  const dc = brand.docxColors;
+  const fonts = brand.fonts;
   const workbook = new ExcelJS.Workbook();
-  workbook.creator = 'Entrepreneurs Oasis MENA';
+  workbook.creator = 'EO GTM Asset Factory';
   workbook.created = new Date();
 
-  // Collect all tables from all sections
   const allTables = [];
   for (const section of blueprint.sections) {
     for (const table of section.tables) {
@@ -25,37 +28,33 @@ async function buildXlsx(inputPath, outputDir) {
   }
 
   if (allTables.length > 0) {
-    // Create a worksheet per table (or combine small ones)
     for (const table of allTables) {
       const sheetName = sanitizeSheetName(table.title);
       const sheet = workbook.addWorksheet(sheetName);
 
-      // Style header row
       sheet.addRow(table.headers);
       const headerRow = sheet.getRow(1);
       headerRow.eachCell(cell => {
-        cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF' + brand.docxColors.dark } };
-        cell.font = { bold: true, color: { argb: 'FFFFFFFF' }, name: brand.fonts.en, size: 11 };
+        cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF' + dc.dark } };
+        cell.font = { bold: true, color: { argb: 'FFFFFFFF' }, name: fonts.en, size: 11 };
         cell.alignment = { horizontal: 'center', vertical: 'middle', wrapText: true };
         cell.border = borderStyle();
       });
       headerRow.height = 28;
 
-      // Data rows
       table.rows.forEach((row, idx) => {
         sheet.addRow(row);
         const dataRow = sheet.getRow(idx + 2);
         dataRow.eachCell(cell => {
-          cell.font = { name: brand.fonts.en, size: 10, color: { argb: 'FF' + brand.docxColors.text } };
+          cell.font = { name: fonts.en, size: 10, color: { argb: 'FF' + dc.text } };
           cell.alignment = { vertical: 'middle', wrapText: true };
           cell.border = borderStyle();
           if (idx % 2 === 0) {
-            cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFFDF8F0' } };
+            cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF' + (dc.cream || 'FDF8F0') } };
           }
         });
       });
 
-      // Auto-width columns
       sheet.columns.forEach((col, i) => {
         const maxLen = Math.max(
           (table.headers[i] || '').length,
@@ -64,31 +63,27 @@ async function buildXlsx(inputPath, outputDir) {
         col.width = Math.min(Math.max(maxLen + 4, 12), 40);
       });
 
-      // Freeze header row
       sheet.views = [{ state: 'frozen', ySplit: 1 }];
     }
   } else {
-    // No tables found - create a sheet from lists
     const sheet = workbook.addWorksheet('Data');
     let rowNum = 1;
 
     for (const section of blueprint.sections) {
-      // Section header
       sheet.addRow([section.title]);
       const sectionRow = sheet.getRow(rowNum);
-      sectionRow.getCell(1).font = { bold: true, size: 12, color: { argb: 'FF' + brand.docxColors.primary }, name: brand.fonts.en };
+      sectionRow.getCell(1).font = { bold: true, size: 12, color: { argb: 'FF' + dc.primary }, name: fonts.en };
       rowNum++;
 
       for (const list of section.lists) {
         for (const item of list) {
           sheet.addRow(['', item]);
           const itemRow = sheet.getRow(rowNum);
-          itemRow.getCell(2).font = { name: brand.fonts.en, size: 10, color: { argb: 'FF' + brand.docxColors.text } };
+          itemRow.getCell(2).font = { name: fonts.en, size: 10, color: { argb: 'FF' + dc.text } };
           rowNum++;
         }
       }
 
-      // Empty row between sections
       sheet.addRow([]);
       rowNum++;
     }
@@ -114,7 +109,6 @@ function borderStyle() {
 }
 
 function sanitizeSheetName(name) {
-  // Excel sheet names: max 31 chars, no special chars
   return name.replace(/[\\/*?:\[\]]/g, '').substring(0, 31);
 }
 
