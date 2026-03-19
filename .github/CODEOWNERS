@@ -1,0 +1,10 @@
+# CODEOWNERS — per AI Native Git Architecture v2
+# Mamoun reviews everything by default
+*                       @smorchestraai-code
+
+# Locked directories — require Mamoun
+/infra/                 @smorchestraai-code
+/agents/openclaw/       @smorchestraai-code
+
+# Prompts — Mamoun owns
+/prompts/               @smorchestraai-code
