@@ -20,6 +20,8 @@ const args = parseArgs(process.argv.slice(2));
 const ASSETS_DIR = path.resolve(args.input || path.join(__dirname, '..', '..', 'assets'));
 const BRAND_FILE = path.resolve(args.brand || path.join(__dirname, '..', '..', 'project-brain', 'brandvoice.md'));
 const OUTPUT_DIR = path.resolve(args.output || path.join(__dirname, 'deployable'));
+// Also copy outputs to workspace-level GTM-Assets-Production folder
+const WORKSPACE_OUTPUT = path.resolve(args['workspace-output'] || path.join(__dirname, '..', '..', 'GTM-Assets-Production'));
 const BASE_TEMPLATE = path.join(__dirname, 'templates', 'base.html');
 const EMAIL_TEMPLATE = path.join(__dirname, 'templates', 'email.html');
 
@@ -146,6 +148,17 @@ async function main() {
       console.log(`      WARN:  ${warn}`);
     }
   }
+
+  // Copy outputs to workspace-level GTM-Assets-Production
+  console.log('\n--- Copying to GTM-Assets-Production ---\n');
+  if (!fs.existsSync(WORKSPACE_OUTPUT)) {
+    fs.mkdirSync(WORKSPACE_OUTPUT, { recursive: true });
+  }
+  const deployedFiles = fs.readdirSync(OUTPUT_DIR).filter(f => !f.startsWith('.'));
+  for (const file of deployedFiles) {
+    fs.copyFileSync(path.join(OUTPUT_DIR, file), path.join(WORKSPACE_OUTPUT, file));
+  }
+  console.log(`  Copied ${deployedFiles.length} files to ${WORKSPACE_OUTPUT}`);
 
   // Summary
   console.log('\n=== BUILD COMPLETE ===\n');
