@@ -1,6 +1,5 @@
 // PDF Builder - Lead magnets, checklists, guides
-// Renders MD → print-ready HTML (open in browser, Cmd+P to save as PDF)
-// Puppeteer is optional: install separately with `npm install puppeteer` if you want auto PDF generation
+// Renders MD → branded HTML → PDF via Puppeteer
 
 const fs = require('fs');
 const path = require('path');
@@ -8,8 +7,8 @@ const { marked } = require('marked');
 const { parseBlueprint } = require('../utils/md-parser');
 
 /**
- * Build a print-ready HTML from a markdown blueprint
- * Output is designed for browser Print → Save as PDF
+ * Build a PDF from a markdown blueprint
+ * Uses Puppeteer to render branded HTML to PDF
  */
 async function buildPdf(inputPath, outputDir, baseTemplatePath) {
   const blueprint = parseBlueprint(inputPath);
@@ -17,7 +16,6 @@ async function buildPdf(inputPath, outputDir, baseTemplatePath) {
 
   const contentHtml = marked(blueprint.raw);
 
-  // Add print-optimized CSS
   const printCss = `
     <style>
       @media print {
@@ -45,16 +43,63 @@ async function buildPdf(inputPath, outputDir, baseTemplatePath) {
       </div>
     `);
 
-  const filename = path.basename(inputPath, '.md') + '.print.html';
-  const outputPath = path.join(outputDir, filename);
-  fs.writeFileSync(outputPath, html, 'utf-8');
+  // Try Puppeteer for real PDF generation
+  let puppeteer;
+  try {
+    puppeteer = require('puppeteer');
+  } catch (e) {
+    // Fallback: save as print-ready HTML
+    const filename = path.basename(inputPath, '.md') + '.print.html';
+    const outputPath = path.join(outputDir, filename);
+    fs.writeFileSync(outputPath, html, 'utf-8');
+    return {
+      file: filename,
+      type: 'pdf-ready-html',
+      size: fs.statSync(outputPath).size,
+      note: 'Puppeteer not available. Open in browser, Cmd+P to save as PDF.',
+    };
+  }
 
-  return {
-    file: filename,
-    type: 'pdf-ready-html',
-    size: fs.statSync(outputPath).size,
-    note: 'Open in browser and print to PDF (Cmd+P / Ctrl+P)',
-  };
+  // Use PUPPETEER_EXECUTABLE_PATH env var, or find cached Chrome, or let Puppeteer find it
+  const executablePath = process.env.PUPPETEER_EXECUTABLE_PATH || findCachedChrome();
+  const launchOptions = { headless: true, args: ['--no-sandbox'] };
+  if (executablePath) launchOptions.executablePath = executablePath;
+
+  const browser = await puppeteer.launch(launchOptions);
+  const page = await browser.newPage();
+  await page.setContent(html, { waitUntil: 'networkidle0', timeout: 30000 });
+
+  const filename = path.basename(inputPath, '.md') + '.pdf';
+  const outputPath = path.join(outputDir, filename);
+  await page.pdf({
+    path: outputPath,
+    format: 'A4',
+    margin: { top: '20mm', right: '20mm', bottom: '20mm', left: '20mm' },
+    printBackground: true,
+  });
+
+  await browser.close();
+
+  return { file: filename, type: 'pdf', size: fs.statSync(outputPath).size };
+}
+
+function findCachedChrome() {
+  const fs = require('fs');
+  const path = require('path');
+
+  // 1. Check for system Chrome (most reliable)
+  const systemChrome = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
+  if (fs.existsSync(systemChrome)) return systemChrome;
+
+  // 2. Check Puppeteer cache
+  const cacheDir = path.join(require('os').homedir(), '.cache', 'puppeteer', 'chrome');
+  if (!fs.existsSync(cacheDir)) return null;
+  const versions = fs.readdirSync(cacheDir).filter(d => d.startsWith('mac_arm-') || d.startsWith('mac-'));
+  if (versions.length === 0) return null;
+  versions.sort();
+  const latest = versions[versions.length - 1];
+  const chromePath = path.join(cacheDir, latest, 'chrome-mac-arm64', 'Google Chrome for Testing.app', 'Contents', 'MacOS', 'Google Chrome for Testing');
+  return fs.existsSync(chromePath) ? chromePath : null;
 }
 
 function escapeHtml(str) {
