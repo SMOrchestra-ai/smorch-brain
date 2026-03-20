@@ -105,29 +105,27 @@ resolve_profile() {
 cmd_push() {
     echo -e "${CYAN}smorch push — Exporting Cowork skills to registry${NC}"
 
-    # Find Cowork session path
-    local sessions_base="$HOME/Library/Application Support/Claude/local-agent-mode-sessions"
-    if [[ ! -d "$sessions_base" ]]; then
-        echo -e "${RED}ERROR: Cowork sessions directory not found.${NC}"
-        echo "Expected: $sessions_base"
-        echo "Are you running this on the desktop with Claude Desktop installed?"
-        return 1
-    fi
-
-    # Find the session with skills
-    local skills_path=""
-    while IFS= read -r -d '' candidate; do
-        local count
-        count=$(find "$candidate" -maxdepth 1 -mindepth 1 -type d 2>/dev/null | wc -l | xargs)
-        if [[ "$count" -ge 40 ]]; then
-            skills_path="$candidate"
-            break
+    # Find skills — check ~/.claude/skills first (Claude Code), then fall back to Cowork Desktop sessions
+    local skills_path="$HOME/.claude/skills"
+    if [[ ! -d "$skills_path" ]] || [[ $(find "$skills_path" -maxdepth 1 -mindepth 1 -type d 2>/dev/null | wc -l | xargs) -lt 10 ]]; then
+        # Fallback: search Cowork Desktop session paths
+        local sessions_base="$HOME/Library/Application Support/Claude/local-agent-mode-sessions"
+        skills_path=""
+        if [[ -d "$sessions_base" ]]; then
+            while IFS= read -r -d '' candidate; do
+                local count
+                count=$(find "$candidate" -maxdepth 1 -mindepth 1 -type d 2>/dev/null | wc -l | xargs)
+                if [[ "$count" -ge 40 ]]; then
+                    skills_path="$candidate"
+                    break
+                fi
+            done < <(find "$sessions_base" -path "*/skills/skills" -type d -print0 2>/dev/null)
         fi
-    done < <(find "$sessions_base" -path "*/skills/skills" -type d -print0 2>/dev/null)
-
-    if [[ -z "$skills_path" ]]; then
-        echo -e "${RED}ERROR: Could not find Cowork skills directory with 40+ skills${NC}"
-        return 1
+        if [[ -z "$skills_path" ]]; then
+            echo -e "${RED}ERROR: Could not find skills directory${NC}"
+            echo "Checked: ~/.claude/skills and Cowork Desktop sessions"
+            return 1
+        fi
     fi
 
     echo -e "Found Cowork skills at: ${GREEN}$skills_path${NC}"
@@ -140,56 +138,24 @@ cmd_push() {
         skill-creator theme-factory web-artifacts-builder xlsx
     )
 
-    # Category mapping
-    declare -A CATEGORIES
-    CATEGORIES[signal-to-trust-gtm]=smorch-gtm
-    CATEGORIES[signal-detector]=smorch-gtm
-    CATEGORIES[wedge-generator]=smorch-gtm
-    CATEGORIES[asset-factory]=smorch-gtm
-    CATEGORIES[campaign-strategist]=smorch-gtm
-    CATEGORIES[positioning-engine]=smorch-gtm
-    CATEGORIES[outbound-orchestrator]=smorch-gtm
-    CATEGORIES[ghl-operator]=smorch-gtm
-    CATEGORIES[instantly-operator]=smorch-gtm
-    CATEGORIES[heyreach-operator]=smorch-gtm
-    CATEGORIES[clay-operator]=smorch-gtm
-    CATEGORIES[n8n-architect]=smorch-gtm
-    CATEGORIES[scraper-layer]=smorch-gtm
-    CATEGORIES[smorch-salesnav-operator]=smorch-gtm
-    CATEGORIES[smorch-linkedin-intel]=smorch-gtm
-    CATEGORIES[eo-brain-ingestion]=eo-training
-    CATEGORIES[eo-gtm-asset-factory]=eo-training
-    CATEGORIES[eo-skill-extractor]=eo-training
-    CATEGORIES[eo-tech-architect]=eo-training
-    CATEGORIES[eo-microsaas-dev]=eo-training
-    CATEGORIES[eo-db-architect]=eo-training
-    CATEGORIES[eo-api-connector]=eo-training
-    CATEGORIES[eo-qa-testing]=eo-training
-    CATEGORIES[eo-security-hardener]=eo-training
-    CATEGORIES[eo-deploy-infra]=eo-training
-    CATEGORIES[eo-training-factory]=eo-training
-    CATEGORIES[project-definition-scoring-engine]=eo-scoring
-    CATEGORIES[icp-clarity-scoring-engine]=eo-scoring
-    CATEGORIES[market-attractiveness-scoring-engine]=eo-scoring
-    CATEGORIES[strategy-selector-engine]=eo-scoring
-    CATEGORIES[gtm-fitness-scoring-engine]=eo-scoring
-    CATEGORIES[eo-youtube-mamoun]=content
-    CATEGORIES[smorch-perfect-webinar]=content
-    CATEGORIES[smo-offer-assets]=content
-    CATEGORIES[content-systems]=content
-    CATEGORIES[movement-builder]=content
-    CATEGORIES[engagement-engine]=content
-    CATEGORIES[validation-sprint]=content
-    CATEGORIES[smo-skill-creator]=dev-meta
-    CATEGORIES[smorch-tool-super-admin-creator]=dev-meta
-    CATEGORIES[systematic-debugging]=dev-meta
-    CATEGORIES[requesting-code-review]=dev-meta
-    CATEGORIES[receiving-code-review]=dev-meta
-    CATEGORIES[using-superpowers]=dev-meta
-    CATEGORIES[frontend-design]=tools
-    CATEGORIES[webapp-testing]=tools
-    CATEGORIES[get-api-docs]=tools
-    CATEGORIES[lead-research-assistant]=tools
+    # Category mapping (bash 3.x compatible — no associative arrays on macOS default bash)
+    get_category() {
+        case "$1" in
+            signal-to-trust-gtm|signal-detector|wedge-generator|asset-factory|campaign-strategist) echo "smorch-gtm" ;;
+            positioning-engine|outbound-orchestrator|ghl-operator|instantly-operator|heyreach-operator) echo "smorch-gtm" ;;
+            clay-operator|n8n-architect|scraper-layer|smorch-salesnav-operator|smorch-linkedin-intel) echo "smorch-gtm" ;;
+            eo-brain-ingestion|eo-gtm-asset-factory|eo-skill-extractor|eo-tech-architect|eo-microsaas-dev) echo "eo-training" ;;
+            eo-db-architect|eo-api-connector|eo-qa-testing|eo-security-hardener|eo-deploy-infra|eo-training-factory) echo "eo-training" ;;
+            project-definition-scoring-engine|icp-clarity-scoring-engine|market-attractiveness-scoring-engine) echo "eo-scoring" ;;
+            strategy-selector-engine|gtm-fitness-scoring-engine) echo "eo-scoring" ;;
+            eo-youtube-mamoun|smorch-perfect-webinar|smo-offer-assets|content-systems|movement-builder) echo "content" ;;
+            engagement-engine|validation-sprint) echo "content" ;;
+            smo-skill-creator|smorch-tool-super-admin-creator|systematic-debugging) echo "dev-meta" ;;
+            requesting-code-review|receiving-code-review|using-superpowers) echo "dev-meta" ;;
+            frontend-design|webapp-testing|get-api-docs|lead-research-assistant) echo "tools" ;;
+            *) echo "" ;;
+        esac
+    }
 
     # Create category directories
     for cat in smorch-gtm eo-training eo-scoring content dev-meta tools; do
@@ -224,7 +190,8 @@ cmd_push() {
         [[ "$is_skip" == true ]] && { skipped=$((skipped + 1)); continue; }
 
         # Find category
-        local category="${CATEGORIES[$skill_name]:-}"
+        local category
+        category=$(get_category "$skill_name")
         if [[ -z "$category" ]]; then
             echo -e "${YELLOW}WARN: No category mapping for '$skill_name' — skipping${NC}"
             continue
