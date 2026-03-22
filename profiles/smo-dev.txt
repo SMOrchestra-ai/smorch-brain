@@ -1,6 +1,8 @@
 dev-meta/systematic-debugging
 dev-meta/requesting-code-review
 dev-meta/receiving-code-review
+dev-meta/smorch-github-ops
+dev-meta/changelog-generator
 smorch-gtm/n8n-architect
 smorch-gtm/ghl-operator
 smorch-gtm/instantly-operator
