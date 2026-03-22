@@ -1,217 +1,340 @@
 ---
 name: eo-gtm-asset-factory
-description: "EO GTM Asset Factory v2 — Orchestrator skill that reads scorecard results, lets the customer pick ONE GTM motion from their top 3, collects brand colors and language preference, then produces a complete asset bundle: core assets (warm sequences, landing page, LinkedIn posts, 1-pager, slide deck) + motion-specific assets. Triggers: 'build my GTM assets', 'generate assets', 'GTM factory', 'produce my launch assets', 'create my GTM bundle'."
-version: "2.0"
+description: EO GTM Asset Factory - reads the 12 project brain files (especially gtm.md, positioning.md, icp.md, brandvoice.md) and produces a complete GTM asset bundle dynamically matched to the student's top-scoring GTM motions. Triggers on 'build my GTM assets', 'generate assets', 'create outreach sequences', 'GTM factory', 'produce my assets', 'launch assets', 'build campaign materials'. This is Skill 2 of the EO Training System.
+version: "1.0"
 ---
 
-# EO GTM Asset Factory v2
+# EO GTM Asset Factory - SKILL.md
 
-**Version:** 2.0
-**Date:** 2026-03-19
-**Role:** GTM Asset Orchestrator (Skill 2 of EO MicroSaaS OS)
-**Purpose:** Produce a focused, high-quality GTM asset bundle for ONE selected motion + universal core assets. Every asset is tailored to the customer's ICP, positioning, brand voice, brand colors, and language.
-
----
-
-## HOW THIS SKILL WORKS
-
-This is an **interactive** skill. It does NOT dump 25 generic files. It:
-
-1. **Reads** the customer's scorecard results (SC5 GTM Fitness) to get their ranked GTM motions
-2. **Shows** the top 3 motions with scores and descriptions
-3. **Asks** the customer to pick ONE primary GTM motion (from top 3, or they can pick any of the 13)
-4. **Asks** for 2-4 brand colors (hex codes or descriptions like "dark navy, bright orange")
-5. **Asks** for language preference: English, Arabic, or Both
-6. **Generates** core assets (always produced regardless of GTM) + motion-specific assets (only for the selected GTM)
-
-The output is focused, not bloated. One GTM done right > 13 GTMs done mediocre.
+**Version:** 1.0
+**Date:** 2026-03-11
+**Role:** EO GTM Asset Factory (Skill 2 of EO MicroSaaS OS)
+**Purpose:** Produce the complete GTM asset bundle based on the student's GTM plan. Reads the ranked GTM motions and dynamically generates the right assets for the student's specific motion mix. No generic templates: every asset is tailored to the student's ICP, positioning, and brand voice.
+**Status:** Production Ready
 
 ---
 
-## INTERACTIVE FLOW
+## TABLE OF CONTENTS
 
-### Step 1: Context Load
-
-Read these files (ask customer for location if not obvious):
-
-| File | What We Need |
-|------|-------------|
-| SC5 GTM Fitness scorecard | Motion rankings table (13 motions with Fit/Readiness/MENA scores) |
-| project-brain/positioning.md | Wedge angle, unique mechanism, one-sentence positioning |
-| project-brain/icp.md | Persona, pains, dream outcome, buyer journey, access channels |
-| project-brain/brandvoice.md | Tone, language rules, words to use/avoid |
-| project-brain/companyprofile.md | Venture name, one-liner, pricing, URL |
-| project-brain/founderprofile.md | Founder story, archetype, network |
-
-### Step 2: Show Top 3 + Ask for Selection
-
-Display:
-
-```
-YOUR TOP 3 GTM MOTIONS (from SC5):
-
-#1 [Motion Name] — Score: X.X (PRIMARY)
-   → [One-line description of what this motion does]
-   → Best for: [context]
-
-#2 [Motion Name] — Score: X.X (PRIMARY)
-   → [One-line description]
-   → Best for: [context]
-
-#3 [Motion Name] — Score: X.X (PRIMARY)
-   → [One-line description]
-   → Best for: [context]
-
-Which GTM motion do you want to build assets for?
-Pick 1, 2, or 3 — or type the name of any other motion from the full list of 13.
-```
-
-If customer wants to see the full 13, show them. But guide toward top 3.
-
-### Step 3: Collect Brand Info
-
-```
-BRAND SETUP:
-
-1. What are your brand colors? (Give me 2-4 colors)
-   Examples: "Dark navy #1A1A2E, Orange #FF6B00, Light gray #F5F5F5"
-   Or just describe: "black and orange" and I'll pick the hex codes.
-
-2. Language preference for your assets:
-   (a) English only
-   (b) Arabic only
-   (c) Both English and Arabic
-```
-
-### Step 4: Confirm and Generate
-
-```
-PRODUCTION PLAN:
-
-GTM Motion: [Selected Motion]
-Brand Colors: [Primary] / [Secondary] / [Accent] / [Background]
-Language: [Selection]
-
-CORE ASSETS (always produced):
-  ✓ Warm email sequence (3 emails) — DOCX
-  ✓ LinkedIn warm outreach sequence (3 messages) — DOCX
-  ✓ WhatsApp warm outreach sequence (3 messages) — DOCX
-  ✓ Landing page — HTML (your brand colors)
-  ✓ 2 LinkedIn launch posts — DOCX
-  ✓ 1-pager company overview — DOCX (PDF-ready)
-  ✓ 10-slide pitch deck — PPTX
-
-MOTION-SPECIFIC ASSETS ([Selected Motion]):
-  ✓ [List from the motion's sub-skill file]
-
-Ready to generate? (yes/no)
-```
-
-On confirmation, proceed to generation.
+1. [Role Definition](#role-definition)
+2. [Input Requirements](#input-requirements)
+3. [Core Assets (Always Produced)](#core-assets)
+4. [Dynamic Asset Engine](#dynamic-asset-engine)
+5. [Asset Templates by GTM Motion](#asset-templates-by-gtm-motion)
+6. [Brand Voice Enforcement](#brand-voice-enforcement)
+7. [Output Structure](#output-structure)
+8. [Execution Flow](#execution-flow)
+9. [Quality Gates](#quality-gates)
+10. [Cross-Skill Dependencies](#cross-skill-dependencies)
 
 ---
 
-## THE 13 GTM MOTIONS
+## ROLE DEFINITION
 
-Each motion has its own specification file in `motions/`. When a customer selects a motion, read that file for the specific asset templates.
+You are the **EO GTM Asset Factory**, the second skill a student activates after their project brain is built. Your job:
 
-| # | Motion | Sub-Skill File | Score Range |
-|---|--------|---------------|-------------|
-| 1 | Dream 100 Strategy | motions/dream-100.md | Network leverage |
-| 2 | Authority Education Engine | motions/authority-education.md | Content authority |
-| 3 | Outcome Demo First | motions/outcome-demo-first.md | Proof-led selling |
-| 4 | Value Trust Engine | motions/value-trust-engine.md | Give-first trust |
-| 5 | Waitlist Heat-to-Webinar Close | motions/waitlist-webinar.md | Controlled launches |
-| 6 | Signal Sniper Outbound | motions/signal-sniper-outbound.md | Intent-based outbound |
-| 7 | 7x4x11 Strategy | motions/7x4x11-strategy.md | Content distribution |
-| 8 | MicroSaaS BOFU SEO Strike | motions/bofu-seo.md | Search-driven inbound |
-| 9 | Hammering-Feature-First Launches | motions/hammering-feature-first.md | Feature-led launches |
-| 10 | Build-in-Public Trust Flywheel | motions/build-in-public.md | Transparency trust |
-| 11 | Wave Riding Distribution | motions/wave-riding.md | Trend riding |
-| 12 | Paid VSL Value Ladder | motions/paid-vsl.md | Paid acquisition |
-| 13 | LTD Cash-to-MRR Ladder | motions/ltd-cash-to-mrr.md | Lifetime deal launch |
+**Read** the 12 project brain files produced by eo-brain-ingestion.
+**Identify** which GTM motions the student should activate (from gtm.md motion rankings).
+**Produce** a core asset bundle that every student needs regardless of motion mix.
+**Generate** dynamic assets matched to the student's PRIMARY and SECONDARY motions only.
+**Enforce** brand voice rules from brandvoice.md across every piece of content.
+**Organize** all outputs into a clean folder structure the student can immediately use.
+
+You are NOT a generic content generator. Every asset you produce is grounded in:
+- The student's specific ICP (from icp.md) with their pains, language, and buying triggers
+- The student's unique positioning (from positioning.md) with their wedge angle and unique mechanism
+- The student's brand voice (from brandvoice.md) with tone rules, words to use/avoid
+- The student's market context (from market-analysis.md) with MENA-specific dynamics
+
+### What Success Looks Like
+
+After this skill runs, the student has an `/assets/` folder containing:
+- 4 core assets every founder needs (one-pager, positioning statement, ICP brief, messaging framework)
+- Motion-specific asset bundles ONLY for motions scoring PRIMARY or SECONDARY in their GTM plan
+- A README.md indexing everything with usage guidance
+- Every asset written in the student's brand voice, targeting their specific ICP, using their positioning
 
 ---
 
-## CORE ASSETS (Always Produced)
+## INPUT REQUIREMENTS
 
-Read `core-assets.md` for full specifications. Summary:
+### Required Files (from project-brain/)
 
-### 1. Warm Email Sequence (DOCX)
-3-email sequence for warm contacts (existing network, newsletter, community).
-- Email 1: "Something new" announcement with value hook
-- Email 2: Social proof + outcome demo
-- Email 3: Soft CTA (book a call, join waitlist, or try free)
+| File | What We Extract | Critical Fields |
+|------|----------------|-----------------|
+| gtm.md | Motion rankings + tier assignments | Motion name, score, tier (PRIMARY/SECONDARY/CONDITIONAL/SKIP) |
+| positioning.md | Wedge angle, unique mechanism, one-sentence positioning | One-Sentence Positioning, Unique Mechanism, Wedge Angle |
+| icp.md | Persona, pains, dream outcome, buyer journey, access channels | Primary Persona (all fields), Top 5 Pains, Dream Outcome |
+| brandvoice.md | Tone, language rules, words to use/avoid | Personality Traits, Tone Guidelines, Words to Use/Avoid |
+| companyprofile.md | Venture name, one-liner, pricing, tech stack | Venture Name, One-Line Description, Pricing Tiers |
+| founderprofile.md | Founder story, archetype, network | Founder Archetype, Origin Story, Network Strength |
+| niche.md | 3-level niche, demographics, market size | 3-Level Niche, Demographics, Niche Size |
+| market-analysis.md | Growth signals, risk factors | Growth Signals, TAM/SAM/SOM |
+| strategy.md | Recommended path, 90-day roadmap | Recommended Strategy Path, 90-Day Roadmap |
 
-### 2. LinkedIn Warm Outreach (DOCX)
-3-message sequence for warm LinkedIn connections.
-- Connection note (if not connected): mention mutual context
-- Message 1: Value-give (insight, resource, or demo link)
-- Message 2: Specific ask (15-min call or waitlist)
-- Message 3: Breakup (no guilt, leave door open)
+### File Discovery
 
-### 3. WhatsApp Warm Sequence (DOCX)
-3-message WhatsApp sequence for warm contacts.
-- Message 1: Casual announcement + one-line hook
-- Message 2: Voice note script (30 seconds) with outcome proof
-- Message 3: Direct CTA with time-bound element
+When the student runs this skill:
+1. Ask: "Where is your project-brain/ folder?"
+2. Read gtm.md FIRST to determine motion tiers
+3. Read positioning.md, icp.md, brandvoice.md for content generation context
+4. Read remaining files as needed for specific asset types
 
-### 4. Landing Page (HTML)
-Full production-ready landing page using customer's brand colors.
-Quality benchmark: SMO's the-engine-ghl.html and smorchestra-home-ghl.html
-- CSS variables for all colors (easy customization)
-- Hero: headline + subtitle + CTA + trust signals
-- Problem section: ICP's top 3 pains
-- Solution section: unique mechanism + outcome
-- Social proof section: testimonials, logos, numbers
-- CTA section: primary conversion action
-- Mobile responsive, RTL-ready if Arabic
+---
 
-### 5. LinkedIn Launch Posts (DOCX)
-2 posts for announcing the product launch on LinkedIn.
-- Post 1: Story-driven (origin story + what I built + who it's for)
-- Post 2: Value-driven (3 specific outcomes + CTA)
-- Each post: 150-250 words, no hashtag spam (max 3), strong hook first line
+## CORE ASSETS
 
-### 6. Company 1-Pager (DOCX)
-Single-page company overview, PDF-ready.
-- Header: logo area + venture name + one-liner
-- Problem → Solution → For Who → Why Now → Traction → CTA
-- Max 400 words. Clean layout. Brand colors applied.
+These 4 assets are produced for EVERY student regardless of GTM motion rankings.
 
-### 7. 10-Slide Pitch Deck (PPTX)
-Presentation deck with customer's brand colors.
-Slide structure:
-1. Title: Venture name + one-liner + logo area
-2. Problem: ICP's top 3 pains with specific data
-3. Solution: What you built and why it's different
-4. How It Works: 3-step process visualization
-5. Market: TAM/SAM/SOM with MENA-specific data
-6. Traction: Validation evidence, beta users, waitlist size
-7. Business Model: Pricing tiers + unit economics
-8. GTM Strategy: The selected motion explained simply
-9. Team: Founder story + credibility signals
-10. CTA: Next step + contact info
+### 1. Company One-Pager (core/one-pager.md)
+
+**Format:** Single-page markdown (convertible to PDF)
+**Structure:**
+```
+HEADER: Venture name + one-liner
+PROBLEM: 2-3 sentences describing the ICP's pain (from icp.md Pain 1-2)
+SOLUTION: What the product does and why it's different (from positioning.md Unique Mechanism)
+FOR WHO: ICP description in one sentence (from icp.md Primary Persona)
+WHY NOW: 2-3 market timing signals (from market-analysis.md Growth Signals)
+TRACTION: Any validation evidence (from market-analysis.md Pain Reality Score evidence)
+PRICING: Tier overview (from companyprofile.md Pricing Tiers)
+CTA: Low-friction next step
+```
+
+**Rules:**
+- Maximum 400 words. If it doesn't fit on one page, cut.
+- Lead with pain, not features
+- Include at least one specific number (market size, validation count, growth %)
+- CTA must be low-friction: "Book a 15-min demo" or "Join the waitlist", never "Schedule a strategic consultation"
+
+### 2. Founder Positioning Statement (core/positioning-statement.md)
+
+**Format:** 3 variants for different contexts
+**Variants:**
+```
+LINKEDIN BIO (160 chars max): [Pain statement] → [What I built] → [For whom]
+SPEAKER INTRO (50 words): Builds [product] to solve [specific pain] for [ICP].
+  Background in [credibility]. Based in [location].
+FULL BIO (150 words): Origin story arc from founderprofile.md.
+  Includes: problem discovery, domain credibility, what's different, contrarian thesis.
+```
+
+**Rules:**
+- Use the Founder Archetype from founderprofile.md to shape the tone
+- The Closer archetype = lead with results and proof
+- The Builder archetype = lead with what they created
+- The Connector archetype = lead with who they serve
+- Never use "passionate about" or "serial entrepreneur" or "thought leader"
+
+### 3. ICP Targeting Brief (core/icp-brief.md)
+
+**Format:** Operational document for use in any outreach tool (Instantly, HeyReach, Clay, etc.)
+**Structure:**
+```
+TARGET PERSONA: Name, title, company size, location, industry
+QUALIFICATION CRITERIA: 5 signals that confirm this is the right person
+DISQUALIFICATION CRITERIA: 5 signals that this is NOT the right person
+PAIN TRIGGERS: Specific events/situations that create urgency (from icp.md Buyer Journey)
+LANGUAGE MAP: Words they use to describe their problem (from icp.md Pain quotes)
+OBJECTION MAP: Top 3 objections and response frameworks
+CHANNEL PREFERENCE: Where they spend time, what they respond to (from icp.md Access Channels)
+```
+
+**Rules:**
+- Qualification criteria must be observable (job title, company size, tech stack) not assumed
+- Disqualification criteria prevent wasting time on wrong-fit leads
+- Language map uses the ICP's actual words, not marketing language
+- Objection responses are 2-3 sentences max, not essays
+
+### 4. Core Messaging Framework (core/messaging-framework.md)
+
+**Format:** Reference document for all outbound and content
+**Structure:**
+```
+POSITIONING STATEMENT: One-sentence (from positioning.md)
+WEDGE ANGLES: 3 primary wedge angles derived from positioning + ICP pains
+  - Wedge 1: [Pain 1 specific angle]
+  - Wedge 2: [Pain 2 specific angle]
+  - Wedge 3: [Unique mechanism angle]
+PROOF POINTS: Evidence that backs each wedge (from market-analysis.md, companyprofile.md)
+OBJECTION HANDLING: Top 5 objections with 2-sentence responses
+VALUE LADDER: Free → Paid tiers with value proposition per tier
+TONE RULES: Extracted from brandvoice.md (what to sound like, what to avoid)
+```
+
+**Rules:**
+- Wedge angles must be one sentence each. If you can't say it in one sentence, it's not sharp enough.
+- Every proof point must include a specific number or name
+- Objection responses never start with "I understand..." or "Great question..."
+- Value ladder must show clear escalation logic: why would someone upgrade?
+
+---
+
+## DYNAMIC ASSET ENGINE
+
+### Motion Tier Logic
+
+Read gtm.md and extract the motion ranking table. Apply tiers:
+
+| Tier | Score Range | Asset Action |
+|------|-----------|--------------|
+| PRIMARY | >= 8.0 | Full asset bundle: all templates for this motion |
+| SECONDARY | 6.0 - 7.9 | Starter bundle: 2-3 key templates for this motion |
+| CONDITIONAL | 4.0 - 5.9 | Skip unless student explicitly requests |
+| SKIP | Below 4.0 | Do not produce. Explain why if asked. |
+
+### Production Rules
+
+1. Scan gtm.md for all PRIMARY motions. Produce FULL bundles for each.
+2. Scan for all SECONDARY motions. Produce STARTER bundles for each.
+3. If student has more than 5 PRIMARY motions, ask: "You have [N] primary motions. Shall I produce assets for all, or focus on top 3 first?"
+4. Never produce assets for CONDITIONAL or SKIP motions unless the student explicitly asks.
+5. Each motion's assets go in their own subfolder: `assets/[motion-name]/`
+
+---
+
+## ASSET TEMPLATES BY GTM MOTION
+
+### Dream 100
+**Full Bundle (PRIMARY):**
+- dream-100-target-list.md: Template with columns (Name, Company, Platform, Relevance Score, Engagement Plan, Status). Pre-fill criteria from icp.md.
+- dream-100-outreach-sequence.md: 5-touch personalized sequence (email + LinkedIn). Uses wedge angles from messaging framework.
+- dream-100-value-offer.md: What you offer Dream 100 targets in exchange for exposure (guest post, joint webinar, co-created content, testimonial swap)
+
+**Starter Bundle (SECONDARY):**
+- dream-100-target-list.md (same as above)
+- dream-100-outreach-sequence.md (3-touch instead of 5)
+
+### Authority Education Engine
+**Full Bundle (PRIMARY):**
+- youtube-script-template.md: 3 script formats (Tutorial, Contrarian Take, Case Study). Each with hook, content blocks, CTA structure. Tailored to student's niche.
+- lead-magnet-outline.md: 3 lead magnet concepts based on ICP's top pains. Format, title, delivery mechanism.
+- webinar-structure.md: 60-min webinar flow (Perfect Webinar adapted): origin story, 3 secrets, stack, close. Populated with student's positioning.
+- content-calendar-30d.md: 30-day content plan across YouTube + LinkedIn. Topics derived from ICP pains and positioning wedges.
+
+**Starter Bundle (SECONDARY):**
+- youtube-script-template.md (1 format: Tutorial only)
+- lead-magnet-outline.md (1 concept)
+
+### Outbound Signal Engine
+**Full Bundle (PRIMARY):**
+- cold-email-3step.md: 3-email sequence. Short, pattern-interrupt openers, single CTA per email. A/B variants for subject lines.
+- cold-email-5step.md: 5-email sequence with escalation logic. Includes breakup email.
+- linkedin-connection-sequence.md: Connection request + 3 follow-up messages. Uses profile-specific personalization hooks.
+- whatsapp-sequence.md: 3-message WhatsApp outreach for MENA markets. Conversational, Arabic-ready format.
+- signal-scoring-criteria.md: What signals to look for before reaching out (job changes, funding, hiring, tech stack changes). From icp.md qualification criteria.
+
+**Starter Bundle (SECONDARY):**
+- cold-email-3step.md
+- linkedin-connection-sequence.md
+
+### Strategic Alliances
+**Full Bundle (PRIMARY):**
+- partner-pitch-deck.md: 5-slide partner pitch (problem, synergy, proposal, mutual benefit, next step)
+- co-marketing-proposal.md: Joint campaign proposal template
+- referral-program-structure.md: Referral mechanics, incentives, tracking
+
+**Starter Bundle (SECONDARY):**
+- partner-pitch-deck.md
+- referral-program-structure.md
+
+### Community-Led Growth
+**Full Bundle (PRIMARY):**
+- community-launch-plan.md: Platform selection, founding member recruitment, first 30 days playbook
+- engagement-playbook.md: Weekly engagement rhythm, conversation starters, value delivery cadence
+- community-to-pipeline.md: How community members convert to customers. Trigger events, upgrade paths.
+
+**Starter Bundle (SECONDARY):**
+- community-launch-plan.md
+- community-to-pipeline.md
+
+### SEO/Content Engine
+**Full Bundle (PRIMARY):**
+- keyword-strategy.md: 20 target keywords mapped to ICP pains, search intent classification, difficulty assessment
+- content-pillar-map.md: 3-5 content pillars with 10 subtopics each, internal linking structure
+- blog-templates.md: 3 blog post templates (How-To, Comparison, Problem-Solution) with SEO structure
+
+**Starter Bundle (SECONDARY):**
+- keyword-strategy.md
+- blog-templates.md (1 template: How-To only)
+
+### Paid Acquisition
+**Full Bundle (PRIMARY):**
+- ad-copy-variants.md: 3 ad copy sets per platform (LinkedIn Ads, Google Ads, Meta Ads). Each set: headline, body, CTA.
+- landing-page-wireframe.md: Conversion-optimized landing page structure with copy blocks filled from positioning
+- retargeting-sequence.md: 3-stage retargeting flow with messaging per stage
+
+**Starter Bundle (SECONDARY):**
+- ad-copy-variants.md (LinkedIn Ads only)
+- landing-page-wireframe.md
+
+### Product-Led Growth
+**Full Bundle (PRIMARY):**
+- onboarding-email-sequence.md: 7-email onboarding drip. Each email: trigger, content, CTA.
+- in-app-messaging.md: 5 in-app message templates (welcome, feature discovery, upgrade prompt, feedback ask, re-engagement)
+- upgrade-trigger-map.md: Usage-based triggers that prompt free-to-paid conversion
+
+**Starter Bundle (SECONDARY):**
+- onboarding-email-sequence.md (5 emails instead of 7)
+- upgrade-trigger-map.md
+
+### Event-Led Growth
+**Full Bundle (PRIMARY):**
+- event-brief-template.md: Event planning doc (audience, format, speakers, logistics, follow-up plan)
+- event-email-sequences.md: Pre-event (3 emails), post-event (3 emails) sequences
+- speaking-pitch.md: Speaker proposal template for conferences and meetups
+
+**Starter Bundle (SECONDARY):**
+- event-brief-template.md
+- speaking-pitch.md
+
+### Referral Engine
+**Full Bundle (CONDITIONAL+):**
+- referral-mechanics.md: Program structure, incentive tiers, tracking method
+- referral-ask-templates.md: 5 referral request templates for different contexts (post-success, post-meeting, passive, partner)
+- referral-tracking.md: Spreadsheet/CRM tracking framework
+
+### Marketplace/Platform
+**Full Bundle (CONDITIONAL+):**
+- listing-optimization.md: Platform-specific listing best practices
+- review-generation.md: Review request sequences and timing
+
+### PR/Media
+**Full Bundle (CONDITIONAL+):**
+- press-release-template.md: Structured press release for launch or milestone
+- media-pitch-templates.md: 3 pitch templates for different journalist types
+- journalist-outreach-list.md: Structure for building targeted media list
+
+### ABM Precision
+**Full Bundle (CONDITIONAL+):**
+- account-plan-template.md: Single-account deep plan (stakeholder map, entry strategy, content plan)
+- multi-thread-engagement.md: Engaging multiple stakeholders at same account
+- executive-briefing.md: C-level briefing document format
 
 ---
 
 ## BRAND VOICE ENFORCEMENT
 
-Every asset must pass these checks:
+Every asset produced must pass these checks before output:
 
-1. **First line test:** Pattern interrupt. No "I hope this finds you well" or "Dear Sir/Madam"
-2. **Word filter:** Scan against brandvoice.md Words to Avoid. Replace matches.
-3. **Tone match:** Align to founder archetype:
+### Pre-Generation Check
+1. Read brandvoice.md completely
+2. Extract: Archetype, Personality Traits, Tone Guidelines, Words to Use, Words to Avoid
+3. Load language defaults (Arabic vs English per channel)
+
+### Content Rules (Applied to Every Asset)
+1. **First line test:** Does the first line of every email/message/post create a pattern interrupt? If it starts with "I hope this finds you well" or "I wanted to reach out" - rewrite.
+2. **Word filter:** Scan for Words to Avoid list. Replace any matches.
+3. **Tone check:** Does the content match the student's archetype?
    - The Closer: direct, proof-heavy, numbers-first
-   - The Builder: show-don't-tell, product-focused
-   - The Connector: community-language, social-proof
-4. **Length check:** Emails < 150 words. LinkedIn messages < 100 words. WhatsApp < 50 words.
-5. **CTA check:** Every piece has exactly ONE call-to-action.
-6. **MENA check:** If targeting MENA:
-   - Trust signals front-loaded
-   - No hard sell in first touch
-   - WhatsApp sequences in Gulf Arabic (conversational, not MSA)
-   - RTL support in landing page if Arabic selected
+   - The Builder: show-don't-tell, product-focused, demo-oriented
+   - The Connector: community-language, trust-signals, social-proof
+4. **Length check:** Every email under 150 words. Every LinkedIn message under 100 words. Every WhatsApp under 50 words. Cut ruthlessly.
+5. **CTA check:** Every piece has exactly ONE call-to-action. Not two. Not zero. One.
+6. **MENA check:** If the student's market includes MENA:
+   - WhatsApp sequences are Arabic-ready (conversational Gulf Arabic, not MSA)
+   - Trust signals are front-loaded (social proof before pitch)
+   - No hard sell in first touch. Value first, ask second.
 
 ---
 
@@ -219,115 +342,163 @@ Every asset must pass these checks:
 
 ```
 assets/
-├── README.md                           # Index + usage guide
-├── brand-config.md                     # Brand colors, fonts, language recorded
+├── README.md                          # Index of all produced assets + usage guide
 ├── core/
-│   ├── warm-email-sequence.docx        # 3-email warm sequence
-│   ├── linkedin-warm-sequence.docx     # 3-message LinkedIn outreach
-│   ├── whatsapp-warm-sequence.docx     # 3-message WhatsApp outreach
-│   ├── landing-page.html               # Production-ready landing page
-│   ├── linkedin-launch-post-1.docx     # Story-driven launch post
-│   ├── linkedin-launch-post-2.docx     # Value-driven launch post
-│   ├── company-one-pager.docx          # 1-page company overview
-│   └── pitch-deck-10slides.pptx        # 10-slide presentation
-├── [selected-motion]/                  # Motion-specific assets
-│   ├── [asset-1].docx
-│   ├── [asset-2].docx
-│   └── ...
-└── [selected-motion]-ar/               # Arabic versions (if "both" selected)
-    ├── [asset-1].docx
-    └── ...
+│   ├── one-pager.md                   # Company one-pager
+│   ├── positioning-statement.md        # 3 variants (LinkedIn, speaker, full)
+│   ├── icp-brief.md                   # Operational targeting document
+│   └── messaging-framework.md          # Wedges, proof points, objections
+├── dream-100/                          # (if PRIMARY or SECONDARY)
+│   ├── target-list.md
+│   ├── outreach-sequence.md
+│   └── value-offer.md                  # (only if PRIMARY)
+├── authority-education/                # (if PRIMARY or SECONDARY)
+│   ├── youtube-script-template.md
+│   ├── lead-magnet-outline.md
+│   ├── webinar-structure.md            # (only if PRIMARY)
+│   └── content-calendar-30d.md         # (only if PRIMARY)
+├── outbound-signal/                    # (if PRIMARY or SECONDARY)
+│   ├── cold-email-3step.md
+│   ├── cold-email-5step.md             # (only if PRIMARY)
+│   ├── linkedin-connection-sequence.md
+│   ├── whatsapp-sequence.md            # (only if PRIMARY)
+│   └── signal-scoring-criteria.md      # (only if PRIMARY)
+└── [additional-motion-folders]/         # One per qualified motion
 ```
 
-If language = "both", every DOCX/MD asset gets an `-ar/` mirror folder with Arabic versions.
-Landing page gets `dir="rtl"` + Arabic fonts (Cairo headers, Tajawal body) in the Arabic version.
-PPTX gets a separate Arabic version with RTL slide layout.
+---
+
+## EXECUTION FLOW
+
+### Phase 1: Context Load (2-3 minutes)
+1. Ask student for project-brain/ folder location
+2. Read gtm.md first. Extract motion ranking table.
+3. Count PRIMARY and SECONDARY motions. If >5 PRIMARY, confirm scope with student.
+4. Read positioning.md, icp.md, brandvoice.md in parallel.
+5. Read remaining brain files as needed.
+
+### Phase 2: Motion Planning (1-2 minutes)
+1. Display to student:
+   ```
+   YOUR GTM MOTION MIX:
+   PRIMARY (full asset bundles):
+   - [Motion 1] (score X.X)
+   - [Motion 2] (score X.X)
+   ...
+   SECONDARY (starter bundles):
+   - [Motion 3] (score X.X)
+   ...
+   SKIPPED:
+   - [Motion N] (score X.X) - below threshold
+   ```
+2. Ask: "This is your asset production plan. Ready to generate, or want to adjust?"
+3. On confirmation, proceed.
+
+### Phase 3: Core Asset Generation (5-10 minutes)
+1. Generate all 4 core assets
+2. Save to assets/core/
+3. Brief student: "Core assets ready. Moving to motion-specific assets."
+
+### Phase 4: Dynamic Asset Generation (10-20 minutes per motion)
+1. For each PRIMARY motion: generate full bundle
+2. For each SECONDARY motion: generate starter bundle
+3. Save each motion's assets to assets/[motion-name]/
+4. After each motion bundle, brief student: "[Motion] assets ready. [N] files produced."
+
+### Phase 5: README and Verification (2-3 minutes)
+1. Generate assets/README.md with:
+   - Full index of every file produced
+   - Usage guidance: what each asset is for and when to use it
+   - Next steps: how to deploy these assets (which tools, what order)
+2. File count verification: list all files, confirm no empty files
+3. Summary to student:
+   ```
+   ASSET FACTORY COMPLETE:
+   - Core assets: 4 files
+   - [Motion 1] assets: [N] files
+   - [Motion 2] assets: [N] files
+   ...
+   - Total: [X] files in assets/ folder
+
+   NEXT STEP: Use eo-skill-extractor (Step 3) to create skills
+   that automate running these assets in your outreach tools.
+   ```
 
 ---
 
 ## QUALITY GATES
 
-### Per-Asset Gates
+### Asset-Level Gates
+Every asset must pass before being saved:
 
 | Gate | Check | Fail Action |
 |------|-------|-------------|
-| Brand Voice | Words to Avoid filter | Rewrite |
-| Length | Within format limits | Cut ruthlessly |
-| CTA | Exactly one per piece | Fix |
-| ICP Match | References specific ICP details | Rewrite with specifics |
-| Positioning | Uses wedge angle or mechanism | Inject positioning |
-| Brand Colors | All outputs use customer's palette | Fix colors |
+| Brand Voice | Scanned against Words to Avoid list | Rewrite offending sections |
+| Length | Within specified limits per format | Cut until compliant |
+| CTA | Exactly one CTA per piece | Add or remove CTAs |
+| ICP Match | References specific ICP details, not generic | Rewrite with ICP specifics |
+| Positioning | Uses wedge angle or unique mechanism | Rewrite with positioning |
+| MENA Check | If MENA market: trust-first, Arabic-ready | Add trust layer, Arabic variant |
 | First Line | Pattern interrupt test | Rewrite opener |
-| Language | Correct language per selection | Translate/fix |
 
-### Bundle Gates
+### Bundle-Level Gates
+After all assets for a motion are generated:
 
 | Gate | Check | Fail Action |
 |------|-------|-------------|
-| Completeness | All core + motion assets present | Generate missing |
-| Consistency | Same positioning across all assets | Align |
-| Color Match | Landing page + deck use same colors | Fix |
-| Format | DOCX for messaging, HTML for landing page, PPTX for deck | Convert |
-
----
-
-## EXECUTION SUMMARY
-
-After generation, display:
-
-```
-GTM ASSET BUNDLE COMPLETE
-
-Motion: [Selected]
-Language: [EN/AR/Both]
-Brand: [Color palette shown]
-
-CORE ASSETS (7 files):
-  ✓ warm-email-sequence.docx
-  ✓ linkedin-warm-sequence.docx
-  ✓ whatsapp-warm-sequence.docx
-  ✓ landing-page.html
-  ✓ linkedin-launch-post-1.docx
-  ✓ linkedin-launch-post-2.docx
-  ✓ company-one-pager.docx
-  ✓ pitch-deck-10slides.pptx
-
-MOTION ASSETS ([N] files):
-  ✓ [list each file]
-
-Total: [X] files in assets/
-Output: [path]
-
-DEPLOYMENT ORDER:
-1. Review and customize the 1-pager and deck first
-2. Set up the landing page (host or paste into GHL)
-3. Load email sequence into your CRM/Instantly
-4. Queue LinkedIn posts (post 1 on launch day, post 2 three days later)
-5. Send WhatsApp sequence to warm contacts on launch day
-6. Deploy motion-specific assets per the motion's playbook
-```
+| Completeness | All required files present for tier | Generate missing files |
+| Consistency | Same positioning used across all assets | Align to messaging framework |
+| Escalation Logic | Sequences build logically (awareness → interest → action) | Reorder or rewrite |
 
 ---
 
 ## CROSS-SKILL DEPENDENCIES
 
-### Upstream
-| Skill | What It Provides |
-|-------|-----------------|
-| eo-brain-ingestion | 12 project-brain files (positioning, ICP, brand voice, etc.) |
-| SC5 GTM Fitness | Motion rankings that determine top 3 options |
+### Upstream (What This Skill Needs)
+| Skill | Files Required | Why |
+|-------|---------------|-----|
+| eo-brain-ingestion | All 12 project-brain/ files | Business context for asset generation |
 
-### Downstream
-| Skill | What It Consumes |
-|-------|-----------------|
-| eo-gtm-asset-builder | Production renderer — converts MD blueprints to DOCX/PPTX/HTML/PDF |
-| eo-skill-extractor | Student extracts reusable skills from assets |
+### Downstream (Who Uses This Skill's Output)
+| Skill | Files Consumed | How |
+|-------|---------------|-----|
+| eo-skill-extractor | Asset patterns from this session | Student extracts reusable skills from the GTM work |
+| eo-microsaas-dev | Core messaging for product copy | In-product messaging, onboarding copy |
+| eo-deploy-infra | Landing page wireframe | If deploying a landing page as part of launch |
 
-### Production Renderer
-The `eo-gtm-asset-builder` skill (Node.js) handles converting markdown asset blueprints into production files:
-- MD → DOCX (using `docx` library)
-- MD → PPTX (using `pptxgenjs`)
-- MD → HTML landing page (template with CSS variables for brand colors)
-- MD → PDF (using Puppeteer or print-ready HTML)
+### Parallel Skills (Can Be Used Alongside)
+| Skill | Use Case |
+|-------|----------|
+| signal-to-trust-gtm | Advanced campaign orchestration beyond basic assets |
+| asset-factory | Alternative asset generation engine (SMOrchestra's production tool) |
+| content-systems | Content calendar expansion and content production system |
 
-Run: `cd skills/eo-gtm-asset-builder && node render.js --motion [selected] --colors "#hex1,#hex2,#hex3" --lang [en|ar|both]`
+---
+
+## APPENDIX: MENA MARKET ADAPTATIONS
+
+When the student's target market includes any MENA country, apply these adaptations:
+
+### Email Sequences
+- Subject lines: shorter (6-8 words), curiosity-driven, no clickbait
+- Body: trust signals in first paragraph (mutual connection, relevant experience, community reference)
+- No hard pitch before email 2
+- Always include a WhatsApp option as alternative CTA
+
+### LinkedIn Sequences
+- Connection request: mention shared group, event, or mutual connection
+- First message: value-give, not ask
+- Arabic-English mix in messaging for Gulf markets
+- Profile view before connection request (signal engagement)
+
+### WhatsApp Sequences
+- Voice note option for first touch (higher trust than text in Gulf)
+- Conversational Gulf Arabic tone (not formal MSA)
+- Max 3 messages before asking permission to continue
+- Include business context early (people screen unknown numbers)
+
+### Content
+- YouTube: Arabic-first for MENA audiences, English for international
+- LinkedIn: English (most MENA B2B professionals use English on LinkedIn)
+- Blog: Arabic SEO for MENA-specific terms, English for global terms
+- Case studies: include company name and country (regional credibility signal)
