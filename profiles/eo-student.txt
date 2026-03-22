@@ -1,5 +1,5 @@
-# EO Student Profile
-# Cowork plugins: eo-microsaas-os, smorch-dev (2 plugins)
-# Claude Code: 7 official plugins (LSPs + code-review + frontend + github)
-# Context: None
-# No standalone skills needed - all come from plugins
+eo-training/*
+eo-scoring/*
+dev-meta/smorch-github-ops
+dev-meta/changelog-generator
+dev-meta/systematic-debugging
