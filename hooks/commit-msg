@@ -1,0 +1,34 @@
+#!/bin/bash
+# SMOrchestra Conventional Commit Enforcer
+# Install: cp this file to .git/hooks/commit-msg && chmod +x .git/hooks/commit-msg
+
+MSG_FILE="$1"
+FIRST_LINE=$(head -1 "$MSG_FILE")
+
+# Exempt merge commits
+if echo "$FIRST_LINE" | grep -qE '^Merge '; then
+    exit 0
+fi
+
+# Conventional commit pattern
+PATTERN='^(feat|fix|refactor|test|docs|chore|agent|hotfix)(\(.+\))?: .{1,72}$'
+
+if ! echo "$FIRST_LINE" | grep -qE "$PATTERN"; then
+    echo ""
+    echo "❌ COMMIT REJECTED — Invalid commit message format"
+    echo ""
+    echo "Expected: type(scope): description"
+    echo "  Types: feat, fix, refactor, test, docs, chore, agent, hotfix"
+    echo ""
+    echo "Examples:"
+    echo "  feat(TASK-184): add retry logic to queue consumer"
+    echo "  fix: resolve null pointer on empty payload"
+    echo "  docs: update CHANGELOG for v1.0.0"
+    echo "  agent(TASK-201): implement scoring per spec"
+    echo ""
+    echo "Your message: $FIRST_LINE"
+    echo ""
+    exit 1
+fi
+
+exit 0
