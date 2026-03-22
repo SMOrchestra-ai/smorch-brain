@@ -479,6 +479,66 @@ For these cases, do not just warn — correct automatically:
 
 ---
 
+## 13. SUBAGENT PATTERNS — WHEN TO SPAWN
+
+Use subagents to keep your main context clean. Spawn when the task would consume >20% of context.
+
+| Situation | Action |
+|---|---|
+| Research a library/API before using it | Spawn Explore agent: "Find how X works in this codebase" |
+| Deep debugging with many file reads | Spawn agent: "Debug why X fails — check files A, B, C" |
+| Code review after implementation | Spawn code-reviewer agent from .claude/agents/ |
+| Running full test suite | Spawn test-runner agent from .claude/agents/ |
+| Creating a PR with proper template | Spawn pr-creator agent from .claude/agents/ |
+| Parallel independent tasks | Spawn multiple agents in one message |
+| Quick fix, single file, clear scope | Do NOT spawn — handle inline |
+| Simple question about the codebase | Do NOT spawn — use Grep/Read directly |
+
+### Agent naming
+When spawning, always give a clear 3-5 word description:
+- "Research Supabase RLS patterns"
+- "Debug auth middleware failure"
+- "Review scoring engine changes"
+
+---
+
+## 14. CONVERSATION BRANCHING — SAFE EXPERIMENTATION
+
+Use `/branch` (or `/fork`) before risky approaches:
+
+| Situation | Action |
+|---|---|
+| About to try a major refactor | `/branch` first — if it fails, rewind to the fork point |
+| Two possible architectural approaches | `/branch`, try approach A. If bad, go back, try B. |
+| Experimental change to infra/config | `/branch` — never experiment on the main conversation |
+| Quick, well-understood fix | Skip branching — just do it |
+
+### Rule: If you'd feel nervous about Esc+Esc not being enough to undo, `/branch` first.
+
+---
+
+## 15. BATCH OPERATIONS
+
+For operations across multiple repos or files, use `claude -p` (non-interactive mode):
+
+```bash
+# Audit all repos
+for repo in SaaSFast eo-assessment-system smorch-brain EO-Build ScrapMfast eo-mena; do
+  claude -p "Check repo SMOrchestra-ai/$repo for missing docs" --allowedTools Bash,Read
+done
+
+# Update all project CLAUDE.md files
+for dir in ~/Desktop/cowork-workspace/*/; do
+  if [ -f "$dir/CLAUDE.md" ]; then
+    claude -p "Review $dir/CLAUDE.md and ensure Required Skills section exists" --allowedTools Read,Edit
+  fi
+done
+```
+
+Use `--allowedTools` to scope what the batch can do. Never give batch operations Write access to infra files.
+
+---
+
 ## Quick Reference Card
 
 ```
@@ -488,4 +548,7 @@ TYPES:    feat | fix | refactor | test | docs | chore | agent | hotfix
 TAG:      vX.Y.Z
 RELEASE:  PR dev->main | tag | gh release | changelog update
 NEVER:    push to main/dev | skip PR | skip changelog | create version repos | commit secrets
+AGENTS:   code-reviewer | test-runner | pr-creator (via /agents)
+BRANCH:   /branch before risky refactors
+BATCH:    claude -p for multi-repo operations
 ```
