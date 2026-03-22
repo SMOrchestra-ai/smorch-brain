@@ -1,3 +1,4 @@
 dev-meta/*
 tools/*
 smorch-gtm/n8n-architect
+smorch-gtm/scraper-layer

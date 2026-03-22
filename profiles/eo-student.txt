@@ -1,2 +1,5 @@
 eo-training/*
 eo-scoring/*
+dev-meta/smorch-github-ops
+dev-meta/changelog-generator
+dev-meta/systematic-debugging
