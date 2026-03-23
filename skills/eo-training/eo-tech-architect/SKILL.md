@@ -395,6 +395,28 @@ As a [persona], I want to [action], so that [outcome].
 - Revenue: [Target MRR by Month 3]
 - Users: [Target active users]
 - Engagement: [Key product metrics]
+
+## 8. Time Estimates
+| Module / Deliverable | Estimated Effort | Dependencies | Notes |
+|---------------------|-----------------|-------------|-------|
+[Every major feature/module from Sections 3-6 with realistic time estimate]
+
+**Total estimated build time:** [X weeks at Y hours/week]
+**Critical path:** [Which modules block others — the longest dependency chain]
+
+## 9. Implementation Steps
+[Phased step-by-step build plan derived from the requirements above]
+
+### Phase 1: Foundation (Week 1)
+- Step 1.1: [Task] — [time] — [what it produces]
+- Step 1.2: [Task] — [time] — [what it produces]
+
+### Phase 2: Core Features (Week 2-3)
+- Step 2.1: [Task] — [time] — [what it produces]
+[Continue for all phases through launch]
+
+### Phase N: Deploy + Launch
+- [Final deployment steps with time estimates]
 ```
 
 ### File 4: mcp-integration-plan.md
@@ -504,6 +526,8 @@ Once stack is agreed, generate all 4 output files:
 - Every MVP user story has acceptance criteria
 - Non-functional requirements cover security, i18n, and performance
 - MVP scope boundary is explicit (what's IN and what's OUT)
+- Time Estimates table exists with per-module effort, dependencies, and total build time
+- Implementation Steps section exists with phased breakdown and time per step
 
 ### Gate 4: Architecture Coherence
 - Architecture diagram matches tech stack decisions (no contradictions)
