@@ -103,33 +103,95 @@ resolve_profile() {
 }
 
 cmd_push() {
-    echo -e "${CYAN}smorch push — Exporting Cowork skills to registry${NC}"
+    echo -e "${CYAN}smorch push — Exporting skills to registry${NC}"
 
-    # Find skills — check ~/.claude/skills first (Claude Code), then fall back to Cowork Desktop sessions
+    # Primary skills directory (symlinked to cowork-workspace/SKILLs/)
     local skills_path="$HOME/.claude/skills"
-    if [[ ! -d "$skills_path" ]] || [[ $(find "$skills_path" -maxdepth 1 -mindepth 1 -type d 2>/dev/null | wc -l | xargs) -lt 10 ]]; then
-        # Fallback: search Cowork Desktop session paths
-        local sessions_base="$HOME/Library/Application Support/Claude/local-agent-mode-sessions"
-        skills_path=""
-        if [[ -d "$sessions_base" ]]; then
-            while IFS= read -r -d '' candidate; do
-                local count
-                count=$(find "$candidate" -maxdepth 1 -mindepth 1 -type d 2>/dev/null | wc -l | xargs)
-                if [[ "$count" -ge 40 ]]; then
-                    skills_path="$candidate"
-                    break
+    if [[ ! -d "$skills_path" ]]; then
+        echo -e "${RED}ERROR: ~/.claude/skills not found${NC}"
+        return 1
+    fi
+
+    # --- Phase 0: Pull new CUSTOM skills from Cowork Desktop sessions ---
+    # Only pulls skills user manually added (customize → skills → add)
+    # Does NOT pull plugin skills (those stay in PLUGINS/ only)
+    local sessions_base="$HOME/Library/Application Support/Claude/local-agent-mode-sessions"
+    if [[ -d "$sessions_base" ]]; then
+        local pulled=0
+        while IFS= read -r -d '' skill_dir; do
+            local skill_name
+            skill_name=$(basename "$skill_dir")
+            # Skip if already exists
+            [[ -d "$skills_path/$skill_name" ]] && continue
+            # Skip Anthropic built-ins
+            case "$skill_name" in
+                algorithmic-art|brand-guidelines|canvas-design|doc-coauthoring|docx|internal-comms|mcp-builder|pdf|pptx|schedule|skill-creator|theme-factory|web-artifacts-builder|xlsx) continue ;;
+            esac
+            # Check manifest — skip if Anthropic-created
+            local manifest="$skill_dir/manifest.json"
+            if [[ -f "$manifest" ]]; then
+                local ctype
+                ctype=$(python3 -c "import json; print(json.load(open('$manifest')).get('creatorType',''))" 2>/dev/null || echo "")
+                [[ "$ctype" == "anthropic" ]] && continue
+            fi
+            cp -a "$skill_dir" "$skills_path/$skill_name"
+            chmod -R u+w "$skills_path/$skill_name" 2>/dev/null
+            echo -e "  ${GREEN}+${NC} Pulled from Cowork: $skill_name"
+            pulled=$((pulled + 1))
+        done < <(find "$sessions_base" -path "*/.claude/skills/*" -maxdepth 7 -mindepth 7 -type d -print0 2>/dev/null)
+        [[ $pulled -gt 0 ]] && echo -e "${GREEN}Pulled $pulled new skills from Cowork Desktop${NC}"
+    fi
+
+    # --- Phase 0b: Sync Cowork plugins → PLUGINS/ (full packages, no skills into SKILLs) ---
+    local workspace_plugins="$HOME/Desktop/cowork-workspace/PLUGINS"
+    if [[ -d "$sessions_base" ]]; then
+        local plugins_cache=""
+        while IFS= read -r -d '' candidate; do
+            plugins_cache="$candidate"
+            break
+        done < <(find "$sessions_base" -path "*/cowork_plugins/cache" -type d -print0 2>/dev/null)
+        if [[ -n "$plugins_cache" && -d "$workspace_plugins" ]]; then
+            local psync=0
+            # knowledge-work-plugins (latest version each)
+            for pdir in "$plugins_cache"/knowledge-work-plugins/*/; do
+                [[ -d "$pdir" ]] || continue
+                local pname=$(basename "$pdir")
+                local latest=$(ls "$pdir" | sort -V | tail -1)
+                local src="$pdir$latest"
+                local dest="$workspace_plugins/$pname"
+                if [[ -d "$src" ]] && [[ ! -d "$dest" || "$src" -nt "$dest" ]]; then
+                    rm -rf "$dest" 2>/dev/null
+                    cp -a "$src" "$dest"
+                    chmod -R u+w "$dest" 2>/dev/null
+                    psync=$((psync + 1))
                 fi
-            done < <(find "$sessions_base" -path "*/skills/skills" -type d -print0 2>/dev/null)
-        fi
-        if [[ -z "$skills_path" ]]; then
-            echo -e "${RED}ERROR: Could not find skills directory${NC}"
-            echo "Checked: ~/.claude/skills and Cowork Desktop sessions"
-            return 1
+            done
+            # local-desktop-app-uploads
+            for pdir in "$plugins_cache"/local-desktop-app-uploads/*/; do
+                [[ -d "$pdir" ]] || continue
+                local pname=$(basename "$pdir")
+                local latest=$(ls "$pdir" | sort -V | tail -1)
+                local src="$pdir$latest"
+                local dest="$workspace_plugins/$pname"
+                if [[ -d "$src" ]] && [[ ! -d "$dest" || "$src" -nt "$dest" ]]; then
+                    rm -rf "$dest" 2>/dev/null
+                    cp -a "$src" "$dest"
+                    chmod -R u+w "$dest" 2>/dev/null
+                    psync=$((psync + 1))
+                fi
+            done
+            [[ $psync -gt 0 ]] && echo -e "${GREEN}Synced $psync plugins to PLUGINS/${NC}"
         fi
     fi
 
-    echo -e "Found Cowork skills at: ${GREEN}$skills_path${NC}"
-    echo "Skills found: $(find "$skills_path" -maxdepth 1 -mindepth 1 -type d | wc -l | xargs)"
+    echo -e "Skills dir: ${GREEN}$skills_path${NC} ($(find "$skills_path" -maxdepth 1 -mindepth 1 -type d | wc -l | xargs) skills)"
+
+    # Files to exclude from export (bloat reduction)
+    local -a EXCLUDE_FILES=(
+        "package-lock.json" "*.html" "*.ttf" "*.woff" "*.woff2"
+        "*.png" "*.jpg" "*.jpeg" "*.gif" "*.svg" "*.ico"
+        "node_modules" "__pycache__" ".DS_Store"
+    )
 
     # Anthropic built-in skills to skip
     local -a SKIP=(
@@ -138,14 +200,15 @@ cmd_push() {
         skill-creator theme-factory web-artifacts-builder xlsx
     )
 
-    # Category mapping (bash 3.x compatible — no associative arrays on macOS default bash)
+    # Category mapping (bash 3.x compatible)
     get_category() {
         case "$1" in
             signal-to-trust-gtm|signal-detector|wedge-generator|asset-factory|campaign-strategist) echo "smorch-gtm" ;;
             positioning-engine|outbound-orchestrator|ghl-operator|instantly-operator|heyreach-operator) echo "smorch-gtm" ;;
             clay-operator|n8n-architect|scraper-layer|smorch-salesnav-operator|smorch-linkedin-intel) echo "smorch-gtm" ;;
-            eo-brain-ingestion|eo-gtm-asset-factory|eo-skill-extractor|eo-tech-architect|eo-microsaas-dev) echo "eo-training" ;;
+            eo-brain-ingestion|eo-gtm-asset-factory|eo-gtm-asset-builder|eo-skill-extractor|eo-tech-architect|eo-microsaas-dev) echo "eo-training" ;;
             eo-db-architect|eo-api-connector|eo-qa-testing|eo-security-hardener|eo-deploy-infra|eo-training-factory) echo "eo-training" ;;
+            eo-production-renderer|eo-guide|eo-os-navigator) echo "eo-training" ;;
             project-definition-scoring-engine|icp-clarity-scoring-engine|market-attractiveness-scoring-engine) echo "eo-scoring" ;;
             strategy-selector-engine|gtm-fitness-scoring-engine) echo "eo-scoring" ;;
             eo-youtube-mamoun|smorch-perfect-webinar|smo-offer-assets|content-systems|movement-builder) echo "content" ;;
@@ -164,6 +227,7 @@ cmd_push() {
 
     local copied=0
     local skipped=0
+    local oversized=0
     for skill_dir in "$skills_path"/*/; do
         local skill_name
         skill_name=$(basename "$skill_dir")
@@ -179,13 +243,10 @@ cmd_push() {
             fi
         fi
 
-        # Skip known Anthropic skills by name as fallback
+        # Skip known Anthropic skills by name
         local is_skip=false
         for s in "${SKIP[@]}"; do
-            if [[ "$skill_name" == "$s" ]]; then
-                is_skip=true
-                break
-            fi
+            [[ "$skill_name" == "$s" ]] && { is_skip=true; break; }
         done
         [[ "$is_skip" == true ]] && { skipped=$((skipped + 1)); continue; }
 
@@ -193,16 +254,34 @@ cmd_push() {
         local category
         category=$(get_category "$skill_name")
         if [[ -z "$category" ]]; then
-            echo -e "${YELLOW}WARN: No category mapping for '$skill_name' — skipping${NC}"
-            continue
+            continue  # Silently skip unmapped skills (plugin skills, etc.)
         fi
 
-        # Copy skill
-        cp -a "$skill_dir" "$REPO_DIR/skills/$category/$skill_name"
+        # Flag oversized SKILL.md (>20KB should use references instead)
+        local skill_md="$skill_dir/SKILL.md"
+        if [[ -f "$skill_md" ]]; then
+            local size
+            size=$(wc -c < "$skill_md" | xargs)
+            if [[ $size -gt 20480 ]]; then
+                echo -e "${YELLOW}LARGE: $skill_name/SKILL.md ($(( size / 1024 ))KB) — consider using reference files${NC}"
+                oversized=$((oversized + 1))
+            fi
+        fi
+
+        # Copy skill, excluding bloat files
+        local dest="$REPO_DIR/skills/$category/$skill_name"
+        mkdir -p "$dest"
+        # Use rsync for selective copy with excludes
+        local exclude_args=""
+        for ex in "${EXCLUDE_FILES[@]}"; do
+            exclude_args="$exclude_args --exclude=$ex"
+        done
+        rsync -a $exclude_args "$skill_dir/" "$dest/"
         copied=$((copied + 1))
     done
 
-    echo -e "${GREEN}Exported: $copied skills | Skipped: $skipped Anthropic skills${NC}"
+    echo -e "${GREEN}Exported: $copied skills | Skipped: $skipped Anthropic built-ins${NC}"
+    [[ $oversized -gt 0 ]] && echo -e "${YELLOW}$oversized skill(s) over 20KB — consider splitting into reference files${NC}"
 
     # Git operations
     cd "$REPO_DIR"
@@ -213,8 +292,16 @@ cmd_push() {
         local changes
         changes=$(git diff --cached --stat | tail -1)
         git commit -m "skills: export from Cowork — $changes"
-        echo -e "${GREEN}Committed. Run 'git push' or 'smorch push' again to push.${NC}"
-        git push origin main 2>&1 && echo -e "${GREEN}Pushed to GitHub.${NC}" || echo -e "${YELLOW}Push failed. Run 'git push' manually.${NC}"
+        echo -e "${GREEN}Committed.${NC}"
+        # Push to dev first (safe — no branch protection bypass needed)
+        git push origin dev 2>&1 && echo -e "${GREEN}Pushed to dev.${NC}" || {
+            # If dev doesn't exist locally, create it tracking origin/dev
+            git checkout -b dev origin/dev 2>/dev/null || git checkout dev 2>/dev/null
+            git merge main --no-edit 2>/dev/null
+            git push origin dev 2>&1 && echo -e "${GREEN}Pushed to dev.${NC}"
+        }
+        # Skills go to dev. Mamoun promotes dev → main via release PR when ready.
+        echo -e "${CYAN}Skills pushed to dev branch. Run 'smorch release' to promote to main via PR.${NC}"
     fi
 }
 
