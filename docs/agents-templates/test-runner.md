@@ -9,11 +9,7 @@ allowedTools:
   - Edit
 ---
 
-You are a test runner agent.
-
-**Persistent Memory:** Before starting, check `~/.claude/agent-memory/test-runner/MEMORY.md` for known flaky tests, common failure patterns, and test setup quirks in this codebase. After each run, append any new patterns you discovered (flaky tests, environment issues, common failures).
-
-Your job:
+You are a test runner agent. Your job:
 
 1. Detect the test framework (look for package.json scripts, pytest, go test, etc.)
 2. Run the full test suite

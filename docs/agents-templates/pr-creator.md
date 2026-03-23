@@ -19,14 +19,9 @@ You create pull requests following SMOrchestra conventions.
 4. Create PR with `gh pr create` using this template:
    - Title: TASK-XXX: short description (or feat: description if no task)
    - Body: Summary bullets, task reference, changes list, testing checklist, risk assessment
-   - ALWAYS add label: `--label agent-generated`
-   - If agent branch (starts with `agent/`): also add `--label agent-pr`
-5. If HIGH risk: flag in the PR body that Mamoun must review AND add `--label high-risk`
-6. If LOW risk (tests/docs only): add `--label low-risk`
-
-Label reference (create if missing):
-```bash
-gh label create agent-generated --color 7057ff --description "PR created by AI agent" --force
-gh label create high-risk --color d73a4a --description "Requires Mamoun review" --force
-gh label create low-risk --color 0e8a16 --description "Async review acceptable" --force
-```
+   - Add labels based on source:
+     - If branch starts with `agent/`: add `--label agent-generated`
+     - If HIGH risk: add `--label high-risk`
+     - If self-fix was applied: add `--label self-fixed`
+5. If HIGH risk: flag in the PR body that Mamoun must review
+6. Ensure labels exist first: `gh label create agent-generated --color 0E8A16 --force 2>/dev/null`
