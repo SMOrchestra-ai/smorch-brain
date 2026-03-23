@@ -1,0 +1,73 @@
+# .github/workflows/agent-scope-check.yml
+# Validates agent PRs only touch files declared in their task spec
+name: Agent Scope Check
+
+on:
+  pull_request:
+    branches: [dev]
+
+jobs:
+  scope-check:
+    # Only run on agent/* branches
+    if: startsWith(github.head_ref, 'agent/')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check agent stayed in declared scope
+        run: |
+          echo "🔍 Checking agent branch scope compliance..."
+
+          # Get list of files changed in this PR
+          CHANGED_FILES=$(git diff origin/dev...HEAD --name-only)
+          echo "Files changed:"
+          echo "$CHANGED_FILES"
+          echo ""
+
+          # Check for high-risk file touches
+          HIGH_RISK=false
+          RISK_FILES=""
+
+          for file in $CHANGED_FILES; do
+            case "$file" in
+              infra/*|auth/*|billing/*|security/*|.env*)
+                HIGH_RISK=true
+                RISK_FILES="$RISK_FILES\n  ⚠️  $file (LOCKED directory)"
+                ;;
+              .github/workflows/*|Dockerfile*|docker-compose*)
+                HIGH_RISK=true
+                RISK_FILES="$RISK_FILES\n  ⚠️  $file (CI/CD configuration)"
+                ;;
+            esac
+          done
+
+          # Count lines changed
+          LINES_CHANGED=$(git diff origin/dev...HEAD --stat | tail -1 | grep -oP '\d+ insertion' | grep -oP '\d+' || echo 0)
+          echo "Lines changed: $LINES_CHANGED"
+
+          # Determine risk tier
+          if [ "$HIGH_RISK" = true ]; then
+            echo ""
+            echo "🔴 HIGH RISK — Agent touched restricted files:"
+            echo -e "$RISK_FILES"
+            echo ""
+            echo "This PR requires Mamoun's review."
+            echo ""
+            # Add label via gh CLI if available
+            gh pr edit "${{ github.event.pull_request.number }}" --add-label "high-risk" 2>/dev/null || true
+          elif [ "${LINES_CHANGED:-0}" -gt 200 ]; then
+            echo ""
+            echo "🟡 MEDIUM-HIGH RISK — Diff exceeds 200 lines ($LINES_CHANGED insertions)"
+            echo "This PR requires senior review."
+            gh pr edit "${{ github.event.pull_request.number }}" --add-label "high-risk" 2>/dev/null || true
+          else
+            echo ""
+            echo "✅ SCOPE CHECK PASSED — Agent stayed within acceptable bounds"
+          fi
+
+          # Always add agent-generated label
+          gh pr edit "${{ github.event.pull_request.number }}" --add-label "agent-generated" 2>/dev/null || true
+        env:
+          GH_TOKEN: ${{ github.token }}
