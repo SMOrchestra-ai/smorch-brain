@@ -1,0 +1,271 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# smorch-server-setup — One-command setup for new server or team member machine
+# Clones the smorch-brain repo, cleans duplicates, pulls the profile,
+# adds smorch to PATH, and confirms everything is working.
+
+VERSION="1.0.0"
+REPO_URL="https://github.com/SMOrchestra-ai/smorch-brain.git"
+REPO_DIR="$HOME/smorch-brain"
+SCRIPTS_DIR="$REPO_DIR/scripts"
+SMORCH_BIN="$SCRIPTS_DIR/smorch"
+
+# Colors
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+CYAN='\033[0;36m'
+BOLD='\033[1m'
+NC='\033[0m'
+
+usage() {
+    cat <<EOF
+${BOLD}smorch-server-setup${NC} v${VERSION} — One-command setup for new machines
+
+${BOLD}Usage:${NC} smorch-server-setup --profile <name> [options]
+
+${BOLD}Required:${NC}
+  --profile <name>    Profile to install (e.g., mamoun, smo-brain, team-dev)
+
+${BOLD}Options:${NC}
+  --repo-url <url>    Override default repo URL
+                      (default: ${REPO_URL})
+  --branch <name>     Checkout specific branch (default: main)
+  --skip-cleanup      Skip the duplicate cleanup step
+  -h, --help          Show this help message
+
+${BOLD}What it does:${NC}
+  1. Clones smorch-brain repo (if not already present)
+  2. Runs smorch-cleanup to remove duplicates
+  3. Runs smorch pull --profile <name> to install skills
+  4. Adds smorch to PATH in shell rc file
+  5. Runs smorch status to confirm setup
+  6. Prints next steps
+
+${BOLD}Example:${NC}
+  smorch-server-setup --profile smo-brain
+  smorch-server-setup --profile mamoun --branch develop
+EOF
+}
+
+log_info()    { echo -e "${CYAN}[INFO]${NC} $*"; }
+log_success() { echo -e "${GREEN}[OK]${NC} $*"; }
+log_warn()    { echo -e "${YELLOW}[WARN]${NC} $*"; }
+log_error()   { echo -e "${RED}[ERROR]${NC} $*"; }
+log_header()  { echo -e "\n${BOLD}=== $* ===${NC}"; }
+log_step()    { echo -e "\n${BOLD}[$1/6]${NC} $2"; }
+
+# Parse arguments
+PROFILE=""
+BRANCH="main"
+SKIP_CLEANUP=false
+
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --profile)
+            if [[ -z "${2:-}" ]]; then
+                log_error "--profile requires a value"
+                exit 1
+            fi
+            PROFILE="$2"; shift 2 ;;
+        --repo-url)
+            if [[ -z "${2:-}" ]]; then
+                log_error "--repo-url requires a value"
+                exit 1
+            fi
+            REPO_URL="$2"; shift 2 ;;
+        --branch)
+            if [[ -z "${2:-}" ]]; then
+                log_error "--branch requires a value"
+                exit 1
+            fi
+            BRANCH="$2"; shift 2 ;;
+        --skip-cleanup) SKIP_CLEANUP=true; shift ;;
+        -h|--help)      usage; exit 0 ;;
+        *)              log_error "Unknown option: $1"; usage; exit 1 ;;
+    esac
+done
+
+if [[ -z "$PROFILE" ]]; then
+    log_error "--profile is required"
+    echo ""
+    usage
+    exit 1
+fi
+
+# Prerequisite checks
+check_prerequisites() {
+    log_step 0 "Checking prerequisites"
+
+    if ! command -v git &>/dev/null; then
+        log_error "git is not installed. Install git first."
+        exit 1
+    fi
+    log_success "git found"
+
+    if ! command -v bash &>/dev/null; then
+        log_error "bash is not available."
+        exit 1
+    fi
+    log_success "bash found"
+
+    # Ensure ~/.claude directory exists
+    mkdir -p "$HOME/.claude/skills"
+    log_success "~/.claude directory ready"
+}
+
+# Step 1: Clone repo
+clone_repo() {
+    log_step 1 "Cloning smorch-brain repository"
+
+    if [[ -d "$REPO_DIR" ]]; then
+        log_info "Repository already exists at $REPO_DIR"
+        log_info "Pulling latest changes..."
+        if ! git -C "$REPO_DIR" pull origin "$BRANCH" 2>/dev/null; then
+            log_warn "Could not pull latest. Using existing local copy."
+        else
+            log_success "Repository updated"
+        fi
+    else
+        log_info "Cloning from $REPO_URL (branch: $BRANCH)..."
+        if ! git clone --branch "$BRANCH" "$REPO_URL" "$REPO_DIR" 2>/dev/null; then
+            log_error "Failed to clone repository from $REPO_URL"
+            log_info "Check your network connection and repo access."
+            exit 1
+        fi
+        log_success "Repository cloned to $REPO_DIR"
+    fi
+
+    # Verify smorch script exists
+    if [[ ! -f "$SMORCH_BIN" ]]; then
+        log_error "smorch script not found at $SMORCH_BIN"
+        log_error "Repository may be incomplete or corrupted."
+        exit 1
+    fi
+    chmod +x "$SMORCH_BIN"
+    log_success "smorch binary verified"
+}
+
+# Step 2: Run cleanup
+run_cleanup() {
+    log_step 2 "Running smorch-cleanup"
+
+    if [[ "$SKIP_CLEANUP" == true ]]; then
+        log_info "Skipping cleanup (--skip-cleanup flag set)"
+        return
+    fi
+
+    local cleanup_script="$SCRIPTS_DIR/smorch-cleanup"
+    if [[ ! -f "$cleanup_script" ]]; then
+        log_warn "smorch-cleanup script not found at $cleanup_script — skipping"
+        return
+    fi
+
+    chmod +x "$cleanup_script"
+    if "$cleanup_script" --force; then
+        log_success "Cleanup complete"
+    else
+        log_warn "Cleanup encountered issues but continuing setup"
+    fi
+}
+
+# Step 3: Pull profile
+pull_profile() {
+    log_step 3 "Pulling profile: ${PROFILE}"
+
+    if ! "$SMORCH_BIN" pull --profile "$PROFILE"; then
+        log_error "Failed to pull profile '$PROFILE'"
+        log_info "Check available profiles with: smorch list --profiles"
+        exit 1
+    fi
+    log_success "Profile '$PROFILE' installed"
+}
+
+# Step 4: Add to PATH
+add_to_path() {
+    log_step 4 "Adding smorch to PATH"
+
+    local path_line="export PATH=\"$SCRIPTS_DIR:\$PATH\""
+    local added=false
+
+    # Determine shell rc file
+    local rc_files=()
+    if [[ -f "$HOME/.zshrc" ]] || [[ "$SHELL" == *"zsh"* ]]; then
+        rc_files+=("$HOME/.zshrc")
+    fi
+    if [[ -f "$HOME/.bashrc" ]] || [[ "$SHELL" == *"bash"* ]]; then
+        rc_files+=("$HOME/.bashrc")
+    fi
+    # Fallback
+    if [[ ${#rc_files[@]} -eq 0 ]]; then
+        rc_files+=("$HOME/.bashrc")
+    fi
+
+    for rc_file in "${rc_files[@]}"; do
+        if [[ -f "$rc_file" ]] && grep -qF "$SCRIPTS_DIR" "$rc_file" 2>/dev/null; then
+            log_info "PATH already configured in $(basename "$rc_file")"
+            added=true
+            continue
+        fi
+
+        echo "" >> "$rc_file"
+        echo "# smorch-brain CLI" >> "$rc_file"
+        echo "$path_line" >> "$rc_file"
+        log_success "Added smorch to PATH in $(basename "$rc_file")"
+        added=true
+    done
+
+    if [[ "$added" == false ]]; then
+        log_warn "Could not detect shell rc file. Add this to your shell profile manually:"
+        echo "  $path_line"
+    fi
+
+    # Make all scripts in scripts/ executable
+    chmod +x "$SCRIPTS_DIR"/smorch* 2>/dev/null || true
+
+    # Add to current session PATH
+    export PATH="$SCRIPTS_DIR:$PATH"
+}
+
+# Step 5: Verify with status
+verify_setup() {
+    log_step 5 "Verifying setup"
+
+    if "$SMORCH_BIN" status; then
+        log_success "Setup verified"
+    else
+        log_warn "smorch status returned non-zero. Check output above."
+    fi
+}
+
+# Step 6: Print next steps
+print_next_steps() {
+    log_step 6 "Setup complete"
+
+    echo ""
+    echo -e "${GREEN}${BOLD}smorch-server-setup finished successfully.${NC}"
+    echo ""
+    echo -e "${BOLD}Next steps:${NC}"
+    echo -e "  1. Reload your shell:    ${CYAN}source ~/.zshrc${NC}  or  ${CYAN}source ~/.bashrc${NC}"
+    echo -e "  2. Verify installation:  ${CYAN}smorch status${NC}"
+    echo -e "  3. List installed skills: ${CYAN}smorch list --installed${NC}"
+    echo -e "  4. Run an audit:         ${CYAN}smorch audit${NC}"
+    echo ""
+    echo -e "${BOLD}Profile:${NC} ${PROFILE}"
+    echo -e "${BOLD}Repo:${NC}    ${REPO_DIR}"
+    echo -e "${BOLD}Scripts:${NC} ${SCRIPTS_DIR}"
+    echo ""
+}
+
+# Main
+log_header "smorch-server-setup v${VERSION}"
+log_info "Setting up profile: ${BOLD}${PROFILE}${NC}"
+
+check_prerequisites
+clone_repo
+run_cleanup
+pull_profile
+add_to_path
+verify_setup
+print_next_steps

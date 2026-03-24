@@ -1,0 +1,4 @@
+# Server list for smorch-sync-all
+# Format: user@host:profile
+# Example: root@server1.example.com:smo-brain
+# Add your servers below:

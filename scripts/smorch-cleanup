@@ -1,0 +1,210 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# smorch-cleanup — Remove duplicate skills from Claude machines
+# Run on each server/team machine before first sync to deduplicate
+# skills that exist both as standalone files and inside plugins.
+
+VERSION="1.0.0"
+SKILLS_DIR="$HOME/.claude/skills"
+PLUGINS_DIR="$HOME/.claude/plugins"
+COMMANDS_DIR="$HOME/.claude/commands"
+DATE_STAMP=$(date +%Y%m%d)
+SKILLS_BACKUP_DIR="$HOME/.claude/skills-cleanup-backup-${DATE_STAMP}"
+COMMANDS_BACKUP_DIR="$HOME/.claude/commands-backup-${DATE_STAMP}"
+
+# Colors
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+CYAN='\033[0;36m'
+BOLD='\033[1m'
+NC='\033[0m'
+
+usage() {
+    cat <<EOF
+${BOLD}smorch-cleanup${NC} v${VERSION} — Remove duplicate skills from Claude machines
+
+${BOLD}Usage:${NC} smorch-cleanup [options]
+
+${BOLD}Description:${NC}
+  Finds skills in ~/.claude/skills/ that also exist in installed plugins
+  (~/.claude/plugins/), and commands in ~/.claude/commands/ that are
+  oversized (>50 lines, likely skill duplicates). Backs up and removes
+  duplicates after confirmation.
+
+${BOLD}Options:${NC}
+  --dry-run     Show what would be cleaned without making changes
+  --force       Skip confirmation prompt
+  -h, --help    Show this help message
+
+${BOLD}Backup locations:${NC}
+  Skills:   ${SKILLS_BACKUP_DIR}
+  Commands: ${COMMANDS_BACKUP_DIR}
+EOF
+}
+
+log_info()    { echo -e "${CYAN}[INFO]${NC} $*"; }
+log_success() { echo -e "${GREEN}[OK]${NC} $*"; }
+log_warn()    { echo -e "${YELLOW}[WARN]${NC} $*"; }
+log_error()   { echo -e "${RED}[ERROR]${NC} $*"; }
+log_header()  { echo -e "\n${BOLD}=== $* ===${NC}"; }
+
+# Parse arguments
+DRY_RUN=false
+FORCE=false
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --dry-run)  DRY_RUN=true; shift ;;
+        --force)    FORCE=true; shift ;;
+        -h|--help)  usage; exit 0 ;;
+        *)          log_error "Unknown option: $1"; usage; exit 1 ;;
+    esac
+done
+
+# Collect duplicate skills (exist in both skills/ and plugins/)
+declare -a SKILL_DUPES=()
+declare -a OVERSIZED_COMMANDS=()
+
+find_skill_duplicates() {
+    log_header "Scanning for duplicate skills"
+
+    if [[ ! -d "$SKILLS_DIR" ]]; then
+        log_warn "No skills directory found at $SKILLS_DIR — skipping"
+        return
+    fi
+
+    if [[ ! -d "$PLUGINS_DIR" ]]; then
+        log_warn "No plugins directory found at $PLUGINS_DIR — skipping"
+        return
+    fi
+
+    # Build list of all skill filenames inside plugins
+    declare -A plugin_skills
+    while IFS= read -r -d '' pfile; do
+        local basename
+        basename=$(basename "$pfile")
+        plugin_skills["$basename"]=1
+    done < <(find "$PLUGINS_DIR" -type f -name "*.md" -print0 2>/dev/null || true)
+
+    # Check each skill against plugin contents
+    while IFS= read -r -d '' sfile; do
+        local basename
+        basename=$(basename "$sfile")
+        if [[ -n "${plugin_skills[$basename]:-}" ]]; then
+            SKILL_DUPES+=("$sfile")
+        fi
+    done < <(find "$SKILLS_DIR" -type f -name "*.md" -print0 2>/dev/null || true)
+
+    if [[ ${#SKILL_DUPES[@]} -eq 0 ]]; then
+        log_success "No duplicate skills found"
+    else
+        log_warn "Found ${#SKILL_DUPES[@]} duplicate skill(s):"
+        for f in "${SKILL_DUPES[@]}"; do
+            echo -e "  ${YELLOW}-${NC} $(basename "$f")  ${CYAN}($f)${NC}"
+        done
+    fi
+}
+
+find_oversized_commands() {
+    log_header "Scanning for oversized commands (>50 lines)"
+
+    if [[ ! -d "$COMMANDS_DIR" ]]; then
+        log_warn "No commands directory found at $COMMANDS_DIR — skipping"
+        return
+    fi
+
+    while IFS= read -r -d '' cfile; do
+        local lines
+        lines=$(wc -l < "$cfile")
+        if [[ $lines -gt 50 ]]; then
+            OVERSIZED_COMMANDS+=("$cfile")
+        fi
+    done < <(find "$COMMANDS_DIR" -type f -print0 2>/dev/null || true)
+
+    if [[ ${#OVERSIZED_COMMANDS[@]} -eq 0 ]]; then
+        log_success "No oversized commands found"
+    else
+        log_warn "Found ${#OVERSIZED_COMMANDS[@]} oversized command(s):"
+        for f in "${OVERSIZED_COMMANDS[@]}"; do
+            local lines
+            lines=$(wc -l < "$f")
+            echo -e "  ${YELLOW}-${NC} $(basename "$f")  ${CYAN}(${lines} lines)${NC}"
+        done
+    fi
+}
+
+confirm_cleanup() {
+    local total=$(( ${#SKILL_DUPES[@]} + ${#OVERSIZED_COMMANDS[@]} ))
+    if [[ $total -eq 0 ]]; then
+        log_success "Nothing to clean up. Machine is already tidy."
+        exit 0
+    fi
+
+    if [[ "$DRY_RUN" == true ]]; then
+        echo ""
+        log_info "${BOLD}Dry run complete.${NC} ${total} item(s) would be moved to backup."
+        exit 0
+    fi
+
+    if [[ "$FORCE" != true ]]; then
+        echo ""
+        echo -e "${BOLD}Will move ${total} item(s) to backup directories.${NC}"
+        echo -e "  Skills backup:   ${SKILLS_BACKUP_DIR}"
+        echo -e "  Commands backup: ${COMMANDS_BACKUP_DIR}"
+        echo ""
+        read -rp "Proceed? [y/N] " response
+        if [[ ! "$response" =~ ^[Yy]$ ]]; then
+            log_info "Cancelled. No changes made."
+            exit 0
+        fi
+    fi
+}
+
+move_duplicates() {
+    local moved_skills=0
+    local moved_commands=0
+
+    # Move duplicate skills
+    if [[ ${#SKILL_DUPES[@]} -gt 0 ]]; then
+        mkdir -p "$SKILLS_BACKUP_DIR"
+        for f in "${SKILL_DUPES[@]}"; do
+            mv "$f" "$SKILLS_BACKUP_DIR/"
+            moved_skills=$((moved_skills + 1))
+            log_info "Moved $(basename "$f") -> skills-cleanup-backup-${DATE_STAMP}/"
+        done
+    fi
+
+    # Move oversized commands
+    if [[ ${#OVERSIZED_COMMANDS[@]} -gt 0 ]]; then
+        mkdir -p "$COMMANDS_BACKUP_DIR"
+        for f in "${OVERSIZED_COMMANDS[@]}"; do
+            mv "$f" "$COMMANDS_BACKUP_DIR/"
+            moved_commands=$((moved_commands + 1))
+            log_info "Moved $(basename "$f") -> commands-backup-${DATE_STAMP}/"
+        done
+    fi
+
+    log_header "Cleanup Report"
+    echo -e "  ${GREEN}Skills moved:${NC}   ${moved_skills}"
+    echo -e "  ${GREEN}Commands moved:${NC} ${moved_commands}"
+    if [[ $moved_skills -gt 0 ]]; then
+        echo -e "  ${CYAN}Skills backup:${NC}  ${SKILLS_BACKUP_DIR}"
+    fi
+    if [[ $moved_commands -gt 0 ]]; then
+        echo -e "  ${CYAN}Commands backup:${NC} ${COMMANDS_BACKUP_DIR}"
+    fi
+    echo ""
+    log_success "Cleanup complete. Backups preserved if you need to restore."
+}
+
+# Main
+log_header "smorch-cleanup v${VERSION}"
+if [[ "$DRY_RUN" == true ]]; then
+    log_info "Running in dry-run mode (no changes will be made)"
+fi
+
+find_skill_duplicates
+find_oversized_commands
+confirm_cleanup
+move_duplicates

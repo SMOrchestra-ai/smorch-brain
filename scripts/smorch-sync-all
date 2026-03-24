@@ -1,0 +1,292 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# smorch-sync-all — Push and deploy smorch-brain to all servers
+# Mamoun-only script. Reads server list from smorch-brain/servers.txt,
+# pushes the registry, SSHs to each server to pull, and builds plugins.
+
+VERSION="1.0.0"
+REPO_DIR="$HOME/smorch-brain"
+SCRIPTS_DIR="$REPO_DIR/scripts"
+SMORCH_BIN="$SCRIPTS_DIR/smorch"
+SERVERS_FILE="$REPO_DIR/servers.txt"
+PLUGINS_DIR="$REPO_DIR/plugins"
+
+# Colors
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+CYAN='\033[0;36m'
+BOLD='\033[1m'
+NC='\033[0m'
+
+usage() {
+    cat <<EOF
+${BOLD}smorch-sync-all${NC} v${VERSION} — Push and deploy to all servers
+
+${BOLD}Usage:${NC} smorch-sync-all [options]
+
+${BOLD}Options:${NC}
+  --dry-run         Show what would happen without making changes
+  --servers <file>  Override server list file
+                    (default: ${SERVERS_FILE})
+  --skip-push       Skip the local smorch push step
+  --skip-plugins    Skip building plugins
+  -h, --help        Show this help message
+
+${BOLD}Server list format (servers.txt):${NC}
+  user@host:profile
+  # Lines starting with # are comments
+  # Empty lines are ignored
+
+${BOLD}What it does:${NC}
+  1. Runs smorch push (export local skills to registry + git push)
+  2. SSHs to each server and runs smorch pull
+  3. Builds all plugins (smorch build-plugin for each in plugins/)
+  4. Reports success/failure per server
+
+${BOLD}Example:${NC}
+  smorch-sync-all
+  smorch-sync-all --dry-run
+  smorch-sync-all --servers ~/custom-servers.txt
+EOF
+}
+
+log_info()    { echo -e "${CYAN}[INFO]${NC} $*"; }
+log_success() { echo -e "${GREEN}[OK]${NC} $*"; }
+log_warn()    { echo -e "${YELLOW}[WARN]${NC} $*"; }
+log_error()   { echo -e "${RED}[ERROR]${NC} $*"; }
+log_header()  { echo -e "\n${BOLD}=== $* ===${NC}"; }
+
+# Parse arguments
+DRY_RUN=false
+SKIP_PUSH=false
+SKIP_PLUGINS=false
+
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --dry-run)      DRY_RUN=true; shift ;;
+        --skip-push)    SKIP_PUSH=true; shift ;;
+        --skip-plugins) SKIP_PLUGINS=true; shift ;;
+        --servers)
+            if [[ -z "${2:-}" ]]; then
+                log_error "--servers requires a file path"
+                exit 1
+            fi
+            SERVERS_FILE="$2"; shift 2 ;;
+        -h|--help)      usage; exit 0 ;;
+        *)              log_error "Unknown option: $1"; usage; exit 1 ;;
+    esac
+done
+
+# Validate environment
+validate() {
+    if [[ ! -f "$SMORCH_BIN" ]]; then
+        log_error "smorch not found at $SMORCH_BIN"
+        log_error "Is smorch-brain cloned at $REPO_DIR?"
+        exit 1
+    fi
+
+    if [[ ! -f "$SERVERS_FILE" ]]; then
+        log_error "Server list not found at $SERVERS_FILE"
+        log_info "Create it with format: user@host:profile"
+        exit 1
+    fi
+}
+
+# Parse servers.txt into arrays
+declare -a SERVER_HOSTS=()
+declare -a SERVER_PROFILES=()
+
+parse_servers() {
+    while IFS= read -r line; do
+        # Skip comments and empty lines
+        line=$(echo "$line" | sed 's/#.*//' | xargs)
+        [[ -z "$line" ]] && continue
+
+        local host profile
+        if [[ "$line" == *":"* ]]; then
+            host="${line%%:*}"
+            profile="${line#*:}"
+        else
+            log_error "Invalid server entry (missing :profile): $line"
+            log_info "Format: user@host:profile"
+            exit 1
+        fi
+
+        SERVER_HOSTS+=("$host")
+        SERVER_PROFILES+=("$profile")
+    done < "$SERVERS_FILE"
+
+    if [[ ${#SERVER_HOSTS[@]} -eq 0 ]]; then
+        log_warn "No servers found in $SERVERS_FILE"
+        log_info "Add servers in format: user@host:profile"
+        exit 0
+    fi
+
+    log_info "Found ${#SERVER_HOSTS[@]} server(s) in $SERVERS_FILE"
+    for i in "${!SERVER_HOSTS[@]}"; do
+        echo -e "  ${CYAN}-${NC} ${SERVER_HOSTS[$i]} (profile: ${SERVER_PROFILES[$i]})"
+    done
+}
+
+# Step 1: Local push
+do_push() {
+    log_header "Step 1: Local Push"
+
+    if [[ "$SKIP_PUSH" == true ]]; then
+        log_info "Skipping push (--skip-push flag set)"
+        return
+    fi
+
+    if [[ "$DRY_RUN" == true ]]; then
+        log_info "[DRY RUN] Would run: smorch push"
+        return
+    fi
+
+    if "$SMORCH_BIN" push; then
+        log_success "Local push complete"
+    else
+        log_error "smorch push failed. Fix issues before syncing to servers."
+        exit 1
+    fi
+}
+
+# Step 2: SSH pull on each server
+declare -a RESULTS=()
+
+do_server_pulls() {
+    log_header "Step 2: Server Pulls"
+
+    for i in "${!SERVER_HOSTS[@]}"; do
+        local host="${SERVER_HOSTS[$i]}"
+        local profile="${SERVER_PROFILES[$i]}"
+
+        echo -e "\n${BOLD}--- ${host} (${profile}) ---${NC}"
+
+        if [[ "$DRY_RUN" == true ]]; then
+            log_info "[DRY RUN] Would SSH to ${host} and run: smorch pull --profile ${profile}"
+            RESULTS+=("${host}:DRY_RUN")
+            continue
+        fi
+
+        # Test SSH connectivity first
+        if ! ssh -o ConnectTimeout=10 -o BatchMode=yes "$host" "echo ok" &>/dev/null; then
+            log_error "Cannot connect to ${host} (SSH failed)"
+            RESULTS+=("${host}:FAIL:ssh_connect")
+            continue
+        fi
+
+        # Run pull on remote server
+        if ssh -o ConnectTimeout=30 "$host" "cd ~/smorch-brain && git pull origin main && ~/smorch-brain/scripts/smorch pull --profile ${profile}" 2>&1; then
+            log_success "${host} — pull complete"
+            RESULTS+=("${host}:OK")
+        else
+            log_error "${host} — pull failed"
+            RESULTS+=("${host}:FAIL:pull")
+        fi
+    done
+}
+
+# Step 3: Build plugins
+do_build_plugins() {
+    log_header "Step 3: Build Plugins"
+
+    if [[ "$SKIP_PLUGINS" == true ]]; then
+        log_info "Skipping plugin builds (--skip-plugins flag set)"
+        return
+    fi
+
+    if [[ ! -d "$PLUGINS_DIR" ]]; then
+        log_warn "No plugins directory found at $PLUGINS_DIR — skipping"
+        return
+    fi
+
+    local plugin_count=0
+    local plugin_fail=0
+
+    for plugin_dir in "$PLUGINS_DIR"/*/; do
+        [[ ! -d "$plugin_dir" ]] && continue
+        local plugin_name
+        plugin_name=$(basename "$plugin_dir")
+
+        if [[ "$DRY_RUN" == true ]]; then
+            log_info "[DRY RUN] Would build plugin: ${plugin_name}"
+            plugin_count=$((plugin_count + 1))
+            continue
+        fi
+
+        echo -e "  Building ${CYAN}${plugin_name}${NC}..."
+        if "$SMORCH_BIN" build-plugin "$plugin_name" 2>&1; then
+            log_success "Built ${plugin_name}"
+            plugin_count=$((plugin_count + 1))
+        else
+            log_error "Failed to build ${plugin_name}"
+            plugin_fail=$((plugin_fail + 1))
+        fi
+    done
+
+    if [[ $plugin_count -eq 0 && $plugin_fail -eq 0 ]]; then
+        log_info "No plugins found to build"
+    else
+        log_info "Plugins built: ${plugin_count}, failed: ${plugin_fail}"
+    fi
+}
+
+# Step 4: Report
+print_report() {
+    log_header "Sync Report"
+
+    if [[ "$DRY_RUN" == true ]]; then
+        echo -e "  ${YELLOW}DRY RUN — no changes were made${NC}"
+        echo ""
+        return
+    fi
+
+    local ok=0
+    local fail=0
+
+    for result in "${RESULTS[@]}"; do
+        local host="${result%%:*}"
+        local status="${result#*:}"
+
+        if [[ "$status" == "OK" ]]; then
+            echo -e "  ${GREEN}[OK]${NC}   ${host}"
+            ok=$((ok + 1))
+        elif [[ "$status" == "DRY_RUN" ]]; then
+            echo -e "  ${YELLOW}[DRY]${NC}  ${host}"
+        else
+            local reason="${status#*:}"
+            echo -e "  ${RED}[FAIL]${NC} ${host} — ${reason}"
+            fail=$((fail + 1))
+        fi
+    done
+
+    echo ""
+    echo -e "  ${BOLD}Total:${NC} ${#SERVER_HOSTS[@]} servers"
+    echo -e "  ${GREEN}Success:${NC} ${ok}"
+    if [[ $fail -gt 0 ]]; then
+        echo -e "  ${RED}Failed:${NC}  ${fail}"
+    fi
+    echo ""
+
+    if [[ $fail -gt 0 ]]; then
+        log_warn "Some servers failed. Check output above and retry."
+        exit 1
+    else
+        log_success "All servers synced successfully."
+    fi
+}
+
+# Main
+log_header "smorch-sync-all v${VERSION}"
+if [[ "$DRY_RUN" == true ]]; then
+    log_info "Running in dry-run mode (no changes will be made)"
+fi
+
+validate
+parse_servers
+do_push
+do_server_pulls
+do_build_plugins
+print_report
