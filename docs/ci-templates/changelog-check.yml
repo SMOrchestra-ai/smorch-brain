@@ -1,0 +1,41 @@
+name: CHANGELOG Check
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  changelog-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check CHANGELOG updated for release PRs
+        run: |
+          # Only enforce on PRs to main (releases)
+          BASE="${{ github.base_ref }}"
+          if [ "$BASE" != "main" ]; then
+            echo "Not a release PR (target is $BASE, not main). Skipping."
+            exit 0
+          fi
+
+          # Check if CHANGELOG.md was modified in this PR
+          CHANGED=$(git diff --name-only origin/main...HEAD)
+          if echo "$CHANGED" | grep -q "CHANGELOG.md"; then
+            echo "✅ CHANGELOG.md updated"
+          else
+            echo "❌ CHANGELOG.md NOT updated"
+            echo ""
+            echo "This is a release PR (merging to main)."
+            echo "Please update CHANGELOG.md with release notes before merging."
+            echo ""
+            echo "Format:"
+            echo "## [vX.Y.Z] — $(date +%Y-%m-%d)"
+            echo "### Added"
+            echo "- New feature description"
+            echo "### Fixed"
+            echo "- Bug fix description"
+            exit 1
+          fi
