@@ -1,6 +1,7 @@
 # Plugin Migration Guide — Moving Session Skills to Plugins
 
-**Version 1.0 | March 2026**
+**Version 2.0 | March 2026**
+**Platforms: macOS, Linux, Windows**
 
 ---
 

@@ -1,6 +1,7 @@
 # Skill Creation SOP — Zero Duplication Guaranteed
 
-**Version 1.0 | March 2026**
+**Version 2.0 | March 2026**
+**Platforms: macOS, Linux, Windows**
 
 ---
 
@@ -125,17 +126,24 @@ Skill is live instantly via the symlink (`~/.claude/skills/` → workspace).
 ### Step 6: Run Audit
 
 ```bash
+# Mac/Linux
 smorch audit
-# Should show: "All clear! No issues found."
-# If issues: fix before pushing
+
+# Windows
+.\smorch.ps1 audit
 ```
+Should show: "All clear! No issues found." Fix any issues before pushing.
 
 ### Step 7: Push to Registry
 
 ```bash
+# Mac/Linux
 smorch push
-# Commits to dev branch, maps to correct category
+
+# Windows
+.\smorch.ps1 push
 ```
+Commits to dev branch, maps to correct category.
 
 ### Step 8: Decide Placement
 
@@ -212,18 +220,14 @@ smorch-sync-all
 ### After Creating or Modifying a Skill:
 
 ```bash
-# 1. Push from your Mac
-smorch push
+# Mac/Linux:
+smorch push                    # 1. Push to registry
+gh pr create --base main --head dev --title "skills: add <skill-name>"  # 2. Promote
+smorch-sync-all                # 3. Deploy to all servers
 
-# 2. Promote to main (if ready for team)
-gh pr create --base main --head dev --title "skills: add <skill-name>"
-gh pr merge --squash
-
-# 3. Deploy to all servers
-smorch-sync-all
-
-# Or deploy to specific server
-ssh user@server "cd ~/smorch-brain && git pull && smorch pull"
+# Windows:
+.\smorch.ps1 push              # 1. Push to registry
+# Then promote via GitHub web UI or gh CLI
 ```
 
 ### Automatic Sync (Optional — Set Up Cron)

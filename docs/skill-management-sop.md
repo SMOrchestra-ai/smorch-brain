@@ -1,11 +1,14 @@
 # Skill Management SOP — SMOrchestra.ai
 
-**Version 1.0 | March 2026**
+**Version 2.0 | March 2026**
 **CLI Version: smorch v2.0.0**
+**Platforms: macOS, Linux, Windows**
 
 ---
 
-## Quick Reference
+## Quick Reference — All Commands
+
+### Mac / Linux (bash)
 
 | Command | What | Who |
 |---------|------|-----|
@@ -16,6 +19,24 @@
 | `smorch status` | Show profile, sync time, counts | Anyone |
 | `smorch list` | Show all registry skills by category | Anyone |
 | `smorch diff` | Show changes since last pull | Before pulling |
+| `smorch-cleanup` | Remove duplicate skills + bloated commands | Run once per machine |
+| `smorch-server-setup --profile <name>` | One-command machine setup | New machines |
+| `smorch-sync-all` | Push + deploy to all servers via SSH | Mamoun only |
+| `smorch-context --folder <name>` | Download business context files | Any team member |
+
+### Windows (PowerShell)
+
+| Command | What |
+|---------|------|
+| `.\smorch.ps1 push` | Export workspace skills to registry |
+| `.\smorch.ps1 pull -Profile <name>` | Install profile-filtered skills |
+| `.\smorch.ps1 audit` | Check for issues |
+| `.\smorch.ps1 build-plugin -Name <name>` | Build .plugin zip |
+| `.\smorch.ps1 status` | Show profile, sync time, counts |
+| `.\smorch.ps1 list` | Show all registry skills |
+| `.\smorch-cleanup.ps1` | Remove duplicates |
+| `.\smorch-server-setup.ps1 -Profile <name>` | One-command setup |
+| `.\smorch-context.ps1 -Folder <name>` | Download business context files |
 
 ---
 
@@ -57,10 +78,14 @@ Skill is immediately active via symlink (`~/.claude/skills/` -> workspace).
 ### Step 3: PUSH TO REGISTRY
 
 ```bash
+# Mac/Linux
 smorch push
+
+# Windows
+.\smorch.ps1 push
 ```
 
-This maps skills to categories via `.smorch-category` (or hardcoded fallback), copies to `smorch-brain/skills/<category>/<skill>/`, and commits to dev branch.
+Maps skills to categories, copies to registry, commits to dev branch.
 
 ### Step 4: PROMOTE TO MAIN
 
@@ -72,8 +97,14 @@ gh pr merge --squash
 ### Step 5: DEPLOY TO MACHINES
 
 ```bash
-# On each target machine
+# Mac/Linux — single machine
 smorch pull --profile <role>
+
+# Mac/Linux — all servers at once
+smorch-sync-all
+
+# Windows
+.\smorch.ps1 pull -Profile <role>
 ```
 
 ### Step 6: VERSION
@@ -85,7 +116,6 @@ smorch pull --profile <role>
 ### Step 7: ARCHIVE
 
 ```bash
-# Move to archive
 mv smorch-brain/skills/<cat>/<skill> smorch-brain/skills/_archived/<cat>/<skill>
 # Remove from all profiles, note in CHANGELOG
 smorch push
@@ -112,14 +142,14 @@ smorch push
 
 ## Profile Segmentation
 
-| Profile | Who | Gets |
-|---------|-----|------|
-| `mamoun` | Mamoun's Mac | `*` (everything) |
-| `smo-brain` | Brain server (Linux #1) | dev-meta, eo-training, eo-scoring, tools |
-| `smo-dev` | Dev servers (#2, #3) | dev-meta, tools, operators |
-| `gtm-team` | Agency team | smorch-gtm, content |
-| `developer` | Tech team | dev-meta, tools |
-| `eo-student` | EO community (plugin) | eo-training, eo-scoring |
+| Profile | Who | Gets | Context Folder |
+|---------|-----|------|---------------|
+| `mamoun` | Mamoun's Mac | `*` (everything) | all |
+| `smo-brain` | Brain server (Linux #1) | dev-meta, eo-training, eo-scoring, tools | — |
+| `smo-dev` | Dev servers (#2, #3) | dev-meta, tools, operators | — |
+| `gtm-team` | Agency team | smorch-gtm, content | SalesMfastGTM |
+| `developer` | Tech team | dev-meta, tools | EntrepreneurOasis |
+| `eo-student` | EO community (plugin) | eo-training, eo-scoring | — |
 
 ---
 
@@ -132,6 +162,28 @@ smorch push
 | Behavioral rule (always apply) | **CLAUDE.md** |
 | Bundle for distribution | **Plugin** |
 | Automated/scheduled | **Scheduled Task** |
+| Business context (ICP, brand voice, team) | **smorch-context repo** |
+
+---
+
+## Two Repos
+
+| Repo | What | Access |
+|------|------|--------|
+| `smorch-brain` | Skills, scripts, profiles, plugins, SOPs | All team (via profiles) |
+| `smorch-context` | Business context files (ICP, positioning, team profiles) | Per business line |
+
+### Context Access
+
+```bash
+# Mac/Linux
+smorch-context --folder EntrepreneurOasis
+smorch-context --folder SalesMfastGTM
+smorch-context --folder CC_CX
+
+# Windows
+.\smorch-context.ps1 -Folder EntrepreneurOasis
+```
 
 ---
 
@@ -145,12 +197,25 @@ Students get skills via plugins (no repo access):
 
 ---
 
+## Automated Monitoring
+
+Two scheduled tasks run daily in Claude Code:
+
+| Task | Schedule | What |
+|------|----------|------|
+| `smorch-push` | 9:07 AM daily | Audit, push, rebuild stale plugins, check servers, track trends |
+| `smorch-daily-audit` | 8:06 AM daily | GitHub org (14 dims) + skills health (10 checks) + server sync |
+
+---
+
 ## Troubleshooting
 
 | Issue | Fix |
 |-------|-----|
-| `smorch push` silently skips a skill | Add `.smorch-category` file to the skill directory |
+| `smorch push` skips a skill with UNMAPPED warning | Add `.smorch-category` file to the skill directory |
 | Skill not triggering in Claude Code | Check description includes trigger words, restart session |
 | Duplicate skill loading in Cowork | Remove standalone copy if plugin version exists |
 | `smorch audit` shows orphan skills | Add skill to at least one profile in `profiles/*.txt` |
 | Oversized SKILL.md warning | Split into SKILL.md (<500 lines) + reference files |
+| Windows script won't run | Run `Set-ExecutionPolicy RemoteSigned -Scope CurrentUser` first |
+| SSH timeout on `smorch-sync-all` | Check server is reachable, verify SSH key is configured |

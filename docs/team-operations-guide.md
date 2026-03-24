@@ -1,7 +1,10 @@
 # Team Operations Guide — SMOrchestra.ai
 
-**Version 1.0 | March 2026**
+**Version 2.0 | March 2026**
+**Platforms: macOS, Linux, Windows**
 **Audience:** Team members, server admins, EO students, anyone operating within the smorch-brain ecosystem
+
+> **Cross-Platform Note:** All commands in this guide show Mac/Linux (bash) syntax. For Windows, replace `smorch <command>` with `.\smorch.ps1 <command>`, `smorch-cleanup` with `.\smorch-cleanup.ps1`, and `smorch-context --folder` with `.\smorch-context.ps1 -Folder`. Scripts are in `smorch-brain/scripts/`.
 
 ---
 
