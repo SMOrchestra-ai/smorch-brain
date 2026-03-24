@@ -10,3 +10,4 @@ skills.bak.*
 *~
 .env.*
 !.env.template
+.smorch-trends.csv
