@@ -46,6 +46,11 @@ ${BOLD}What it does:${NC}
 ${BOLD}Example:${NC}
   smorch-server-setup --profile smo-brain
   smorch-server-setup --profile mamoun --branch develop
+
+${BOLD}First-time bootstrap (repo not yet cloned):${NC}
+  git clone https://github.com/SMOrchestra-ai/smorch-brain.git ~/smorch-brain && \\
+    chmod +x ~/smorch-brain/scripts/* && \\
+    ~/smorch-brain/scripts/smorch-server-setup --profile smo-brain
 EOF
 }
 

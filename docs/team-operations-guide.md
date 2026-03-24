@@ -28,25 +28,20 @@
 - All `content/*` skills (8 skills): eo-youtube-mamoun, smorch-perfect-webinar, smo-offer-assets, content-systems, movement-builder, engagement-engine, validation-sprint, arabic-localizer
 - Select `dev-meta` skills: smorch-github-ops, changelog-generator, systematic-debugging
 
-**First-time setup:**
+**First-time setup (one command):**
 
 ```bash
-# 1. Clone the registry
-git clone git@github.com:SMOrchestra-ai/smorch-brain.git ~/smorch-brain
-
-# 2. Make the CLI available
-chmod +x ~/smorch-brain/scripts/smorch
-mkdir -p ~/bin
-ln -sf ~/smorch-brain/scripts/smorch ~/bin/smorch
-export PATH="$HOME/bin:$PATH"
-# Add the export to your shell profile (~/.zshrc or ~/.bashrc) to persist
-
-# 3. Initialize with your profile
-smorch init --profile gtm-team
-
-# 4. Verify
-smorch status
+# Bootstrap: clones repo, makes scripts executable, installs profile, adds to PATH
+git clone https://github.com/SMOrchestra-ai/smorch-brain.git ~/smorch-brain && \
+  chmod +x ~/smorch-brain/scripts/* && \
+  ~/smorch-brain/scripts/smorch-server-setup --profile gtm-team
 ```
+
+> **Windows (PowerShell):**
+> ```powershell
+> git clone https://github.com/SMOrchestra-ai/smorch-brain.git $env:USERPROFILE\smorch-brain
+> & "$env:USERPROFILE\smorch-brain\scripts\smorch-server-setup.ps1" -Profile gtm-team
+> ```
 
 **Daily routine:**
 
@@ -79,16 +74,12 @@ smorch audit         # Check for issues on your machine
 - All `tools/*` skills (7 skills): frontend-design, webapp-testing, get-api-docs, lead-research-assistant, supabase-admin, client-onboarding, contabo-deployment
 - Select `smorch-gtm` skills: n8n-architect, scraper-layer
 
-**First-time setup:**
+**First-time setup (one command):**
 
 ```bash
-git clone git@github.com:SMOrchestra-ai/smorch-brain.git ~/smorch-brain
-chmod +x ~/smorch-brain/scripts/smorch
-mkdir -p ~/bin
-ln -sf ~/smorch-brain/scripts/smorch ~/bin/smorch
-export PATH="$HOME/bin:$PATH"
-smorch init --profile developer
-smorch status
+git clone https://github.com/SMOrchestra-ai/smorch-brain.git ~/smorch-brain && \
+  chmod +x ~/smorch-brain/scripts/* && \
+  ~/smorch-brain/scripts/smorch-server-setup --profile developer
 ```
 
 **Daily routine:**
@@ -162,26 +153,17 @@ smorch init --profile eo-student
 | smo-brain (Linux #1) | `smo-brain` | dev-meta (select), eo-training/*, eo-scoring/*, n8n-architect, webapp-testing, get-api-docs |
 | smo-dev (Linux #2, #3) | `smo-dev` | dev-meta (select), smorch-gtm operators, tools (select) |
 
-**First-time server setup:**
+**First-time server setup (one command):**
 
 ```bash
-# 1. Clone
-git clone git@github.com:SMOrchestra-ai/smorch-brain.git ~/smorch-brain
-
-# 2. Install CLI system-wide
-chmod +x ~/smorch-brain/scripts/smorch
-sudo ln -sf ~/smorch-brain/scripts/smorch /usr/local/bin/smorch
-
-# 3. Install dependencies
-sudo apt install jq   # Required for MCP config merging
-
-# 4. Initialize
-smorch init --profile smo-brain   # or smo-dev
-
-# 5. Install hooks, agents, rules
-# Follow the server-specific alignment instructions in:
-# ~/smorch-brain/docs/server-alignment-instructions.md
+# Bootstrap: clones repo, cleans duplicates, installs profile, adds to PATH
+git clone https://github.com/SMOrchestra-ai/smorch-brain.git ~/smorch-brain && \
+  chmod +x ~/smorch-brain/scripts/* && \
+  ~/smorch-brain/scripts/smorch-server-setup --profile smo-brain
+# Change profile to smo-dev for dev servers (#2, #3)
 ```
+
+> **Optional:** Install jq for MCP config merging: `sudo apt install jq`
 
 **Daily routine:**
 
