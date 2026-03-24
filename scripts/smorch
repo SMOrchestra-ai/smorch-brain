@@ -241,6 +241,11 @@ cmd_push() {
         local skill_name
         skill_name=$(basename "$skill_dir")
 
+        # Skip directories without SKILL.md (category folders, references, etc.)
+        if [[ ! -f "$skill_dir/SKILL.md" ]]; then
+            continue
+        fi
+
         # Check manifest for creatorType
         local manifest="$skill_dir/manifest.json"
         if [[ -f "$manifest" ]]; then
