@@ -1,0 +1,97 @@
+{
+  "template_id": "mena_saas_4step",
+  "name": "MENA SaaS — Signal-Based GTM",
+  "description": "4-step cold email sequence targeting SaaS founders, CxOs, and VP Sales in UAE, KSA, Qatar, Kuwait. Gulf business culture tone, insight-driven, low-friction CTA.",
+  "target_market": "MENA",
+  "target_icp": "SaaS founders, CxOs, VP Sales — Gulf region",
+  "schedule": {
+    "timezone": "Asia/Singapore",
+    "timing": {
+      "from": "08:00",
+      "to": "16:00"
+    },
+    "days": {
+      "0": true,
+      "1": true,
+      "2": true,
+      "3": true,
+      "4": true,
+      "5": false,
+      "6": false
+    },
+    "note": "Sun-Thu sending. Asia/Singapore is proxy for Gulf Time (UTC+4 close to UTC+8 but Instantly maps it correctly for Gulf hours)."
+  },
+  "campaign_defaults": {
+    "daily_limit": 25,
+    "email_gap": 14,
+    "stop_on_reply": true,
+    "stop_on_auto_reply": true,
+    "text_only": true,
+    "open_tracking": false,
+    "link_tracking": false
+  },
+  "sequence_steps": [
+    {
+      "type": "email",
+      "delay": 0,
+      "step_name": "The Observation",
+      "step_purpose": "Show you understand their world — relevance",
+      "variants": [
+        {
+          "subject": "{{firstName}}, noticed something about {{companyName}}",
+          "body": "Hi {{firstName}},\n\n{{personalization}}.\n\nMost SaaS companies scaling in the Gulf hit the same wall — the GTM playbook from the US doesn't translate here. The trust mechanics are completely different.\n\nWe built a signal-based system that detects buying intent before it surfaces in conversations. Worth a quick 15-minute chat to see if it fits what you're doing?\n\nMamoun"
+        }
+      ]
+    },
+    {
+      "type": "email",
+      "delay": 3,
+      "step_name": "The Insight",
+      "step_purpose": "Demonstrate competence with data — credibility",
+      "variants": [
+        {
+          "subject": "Re: {{firstName}}, noticed something about {{companyName}}",
+          "body": "Hi {{firstName}},\n\nQuick thought — we analyzed GTM patterns across 200+ B2B companies in the Gulf last quarter.\n\nThe ones growing fastest aren't doing more outbound. They're detecting signals earlier and responding faster than competitors.\n\nOne company in your space cut their sales cycle from 90 days to 35 using this approach.\n\nHappy to share the specifics if useful.\n\nMamoun"
+        }
+      ]
+    },
+    {
+      "type": "email",
+      "delay": 3,
+      "step_name": "The Proof",
+      "step_purpose": "Social proof from similar companies — validation",
+      "variants": [
+        {
+          "subject": "How [similar company] cut their sales cycle in half",
+          "body": "{{firstName}},\n\n[Company name] was spending $15K/month on SDRs and getting 3 meetings. Now they get 12 — with zero SDR headcount.\n\nThe shift: they stopped guessing who's ready and started detecting it.\n\nSame market as {{companyName}}. Want me to show you the exact setup?\n\nMamoun"
+        }
+      ]
+    },
+    {
+      "type": "email",
+      "delay": 4,
+      "step_name": "The Exit",
+      "step_purpose": "Graceful close that keeps door open — respect",
+      "variants": [
+        {
+          "subject": "Should I close this out, {{firstName}}?",
+          "body": "{{firstName}},\n\nI've reached out a couple times about signal-based GTM for {{companyName}}.\n\nTotally get it if timing's off. I'll close this thread — but if things change, I'm always around.\n\nBest,\nMamoun"
+        }
+      ]
+    }
+  ],
+  "personalization_variables": [
+    "{{firstName}}",
+    "{{lastName}}",
+    "{{companyName}}",
+    "{{personalization}}",
+    "{{email}}",
+    "{{website}}"
+  ],
+  "customization_notes": {
+    "social_proof_step": "Replace [Company name] and [similar company] with real case studies matching the ICP. If no exact match, use adjacent industry.",
+    "personalization_line": "Must reference something specific — recent funding, job change, company news, product launch, LinkedIn post. Generic = ignored.",
+    "subject_lines": "A/B test by creating a second variant in the variants array. Change ONE element per test.",
+    "timing": "3-day gaps work for Gulf. Can test 2-day for higher urgency ICPs."
+  }
+}

@@ -1,0 +1,134 @@
+{
+  "version": "1.0",
+  "last_updated": "2026-02-21",
+  "description": "Standard B2B outbound pipeline stages for SalesMfast GHL instance",
+  "default_pipeline": {
+    "name": "B2B Outbound Pipeline",
+    "stages": [
+      {
+        "name": "New Lead",
+        "order": 1,
+        "entry_criteria": "Contact created in GHL from any source",
+        "auto_entry": "Contacts from Clay, list imports, manual entry",
+        "exit_trigger": "First engagement signal detected",
+        "stale_after_days": null,
+        "weight_for_forecast": 0.05,
+        "typical_duration_days": "0-7"
+      },
+      {
+        "name": "Signal Detected",
+        "order": 2,
+        "entry_criteria": "At least one engagement signal, signal_score >= 3",
+        "auto_entry": "n8n signal scoring workflow",
+        "exit_trigger": "Signal score reaches 7+ (qualifies) or decays below 3",
+        "stale_after_days": 7,
+        "weight_for_forecast": 0.10,
+        "typical_duration_days": "1-5"
+      },
+      {
+        "name": "Qualified",
+        "order": 3,
+        "entry_criteria": "signal_score >= 7 or manual qualification",
+        "auto_entry": "Signal scoring workflow threshold",
+        "exit_trigger": "Meeting booked or disqualified",
+        "stale_after_days": 5,
+        "weight_for_forecast": 0.20,
+        "typical_duration_days": "2-7"
+      },
+      {
+        "name": "Meeting Booked",
+        "order": 4,
+        "entry_criteria": "Calendar appointment confirmed",
+        "auto_entry": "Appointment creation webhook",
+        "exit_trigger": "Meeting completed → proposal or no-show → follow-up",
+        "stale_after_days": 2,
+        "weight_for_forecast": 0.40,
+        "typical_duration_days": "1-5"
+      },
+      {
+        "name": "Proposal Sent",
+        "order": 5,
+        "entry_criteria": "Proposal/pricing sent to contact",
+        "auto_entry": "Tag status:proposal_sent added",
+        "exit_trigger": "Response → negotiation or no response after 7 days",
+        "stale_after_days": 7,
+        "weight_for_forecast": 0.60,
+        "typical_duration_days": "3-10"
+      },
+      {
+        "name": "Negotiation",
+        "order": 6,
+        "entry_criteria": "Contact engaged with proposal, discussing terms",
+        "auto_entry": "Manual move",
+        "exit_trigger": "Deal agreed (won) or falls through (lost)",
+        "stale_after_days": 14,
+        "weight_for_forecast": 0.80,
+        "typical_duration_days": "5-30"
+      },
+      {
+        "name": "Closed Won",
+        "order": 7,
+        "entry_criteria": "Deal signed, payment confirmed",
+        "auto_entry": "Manual confirmation",
+        "exit_trigger": null,
+        "stale_after_days": null,
+        "weight_for_forecast": 1.00,
+        "tags_to_add": ["status:closed_won", "client:active"],
+        "post_actions": ["Remove from outbound sequences", "Add to client nurture"]
+      },
+      {
+        "name": "Closed Lost",
+        "order": 8,
+        "entry_criteria": "Deal explicitly lost or abandoned",
+        "auto_entry": "Manual with loss_reason required",
+        "exit_trigger": null,
+        "stale_after_days": null,
+        "weight_for_forecast": 0.00,
+        "tags_to_add": ["status:closed_lost"],
+        "required_fields": ["loss_reason"],
+        "loss_reasons": ["budget", "timing", "competitor", "no_response", "bad_fit", "internal_change"],
+        "re_engagement_after_days": 90
+      }
+    ]
+  },
+  "target_conversion_rates": {
+    "New Lead → Signal Detected": 0.30,
+    "Signal Detected → Qualified": 0.40,
+    "Qualified → Meeting Booked": 0.50,
+    "Meeting Booked → Proposal Sent": 0.70,
+    "Proposal Sent → Negotiation": 0.60,
+    "Negotiation → Closed Won": 0.50
+  },
+  "pipeline_variants": {
+    "MENA SaaS Pipeline": {
+      "icp_tag": "icp:mena_saas",
+      "default_deal_value": 50000,
+      "target_velocity_days": 30,
+      "alert_velocity_days": 45
+    },
+    "US Real Estate Pipeline": {
+      "icp_tag": "icp:us_realestate",
+      "default_deal_value": 10000,
+      "target_velocity_days": 14,
+      "alert_velocity_days": 21
+    },
+    "MENA SME Pipeline": {
+      "icp_tag": "icp:mena_sme",
+      "default_deal_value": 5000,
+      "target_velocity_days": 7,
+      "alert_velocity_days": 14
+    },
+    "CXMfast Pipeline": {
+      "icp_tag": "icp:cxmfast",
+      "default_deal_value": 100000,
+      "target_velocity_days": 60,
+      "alert_velocity_days": 90
+    },
+    "Beauty Clinics Pipeline": {
+      "icp_tag": "icp:beauty_clinic",
+      "default_deal_value": 8000,
+      "target_velocity_days": 10,
+      "alert_velocity_days": 21
+    }
+  }
+}

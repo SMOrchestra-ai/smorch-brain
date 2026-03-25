@@ -1,0 +1,172 @@
+{
+  "taxonomy_version": "1.0",
+  "format": "{category}:{value}",
+  "description": "Standard tag taxonomy for HeyReach LinkedIn outbound operations. Tags are shared with GHL and Instantly via n8n signal routing.",
+
+  "categories": {
+    "signal": {
+      "description": "Engagement signals detected from LinkedIn activity",
+      "values": {
+        "connection_accepted": {
+          "description": "Lead accepted connection request",
+          "score_impact": "cold → warm",
+          "automation": "Schedule first follow-up message (24h delay for MENA, 12h for US)"
+        },
+        "replied_positive": {
+          "description": "Lead replied with positive/interested response",
+          "score_impact": "→ hot",
+          "automation": "Alert user, pause email sequence, create GHL opportunity"
+        },
+        "replied_negative": {
+          "description": "Lead replied with not interested / rejection",
+          "score_impact": "→ cold",
+          "automation": "Stop lead in campaign, tag in GHL as not_interested"
+        },
+        "replied_neutral": {
+          "description": "Lead replied with question or neutral response",
+          "score_impact": "→ warm",
+          "automation": "Alert user for manual follow-up"
+        },
+        "viewed_profile": {
+          "description": "Lead viewed sender's LinkedIn profile",
+          "score_impact": "No change",
+          "automation": "Log for awareness tracking"
+        },
+        "liked_post": {
+          "description": "Lead liked sender's or company's LinkedIn post",
+          "score_impact": "No change",
+          "automation": "Log for engagement tracking"
+        },
+        "inmail_replied": {
+          "description": "Lead replied to an InMail",
+          "score_impact": "→ hot",
+          "automation": "Alert user, high-priority follow-up"
+        },
+        "sequence_complete_no_reply": {
+          "description": "Lead finished full LinkedIn sequence without engaging",
+          "score_impact": "→ cold",
+          "automation": "Route to email channel (Instantly) after 7-day cooldown"
+        },
+        "connection_request_sent": {
+          "description": "Connection request was sent to lead",
+          "score_impact": "No change",
+          "automation": "Activity tracking only"
+        }
+      },
+      "rules": [
+        "Signal tags are additive — a lead can have multiple signal tags",
+        "Score tags should reflect the LATEST signal (replace, don't stack)",
+        "All signal tags should be synced to GHL via n8n webhook processing"
+      ]
+    },
+
+    "geo": {
+      "description": "Geographic market classification for sender mapping and content localization",
+      "values": {
+        "mena": "Gulf/MENA region (UAE, KSA, Qatar, Kuwait, Bahrain, Oman)",
+        "uae": "United Arab Emirates specifically",
+        "ksa": "Saudi Arabia specifically",
+        "qatar": "Qatar specifically",
+        "us": "United States",
+        "eu": "European Union / Europe",
+        "global": "No specific geographic focus"
+      },
+      "rules": [
+        "Geo tags are permanent — assigned at list creation based on lead data",
+        "Used for sender-to-lead mapping (MENA accounts → MENA leads)",
+        "Affects timing schedules (Sun-Thu for MENA, Mon-Fri for US)"
+      ]
+    },
+
+    "score": {
+      "description": "Lead temperature based on cumulative engagement signals",
+      "values": {
+        "hot": "High engagement — replied positively, InMail response, meeting interest. Score ≥7.",
+        "warm": "Moderate engagement — connection accepted, neutral reply. Score 4-6.",
+        "cold": "No engagement or negative response. Score ≤3."
+      },
+      "rules": [
+        "Score tags are MUTUALLY EXCLUSIVE — replace, never stack",
+        "Score should reflect latest signal, not cumulative history",
+        "Hot leads should trigger immediate alert to user",
+        "Score syncs to GHL signal_score custom field via n8n"
+      ]
+    },
+
+    "source": {
+      "description": "Where the lead data originated",
+      "values": {
+        "clay": "Clay enrichment pipeline",
+        "linkedin_search": "Direct LinkedIn Sales Navigator search",
+        "event": "Event attendee list (webinars, conferences)",
+        "referral": "Referred by existing connection",
+        "inbound": "Lead initiated contact (profile view, message)",
+        "apify": "Scraped via Apify"
+      },
+      "rules": [
+        "Source tags are permanent — set once at import, never changed",
+        "Used for lead quality analysis (which sources produce best engagement)"
+      ]
+    },
+
+    "icp": {
+      "description": "Ideal Customer Profile classification",
+      "values": {
+        "saas_founder": "SaaS company founder/CEO",
+        "vp_sales": "VP Sales / Head of Sales / CRO",
+        "vp_marketing": "VP Marketing / CMO / Head of Growth",
+        "cto": "CTO / VP Engineering",
+        "enterprise_buyer": "Enterprise procurement / IT decision maker",
+        "sme_owner": "SME business owner (for SalesMfast SME product)"
+      },
+      "rules": [
+        "ICP tags should match the campaign's target audience",
+        "Used for personalization and sequence selection",
+        "Cross-reference with position field in lead data"
+      ]
+    },
+
+    "status": {
+      "description": "Current lifecycle status of the lead",
+      "values": {
+        "new": "Freshly imported, not yet sequenced",
+        "sequenced": "Added to a campaign, sequence in progress",
+        "engaged": "Has shown engagement (connection accepted, replied)",
+        "meeting_booked": "Meeting scheduled",
+        "not_interested": "Explicitly declined or negative reply",
+        "dormant": "90+ days since last engagement"
+      },
+      "rules": [
+        "Status tags are MUTUALLY EXCLUSIVE — replace old with new",
+        "Status progression: new → sequenced → engaged → meeting_booked",
+        "Or: new → sequenced → not_interested → dormant"
+      ]
+    },
+
+    "campaign": {
+      "description": "Campaign tracking for attribution",
+      "values": {
+        "example_format": "campaign:mena_saas_feb26",
+        "naming": "campaign:{market}_{audience}_{date}"
+      },
+      "rules": [
+        "Campaign tags are additive — lead can have multiple if re-enrolled over time",
+        "Used for attribution analysis",
+        "Format: campaign:{descriptive_slug}"
+      ]
+    }
+  },
+
+  "cross_platform_sync": {
+    "heyreach_to_ghl": {
+      "trigger": "HeyReach webhook → n8n → GHL contact update",
+      "tags_synced": ["signal:*", "score:*", "status:*"],
+      "custom_fields_updated": ["signal_score", "last_linkedin_signal", "linkedin_engagement_date"]
+    },
+    "heyreach_to_instantly": {
+      "trigger": "HeyReach webhook → n8n → Instantly lead tag",
+      "tags_synced": ["signal:replied_positive", "signal:replied_negative"],
+      "action": "Pause email sequence if LinkedIn reply received"
+    }
+  }
+}
