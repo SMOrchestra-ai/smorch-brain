@@ -49,11 +49,15 @@
 git clone https://github.com/SMOrchestra-ai/smorch-brain.git ~/smorch-brain && \
   chmod +x ~/smorch-brain/scripts/* && \
   ~/smorch-brain/scripts/smorch-server-setup --profile gtm-team
+~/smorch-brain/scripts/smorch-install-plugins --role gtm
 ~/smorch-brain/scripts/smorch-context --folder EntrepreneurOasis
 ```
 
-> **Windows:** Replace `~/smorch-brain/scripts/smorch` with `.\smorch-brain\scripts\smorch.ps1`
-> and `smorch-context` with `.\smorch-brain\scripts\smorch-context.ps1 -Action download -Folder`
+> **Windows:** Replace `smorch-install-plugins --role gtm` with `.\smorch-install-plugins.ps1 -Role gtm`
+> and `smorch-context --folder` with `.\smorch-context.ps1 -Action download -Folder`
+
+Then install these 5 plugins in **Cowork Desktop** (Customize > Plugins > Search):
+smorch-context-brain, smorch-gtm-tools, smorch-gtm-engine, smorch-design, mamoun-personal-branding
 
 ### GTM Team — SMO Focus
 
@@ -67,9 +71,12 @@ git clone https://github.com/SMOrchestra-ai/smorch-brain.git ~/smorch-brain && \
 git clone https://github.com/SMOrchestra-ai/smorch-brain.git ~/smorch-brain && \
   chmod +x ~/smorch-brain/scripts/* && \
   ~/smorch-brain/scripts/smorch-server-setup --profile gtm-team
+~/smorch-brain/scripts/smorch-install-plugins --role gtm
 ~/smorch-brain/scripts/smorch-context --folder SalesMfastGTM
 ~/smorch-brain/scripts/smorch-context --folder CC_CX
 ```
+
+Same 5 Cowork plugins as GTM-EO (see above).
 
 ### GTM Daily & Weekly (Both EO and SMO)
 
@@ -108,11 +115,14 @@ smorch audit         # Check for issues on your machine
 git clone https://github.com/SMOrchestra-ai/smorch-brain.git ~/smorch-brain && \
   chmod +x ~/smorch-brain/scripts/* && \
   ~/smorch-brain/scripts/smorch-server-setup --profile developer
+~/smorch-brain/scripts/smorch-install-plugins --role dev
 ~/smorch-brain/scripts/smorch-context --folder EntrepreneurOasis
 ~/smorch-brain/scripts/smorch-context --folder SalesMfastGTM
 ```
 
-> **Windows:** Replace paths with `$env:USERPROFILE\smorch-brain\scripts\smorch.ps1` and use `-Action download -Folder` for context.
+Then install 1 plugin in **Cowork Desktop** (Customize > Plugins > Search): **smorch-dev**
+
+> **Windows:** Replace `smorch-install-plugins --role dev` with `.\smorch-install-plugins.ps1 -Role dev`
 
 **Daily routine:**
 
@@ -157,22 +167,20 @@ Most EO students will receive skills via the `eo-microsaas-os` plugin:
 If you have been granted repo access:
 
 ```bash
-# Mac/Linux
-# On Mac, replace ~/smorch-brain with ~/Desktop/cowork-workspace/smorch-brain
-git clone git@github.com:SMOrchestra-ai/smorch-brain.git ~/smorch-brain
-chmod +x ~/smorch-brain/scripts/smorch
-mkdir -p ~/bin
-ln -sf ~/smorch-brain/scripts/smorch ~/bin/smorch
-export PATH="$HOME/bin:$PATH"
-smorch init --profile eo-student
+git clone https://github.com/SMOrchestra-ai/smorch-brain.git ~/smorch-brain && \
+  chmod +x ~/smorch-brain/scripts/*
+~/smorch-brain/scripts/smorch-install-plugins --role eo-student
+~/smorch-brain/scripts/smorch init --profile eo-student
 ```
 
-> **Windows (PowerShell):**
+Then install 2 plugins in **Cowork Desktop** (Customize > Plugins > Search):
+**eo-microsaas-os** + **smorch-dev**
+
+> **Windows:**
 > ```powershell
-> Set-ExecutionPolicy RemoteSigned -Scope CurrentUser  # One-time only
-> git clone git@github.com:SMOrchestra-ai/smorch-brain.git $env:USERPROFILE\smorch-brain
-> cd $env:USERPROFILE\smorch-brain\scripts
-> .\smorch.ps1 pull -Profile eo-student
+> git clone https://github.com/SMOrchestra-ai/smorch-brain.git $env:USERPROFILE\smorch-brain
+> .\smorch-brain\scripts\smorch-install-plugins.ps1 -Role eo-student
+> .\smorch-brain\scripts\smorch.ps1 init -Profile eo-student
 > ```
 
 **Sync routine:**

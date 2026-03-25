@@ -26,10 +26,12 @@
 | `smorch status` | Show profile, sync time, counts | Anyone |
 | `smorch list` | Show all registry skills by category | Anyone |
 | `smorch diff` | Show changes since last pull | Before pulling |
+| `smorch-install-plugins --role <role>` | Install Claude Code plugins for your role | New machines |
 | `smorch-cleanup` | Remove duplicate skills + bloated commands | Run once per machine |
 | `smorch-server-setup --profile <name>` | One-command machine setup | New machines |
 | `smorch-sync-all` | Push + deploy to all servers via SSH | Mamoun only |
 | `smorch-context --folder <name>` | Download business context files | Any team member |
+| `smorch-context --push` | Push context file changes to GitHub | Any team member |
 
 ### Windows (PowerShell)
 
@@ -41,9 +43,11 @@
 | `.\smorch.ps1 build-plugin -Name <name>` | Build .plugin zip |
 | `.\smorch.ps1 status` | Show profile, sync time, counts |
 | `.\smorch.ps1 list` | Show all registry skills |
+| `.\smorch-install-plugins.ps1 -Role <role>` | Install Code plugins for your role |
 | `.\smorch-cleanup.ps1` | Remove duplicates |
 | `.\smorch-server-setup.ps1 -Profile <name>` | One-command setup |
-| `.\smorch-context.ps1 -Folder <name>` | Download business context files |
+| `.\smorch-context.ps1 -Action download -Folder <name>` | Download business context files |
+| `.\smorch-context.ps1 -Action push` | Push context changes to GitHub |
 
 ---
 
