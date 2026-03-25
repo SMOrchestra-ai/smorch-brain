@@ -26,7 +26,14 @@ param(
 )
 
 $VERSION = "2.0.0"
-$REPO_DIR = Join-Path $env:USERPROFILE "smorch-brain"
+# Auto-detect repo location
+if (Test-Path "$env:USERPROFILE\Desktop\cowork-workspace\smorch-brain") {
+    $REPO_DIR = "$env:USERPROFILE\Desktop\cowork-workspace\smorch-brain"
+} elseif (Test-Path "$env:USERPROFILE\smorch-brain") {
+    $REPO_DIR = "$env:USERPROFILE\smorch-brain"
+} else {
+    $REPO_DIR = Split-Path -Parent (Split-Path -Parent $MyInvocation.MyCommand.Path)
+}
 $SKILLS_TARGET = Join-Path $env:USERPROFILE ".claude\skills"
 $MCP_TARGET = Join-Path $env:USERPROFILE ".claude\.mcp.json"
 $STATE_FILE = Join-Path $REPO_DIR ".smorch-state"

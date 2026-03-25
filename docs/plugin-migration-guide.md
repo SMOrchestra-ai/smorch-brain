@@ -3,6 +3,12 @@
 **Version 2.0 | March 2026**
 **Platforms: macOS, Linux, Windows**
 
+> **Repository Path Note:** The `smorch-brain` repo location varies by machine:
+> - **Mac (Mamoun):** `~/Desktop/cowork-workspace/smorch-brain`
+> - **Linux servers:** `~/smorch-brain`
+>
+> The `smorch` CLI scripts auto-detect the correct location. When this document shows `~/smorch-brain`, substitute your machine's actual path.
+
 ---
 
 ## Why Move Skills to Plugins?
@@ -82,6 +88,7 @@ These are either personal, too generic, or not worth plugin packaging:
 
 ```bash
 # Example: moving smorch-linkedin-intel to smorch-gtm-engine
+# Use your machine's smorch-brain path (see Path Note at top)
 cp -a ~/Desktop/cowork-workspace/SKILLs/smorch-linkedin-intel \
       ~/smorch-brain/plugins/smorch-gtm-engine/skills/smorch-linkedin-intel
 ```
@@ -89,6 +96,7 @@ cp -a ~/Desktop/cowork-workspace/SKILLs/smorch-linkedin-intel \
 ### Step 2: Verify SKILL.md is Under 500 Lines
 
 ```bash
+# Use your machine's smorch-brain path (see Path Note at top)
 wc -l ~/smorch-brain/plugins/smorch-gtm-engine/skills/smorch-linkedin-intel/SKILL.md
 # If over 500, refactor using progressive disclosure first
 ```
@@ -133,6 +141,7 @@ smorch push
 ### Step 1: Create Plugin Directory Structure
 
 ```bash
+# Use your machine's smorch-brain path (see Path Note at top)
 mkdir -p ~/smorch-brain/plugins/smorch-agency-tools/.claude-plugin
 mkdir -p ~/smorch-brain/plugins/smorch-agency-tools/skills
 mkdir -p ~/smorch-brain/plugins/smorch-agency-tools/commands
@@ -141,6 +150,7 @@ mkdir -p ~/smorch-brain/plugins/smorch-agency-tools/commands
 ### Step 2: Create plugin.json
 
 ```bash
+# Use your machine's smorch-brain path (see Path Note at top)
 cat > ~/smorch-brain/plugins/smorch-agency-tools/.claude-plugin/plugin.json << 'EOF'
 {
   "name": "smorch-agency-tools",
@@ -154,6 +164,7 @@ EOF
 ### Step 3: Create README.md
 
 ```bash
+# Use your machine's smorch-brain path
 cat > ~/smorch-brain/plugins/smorch-agency-tools/README.md << 'EOF'
 # SMOrchestra Agency Tools
 
@@ -232,6 +243,8 @@ START: You have a new skill
 ## Quick Command Reference
 
 ```bash
+# All ~/smorch-brain paths below: use your machine's actual path (see Path Note at top)
+
 # Move skill to plugin
 cp -a ~/Desktop/cowork-workspace/SKILLs/<skill> ~/smorch-brain/plugins/<plugin>/skills/
 

@@ -3,6 +3,12 @@
 **Version 2.0 | March 2026**
 **Platforms: macOS, Linux, Windows**
 
+> **Repository Path Note:** The `smorch-brain` repo location varies by machine:
+> - **Mac (Mamoun):** `~/Desktop/cowork-workspace/smorch-brain`
+> - **Linux servers:** `~/smorch-brain`
+>
+> The `smorch` CLI scripts auto-detect the correct location. When this document shows `~/smorch-brain`, substitute your machine's actual path.
+
 ---
 
 ## Before You Create: The 5-Check Protocol
@@ -20,7 +26,9 @@ smorch list | grep -i "<keyword>"
 
 ```bash
 # Check all plugin skills
-for plugin in ~/smorch-brain/plugins/*/; do
+# Use your machine's smorch-brain path (see Path Note above)
+SMORCH_BRAIN="${SMORCH_BRAIN:-$([ -d ~/Desktop/cowork-workspace/smorch-brain ] && echo ~/Desktop/cowork-workspace/smorch-brain || echo ~/smorch-brain)}"
+for plugin in "$SMORCH_BRAIN"/plugins/*/; do
   echo "=== $(basename $plugin) ==="
   ls "$plugin/skills/" 2>/dev/null
 done | grep -i "<keyword>"
@@ -166,7 +174,7 @@ Q1: Will this skill be shared with team or EO students?
 ```bash
 # Copy to plugin
 cp -a ~/Desktop/cowork-workspace/SKILLs/<skill-name> \
-      ~/smorch-brain/plugins/<plugin-name>/skills/<skill-name>
+      "$SMORCH_BRAIN"/plugins/<plugin-name>/skills/<skill-name>
 
 # Rebuild plugin
 smorch build-plugin <plugin-name>
@@ -235,6 +243,7 @@ smorch-sync-all                # 3. Deploy to all servers
 On each server, add to crontab:
 ```bash
 # Sync skills daily at 6 AM
+# Adjust the path below to match your machine's smorch-brain location
 0 6 * * * cd ~/smorch-brain && git pull origin main --rebase && ~/smorch-brain/scripts/smorch pull 2>&1 >> /var/log/smorch-sync.log
 ```
 

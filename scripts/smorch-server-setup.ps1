@@ -38,7 +38,14 @@ param(
 )
 
 $VERSION = "1.0.0"
-$REPO_DIR = Join-Path $env:USERPROFILE "smorch-brain"
+# Auto-detect repo location
+if (Test-Path "$env:USERPROFILE\Desktop\cowork-workspace\smorch-brain") {
+    $REPO_DIR = "$env:USERPROFILE\Desktop\cowork-workspace\smorch-brain"
+} elseif (Test-Path "$env:USERPROFILE\smorch-brain") {
+    $REPO_DIR = "$env:USERPROFILE\smorch-brain"
+} else {
+    $REPO_DIR = Split-Path -Parent (Split-Path -Parent $MyInvocation.MyCommand.Path)
+}
 $SCRIPTS_DIR = Join-Path $REPO_DIR "scripts"
 $SMORCH_BIN = Join-Path $SCRIPTS_DIR "smorch.ps1"
 

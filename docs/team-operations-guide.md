@@ -6,6 +6,12 @@
 
 > **Cross-Platform Note:** All commands in this guide show Mac/Linux (bash) syntax. For Windows, replace `smorch <command>` with `.\smorch.ps1 <command>`, `smorch-cleanup` with `.\smorch-cleanup.ps1`, and `smorch-context --folder` with `.\smorch-context.ps1 -Folder`. Scripts are in `smorch-brain/scripts/`.
 
+> **Repository Path Note:** The `smorch-brain` repo location varies by machine:
+> - **Mac (Mamoun):** `~/Desktop/cowork-workspace/smorch-brain`
+> - **Linux servers:** `~/smorch-brain`
+>
+> The `smorch` CLI scripts auto-detect the correct location. When this document shows `~/smorch-brain`, substitute your machine's actual path. The first-time setup commands clone to `~/smorch-brain` by default; on Mac you may need to adjust the clone target.
+
 ---
 
 ## Table of Contents
@@ -32,6 +38,7 @@
 
 ```bash
 # Bootstrap: clones repo, makes scripts executable, installs profile, adds to PATH
+# On Mac, replace ~/smorch-brain with ~/Desktop/cowork-workspace/smorch-brain
 git clone https://github.com/SMOrchestra-ai/smorch-brain.git ~/smorch-brain && \
   chmod +x ~/smorch-brain/scripts/* && \
   ~/smorch-brain/scripts/smorch-server-setup --profile gtm-team
@@ -77,6 +84,7 @@ smorch audit         # Check for issues on your machine
 **First-time setup (one command):**
 
 ```bash
+# On Mac, replace ~/smorch-brain with ~/Desktop/cowork-workspace/smorch-brain
 git clone https://github.com/SMOrchestra-ai/smorch-brain.git ~/smorch-brain && \
   chmod +x ~/smorch-brain/scripts/* && \
   ~/smorch-brain/scripts/smorch-server-setup --profile developer
@@ -124,6 +132,7 @@ Most EO students will receive skills via the `eo-microsaas-os` plugin:
 If you have been granted repo access:
 
 ```bash
+# On Mac, replace ~/smorch-brain with ~/Desktop/cowork-workspace/smorch-brain
 git clone git@github.com:SMOrchestra-ai/smorch-brain.git ~/smorch-brain
 chmod +x ~/smorch-brain/scripts/smorch
 mkdir -p ~/bin
@@ -157,6 +166,7 @@ smorch init --profile eo-student
 
 ```bash
 # Bootstrap: clones repo, cleans duplicates, installs profile, adds to PATH
+# On Mac, replace ~/smorch-brain with ~/Desktop/cowork-workspace/smorch-brain
 git clone https://github.com/SMOrchestra-ai/smorch-brain.git ~/smorch-brain && \
   chmod +x ~/smorch-brain/scripts/* && \
   ~/smorch-brain/scripts/smorch-server-setup --profile smo-brain
@@ -222,6 +232,7 @@ Profiles are `.txt` files in `smorch-brain/profiles/`. Each line specifies which
 **Step 1:** Create the file.
 
 ```bash
+# Use your machine's smorch-brain path (see Path Note at top)
 touch ~/smorch-brain/profiles/agency-junior.txt
 ```
 
@@ -244,7 +255,7 @@ Empty lines are ignored. Whitespace is trimmed.
 
 This profile gives a junior agency team member content skills plus select GTM skills, without access to operator-level tools or EO content.
 
-Create `~/smorch-brain/profiles/agency-junior.txt`:
+Create `~/smorch-brain/profiles/agency-junior.txt` (adjust path for your machine):
 
 ```
 # Agency Junior Profile
@@ -316,6 +327,7 @@ smorch pull --profile <your-actual-profile>
 After creating and testing:
 
 ```bash
+# Use your machine's smorch-brain path (see Path Note at top)
 cd ~/smorch-brain
 git add profiles/agency-junior.txt
 git commit -m "profiles: add agency-junior profile"
@@ -350,6 +362,7 @@ If a match exists, enhance the existing skill instead of creating a new one.
 **Step 2: Check if a similar skill exists in plugins.**
 
 ```bash
+# Use your machine's smorch-brain path (see Path Note at top)
 ls ~/smorch-brain/plugins/*/skills/ | grep -i <keyword>
 ```
 
@@ -488,6 +501,7 @@ Current plugins:
 ### How to Add a Skill to an Existing Plugin
 
 ```bash
+# All ~/smorch-brain paths below: use your machine's actual path (see Path Note at top)
 # 1. Copy the skill directory to the plugin
 cp -r ~/smorch-brain/skills/<category>/<skill-name> \
       ~/smorch-brain/plugins/<plugin-name>/skills/<skill-name>
@@ -634,6 +648,7 @@ All changes flow one direction: Mamoun's Mac -> GitHub -> all other machines.
 ssh -T git@github.com
 
 # 2. Clone the registry
+# On Mac, replace ~/smorch-brain with ~/Desktop/cowork-workspace/smorch-brain
 git clone git@github.com:SMOrchestra-ai/smorch-brain.git ~/smorch-brain
 
 # 3. Install CLI
