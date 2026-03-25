@@ -1,0 +1,81 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "CMD=$(jq -r '.tool_input.command' 2>/dev/null); if echo \"$CMD\" | grep -qiE '(rm -rf|git push --force|git push -f |git reset --hard|git checkout \\.|git restore \\.|git clean -f|drop table|truncate table)'; then echo '{\"hookSpecificOutput\":{\"hookEventName\":\"PreToolUse\",\"permissionDecision\":\"deny\",\"permissionDecisionReason\":\"BLOCKED: Destructive command detected. Ask Mamoun before running destructive operations.\"}}'; else echo '{\"hookSpecificOutput\":{\"hookEventName\":\"PreToolUse\",\"permissionDecision\":\"allow\"}}'; fi",
+            "statusMessage": "Checking for destructive commands..."
+          }
+        ]
+      },
+      {
+        "matcher": "mcp__cb73f37d*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "SQL=$(jq -r '.tool_input.query // .tool_input.sql // empty' 2>/dev/null); if [ -n \"$SQL\" ] && echo \"$SQL\" | grep -qiE '(DROP\\s+(TABLE|SCHEMA|DATABASE|INDEX)|TRUNCATE|DELETE\\s+FROM\\s+[a-z_]+\\s*;)'; then echo '{\"hookSpecificOutput\":{\"hookEventName\":\"PreToolUse\",\"permissionDecision\":\"deny\",\"permissionDecisionReason\":\"BLOCKED: Destructive SQL detected (DROP/TRUNCATE/mass DELETE). Ask Mamoun before running DDL.\"}}'; else echo '{\"hookSpecificOutput\":{\"hookEventName\":\"PreToolUse\",\"permissionDecision\":\"allow\"}}'; fi",
+            "statusMessage": "Checking SQL for destructive operations..."
+          }
+        ]
+      },
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "CONTENT=$(jq -r '.tool_input.content // .tool_input.new_string // empty' 2>/dev/null); if [ -n \"$CONTENT\" ] && echo \"$CONTENT\" | grep -qiE '(sk-[a-zA-Z0-9]{20,}|AKIA[A-Z0-9]{16}|ghp_[a-zA-Z0-9]{36})'; then FILE=$(jq -r '.tool_input.file_path // empty' 2>/dev/null); if ! echo \"$FILE\" | grep -qiE '(\\.env\\.example|\\.md|settings\\.json)'; then echo '{\"hookSpecificOutput\":{\"hookEventName\":\"PreToolUse\",\"permissionDecision\":\"deny\",\"permissionDecisionReason\":\"BLOCKED: Possible secret/credential detected. Use .env files for secrets.\"}}'; else echo '{\"hookSpecificOutput\":{\"hookEventName\":\"PreToolUse\",\"permissionDecision\":\"allow\"}}'; fi; else echo '{\"hookSpecificOutput\":{\"hookEventName\":\"PreToolUse\",\"permissionDecision\":\"allow\"}}'; fi",
+            "statusMessage": "Scanning for secrets..."
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "if echo \"$CLAUDE_TOOL_INPUT\" | grep -q '.claude/skills'; then bash /Users/mamounalamouri/smorch-brain/scripts/smorch push >/dev/null 2>&1 & fi"
+          }
+        ]
+      },
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "F=$(jq -r '.tool_input.file_path // .tool_response.filePath' 2>/dev/null); if echo \"$F\" | grep -qE '\\.(js|ts|jsx|tsx)$'; then npx prettier --write \"$F\" 2>/dev/null || true; fi",
+            "statusMessage": "Auto-formatting..."
+          }
+        ]
+      }
+    ],
+    "PostCompact": [
+      {
+        "matcher": "manual|auto",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "BRANCH=$(git branch --show-current 2>/dev/null || echo unknown); DIR=$(pwd); echo \"{\\\"hookSpecificOutput\\\":{\\\"hookEventName\\\":\\\"PostCompact\\\",\\\"additionalContext\\\":\\\"CONTEXT RESTORE — Branch: $BRANCH | Dir: $DIR | Check CLAUDE.md Required Skills. Follow GitHub SOPs: conventional commits, branch naming, release protocol. Hooks active: destructive-blocker, SQL-guard, secret-scanner, auto-formatter, compaction-restorer.\\\"}}\"",
+            "statusMessage": "Restoring context..."
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "BRANCH=$(git branch --show-current 2>/dev/null || echo none); HOOKS=$(ls .git/hooks/commit-msg 2>/dev/null && echo ok || echo missing); echo \"{\\\"hookSpecificOutput\\\":{\\\"hookEventName\\\":\\\"SessionStart\\\",\\\"additionalContext\\\":\\\"SESSION BOOTSTRAP — Branch: $BRANCH | Git commit hook: $HOOKS | Check CLAUDE.md Required Skills. Follow SMOrchestra GitHub SOPs. Hooks: destructive-blocker, SQL-guard, secret-scanner, auto-formatter, compaction-restorer.\\\"}}\"",
+            "statusMessage": "Bootstrapping session..."
+          }
+        ]
+      }
+    ]
+  }
+}

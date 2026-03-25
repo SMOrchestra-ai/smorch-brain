@@ -118,6 +118,14 @@ Marketing — Campaign planning, content drafts, SEO (customize for Arabic+Engli
 Productivity — Task management, workflow coordination
 Plugin Create — For building custom plugins as my workflows mature
 
+SKILL MANAGEMENT
+All skill creation, deployment, and sync follows the SOP at docs/skill-management-sop.md. Key rules:
+- smorch-brain is the single source of truth. Never edit skills directly on machines.
+- Every skill needs .smorch-category and .smorch-version files.
+- SKILL.md must be under 500 lines. Use progressive disclosure with reference files.
+- Run `smorch audit` before every `smorch push` to catch issues.
+- Profiles control which skills deploy where. Only mamoun profile gets *.
+
 FILE & NAMING CONVENTIONS
 
 Proposals: [client-name]-[type]-[date].docx → e.g., acme-corp-expansion-proposal-2026-02.docx

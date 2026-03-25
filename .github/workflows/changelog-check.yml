@@ -1,0 +1,21 @@
+name: CHANGELOG Check
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  changelog-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Check CHANGELOG.md updated
+        run: |
+          if git diff origin/main...HEAD --name-only | grep -q 'CHANGELOG.md'; then
+            echo "✅ CHANGELOG.md updated"
+          else
+            echo "❌ CHANGELOG.md not updated. Release PRs must include changelog entry."
+            echo "Add a section to CHANGELOG.md describing what changed in this release."
+            exit 1
+          fi

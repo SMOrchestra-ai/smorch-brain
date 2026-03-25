@@ -1,6 +1,6 @@
 ---
 name: smo-skill-creator
-description: "SMOrchestra Skill Creator — creates, modifies, and improves skills with enforced naming validation (lowercase-hyphen only). Use whenever the user wants to create a skill from scratch, edit or optimize an existing skill, run evals to test a skill, benchmark skill performance, or optimize a skill's description for better triggering accuracy. Triggers on: 'create a skill', 'build a skill', 'new skill for', 'edit skill', 'improve skill', 'skill creator', 'turn this into a skill', 'make a skill'. This version enforces strict naming rules (lowercase letters, numbers, hyphens only) to prevent registration failures. Always use this over the default skill-creator."
+description: "SMOrch Skill Creator — creates, modifies, and improves skills with enforced naming validation (lowercase-hyphen only). Use whenever the user wants to create a skill from scratch, edit or optimize an existing skill, run evals to test a skill, benchmark skill performance, or optimize a skill's description for better triggering accuracy. Triggers on: 'create a skill', 'build a skill', 'new skill for', 'edit skill', 'improve skill', 'skill creator', 'turn this into a skill', 'make a skill'. This version enforces strict naming rules (lowercase letters, numbers, hyphens only) to prevent registration failures. Always use this over the default skill-creator."
 ---
 
 # Skill Creator
@@ -67,6 +67,54 @@ Based on the user interview, fill in these components:
 - **description**: When to trigger, what it does. This is the primary triggering mechanism - include both what the skill does AND specific contexts for when to use it. All "when to use" info goes here, not in the body. Note: currently Claude has a tendency to "undertrigger" skills -- to not use them when they'd be useful. To combat this, please make the skill descriptions a little bit "pushy". So for instance, instead of "How to build a simple fast dashboard to display internal Anthropic data.", you might write "How to build a simple fast dashboard to display internal Anthropic data. Make sure to use this skill whenever the user mentions dashboards, data visualization, internal metrics, or wants to display any kind of company data, even if they don't explicitly ask for a 'dashboard.'"
 - **compatibility**: Required tools, dependencies (optional, rarely needed)
 - **the rest of the skill :)**
+
+### Cowork Plugin Validation Pitfalls (Battle-Tested, March 2025)
+
+These are hard-won lessons from packaging 40+ skills into Cowork plugins. The CLI (`claude plugin validate`) passes in all these cases, but Cowork's app-level validation rejects them silently with "plugin validation failed." Binary search is your friend for debugging.
+
+#### 1. Description Length Limit (~1000 characters)
+
+Cowork enforces an undocumented limit on skill description length in YAML frontmatter. The CLI does not check this.
+
+- **Confirmed**: 366 chars works. 1081 chars fails. Threshold is around 1000 chars.
+- **Safe target**: Keep descriptions under 800 chars.
+- **What to cut first**: "Do NOT trigger for" sections. These are useful for disambiguation but are the first thing to trim when hitting the limit. Move disambiguation logic into the SKILL.md body instead.
+- **Hidden trap**: Multi-line YAML formats (`description: >-` or `description: |`) hide the actual length. A `>-` block that looks like 3 short lines might parse to 1000+ chars. Always measure the parsed length:
+  ```python
+  import yaml
+  with open('SKILL.md') as f:
+      parts = f.read().split('---')
+      fm = yaml.safe_load(parts[1])
+      print(len(fm['description']))
+  ```
+
+#### 2. No .mcp.json Inside Plugins
+
+Including a `.mcp.json` file in a plugin causes Cowork validation failure, even when CLI validates fine. MCPs connected at the account level are automatically available to all plugins and skills.
+
+- **What fails**: Any `.mcp.json` at the plugin root, regardless of content (stdio servers, http servers, ENV: prefixed values).
+- **Fix**: Delete `.mcp.json` from the plugin entirely. Instead, document required MCP connections in a `CONNECTORS.md` or `README.md` that tells users which MCPs to connect at the account level.
+
+#### 3. YAML Frontmatter Bracket Quoting in Commands
+
+Command `.md` files use YAML frontmatter with `description`, `allowed-tools`, and `argument-hint` fields. Square brackets in `argument-hint` values break YAML parsing because `[]` is interpreted as a flow sequence.
+
+- **Fails**: `argument-hint: [campaign-name]`
+- **Fails**: `argument-hint: "[project-name or "update"]"` (nested double quotes)
+- **Works**: `argument-hint: '[campaign-name]'` (single-quoted)
+- **Works**: `argument-hint: '[project-name or update]'` (single-quoted, no nested quotes)
+
+Always single-quote argument-hint values that contain brackets.
+
+#### 4. CLI Validation vs Cowork Validation
+
+`claude plugin validate <path>` checks basic structure (manifest, YAML parseable, directory layout). Cowork's app-level validation adds additional checks that are undocumented. When CLI passes but Cowork rejects, the issue is one of the above three. Debug approach:
+
+1. Create a minimal test plugin (1 skill, 1 command) and confirm it installs
+2. Add skills one at a time to isolate which skill breaks validation
+3. Check description lengths first (most common cause)
+4. Check for .mcp.json files
+5. Check YAML frontmatter in all commands for bracket issues
 
 ### Skill Writing Guide
 
@@ -483,5 +531,46 @@ Repeating one more time the core loop here for emphasis:
 - Package the final skill and return it to the user.
 
 Please add steps to your TodoList, if you have such a thing, to make sure you don't forget. If you're in Cowork, please specifically put "Create evals JSON and run `eval-viewer/generate_review.py` so human can review test cases" in your TodoList to make sure it happens.
+
+---
+
+## Post-Creation/Modification: Sync to smorch-brain
+
+**This step is mandatory after every skill creation or modification.** smorch-brain is the single source of truth for all skills and plugins.
+
+### When to trigger this step
+
+After ANY of these events:
+- A new skill is created and the user confirms it's done
+- An existing skill is modified (content, description, references)
+- A skill is packaged as .skill or .plugin
+- The user says "done", "ship it", "looks good", or otherwise signals completion
+
+### What to do
+
+1. **Identify the target plugin.** Based on the skill's domain:
+   - `eo-*` skills: `plugins/eo-microsaas-os/` or `plugins/eo-training-factory/`
+   - GTM skills (`signal-*`, `wedge-*`, `campaign-*`, `positioning-*`, `asset-factory`, `outbound-*`, `scraper-*`): `plugins/smorch-gtm-engine/`
+   - Tool operators (`clay-*`, `ghl-*`, `heyreach-*`, `instantly-*`, `salesnav-*`): `smorch-gtm-tools` plugin
+   - Dev/meta skills: `skills/dev-meta/` (top-level, not inside a plugin)
+   - If unsure, ask the user
+
+2. **Copy the skill directory** to smorch-brain:
+   ```bash
+   cp -r <skill-directory>/ <smorch-brain>/plugins/<plugin-name>/skills/<skill-name>/
+   ```
+
+3. **Bump the plugin version** in `.claude-plugin/plugin.json` (patch for mods, minor for new skills)
+
+4. **Rebuild the .plugin file**:
+   ```bash
+   cd <smorch-brain>/plugins/<plugin-name> && zip -r ../../dist/<plugin-name>.plugin . -x "*.DS_Store"
+   ```
+
+5. **Remind the user**: "Skill synced to smorch-brain. To deploy: upload the rebuilt .plugin from `dist/` to Cowork. For Claude Code: run `smorch push`."
+
+### If smorch-brain is not accessible
+
+Tell the user: "This skill was created outside smorch-brain. To prevent drift, copy it to smorch-brain and rebuild the plugin. Run `smorch push` from Claude Code."
 
 Good luck!

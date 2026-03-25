@@ -1,0 +1,9 @@
+{
+  "name": "smorch-dev",
+  "version": "1.0.0",
+  "description": "SMOrch development toolkit. n8n workflow architecture, MCP server building, API documentation, skill creation, tool mastery, testing, debugging, and code review.",
+  "author": {
+    "name": "Mamoun Alamouri",
+    "homepage": "https://smorchestra.ai"
+  }
+}

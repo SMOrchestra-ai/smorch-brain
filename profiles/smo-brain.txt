@@ -1,6 +1,8 @@
 dev-meta/systematic-debugging
 dev-meta/requesting-code-review
 dev-meta/receiving-code-review
+dev-meta/smorch-github-ops
+dev-meta/changelog-generator
 eo-training/*
 eo-scoring/*
 smorch-gtm/n8n-architect

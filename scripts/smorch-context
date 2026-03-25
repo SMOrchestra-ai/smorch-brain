@@ -1,0 +1,221 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# smorch-context — Download SMOrchestra context files per business line
+# Works on macOS and Linux
+# For Windows: use smorch-context.ps1
+
+VERSION="1.0.0"
+REPO_URL="https://github.com/SMOrchestra-ai/smorch-context.git"
+# Auto-detect context repo location
+if [[ -d "$HOME/Desktop/cowork-workspace/smorch-context" ]]; then
+    CONTEXT_DIR="$HOME/Desktop/cowork-workspace/smorch-context"
+elif [[ -d "$HOME/smorch-context" ]]; then
+    CONTEXT_DIR="$HOME/smorch-context"
+else
+    CONTEXT_DIR="$HOME/smorch-context"
+fi
+
+# Colors (disabled if not a terminal)
+if [ -t 1 ]; then
+    RED='\033[0;31m'; GREEN='\033[0;32m'; YELLOW='\033[1;33m'; CYAN='\033[0;36m'; BOLD='\033[1m'; NC='\033[0m'
+else
+    RED=''; GREEN=''; YELLOW=''; CYAN=''; BOLD=''; NC=''
+fi
+
+VALID_FOLDERS="EntrepreneurOasis SalesMfastGTM CC_CX"
+
+usage() {
+    cat <<EOF
+${BOLD}smorch-context${NC} v${VERSION} — Download SMOrchestra context files
+
+${BOLD}Usage:${NC}
+  smorch-context --folder <name>     Download a specific context folder
+  smorch-context --folder all        Download all context folders
+  smorch-context --list              Show available folders and their contents
+  smorch-context --update            Update all downloaded context files
+  smorch-context --status            Show what's downloaded and sync status
+
+${BOLD}Folders:${NC}
+  EntrepreneurOasis    EO MENA — MicroSaaS training (4 projects)
+  SalesMfastGTM        SalesMfast — B2B signal-based GTM (6 projects)
+  CC_CX                CXMfast — Contact center technology (3 projects)
+
+${BOLD}Examples:${NC}
+  smorch-context --folder EntrepreneurOasis    # Download EO context
+  smorch-context --folder SalesMfastGTM        # Download GTM context
+  smorch-context --folder all                  # Download everything
+  smorch-context --update                      # Pull latest changes
+
+${BOLD}First-time setup:${NC}
+  The script clones the smorch-context repo on first run.
+  Subsequent runs use git sparse-checkout to fetch only the requested folder.
+
+${BOLD}Cross-platform:${NC}
+  macOS/Linux: This script (bash)
+  Windows:     smorch-context.ps1 (PowerShell) — same commands with -Folder flag
+EOF
+}
+
+ensure_repo() {
+    if [ ! -d "$CONTEXT_DIR/.git" ]; then
+        echo -e "${CYAN}First-time setup: cloning smorch-context...${NC}"
+        git clone --no-checkout "$REPO_URL" "$CONTEXT_DIR" 2>&1
+        cd "$CONTEXT_DIR"
+        git sparse-checkout init --cone
+        echo -e "${GREEN}Repo initialized with sparse-checkout.${NC}"
+    fi
+}
+
+cmd_folder() {
+    local folder="$1"
+
+    # Validate folder name
+    if [ "$folder" != "all" ]; then
+        local valid=false
+        for f in $VALID_FOLDERS; do
+            [ "$f" = "$folder" ] && valid=true
+        done
+        if [ "$valid" = false ]; then
+            echo -e "${RED}ERROR: Unknown folder '$folder'${NC}"
+            echo "Valid folders: $VALID_FOLDERS"
+            return 1
+        fi
+    fi
+
+    ensure_repo
+    cd "$CONTEXT_DIR"
+
+    # Pull latest
+    echo -e "${CYAN}Pulling latest from GitHub...${NC}"
+    git pull origin main --rebase 2>&1 || git pull origin main 2>&1
+
+    if [ "$folder" = "all" ]; then
+        # Disable sparse-checkout to get everything
+        git sparse-checkout disable 2>/dev/null || true
+        git checkout main 2>/dev/null || git checkout HEAD
+        echo -e "${GREEN}Downloaded ALL context folders:${NC}"
+        for f in $VALID_FOLDERS; do
+            if [ -d "$CONTEXT_DIR/$f" ]; then
+                local count
+                count=$(find "$CONTEXT_DIR/$f" -type f ! -path "*/.git/*" | wc -l | xargs)
+                echo -e "  ${GREEN}$f${NC} ($count files)"
+            fi
+        done
+    else
+        # Use sparse-checkout for single folder
+        git sparse-checkout set "$folder" README.md 2>/dev/null
+        git checkout main 2>/dev/null || git checkout HEAD
+
+        if [ -d "$CONTEXT_DIR/$folder" ]; then
+            local count
+            count=$(find "$CONTEXT_DIR/$folder" -type f ! -path "*/.git/*" | wc -l | xargs)
+            local size
+            size=$(du -sh "$CONTEXT_DIR/$folder" 2>/dev/null | cut -f1)
+            echo -e "${GREEN}Downloaded: $folder ($count files, $size)${NC}"
+            echo ""
+            echo -e "${CYAN}Projects:${NC}"
+            for proj in "$CONTEXT_DIR/$folder"/*/; do
+                [ -d "$proj" ] || continue
+                echo -e "  $(basename "$proj")"
+            done
+        else
+            echo -e "${RED}ERROR: Folder '$folder' not found after checkout${NC}"
+            return 1
+        fi
+    fi
+
+    echo ""
+    echo -e "${CYAN}Context files at: $CONTEXT_DIR/$folder${NC}"
+    echo -e "To use in Claude Code: add this as a project directory or reference files directly."
+}
+
+cmd_update() {
+    if [ ! -d "$CONTEXT_DIR/.git" ]; then
+        echo -e "${RED}ERROR: No context downloaded yet. Run: smorch-context --folder <name>${NC}"
+        return 1
+    fi
+
+    cd "$CONTEXT_DIR"
+    echo -e "${CYAN}Updating context files...${NC}"
+    git pull origin main --rebase 2>&1
+
+    echo -e "${GREEN}Updated.${NC}"
+    cmd_status
+}
+
+cmd_status() {
+    if [ ! -d "$CONTEXT_DIR/.git" ]; then
+        echo -e "${YELLOW}Not set up yet. Run: smorch-context --folder <name>${NC}"
+        return 0
+    fi
+
+    cd "$CONTEXT_DIR"
+    echo -e "${CYAN}smorch-context status${NC}"
+    echo "──────────────────────────────────"
+    echo -e "Location: $CONTEXT_DIR"
+
+    local branch
+    branch=$(git branch --show-current 2>/dev/null || echo "detached")
+    echo -e "Branch:   $branch"
+
+    local last_pull
+    last_pull=$(git log -1 --format="%ci" 2>/dev/null || echo "never")
+    echo -e "Last sync: $last_pull"
+
+    echo ""
+    echo -e "${CYAN}Downloaded folders:${NC}"
+    for f in $VALID_FOLDERS; do
+        if [ -d "$CONTEXT_DIR/$f" ]; then
+            local count
+            count=$(find "$CONTEXT_DIR/$f" -type f ! -path "*/.git/*" | wc -l | xargs)
+            local size
+            size=$(du -sh "$CONTEXT_DIR/$f" 2>/dev/null | cut -f1)
+            echo -e "  ${GREEN}$f${NC} — $count files ($size)"
+        else
+            echo -e "  ${YELLOW}$f${NC} — not downloaded"
+        fi
+    done
+    echo "──────────────────────────────────"
+}
+
+cmd_list() {
+    echo -e "${CYAN}Available Context Folders${NC}"
+    echo "──────────────────────────────────"
+    echo ""
+    echo -e "${GREEN}EntrepreneurOasis${NC} — EO MENA MicroSaaS Training"
+    echo "  Project1-MicroSaaSClaudeOS Training"
+    echo "  Project2-EO Build AppSumoTech"
+    echo "  Project3-AI Super cowork training"
+    echo "  Project4-AI Super MicroSaaS LauncherTech"
+    echo ""
+    echo -e "${GREEN}SalesMfastGTM${NC} — B2B Signal-Based GTM"
+    echo "  Project1-SalesMfastExpand"
+    echo "  Project2-SalesMfastB2B"
+    echo "  Project3-SalesMfast-SME"
+    echo "  Project4-CohortTraining"
+    echo "  Project5-MarketingTransformation"
+    echo "  Project6-SSEngineTech"
+    echo ""
+    echo -e "${GREEN}CC_CX${NC} — Contact Center / CXMfast"
+    echo "  Project1-CC transformation"
+    echo "  Project2-CXMfast"
+    echo "  Project3-CX community"
+    echo "──────────────────────────────────"
+    echo ""
+    echo "Usage: smorch-context --folder <name>"
+}
+
+# Main dispatch
+case "${1:-}" in
+    --folder)
+        [ -z "${2:-}" ] && { echo -e "${RED}ERROR: Specify a folder name${NC}"; echo "Valid: $VALID_FOLDERS all"; exit 1; }
+        cmd_folder "$2"
+        ;;
+    --update)     cmd_update ;;
+    --status)     cmd_status ;;
+    --list)       cmd_list ;;
+    --version)    echo "smorch-context v${VERSION}" ;;
+    -h|--help|"") usage ;;
+    *)            echo -e "${RED}Unknown option: $1${NC}"; usage; exit 1 ;;
+esac

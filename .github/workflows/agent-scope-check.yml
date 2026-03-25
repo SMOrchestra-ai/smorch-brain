@@ -1,0 +1,63 @@
+name: Agent Scope Check
+on:
+  pull_request:
+    branches: [dev]
+
+jobs:
+  scope-check:
+    if: startsWith(github.head_ref, 'agent/')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Check agent stayed in scope
+        run: |
+          echo "🔍 Agent branch scope check"
+          echo "Branch: ${{ github.head_ref }}"
+          echo ""
+          echo "Files changed:"
+          git diff origin/dev...HEAD --name-only
+          echo ""
+          
+          # Count changed files
+          CHANGED=$(git diff origin/dev...HEAD --name-only | wc -l)
+          echo "Total files changed: $CHANGED"
+          
+          # Check for sensitive directories
+          SENSITIVE=$(git diff origin/dev...HEAD --name-only | grep -cE '^(infra/|\.github/|auth/|billing/|security/)' || true)
+          if [ "$SENSITIVE" -gt 0 ]; then
+            echo ""
+            echo "⚠️ WARNING: Agent touched sensitive directories ($SENSITIVE files)"
+            echo "Files in sensitive areas:"
+            git diff origin/dev...HEAD --name-only | grep -E '^(infra/|\.github/|auth/|billing/|security/)'
+            echo ""
+            echo "This PR requires Mamoun's review."
+          fi
+          
+          # Check diff size
+          LINES=$(git diff origin/dev...HEAD --stat | tail -1 | grep -oE '[0-9]+ insertion' | grep -oE '[0-9]+' || echo "0")
+          DELETIONS=$(git diff origin/dev...HEAD --stat | tail -1 | grep -oE '[0-9]+ deletion' | grep -oE '[0-9]+' || echo "0")
+          TOTAL=$((LINES + DELETIONS))
+          echo "Total diff size: $TOTAL lines"
+          
+          if [ "$TOTAL" -gt 200 ]; then
+            echo "⚠️ WARNING: Diff exceeds 200 lines. This PR is HIGH RISK."
+          fi
+          
+          # Check for spec file reference
+          TASK_ID=$(echo "${{ github.head_ref }}" | grep -oE 'TASK-[0-9]+' || echo "")
+          if [ -n "$TASK_ID" ]; then
+            SPEC="specs/tasks/${TASK_ID}.md"
+            if [ -f "$SPEC" ]; then
+              echo "✅ Spec file found: $SPEC"
+              echo ""
+              echo "Declared files in spec:"
+              grep -A 20 "Declared Files" "$SPEC" | grep -E '^\s*-' | head -20 || echo "(no declared files section found)"
+            else
+              echo "ℹ️ No spec file found at $SPEC"
+            fi
+          fi
+          
+          echo ""
+          echo "Scope check complete. Review the output above for any warnings."

@@ -3,7 +3,7 @@ description: Generate your Claude Code handoff package
 allowed-tools: Read, Write, Glob, Grep, Bash(ls:*), Bash(wc:*), Bash(mkdir:*), Bash(cp:*)
 ---
 
-The founder is ready to transition from Cowork (Strategy Phase) to Claude Code (Build Phase). Generate a complete handoff package.
+The founder is ready to transition from Cowork (Strategy + Architecture Phase) to Claude Code (Build Phase). Generate a complete handoff package.
 
 Read the orchestrator for context:
 @${CLAUDE_PLUGIN_ROOT}/skills/eo-os-navigator/SKILL.md
@@ -14,10 +14,15 @@ Before generating the handoff, verify ALL prerequisites exist. Scan the workspac
 
 1. **Brain files**: Glob for `**/project-brain/*.md` - need 12 files, each with 200+ chars
 2. **Scorecard results**: Glob for `**/SC[1-5]*.md` - need at least SC1 + SC2
-3. **Founder brief**: Glob for `**/founder-brief*.md` or `**/eo-founder-brief*.md`
+3. **Architecture docs**: Glob for `**/architecture/brd.md` AND `**/architecture/tech-stack-decision.md` - MUST exist (Gate 2)
+4. **CLAUDE.md**: Glob for `**/CLAUDE.md` - MUST exist (produced by eo-tech-architect)
+5. **Founder brief**: Glob for `**/founder-brief*.md` or `**/eo-founder-brief*.md`
 
 If brain files are missing or incomplete, STOP and say:
 "You can't graduate yet. Your brain files are incomplete. Run /eo to see what's missing."
+
+If architecture docs or CLAUDE.md are missing, STOP and say:
+"You can't graduate yet. Architecture must be complete first. Run eo-tech-architect to produce your BRD, stack decisions, and CLAUDE.md. This is Step 4 and it runs right here in Cowork."
 
 If prerequisites pass, continue.
 
@@ -39,14 +44,15 @@ Overall Readiness: [from founder brief if available]
 
 ## What You've Completed
 
-### Strategy Phase (Cowork)
+### Strategy + Architecture Phase (Cowork)
 - [x] Scorecards: [list which SC files exist with scores]
 - [x] Brain Ingestion: [count]/12 files generated
 - [x] GTM Assets: [YES/NO - list what was generated]
 - [x] Skill Extraction: [YES/NO]
+- [x] Tech Architecture: [YES - list brd.md, tech-stack-decision.md, architecture-diagram.md, mcp-integration-plan.md]
+- [x] CLAUDE.md: [YES - workspace instructions for Claude Code]
 
 ### What's Next (Claude Code)
-- [ ] Step 4: Tech Architecture → BRD + stack decision
 - [ ] Step 5a: Database Architecture → schema + migrations
 - [ ] Step 5b: Application Build → full app code
 - [ ] Step 5c: API Integrations → third-party connections
@@ -75,27 +81,45 @@ These files ARE your project brain. They give Claude full context about your bus
 ### Scorecard Results
 [list actual SC files found]
 
+### Architecture Documents
+- architecture/brd.md - Business Requirements Document
+- architecture/tech-stack-decision.md - Stack decisions with rationale
+- architecture/architecture-diagram.md - System diagrams (Mermaid)
+- architecture/mcp-integration-plan.md - Integration roadmap
+
+### CLAUDE.md
+Workspace instructions file. Claude Code reads this automatically on startup.
+Contains: project context, stack decisions, skill routing, build instructions.
+
 ### Founder Brief
 [if exists, list path]
 
 ## Setup Instructions for Claude Code
 
-### Step 1: Create your project directory
+### Step 1: Install required MCPs
+Before opening Claude Code, install the MCPs listed in architecture/mcp-integration-plan.md.
+At minimum, you need the tools your stack depends on (Supabase, Contabo, etc.).
+
+### Step 2: Create your project directory
 ```bash
 mkdir my-microsaas && cd my-microsaas
 ```
 
-### Step 2: Copy your brain files
-Copy the entire `project-brain/` folder from this handoff package into your project root.
+### Step 3: Copy your handoff files
+Copy from this handoff package into your project root:
+- `CLAUDE.md` (must be at project root - Claude Code reads it automatically)
+- `project-brain/` folder (all 12 context files)
+- `architecture/` folder (BRD + stack decisions + diagrams)
+- `scorecards/` folder (assessment results)
 
-### Step 3: Install the plugin
+### Step 4: Install the plugin
 Make sure eo-microsaas-os plugin is installed in Claude Code.
 
-### Step 4: Start building
-Open Claude Code in your project directory and say:
-"I'm continuing from Cowork. My brain files are in project-brain/. Run /eo to pick up where I left off."
+### Step 5: Start building
+Open Claude Code in your project directory. It reads CLAUDE.md automatically.
+Say: "/eo" and the navigator picks up from Step 5a (Database Architecture).
 
-Claude will detect your brain files, confirm context, and route you to Step 4 (Tech Architecture).
+Claude Code already knows: what you're building, which stack to use, which skills to invoke, and your full business context. Zero cold-start.
 
 ## Key Decisions Locked In (From Your Brain Files)
 
@@ -114,7 +138,6 @@ Based on your resource profile and strategy path:
 
 | Phase | Estimated Hours |
 |-------|----------------|
-| Tech Architecture | 1-2 hours |
 | Database Design | 30-60 minutes |
 | Application Build | 2-6 hours |
 | API Integrations | 1-3 hours |
@@ -123,15 +146,23 @@ Based on your resource profile and strategy path:
 | **Total** | **8-17 hours** |
 ```
 
-### 2. Copy brain files
+### 2. Copy CLAUDE.md
+
+Copy the CLAUDE.md file to `claude-code-handoff/CLAUDE.md` (project root level).
+
+### 3. Copy brain files
 
 Copy the entire `project-brain/` directory into `claude-code-handoff/project-brain/`.
 
-### 3. Copy scorecard results
+### 4. Copy architecture docs
+
+Copy the entire `architecture/` directory into `claude-code-handoff/architecture/`.
+
+### 5. Copy scorecard results
 
 Copy all SC*.md files into `claude-code-handoff/scorecards/`.
 
-### 4. Copy founder brief
+### 6. Copy founder brief
 
 If it exists, copy to `claude-code-handoff/`.
 
@@ -142,14 +173,17 @@ After generating the package, tell the founder:
 "Your handoff package is ready in `claude-code-handoff/`.
 
 What's inside:
+- CLAUDE.md - workspace instructions (Claude Code reads this automatically)
 - HANDOFF-BRIEFING.md - your full status and setup instructions
 - project-brain/ - all 12 context files
+- architecture/ - BRD, stack decisions, diagrams, MCP plan
 - scorecards/ - your assessment results
 
 **Next steps:**
-1. Copy the `claude-code-handoff/` folder to wherever you'll open Claude Code
-2. Install the eo-microsaas-os plugin in Claude Code
-3. Open Claude Code in that directory
-4. Say '/eo' and the navigator picks up from Step 4
+1. Install the MCPs listed in architecture/mcp-integration-plan.md
+2. Copy `claude-code-handoff/` contents to your Claude Code project directory
+3. Make sure CLAUDE.md is at the project root
+4. Install the eo-microsaas-os plugin in Claude Code
+5. Open Claude Code and say '/eo' - the navigator picks up from Step 5a
 
-Your strategy phase is done. Time to build."
+Your strategy and architecture phase is done. Claude Code knows everything. Time to build."

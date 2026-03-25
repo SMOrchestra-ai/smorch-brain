@@ -1,0 +1,111 @@
+name: Agent Scope Check
+
+on:
+  pull_request:
+    branches: [dev]
+
+jobs:
+  scope-check:
+    runs-on: ubuntu-latest
+    # Only run on agent/* branches
+    if: startsWith(github.head_ref, 'agent/')
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check agent stayed in scope
+        run: |
+          echo "=== Agent Branch Scope Check ==="
+          BRANCH="${{ github.head_ref }}"
+          echo "Branch: $BRANCH"
+
+          # Extract TASK-XXX from branch name
+          TASK=$(echo "$BRANCH" | grep -oP 'TASK-\d+' || echo "unknown")
+          echo "Task: $TASK"
+
+          # Get files changed in this PR
+          FILES=$(git diff --name-only origin/dev...HEAD)
+          echo ""
+          echo "Files changed:"
+          echo "$FILES"
+
+          # Check for out-of-scope patterns
+          VIOLATIONS=""
+
+          # Check if agent touched locked directories
+          if echo "$FILES" | grep -qE '^(infra/|\.github/workflows/)'; then
+            VIOLATIONS="${VIOLATIONS}\n❌ LOCKED: Agent modified infra/ or CI workflows"
+          fi
+
+          if echo "$FILES" | grep -qE '^(auth/|security/)'; then
+            VIOLATIONS="${VIOLATIONS}\n❌ SENSITIVE: Agent modified auth/ or security/"
+          fi
+
+          # Check diff size
+          DIFF_LINES=$(git diff --stat origin/dev...HEAD | tail -1 | grep -oP '\d+ insertion' | grep -oP '\d+' || echo "0")
+          DEL_LINES=$(git diff --stat origin/dev...HEAD | tail -1 | grep -oP '\d+ deletion' | grep -oP '\d+' || echo "0")
+          TOTAL=$((${DIFF_LINES:-0} + ${DEL_LINES:-0}))
+
+          if [ "$TOTAL" -gt 200 ]; then
+            VIOLATIONS="${VIOLATIONS}\n⚠️ LARGE DIFF: ${TOTAL} lines changed (threshold: 200). Requires owner review."
+          fi
+
+          # Check if spec exists and validate scope
+          SPEC_FILE="specs/tasks/${TASK}.md"
+          if [ -f "$SPEC_FILE" ]; then
+            echo ""
+            echo "Spec found: $SPEC_FILE"
+
+            # Extract declared files from spec
+            DECLARED=$(sed -n '/## Declared Files/,/^##/p' "$SPEC_FILE" | grep -E '^- ' | sed 's/^- //')
+
+            if [ -n "$DECLARED" ]; then
+              echo "Declared files in spec:"
+              echo "$DECLARED"
+
+              # Check each changed file against declared scope
+              for file in $FILES; do
+                # Skip common files that are always OK
+                if echo "$file" | grep -qE '(\.md$|tests/|specs/)'; then
+                  continue
+                fi
+
+                FOUND=0
+                for declared in $DECLARED; do
+                  if echo "$file" | grep -q "$declared"; then
+                    FOUND=1
+                    break
+                  fi
+                done
+
+                if [ "$FOUND" -eq 0 ]; then
+                  VIOLATIONS="${VIOLATIONS}\n⚠️ OUT OF SCOPE: $file not in declared spec files"
+                fi
+              done
+            fi
+          else
+            echo ""
+            echo "No spec file found at $SPEC_FILE — scope check limited to locked directories and diff size"
+          fi
+
+          # Report results
+          echo ""
+          echo "=== RESULTS ==="
+          if [ -n "$VIOLATIONS" ]; then
+            echo -e "$VIOLATIONS"
+            echo ""
+            echo "🔴 This agent PR has scope violations."
+            echo "Risk tier: HIGH — requires Mamoun's review."
+            echo ""
+            echo "Add label: high-risk"
+            # Don't fail the check — just flag it. Human decides.
+            # For locked directory violations, fail hard:
+            if echo "$VIOLATIONS" | grep -q "LOCKED"; then
+              echo "❌ BLOCKED: Agent modified locked directories. This PR cannot merge without admin override."
+              exit 1
+            fi
+          else
+            echo "✅ Agent stayed in scope"
+            echo "Risk tier: MEDIUM or LOW"
+          fi

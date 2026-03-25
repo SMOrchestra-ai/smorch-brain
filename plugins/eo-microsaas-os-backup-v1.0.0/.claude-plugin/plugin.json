@@ -1,0 +1,9 @@
+{
+  "name": "eo-microsaas-os",
+  "version": "1.0.0",
+  "description": "EO MicroSaaS Operating System - walks aspiring entrepreneurs from idea validation to live product through a gated 6-step journey: scorecard ingestion, brain file generation, GTM asset production, tech architecture, full-stack development, and production deployment.",
+  "author": {
+    "name": "Mamoun Alamouri / SMOrchestra.ai"
+  },
+  "keywords": ["microsaas", "entrepreneur", "mena", "startup", "gtm", "deployment", "ai-builder"]
+}

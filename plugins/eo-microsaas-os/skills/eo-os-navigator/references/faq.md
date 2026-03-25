@@ -14,13 +14,16 @@ A: You need at minimum SC1 (Project Definition) and SC2 (ICP Clarity) to start b
 ## Environment Questions
 
 **Q: What's the difference between Cowork and Claude Code?**
-A: Cowork is for file-based work: reading scorecards, generating strategy documents, creating templates. Claude Code is a development environment with terminal access: it runs code, creates databases, builds apps, deploys to servers. Steps 1-3 work in Cowork. Steps 4-5 need Claude Code.
+A: Cowork is for strategy and architecture: reading scorecards, generating brain files, producing GTM assets, designing your tech stack, and generating your CLAUDE.md. Claude Code is for building: it runs code, creates databases, builds apps, and deploys to servers. Steps 0-4 work in Cowork. Step 5 (all sub-steps) uses Claude Code.
 
 **Q: How do I move from Cowork to Claude Code?**
-A: Copy your project-brain/ folder and any architecture/ files to your Claude Code project directory. Make sure the eo-microsaas-os plugin is installed in Claude Code too. Say "eo start" and the navigator will detect your progress and continue.
+A: Run /eo-graduate in Cowork. It generates a handoff package with your CLAUDE.md, brain files, architecture docs, and scorecards. Copy that package to your Claude Code project directory. CLAUDE.md goes at the root - Claude Code reads it automatically on startup. Install the MCPs listed in your architecture/mcp-integration-plan.md. Then say "/eo" and the navigator picks up from Step 5a.
+
+**Q: What is CLAUDE.md?**
+A: It is a workspace instructions file that Claude Code reads automatically when it starts. The eo-tech-architect skill generates it during Step 4. It tells Claude Code exactly what your project is, which stack to use, which skills to invoke, and your MENA-specific rules. It eliminates "cold-start" - Claude Code does not need you to re-explain your project.
 
 **Q: Can I do everything in Claude Code?**
-A: Yes, all skills work in Claude Code. You can skip Cowork entirely and do the full journey in Claude Code. Cowork is just more comfortable for the strategy steps.
+A: Yes, all skills work in Claude Code. You can skip Cowork entirely and do the full journey in Claude Code. Cowork is recommended for Steps 0-4 because the conversational interface is more comfortable for strategy and architecture decisions.
 
 ## Brain Files
 

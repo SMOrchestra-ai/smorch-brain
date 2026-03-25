@@ -26,7 +26,7 @@ Glob: **/brain-templates/icp.md → check wc -c > 300
 **Fail message**: "You need scorecard results before I can build your brain files. Three options: (1) Complete them at score.entrepreneursoasis.me, (2) Upload scoring DOCX files, or (3) Run /eo-score 1 to do them right here. Alternatively, run /eo-templates for the manual path."
 
 ### Gate 1: Brain Completeness
-**Checks before**: GTM Assets (Step 2), Tech Architecture (Step 4), any dev skill
+**Checks before**: GTM Assets (Step 2), Tech Architecture (Step 4)
 **Required**: 12 files in project-brain/ directory
 
 **Check method**:
@@ -45,17 +45,19 @@ For each of these 12 filenames:
 
 **Partial pass**: If 8+ files exist with 200+ chars each, allow GTM Assets and Tech Architecture but flag: "Warning: [missing files] are empty. Outputs will be weaker in those areas. Recommend completing them."
 
-### Gate 2: Architecture Exists
-**Checks before**: Any dev skill (eo-db-architect, eo-microsaas-dev, eo-api-connector)
-**Required**: architecture/brd.md AND architecture/tech-stack-decision.md
+### Gate 2: Architecture + CLAUDE.md Exists
+**Checks before**: Graduation (/eo-graduate) AND any dev skill (eo-db-architect, eo-microsaas-dev, eo-api-connector)
+**Required**: architecture/brd.md AND architecture/tech-stack-decision.md AND CLAUDE.md
+**Environment**: Architecture is produced in Cowork (Phase 1, Step 4). Must exist before graduation.
 
 **Check method**:
 ```
 Glob: **/architecture/brd.md → must exist, wc -c > 500
 Glob: **/architecture/tech-stack-decision.md → must exist, wc -c > 200
+Glob: **/CLAUDE.md → must exist, wc -c > 300
 ```
 
-**Fail message**: "No BRD found. Starting code without architecture is how you build something you throw away. Run /eo architect or trigger eo-tech-architect first."
+**Fail message**: "No BRD or CLAUDE.md found. Architecture must be done before graduation. Run eo-tech-architect in Cowork first. It will produce your BRD, stack decisions, MCP plan, and CLAUDE.md that configures Claude Code automatically."
 
 ### Gate 3: Code Exists
 **Checks before**: QA Testing (eo-qa-testing)

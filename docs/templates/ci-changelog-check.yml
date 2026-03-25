@@ -1,0 +1,33 @@
+# .github/workflows/changelog-check.yml
+# Enforces CHANGELOG.md is updated on release PRs (dev → main)
+name: Changelog Check
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  changelog-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check CHANGELOG.md was updated
+        run: |
+          # Only enforce on PRs targeting main (releases)
+          if git diff origin/main...HEAD --name-only | grep -q 'CHANGELOG.md'; then
+            echo "✅ CHANGELOG.md was updated"
+          else
+            echo "❌ CHANGELOG.md was NOT updated in this PR"
+            echo ""
+            echo "Release PRs (dev → main) must include CHANGELOG.md updates."
+            echo "Add a section like:"
+            echo ""
+            echo "## [vX.Y.Z] — $(date +%Y-%m-%d)"
+            echo "### Added"
+            echo "- Description of changes"
+            echo ""
+            exit 1
+          fi

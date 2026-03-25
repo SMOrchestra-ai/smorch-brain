@@ -30,20 +30,36 @@ ENTRY POINTS
         |                       |
         +-----------+-----------+
                     |
-    ======= PHASE TRANSITION =======
-    (Move to Claude Code environment)
-    =================================
-                    |
                     v
     +---------------------------------+
     |   STEP 4: TECH ARCHITECTURE     |
     |   eo-tech-architect             |
+    |   (runs in Cowork)              |
     |   Output: BRD + 3 arch docs     |
+    |           + CLAUDE.md           |
+    |           + MCP setup list      |
     +---------------------------------+
                     |
                     v
     +---------------------------------+
+    |   GRADUATION (/eo-graduate)     |
+    |   Handoff package includes:     |
+    |   - CLAUDE.md (root level)      |
+    |   - project-brain/ (12 files)   |
+    |   - architecture/ (4 docs)      |
+    |   - scorecards/ (SC1-SC5)       |
+    +---------------------------------+
+                    |
+    ======= PHASE TRANSITION =======
+    Install MCPs from plan
+    Copy handoff to Claude Code dir
+    =================================
+                    |
+                    v
+    +---------------------------------+
     |   STEP 5: DEVELOPMENT PIPELINE  |
+    |   (Claude Code reads CLAUDE.md  |
+    |    automatically on startup)    |
     +---------------------------------+
         |
         v
@@ -77,14 +93,17 @@ ENTRY POINTS
 ## Quality Gates
 
 ```
-Gate 1: Scorecards/Templates ---> Brain Ingestion
+Gate 0: Scorecards/Templates ---> Brain Ingestion
   REQUIRES: SC1+SC2 uploaded OR 8 templates filled
 
-Gate 2: Brain Files ---> GTM/Architecture
+Gate 1: Brain Files ---> GTM/Architecture
   REQUIRES: 12 brain files with 200+ chars each
 
-Gate 3: Architecture ---> Development
-  REQUIRES: brd.md + tech-stack-decision.md
+Gate 2: Architecture + CLAUDE.md ---> Graduation/Dev
+  REQUIRES: brd.md + tech-stack-decision.md + CLAUDE.md
+
+Gate 3: Code ---> QA
+  REQUIRES: 5+ source files in src/
 
 Gate 4: QA ---> Security
   REQUIRES: qa-report.md with PASS status
@@ -101,7 +120,9 @@ Gate 5: Security ---> Deploy
 | Step 1: Brain Ingestion | 30-60 minutes | Cowork |
 | Step 2: GTM Assets | 1-2 hours | Cowork |
 | Step 3: Skill Extraction | 1-2 hours | Cowork |
-| Step 4: Architecture | 1-2 hours | Claude Code |
+| Step 4: Architecture | 1-2 hours | Cowork |
+| Step G: Graduation | 10-15 minutes | Cowork |
+| MCP Setup | 15-30 minutes | Local machine |
 | Step 5a: Database | 30-60 minutes | Claude Code |
 | Step 5b: App Build | 2-6 hours | Claude Code |
 | Step 5c: API Integration | 1-3 hours | Claude Code |
@@ -113,5 +134,6 @@ Gate 5: Security ---> Deploy
 ## Parallel Paths
 
 Steps 2 and 3 can run in parallel (both only need brain files).
+Step 4 requires brain files (Gate 1) but can start before Steps 2-3 finish.
 Steps 5a-5c are sequential but 5b calls 5a and 5c internally.
 Steps 5d, 5e, 5f are strictly sequential (each gates the next).

@@ -24,7 +24,13 @@ Display the progress dashboard using the format from the navigator skill.
 Then determine the next step and route the founder there. Follow all quality gates. Never let them skip ahead without prerequisites.
 
 If this is their first time (no files found), welcome them:
-"Welcome to EO MicroSaaS OS. I'll walk you through building your MicroSaaS from idea to live product. Two ways to start: (1) Upload your scorecard results from score.entrepreneursoasis.me, or (2) I'll give you 8 brain templates to fill manually. Which path?"
+"Welcome to EO MicroSaaS OS. I'll walk you through building your MicroSaaS from idea to live product. Three ways to start:
+
+(1) Upload scorecard results from score.entrepreneursoasis.me
+(2) Install the eo-scoring-suite plugin and run /eo-score to do scorecards interactively
+(3) Get 8 brain templates to fill manually with /eo-templates
+
+You need at minimum SC1 (Project Definition) and SC2 (ICP Clarity) results to proceed. Which path?"
 
 If they provide arguments with the command ($ARGUMENTS), interpret them:
 - "start" or "begin" = fresh start welcome

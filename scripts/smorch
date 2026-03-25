@@ -5,8 +5,15 @@ set -euo pipefail
 # Single tool for managing skills across all nodes
 # Repo: github.com/SMOrchestra-ai/smorch-brain
 
-VERSION="1.0.0"
-REPO_DIR="$HOME/smorch-brain"
+VERSION="2.0.0"
+# Auto-detect repo location
+if [[ -d "$HOME/Desktop/cowork-workspace/smorch-brain" ]]; then
+    REPO_DIR="$HOME/Desktop/cowork-workspace/smorch-brain"
+elif [[ -d "$HOME/smorch-brain" ]]; then
+    REPO_DIR="$HOME/smorch-brain"
+else
+    REPO_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+fi
 SKILLS_TARGET="$HOME/.claude/skills"
 MCP_TARGET="$HOME/.claude/.mcp.json"
 STATE_FILE="$REPO_DIR/.smorch-state"
@@ -29,8 +36,6 @@ Commands:
   pull                    Git pull + install current profile's skills
   pull --profile <name>   Pull + install specific profile (saves as default)
   install <path>          Install a category or single skill
-                          e.g., smorch install eo-training
-                          e.g., smorch install eo-training/eo-brain-ingestion
   remove <path>           Remove a category or skill from this machine
   list                    Show all skills in registry (by category)
   list --installed        Show skills installed on this machine
@@ -39,6 +44,8 @@ Commands:
   diff                    Show what changed since last pull
   status                  Profile, last sync, skill counts
   init --profile <name>   First-time setup on a new machine
+  audit                   Check for issues (unmapped, oversized, missing versions)
+  build-plugin <name>     Build .plugin zip from plugins/<name>/
 
 Registry: ${REPO_DIR}
 Skills:   ${SKILLS_TARGET}
@@ -103,33 +110,95 @@ resolve_profile() {
 }
 
 cmd_push() {
-    echo -e "${CYAN}smorch push — Exporting Cowork skills to registry${NC}"
+    echo -e "${CYAN}smorch push — Exporting skills to registry${NC}"
 
-    # Find skills — check ~/.claude/skills first (Claude Code), then fall back to Cowork Desktop sessions
+    # Primary skills directory (symlinked to cowork-workspace/SKILLs/)
     local skills_path="$HOME/.claude/skills"
-    if [[ ! -d "$skills_path" ]] || [[ $(find "$skills_path" -maxdepth 1 -mindepth 1 -type d 2>/dev/null | wc -l | xargs) -lt 10 ]]; then
-        # Fallback: search Cowork Desktop session paths
-        local sessions_base="$HOME/Library/Application Support/Claude/local-agent-mode-sessions"
-        skills_path=""
-        if [[ -d "$sessions_base" ]]; then
-            while IFS= read -r -d '' candidate; do
-                local count
-                count=$(find "$candidate" -maxdepth 1 -mindepth 1 -type d 2>/dev/null | wc -l | xargs)
-                if [[ "$count" -ge 40 ]]; then
-                    skills_path="$candidate"
-                    break
+    if [[ ! -d "$skills_path" ]]; then
+        echo -e "${RED}ERROR: ~/.claude/skills not found${NC}"
+        return 1
+    fi
+
+    # --- Phase 0: Pull new CUSTOM skills from Cowork Desktop sessions ---
+    # Only pulls skills user manually added (customize → skills → add)
+    # Does NOT pull plugin skills (those stay in PLUGINS/ only)
+    local sessions_base="$HOME/Library/Application Support/Claude/local-agent-mode-sessions"
+    if [[ -d "$sessions_base" ]]; then
+        local pulled=0
+        while IFS= read -r -d '' skill_dir; do
+            local skill_name
+            skill_name=$(basename "$skill_dir")
+            # Skip if already exists
+            [[ -d "$skills_path/$skill_name" ]] && continue
+            # Skip Anthropic built-ins
+            case "$skill_name" in
+                algorithmic-art|brand-guidelines|canvas-design|doc-coauthoring|docx|internal-comms|mcp-builder|pdf|pptx|schedule|skill-creator|theme-factory|web-artifacts-builder|xlsx) continue ;;
+            esac
+            # Check manifest — skip if Anthropic-created
+            local manifest="$skill_dir/manifest.json"
+            if [[ -f "$manifest" ]]; then
+                local ctype
+                ctype=$(python3 -c "import json; print(json.load(open('$manifest')).get('creatorType',''))" 2>/dev/null || echo "")
+                [[ "$ctype" == "anthropic" ]] && continue
+            fi
+            cp -a "$skill_dir" "$skills_path/$skill_name"
+            chmod -R u+w "$skills_path/$skill_name" 2>/dev/null
+            echo -e "  ${GREEN}+${NC} Pulled from Cowork: $skill_name"
+            pulled=$((pulled + 1))
+        done < <(find "$sessions_base" -path "*/.claude/skills/*" -maxdepth 7 -mindepth 7 -type d -print0 2>/dev/null)
+        [[ $pulled -gt 0 ]] && echo -e "${GREEN}Pulled $pulled new skills from Cowork Desktop${NC}"
+    fi
+
+    # --- Phase 0b: Sync Cowork plugins → PLUGINS/ (full packages, no skills into SKILLs) ---
+    local workspace_plugins="$HOME/Desktop/cowork-workspace/PLUGINS"
+    if [[ -d "$sessions_base" ]]; then
+        local plugins_cache=""
+        while IFS= read -r -d '' candidate; do
+            plugins_cache="$candidate"
+            break
+        done < <(find "$sessions_base" -path "*/cowork_plugins/cache" -type d -print0 2>/dev/null)
+        if [[ -n "$plugins_cache" && -d "$workspace_plugins" ]]; then
+            local psync=0
+            # knowledge-work-plugins (latest version each)
+            for pdir in "$plugins_cache"/knowledge-work-plugins/*/; do
+                [[ -d "$pdir" ]] || continue
+                local pname=$(basename "$pdir")
+                local latest=$(ls "$pdir" | sort -V | tail -1)
+                local src="$pdir$latest"
+                local dest="$workspace_plugins/$pname"
+                if [[ -d "$src" ]] && [[ ! -d "$dest" || "$src" -nt "$dest" ]]; then
+                    rm -rf "$dest" 2>/dev/null
+                    cp -a "$src" "$dest"
+                    chmod -R u+w "$dest" 2>/dev/null
+                    psync=$((psync + 1))
                 fi
-            done < <(find "$sessions_base" -path "*/skills/skills" -type d -print0 2>/dev/null)
-        fi
-        if [[ -z "$skills_path" ]]; then
-            echo -e "${RED}ERROR: Could not find skills directory${NC}"
-            echo "Checked: ~/.claude/skills and Cowork Desktop sessions"
-            return 1
+            done
+            # local-desktop-app-uploads
+            for pdir in "$plugins_cache"/local-desktop-app-uploads/*/; do
+                [[ -d "$pdir" ]] || continue
+                local pname=$(basename "$pdir")
+                local latest=$(ls "$pdir" | sort -V | tail -1)
+                local src="$pdir$latest"
+                local dest="$workspace_plugins/$pname"
+                if [[ -d "$src" ]] && [[ ! -d "$dest" || "$src" -nt "$dest" ]]; then
+                    rm -rf "$dest" 2>/dev/null
+                    cp -a "$src" "$dest"
+                    chmod -R u+w "$dest" 2>/dev/null
+                    psync=$((psync + 1))
+                fi
+            done
+            [[ $psync -gt 0 ]] && echo -e "${GREEN}Synced $psync plugins to PLUGINS/${NC}"
         fi
     fi
 
-    echo -e "Found Cowork skills at: ${GREEN}$skills_path${NC}"
-    echo "Skills found: $(find "$skills_path" -maxdepth 1 -mindepth 1 -type d | wc -l | xargs)"
+    echo -e "Skills dir: ${GREEN}$skills_path${NC} ($(find "$skills_path" -maxdepth 1 -mindepth 1 -type d | wc -l | xargs) skills)"
+
+    # Files to exclude from export (bloat reduction)
+    local -a EXCLUDE_FILES=(
+        "package-lock.json" "*.html" "*.ttf" "*.woff" "*.woff2"
+        "*.png" "*.jpg" "*.jpeg" "*.gif" "*.svg" "*.ico"
+        "node_modules" "__pycache__" ".DS_Store"
+    )
 
     # Anthropic built-in skills to skip
     local -a SKIP=(
@@ -138,35 +207,51 @@ cmd_push() {
         skill-creator theme-factory web-artifacts-builder xlsx
     )
 
-    # Category mapping (bash 3.x compatible — no associative arrays on macOS default bash)
+    # Category mapping: reads .smorch-category file first, falls back to hardcoded map
     get_category() {
+        local skill_path="$skills_path/$1"
+        # Priority 1: .smorch-category file in skill directory
+        if [[ -f "$skill_path/.smorch-category" ]]; then
+            cat "$skill_path/.smorch-category" | xargs
+            return
+        fi
+        # Priority 2: Hardcoded fallback map
         case "$1" in
             signal-to-trust-gtm|signal-detector|wedge-generator|asset-factory|campaign-strategist) echo "smorch-gtm" ;;
             positioning-engine|outbound-orchestrator|ghl-operator|instantly-operator|heyreach-operator) echo "smorch-gtm" ;;
             clay-operator|n8n-architect|scraper-layer|smorch-salesnav-operator|smorch-linkedin-intel) echo "smorch-gtm" ;;
-            eo-brain-ingestion|eo-gtm-asset-factory|eo-skill-extractor|eo-tech-architect|eo-microsaas-dev) echo "eo-training" ;;
+            eo-brain-ingestion|eo-gtm-asset-factory|eo-gtm-asset-builder|eo-skill-extractor|eo-tech-architect|eo-microsaas-dev) echo "eo-training" ;;
             eo-db-architect|eo-api-connector|eo-qa-testing|eo-security-hardener|eo-deploy-infra|eo-training-factory) echo "eo-training" ;;
+            eo-production-renderer|eo-guide|eo-os-navigator) echo "eo-training" ;;
             project-definition-scoring-engine|icp-clarity-scoring-engine|market-attractiveness-scoring-engine) echo "eo-scoring" ;;
             strategy-selector-engine|gtm-fitness-scoring-engine) echo "eo-scoring" ;;
             eo-youtube-mamoun|smorch-perfect-webinar|smo-offer-assets|content-systems|movement-builder) echo "content" ;;
-            engagement-engine|validation-sprint) echo "content" ;;
-            smo-skill-creator|smorch-tool-super-admin-creator|systematic-debugging) echo "dev-meta" ;;
+            engagement-engine|validation-sprint|arabic-localizer) echo "content" ;;
+            smo-skill-creator|smorch-tool-super-admin-creator|systematic-debugging|smorch-github-ops|changelog-generator) echo "dev-meta" ;;
             requesting-code-review|receiving-code-review|using-superpowers) echo "dev-meta" ;;
-            frontend-design|webapp-testing|get-api-docs|lead-research-assistant) echo "tools" ;;
+            frontend-design|webapp-testing|get-api-docs|lead-research-assistant|saasfast-gating) echo "tools" ;;
+            client-onboarding|contabo-deployment|supabase-admin) echo "tools" ;;
+            smorch-about-me|smorch-project-brain) echo "personal" ;;
             *) echo "" ;;
         esac
     }
 
     # Create category directories
-    for cat in smorch-gtm eo-training eo-scoring content dev-meta tools; do
+    for cat in smorch-gtm eo-training eo-scoring content dev-meta tools personal; do
         mkdir -p "$REPO_DIR/skills/$cat"
     done
 
     local copied=0
     local skipped=0
+    local oversized=0
     for skill_dir in "$skills_path"/*/; do
         local skill_name
         skill_name=$(basename "$skill_dir")
+
+        # Skip directories without SKILL.md (category folders, references, etc.)
+        if [[ ! -f "$skill_dir/SKILL.md" ]]; then
+            continue
+        fi
 
         # Check manifest for creatorType
         local manifest="$skill_dir/manifest.json"
@@ -179,13 +264,10 @@ cmd_push() {
             fi
         fi
 
-        # Skip known Anthropic skills by name as fallback
+        # Skip known Anthropic skills by name
         local is_skip=false
         for s in "${SKIP[@]}"; do
-            if [[ "$skill_name" == "$s" ]]; then
-                is_skip=true
-                break
-            fi
+            [[ "$skill_name" == "$s" ]] && { is_skip=true; break; }
         done
         [[ "$is_skip" == true ]] && { skipped=$((skipped + 1)); continue; }
 
@@ -193,16 +275,36 @@ cmd_push() {
         local category
         category=$(get_category "$skill_name")
         if [[ -z "$category" ]]; then
-            echo -e "${YELLOW}WARN: No category mapping for '$skill_name' — skipping${NC}"
+            echo -e "${YELLOW}UNMAPPED: $skill_name — add .smorch-category file or update get_category()${NC}"
+            skipped=$((skipped + 1))
             continue
         fi
 
-        # Copy skill
-        cp -a "$skill_dir" "$REPO_DIR/skills/$category/$skill_name"
+        # Flag oversized SKILL.md (>20KB should use references instead)
+        local skill_md="$skill_dir/SKILL.md"
+        if [[ -f "$skill_md" ]]; then
+            local size
+            size=$(wc -c < "$skill_md" | xargs)
+            if [[ $size -gt 20480 ]]; then
+                echo -e "${YELLOW}LARGE: $skill_name/SKILL.md ($(( size / 1024 ))KB) — consider using reference files${NC}"
+                oversized=$((oversized + 1))
+            fi
+        fi
+
+        # Copy skill, excluding bloat files
+        local dest="$REPO_DIR/skills/$category/$skill_name"
+        mkdir -p "$dest"
+        # Use rsync for selective copy with excludes
+        local exclude_args=""
+        for ex in "${EXCLUDE_FILES[@]}"; do
+            exclude_args="$exclude_args --exclude=$ex"
+        done
+        rsync -a $exclude_args "$skill_dir/" "$dest/"
         copied=$((copied + 1))
     done
 
-    echo -e "${GREEN}Exported: $copied skills | Skipped: $skipped Anthropic skills${NC}"
+    echo -e "${GREEN}Exported: $copied skills | Skipped: $skipped Anthropic built-ins${NC}"
+    [[ $oversized -gt 0 ]] && echo -e "${YELLOW}$oversized skill(s) over 20KB — consider splitting into reference files${NC}"
 
     # Git operations
     cd "$REPO_DIR"
@@ -213,8 +315,16 @@ cmd_push() {
         local changes
         changes=$(git diff --cached --stat | tail -1)
         git commit -m "skills: export from Cowork — $changes"
-        echo -e "${GREEN}Committed. Run 'git push' or 'smorch push' again to push.${NC}"
-        git push origin main 2>&1 && echo -e "${GREEN}Pushed to GitHub.${NC}" || echo -e "${YELLOW}Push failed. Run 'git push' manually.${NC}"
+        echo -e "${GREEN}Committed.${NC}"
+        # Push to dev first (safe — no branch protection bypass needed)
+        git push origin dev 2>&1 && echo -e "${GREEN}Pushed to dev.${NC}" || {
+            # If dev doesn't exist locally, create it tracking origin/dev
+            git checkout -b dev origin/dev 2>/dev/null || git checkout dev 2>/dev/null
+            git merge main --no-edit 2>/dev/null
+            git push origin dev 2>&1 && echo -e "${GREEN}Pushed to dev.${NC}"
+        }
+        # Skills go to dev. Mamoun promotes dev → main via release PR when ready.
+        echo -e "${CYAN}Skills pushed to dev branch. Run 'smorch release' to promote to main via PR.${NC}"
     fi
 }
 
@@ -255,7 +365,7 @@ cmd_pull() {
     fi
 
     # Clean only managed categories (preserve Anthropic/system skills)
-    local -a MANAGED_CATS=(smorch-gtm eo-training eo-scoring content dev-meta tools)
+    local -a MANAGED_CATS=(smorch-gtm eo-training eo-scoring content dev-meta tools personal)
     for cat in "${MANAGED_CATS[@]}"; do
         rm -rf "$SKILLS_TARGET/$cat" 2>/dev/null
     done
@@ -510,6 +620,121 @@ cmd_init() {
     echo -e "${GREEN}Setup complete! Run 'smorch status' to verify.${NC}"
 }
 
+cmd_audit() {
+    echo -e "${CYAN}smorch audit — Checking for issues${NC}"
+    echo "──────────────────────────────────"
+    local issues=0
+
+    # 1. Unmapped skills (no .smorch-category and not in hardcoded map)
+    local skills_path="$HOME/.claude/skills"
+    if [[ -d "$skills_path" ]]; then
+        echo -e "\n${CYAN}Checking for unmapped skills...${NC}"
+        for skill_dir in "$skills_path"/*/; do
+            [[ -d "$skill_dir" ]] || continue
+            local skill_name
+            skill_name=$(basename "$skill_dir")
+            # Skip category dirs and known system dirs
+            [[ -d "$skill_dir/SKILL.md" ]] || [[ -f "$skill_dir/SKILL.md" ]] || continue
+            if [[ ! -f "$skill_dir/.smorch-category" ]]; then
+                echo -e "  ${YELLOW}UNMAPPED: $skill_name — missing .smorch-category file${NC}"
+                issues=$((issues + 1))
+            fi
+        done
+    fi
+
+    # 2. Missing version files
+    echo -e "\n${CYAN}Checking for missing version files...${NC}"
+    if [[ -d "$skills_path" ]]; then
+        for skill_dir in "$skills_path"/*/; do
+            [[ -d "$skill_dir" ]] || continue
+            local skill_name
+            skill_name=$(basename "$skill_dir")
+            [[ -f "$skill_dir/SKILL.md" ]] || continue
+            if [[ ! -f "$skill_dir/.smorch-version" ]]; then
+                echo -e "  ${YELLOW}NO VERSION: $skill_name — missing .smorch-version file${NC}"
+                issues=$((issues + 1))
+            fi
+        done
+    fi
+
+    # 3. Oversized SKILL.md files (>500 lines)
+    echo -e "\n${CYAN}Checking for oversized SKILL.md files (>500 lines)...${NC}"
+    while IFS= read -r line; do
+        local linecount="${line%% *}"
+        local filepath="${line#* }"
+        if [[ "$linecount" -gt 500 ]]; then
+            echo -e "  ${RED}OVERSIZED: $filepath ($linecount lines, limit: 500)${NC}"
+            issues=$((issues + 1))
+        fi
+    done < <(find "$skills_path" "$REPO_DIR/plugins" -name "SKILL.md" -exec sh -c 'echo "$(wc -l < "$1") $1"' _ {} \; 2>/dev/null | sort -rn)
+
+    # 4. Skills not in any profile
+    echo -e "\n${CYAN}Checking for skills not in any profile...${NC}"
+    for cat_dir in "$REPO_DIR/skills"/*/; do
+        [[ -d "$cat_dir" ]] || continue
+        local cat_name
+        cat_name=$(basename "$cat_dir")
+        for skill_dir in "$cat_dir"*/; do
+            [[ -d "$skill_dir" ]] || continue
+            local skill_name
+            skill_name=$(basename "$skill_dir")
+            local in_profile=false
+            for pf in "$REPO_DIR/profiles/"*.txt; do
+                if grep -q "$cat_name/\*\|$cat_name/$skill_name\|^\*$" "$pf" 2>/dev/null; then
+                    in_profile=true
+                    break
+                fi
+            done
+            if [[ "$in_profile" == false ]]; then
+                echo -e "  ${YELLOW}ORPHAN: $cat_name/$skill_name — not in any profile${NC}"
+                issues=$((issues + 1))
+            fi
+        done
+    done
+
+    echo -e "\n──────────────────────────────────"
+    if [[ $issues -eq 0 ]]; then
+        echo -e "${GREEN}All clear! No issues found.${NC}"
+    else
+        echo -e "${RED}Found $issues issue(s) to fix.${NC}"
+    fi
+}
+
+cmd_build_plugin() {
+    local plugin_name="$1"
+    if [[ -z "$plugin_name" ]]; then
+        echo -e "${RED}Usage: smorch build-plugin <name>${NC}"
+        echo "Available plugins:"
+        ls "$REPO_DIR/plugins/" 2>/dev/null | sed 's/^/  /'
+        return 1
+    fi
+
+    local plugin_dir="$REPO_DIR/plugins/$plugin_name"
+    if [[ ! -d "$plugin_dir" ]]; then
+        echo -e "${RED}Plugin not found: $plugin_dir${NC}"
+        return 1
+    fi
+
+    local output="$REPO_DIR/dist/${plugin_name}.plugin"
+    mkdir -p "$REPO_DIR/dist"
+
+    echo -e "${CYAN}Building plugin: $plugin_name${NC}"
+
+    # Create zip (excluding .DS_Store, node_modules, etc.)
+    cd "$plugin_dir"
+    zip -r "$output" . \
+        -x "*.DS_Store" \
+        -x "*node_modules/*" \
+        -x "*__pycache__/*" \
+        -x "*.git/*" \
+        2>/dev/null
+
+    local size
+    size=$(du -h "$output" | cut -f1)
+    echo -e "${GREEN}Built: $output ($size)${NC}"
+    echo -e "To install: Upload via Cowork > Customize > Plugins"
+}
+
 # Main dispatch
 case "${1:-}" in
     push)       cmd_push ;;
@@ -520,6 +745,8 @@ case "${1:-}" in
     diff)       cmd_diff ;;
     status)     cmd_status ;;
     init)       shift; cmd_init "$@" ;;
+    audit)      cmd_audit ;;
+    build-plugin) shift; cmd_build_plugin "$@" ;;
     --version)  echo "smorch v${VERSION}" ;;
     -h|--help|"") usage ;;
     *)          echo "Unknown command: $1"; usage; exit 1 ;;
