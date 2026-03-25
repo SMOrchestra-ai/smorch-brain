@@ -1,0 +1,83 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# smorch-install-plugins — Install all recommended Claude Code plugins
+# Works on: macOS, Linux
+# Usage: smorch-install-plugins [--all | --lsp | --gtm | --official]
+
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m'
+
+show_help() {
+    echo "smorch-install-plugins — Install Claude Code plugins"
+    echo ""
+    echo "Usage: smorch-install-plugins [OPTIONS]"
+    echo ""
+    echo "Options:"
+    echo "  --all       Install everything (default)"
+    echo "  --lsp       Install language server plugins only"
+    echo "  --official  Install official Anthropic plugins only"
+    echo "  --gtm       Install GTM agents plugins only"
+    echo "  --help      Show this help"
+}
+
+install_plugin() {
+    local name="$1"
+    local registry="$2"
+    echo -e "${BLUE}Installing${NC} ${name}@${registry}..."
+    if claude /plugin install "${name}@${registry}" 2>/dev/null; then
+        echo -e "${GREEN}OK${NC} ${name}"
+    else
+        echo -e "${YELLOW}SKIP${NC} ${name} (may already be installed)"
+    fi
+}
+
+MODE="${1:---all}"
+
+case "$MODE" in
+    --help|-h)
+        show_help
+        exit 0
+        ;;
+    --lsp)
+        echo -e "${GREEN}Installing LSP plugins...${NC}"
+        for p in typescript-lsp pyright-lsp rust-analyzer-lsp gopls-lsp; do
+            install_plugin "$p" "claude-plugins-official"
+        done
+        ;;
+    --official)
+        echo -e "${GREEN}Installing official Anthropic plugins...${NC}"
+        for p in typescript-lsp pyright-lsp rust-analyzer-lsp gopls-lsp code-review frontend-design github; do
+            install_plugin "$p" "claude-plugins-official"
+        done
+        ;;
+    --gtm)
+        echo -e "${GREEN}Installing GTM agents plugins...${NC}"
+        for p in campaign-orchestration content-marketing customer-analytics email-marketing growth-experiments revenue-analytics sales-enablement sales-pipeline sales-prospecting; do
+            install_plugin "$p" "gtm-agents"
+        done
+        ;;
+    --all)
+        echo -e "${GREEN}Installing ALL Claude Code plugins...${NC}"
+        echo ""
+        echo "=== Official Anthropic ==="
+        for p in typescript-lsp pyright-lsp rust-analyzer-lsp gopls-lsp code-review frontend-design github; do
+            install_plugin "$p" "claude-plugins-official"
+        done
+        echo ""
+        echo "=== GTM Agents ==="
+        for p in campaign-orchestration content-marketing customer-analytics email-marketing growth-experiments revenue-analytics sales-enablement sales-pipeline sales-prospecting; do
+            install_plugin "$p" "gtm-agents"
+        done
+        ;;
+    *)
+        echo "Unknown option: $MODE"
+        show_help
+        exit 1
+        ;;
+esac
+
+echo ""
+echo -e "${GREEN}Done!${NC} Restart Claude Code to activate new plugins."
