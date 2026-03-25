@@ -1,131 +1,125 @@
-# smorch-install-plugins.ps1 — Install the right plugins for your role
+# smorch-install-plugins.ps1 — Install plugins for your role
+# GTM roles: Cowork only (no Code plugins)
+# Dev/EO roles: Cowork + 7 Claude Code dev tools
 # Works on: Windows (PowerShell)
-# Usage: .\smorch-install-plugins.ps1 -Role gtm|dev|eo-student|mamoun
 
 param(
     [string]$Role = "",
-    [ValidateSet("all", "official", "lsp", "gtm", "list-cowork")]
-    [string]$Mode = "",
+    [switch]$List,
     [switch]$Help
 )
 
-if ($Help -or (-not $Role -and -not $Mode)) {
-    Write-Host "smorch-install-plugins — Install the right plugins for your role"
+if ($Help -or (-not $Role -and -not $List)) {
+    Write-Host "smorch-install-plugins — Install plugins for your role"
     Write-Host ""
-    Write-Host "BY ROLE (recommended):"
-    Write-Host "  -Role gtm          GTM team: all Code plugins + Cowork list"
-    Write-Host "  -Role dev          Dev team: official Code plugins + Cowork list"
-    Write-Host "  -Role eo-student   EO student: official Code plugins + Cowork list"
+    Write-Host "ROLES:"
+    Write-Host "  -Role gtm-eo       GTM-EO team (Cowork only)"
+    Write-Host "  -Role gtm-smo      GTM-SMO team (Cowork only)"
+    Write-Host "  -Role dev          Dev team (Cowork + 7 Code dev tools)"
+    Write-Host "  -Role eo-student   EO student (Cowork + 7 Code dev tools)"
     Write-Host "  -Role mamoun       Everything"
     Write-Host ""
-    Write-Host "MANUAL:"
-    Write-Host "  -Mode all          All Claude Code plugins"
-    Write-Host "  -Mode official     Official Anthropic only"
-    Write-Host "  -Mode lsp          Language servers only"
-    Write-Host "  -Mode gtm          GTM agents only"
-    Write-Host "  -Mode list-cowork  Show Cowork plugins per role"
+    Write-Host "  -List              Show what each role gets"
     exit 0
 }
 
-function Install-Plugin {
-    param([string]$Name, [string]$Registry)
-    Write-Host "Installing $Name@$Registry..." -ForegroundColor Blue -NoNewline
-    try {
-        claude /plugin install "$Name@$Registry" 2>$null
-        Write-Host " OK" -ForegroundColor Green
-    } catch {
-        Write-Host " SKIP (already installed)" -ForegroundColor Yellow
+function Install-CodePlugins {
+    Write-Host "Installing 7 Claude Code Dev Tools" -ForegroundColor Cyan
+    Write-Host "(NOT available in Cowork - Code only)" -ForegroundColor Cyan
+    Write-Host ""
+    Write-Host "  Language Servers:" -ForegroundColor Blue
+    foreach ($p in @("typescript-lsp", "pyright-lsp", "rust-analyzer-lsp", "gopls-lsp")) {
+        Write-Host "  Installing $p@claude-plugins-official..." -ForegroundColor Blue -NoNewline
+        try { claude /plugin install "$p@claude-plugins-official" 2>$null; Write-Host " OK" -ForegroundColor Green }
+        catch { Write-Host " SKIP" -ForegroundColor Yellow }
+    }
+    Write-Host ""
+    Write-Host "  Dev Tools:" -ForegroundColor Blue
+    foreach ($p in @("code-review", "frontend-design", "github")) {
+        Write-Host "  Installing $p@claude-plugins-official..." -ForegroundColor Blue -NoNewline
+        try { claude /plugin install "$p@claude-plugins-official" 2>$null; Write-Host " OK" -ForegroundColor Green }
+        catch { Write-Host " SKIP" -ForegroundColor Yellow }
     }
 }
 
-$officialPlugins = @("typescript-lsp", "pyright-lsp", "rust-analyzer-lsp", "gopls-lsp", "code-review", "frontend-design", "github")
-$gtmPlugins = @("campaign-orchestration", "content-marketing", "customer-analytics", "email-marketing", "growth-experiments", "revenue-analytics", "sales-enablement", "sales-pipeline", "sales-prospecting")
-
-function Install-Official {
-    Write-Host "=== Official Anthropic Plugins (7) ===" -ForegroundColor Cyan
-    foreach ($p in $officialPlugins) { Install-Plugin -Name $p -Registry "claude-plugins-official" }
+if ($List) {
+    Write-Host "=== What Each Role Gets ===" -ForegroundColor Cyan
+    Write-Host ""
+    Write-Host "GTM-EO:" -ForegroundColor Green
+    Write-Host "  Cowork (6): smorch-context-brain, smorch-gtm-tools, smorch-gtm-engine,"
+    Write-Host "              smorch-design, mamoun-personal-branding, eo-microsaas-os"
+    Write-Host "  Code: None"
+    Write-Host ""
+    Write-Host "GTM-SMO:" -ForegroundColor Green
+    Write-Host "  Cowork (5): smorch-context-brain, smorch-gtm-tools, smorch-gtm-engine,"
+    Write-Host "              smorch-design, mamoun-personal-branding"
+    Write-Host "  Code: None"
+    Write-Host ""
+    Write-Host "Dev:" -ForegroundColor Green
+    Write-Host "  Cowork (1): smorch-dev"
+    Write-Host "  Code (7): 4 LSPs + code-review + frontend-design + github"
+    Write-Host ""
+    Write-Host "EO Student:" -ForegroundColor Green
+    Write-Host "  Cowork (2): eo-microsaas-os, smorch-dev"
+    Write-Host "  Code (7): 4 LSPs + code-review + frontend-design + github"
+    exit 0
 }
 
-function Install-GtmAgents {
-    Write-Host "=== GTM Agent Plugins (9) ===" -ForegroundColor Cyan
-    foreach ($p in $gtmPlugins) { Install-Plugin -Name $p -Registry "gtm-agents" }
-}
-
-# Handle -Role
-if ($Role) {
-    switch ($Role) {
-        "gtm" {
-            Write-Host "=== GTM Team Setup ===" -ForegroundColor Green
-            Write-Host "Installing: 7 official + 9 GTM agent plugins" -ForegroundColor White
-            Write-Host ""
-            Install-Official
-            Write-Host ""
-            Install-GtmAgents
-            Write-Host ""
-            Write-Host "=== NOW: Install these in Cowork Desktop ===" -ForegroundColor Cyan
-            Write-Host "   Go to: Customize > Plugins > Search marketplace" -ForegroundColor Cyan
-            Write-Host ""
-            Write-Host "  1. smorch-context-brain     - Project brain builder"
-            Write-Host "  2. smorch-gtm-tools         - Clay, GHL, Instantly, HeyReach, SalesNav"
-            Write-Host "  3. smorch-gtm-engine        - Campaigns, signals, wedges, outbound"
-            Write-Host "  4. smorch-design            - Frontend design, brand system"
-            Write-Host "  5. mamoun-personal-branding  - LinkedIn, YouTube, content"
-        }
-        "dev" {
-            Write-Host "=== Dev Team Setup ===" -ForegroundColor Green
-            Write-Host "Installing: 7 official plugins (no GTM agents)" -ForegroundColor White
-            Write-Host ""
-            Install-Official
-            Write-Host ""
-            Write-Host "=== NOW: Install this in Cowork Desktop ===" -ForegroundColor Cyan
-            Write-Host "  1. smorch-dev - Debugging, code review, MCP builder, n8n" -ForegroundColor White
-        }
-        "eo-student" {
-            Write-Host "=== EO Student Setup ===" -ForegroundColor Green
-            Write-Host "Installing: 7 official plugins (no GTM agents)" -ForegroundColor White
-            Write-Host ""
-            Install-Official
-            Write-Host ""
-            Write-Host "=== NOW: Install these in Cowork Desktop ===" -ForegroundColor Cyan
-            Write-Host "  1. eo-microsaas-os - Full MicroSaaS journey" -ForegroundColor White
-            Write-Host "  2. smorch-dev      - Debugging, code review, testing" -ForegroundColor White
-        }
-        "mamoun" {
-            Write-Host "=== Mamoun (All Access) ===" -ForegroundColor Green
-            Install-Official
-            Write-Host ""
-            Install-GtmAgents
-        }
-        default {
-            Write-Host "Unknown role: $Role. Use: gtm, dev, eo-student, mamoun" -ForegroundColor Red
-            exit 1
-        }
+switch ($Role) {
+    "gtm-eo" {
+        Write-Host "=== GTM-EO Team Setup ===" -ForegroundColor Green
+        Write-Host ""
+        Write-Host "No Claude Code plugins needed for GTM roles." -ForegroundColor Yellow
+        Write-Host ""
+        Write-Host "Install these 6 plugins in Cowork Desktop:" -ForegroundColor Cyan
+        Write-Host "Customize > Plugins > Search marketplace:" -ForegroundColor Cyan
+        Write-Host "  1. smorch-context-brain"
+        Write-Host "  2. smorch-gtm-tools"
+        Write-Host "  3. smorch-gtm-engine"
+        Write-Host "  4. smorch-design"
+        Write-Host "  5. mamoun-personal-branding"
+        Write-Host "  6. eo-microsaas-os"
     }
-} elseif ($Mode) {
-    switch ($Mode) {
-        "all" { Install-Official; Write-Host ""; Install-GtmAgents }
-        "official" { Install-Official }
-        "lsp" {
-            foreach ($p in @("typescript-lsp", "pyright-lsp", "rust-analyzer-lsp", "gopls-lsp")) {
-                Install-Plugin -Name $p -Registry "claude-plugins-official"
-            }
-        }
-        "gtm" { Install-GtmAgents }
-        "list-cowork" {
-            Write-Host "=== Cowork Plugins by Role ===" -ForegroundColor Cyan
-            Write-Host ""
-            Write-Host "GTM Team (5 plugins):" -ForegroundColor Green
-            Write-Host "  smorch-context-brain, smorch-gtm-tools, smorch-gtm-engine,"
-            Write-Host "  smorch-design, mamoun-personal-branding"
-            Write-Host ""
-            Write-Host "Dev Team (1 plugin):" -ForegroundColor Green
-            Write-Host "  smorch-dev"
-            Write-Host ""
-            Write-Host "EO Student (2 plugins):" -ForegroundColor Green
-            Write-Host "  eo-microsaas-os, smorch-dev"
-        }
+    {$_ -in "gtm-smo", "gtm"} {
+        Write-Host "=== GTM-SMO Team Setup ===" -ForegroundColor Green
+        Write-Host ""
+        Write-Host "No Claude Code plugins needed for GTM roles." -ForegroundColor Yellow
+        Write-Host ""
+        Write-Host "Install these 5 plugins in Cowork Desktop:" -ForegroundColor Cyan
+        Write-Host "  1. smorch-context-brain"
+        Write-Host "  2. smorch-gtm-tools"
+        Write-Host "  3. smorch-gtm-engine"
+        Write-Host "  4. smorch-design"
+        Write-Host "  5. mamoun-personal-branding"
+    }
+    "dev" {
+        Write-Host "=== Dev Team Setup ===" -ForegroundColor Green
+        Write-Host ""
+        Install-CodePlugins
+        Write-Host ""
+        Write-Host "Install this plugin in Cowork Desktop:" -ForegroundColor Cyan
+        Write-Host "  1. smorch-dev"
+    }
+    "eo-student" {
+        Write-Host "=== EO Student Setup ===" -ForegroundColor Green
+        Write-Host ""
+        Install-CodePlugins
+        Write-Host ""
+        Write-Host "Install these 2 plugins in Cowork Desktop:" -ForegroundColor Cyan
+        Write-Host "  1. eo-microsaas-os"
+        Write-Host "  2. smorch-dev"
+    }
+    "mamoun" {
+        Write-Host "=== Mamoun (All Access) ===" -ForegroundColor Green
+        Install-CodePlugins
+        Write-Host ""
+        Write-Host "All Cowork plugins should already be installed." -ForegroundColor Cyan
+    }
+    default {
+        Write-Host "Unknown role: $Role. Use: gtm-eo, gtm-smo, dev, eo-student, mamoun" -ForegroundColor Red
+        exit 1
     }
 }
 
 Write-Host ""
-Write-Host "Done! Restart Claude Code to activate new plugins." -ForegroundColor Green
+Write-Host "Done!" -ForegroundColor Green
