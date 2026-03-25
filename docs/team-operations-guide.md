@@ -37,36 +37,48 @@
 
 ## 1. Per-Persona Sync Guide
 
-### GTM Team
+### GTM Team — EO Focus
 
-**What you get:**
-- All `smorch-gtm/*` skills (15 skills): signal-to-trust-gtm, signal-detector, wedge-generator, asset-factory, campaign-strategist, positioning-engine, outbound-orchestrator, ghl-operator, instantly-operator, heyreach-operator, clay-operator, n8n-architect, scraper-layer, smorch-salesnav-operator, smorch-linkedin-intel
-- All `content/*` skills (8 skills): eo-youtube-mamoun, smorch-perfect-webinar, smo-offer-assets, content-systems, movement-builder, engagement-engine, validation-sprint, arabic-localizer
-- Select `dev-meta` skills: smorch-github-ops, changelog-generator, systematic-debugging
+**What you get:** All GTM skills + content skills + EO context files.
 
-**First-time setup (one command):**
+**Context files:** `EntrepreneurOasis`
+
+**First-time setup:**
 
 ```bash
-# Bootstrap: clones repo, makes scripts executable, installs profile, adds to PATH
-# On Mac, replace ~/smorch-brain with ~/Desktop/cowork-workspace/smorch-brain
 git clone https://github.com/SMOrchestra-ai/smorch-brain.git ~/smorch-brain && \
   chmod +x ~/smorch-brain/scripts/* && \
   ~/smorch-brain/scripts/smorch-server-setup --profile gtm-team
+~/smorch-brain/scripts/smorch-context --folder EntrepreneurOasis
 ```
 
-> **Windows (PowerShell):**
-> ```powershell
-> git clone https://github.com/SMOrchestra-ai/smorch-brain.git $env:USERPROFILE\smorch-brain
-> & "$env:USERPROFILE\smorch-brain\scripts\smorch-server-setup.ps1" -Profile gtm-team
-> ```
+> **Windows:** Replace `~/smorch-brain/scripts/smorch` with `.\smorch-brain\scripts\smorch.ps1`
+> and `smorch-context` with `.\smorch-brain\scripts\smorch-context.ps1 -Action download -Folder`
+
+### GTM Team — SMO Focus
+
+**What you get:** All GTM skills + content skills + SMO/CX context files.
+
+**Context files:** `SalesMfastGTM` + `CC_CX`
+
+**First-time setup:**
+
+```bash
+git clone https://github.com/SMOrchestra-ai/smorch-brain.git ~/smorch-brain && \
+  chmod +x ~/smorch-brain/scripts/* && \
+  ~/smorch-brain/scripts/smorch-server-setup --profile gtm-team
+~/smorch-brain/scripts/smorch-context --folder SalesMfastGTM
+~/smorch-brain/scripts/smorch-context --folder CC_CX
+```
+
+### GTM Daily & Weekly (Both EO and SMO)
 
 **Daily routine:**
 
 ```bash
 smorch pull
+smorch-context --update
 ```
-
-Run this at the start of each workday. It pulls the latest from GitHub and reinstalls your profile's skills. Takes under 30 seconds.
 
 **Weekly routine:**
 
@@ -86,30 +98,27 @@ smorch audit         # Check for issues on your machine
 
 ### Dev Team
 
-**What you get:**
-- All `dev-meta/*` skills (8 skills): systematic-debugging, requesting-code-review, receiving-code-review, smorch-github-ops, changelog-generator, smo-skill-creator, smorch-tool-super-admin-creator, using-superpowers
-- All `tools/*` skills (7 skills): frontend-design, webapp-testing, get-api-docs, lead-research-assistant, supabase-admin, client-onboarding, contabo-deployment
-- Select `smorch-gtm` skills: n8n-architect, scraper-layer
+**What you get:** All dev-meta + tools skills. Cowork plugin: smorch-dev.
 
-**First-time setup (one command):**
+**Context files:** `EntrepreneurOasis` + `SalesMfastGTM`
+
+**First-time setup:**
 
 ```bash
-# On Mac, replace ~/smorch-brain with ~/Desktop/cowork-workspace/smorch-brain
 git clone https://github.com/SMOrchestra-ai/smorch-brain.git ~/smorch-brain && \
   chmod +x ~/smorch-brain/scripts/* && \
   ~/smorch-brain/scripts/smorch-server-setup --profile developer
+~/smorch-brain/scripts/smorch-context --folder EntrepreneurOasis
+~/smorch-brain/scripts/smorch-context --folder SalesMfastGTM
 ```
 
-> **Windows (PowerShell):**
-> ```powershell
-> git clone https://github.com/SMOrchestra-ai/smorch-brain.git $env:USERPROFILE\smorch-brain
-> & "$env:USERPROFILE\smorch-brain\scripts\smorch-server-setup.ps1" -Profile developer
-> ```
+> **Windows:** Replace paths with `$env:USERPROFILE\smorch-brain\scripts\smorch.ps1` and use `-Action download -Folder` for context.
 
 **Daily routine:**
 
 ```bash
 smorch pull
+smorch-context --update
 ```
 
 **Weekly routine:**

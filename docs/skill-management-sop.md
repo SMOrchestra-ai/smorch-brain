@@ -149,13 +149,14 @@ smorch push
 
 ## Profile Segmentation
 
-| Profile | Who | Gets | Context Folder |
-|---------|-----|------|---------------|
+| Profile | Who | Gets | Context Folders |
+|---------|-----|------|----------------|
 | `mamoun` | Mamoun's Mac | `*` (everything) | all |
 | `smo-brain` | Brain server (Linux #1) | dev-meta, eo-training, eo-scoring, tools | — |
 | `smo-dev` | Dev servers (#2, #3) | dev-meta, tools, operators | — |
-| `gtm-team` | Agency team | smorch-gtm, content | SalesMfastGTM |
-| `developer` | Tech team | dev-meta, tools | EntrepreneurOasis |
+| `gtm-team` (EO) | GTM - EO team | smorch-gtm, content | EntrepreneurOasis |
+| `gtm-team` (SMO) | GTM - SMO team | smorch-gtm, content | SalesMfastGTM + CC_CX |
+| `developer` | Tech team | dev-meta, tools | EntrepreneurOasis + SalesMfastGTM |
 | `eo-student` | EO community (plugin) | eo-training, eo-scoring | — |
 
 ---
@@ -180,16 +181,21 @@ smorch push
 | `smorch-brain` | Skills, scripts, profiles, plugins, SOPs | All team (via profiles) |
 | `smorch-context` | Business context files (ICP, positioning, team profiles) | Per business line |
 
-### Context Access
+### Context Access Per Role
 
 ```bash
-# Mac/Linux
+# GTM - EO team:
 smorch-context --folder EntrepreneurOasis
+
+# GTM - SMO team:
 smorch-context --folder SalesMfastGTM
 smorch-context --folder CC_CX
 
-# Windows
-.\smorch-context.ps1 -Folder EntrepreneurOasis
+# Dev team:
+smorch-context --folder EntrepreneurOasis
+smorch-context --folder SalesMfastGTM
+
+# Windows: replace smorch-context with .\smorch-context.ps1 -Action download -Folder
 ```
 
 ---
