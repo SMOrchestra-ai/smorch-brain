@@ -6,8 +6,18 @@
 > **Repository Path Note:** The `smorch-brain` repo location varies by machine:
 > - **Mac (Mamoun):** `~/Desktop/cowork-workspace/smorch-brain`
 > - **Linux servers:** `~/smorch-brain`
+> - **Windows:** `C:\Users\<you>\smorch-brain` or `C:\Users\<you>\Desktop\cowork-workspace\smorch-brain`
 >
 > The `smorch` CLI scripts auto-detect the correct location. When this document shows `~/smorch-brain`, substitute your machine's actual path.
+>
+> **Windows Setup (first time):**
+> ```powershell
+> # Windows: Run in PowerShell
+> Set-ExecutionPolicy RemoteSigned -Scope CurrentUser  # One-time only
+> git clone https://github.com/SMOrchestra-ai/smorch-brain.git $env:USERPROFILE\smorch-brain
+> cd $env:USERPROFILE\smorch-brain\scripts
+> .\smorch.ps1 pull -Profile <your-profile>
+> ```
 
 ---
 
@@ -87,10 +97,17 @@ These are either personal, too generic, or not worth plugin packaging:
 ### Step 1: Copy Skill to Plugin Directory
 
 ```bash
+# Mac/Linux
 # Example: moving smorch-linkedin-intel to smorch-gtm-engine
 # Use your machine's smorch-brain path (see Path Note at top)
 cp -a ~/Desktop/cowork-workspace/SKILLs/smorch-linkedin-intel \
       ~/smorch-brain/plugins/smorch-gtm-engine/skills/smorch-linkedin-intel
+```
+
+```powershell
+# Windows (PowerShell)
+Copy-Item -Recurse "$env:USERPROFILE\Desktop\cowork-workspace\SKILLs\smorch-linkedin-intel" `
+  "$env:USERPROFILE\smorch-brain\plugins\smorch-gtm-engine\skills\smorch-linkedin-intel"
 ```
 
 ### Step 2: Verify SKILL.md is Under 500 Lines
@@ -104,8 +121,14 @@ wc -l ~/smorch-brain/plugins/smorch-gtm-engine/skills/smorch-linkedin-intel/SKIL
 ### Step 3: Rebuild the Plugin
 
 ```bash
+# Mac/Linux
 smorch build-plugin smorch-gtm-engine
 # Output: ~/smorch-brain/dist/smorch-gtm-engine.plugin
+```
+
+```powershell
+# Windows (PowerShell)
+.\smorch.ps1 build-plugin -Name smorch-gtm-engine
 ```
 
 ### Step 4: Upload to Cowork
@@ -130,8 +153,14 @@ smorch build-plugin smorch-gtm-engine
 ### Step 7: Push to Registry
 
 ```bash
+# Mac/Linux
 smorch push
 # This syncs the updated plugin to smorch-brain
+```
+
+```powershell
+# Windows (PowerShell)
+.\smorch.ps1 push
 ```
 
 ---
@@ -141,10 +170,17 @@ smorch push
 ### Step 1: Create Plugin Directory Structure
 
 ```bash
+# Mac/Linux
 # Use your machine's smorch-brain path (see Path Note at top)
 mkdir -p ~/smorch-brain/plugins/smorch-agency-tools/.claude-plugin
 mkdir -p ~/smorch-brain/plugins/smorch-agency-tools/skills
 mkdir -p ~/smorch-brain/plugins/smorch-agency-tools/commands
+```
+
+```powershell
+# Windows (PowerShell)
+$base = "$env:USERPROFILE\smorch-brain\plugins\smorch-agency-tools"
+New-Item -ItemType Directory -Force -Path "$base\.claude-plugin", "$base\skills", "$base\commands"
 ```
 
 ### Step 2: Create plugin.json
@@ -210,8 +246,14 @@ EOF
 ### Step 6: Build and Test
 
 ```bash
+# Mac/Linux
 smorch build-plugin smorch-agency-tools
 # Upload to Cowork, test skills fire correctly
+```
+
+```powershell
+# Windows (PowerShell)
+.\smorch.ps1 build-plugin -Name smorch-agency-tools
 ```
 
 ---
@@ -242,6 +284,8 @@ START: You have a new skill
 
 ## Quick Command Reference
 
+### Mac / Linux (bash)
+
 ```bash
 # All ~/smorch-brain paths below: use your machine's actual path (see Path Note at top)
 
@@ -263,4 +307,28 @@ smorch build-plugin <plugin>             # build
 # Upload .plugin to Cowork               # install
 # Remove from Customize > Skills         # deduplicate
 smorch push                              # sync to registry
+```
+
+### Windows (PowerShell)
+
+```powershell
+# Move skill to plugin
+Copy-Item -Recurse "$env:USERPROFILE\Desktop\cowork-workspace\SKILLs\<skill>" "$env:USERPROFILE\smorch-brain\plugins\<plugin>\skills\"
+
+# Build plugin
+.\smorch.ps1 build-plugin -Name <plugin-name>
+
+# List what's in a plugin
+Get-ChildItem "$env:USERPROFILE\smorch-brain\plugins\<plugin>\skills\"
+
+# Create new plugin
+$base = "$env:USERPROFILE\smorch-brain\plugins\<name>"
+New-Item -ItemType Directory -Force -Path "$base\.claude-plugin", "$base\skills", "$base\commands"
+
+# Full migration cycle
+Copy-Item -Recurse <skill> "plugins\<plugin>\skills\"   # copy
+.\smorch.ps1 build-plugin -Name <plugin>                 # build
+# Upload .plugin to Cowork                               # install
+# Remove from Customize > Skills                         # deduplicate
+.\smorch.ps1 push                                        # sync to registry
 ```

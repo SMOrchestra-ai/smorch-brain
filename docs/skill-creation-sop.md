@@ -6,8 +6,18 @@
 > **Repository Path Note:** The `smorch-brain` repo location varies by machine:
 > - **Mac (Mamoun):** `~/Desktop/cowork-workspace/smorch-brain`
 > - **Linux servers:** `~/smorch-brain`
+> - **Windows:** `C:\Users\<you>\smorch-brain` or `C:\Users\<you>\Desktop\cowork-workspace\smorch-brain`
 >
 > The `smorch` CLI scripts auto-detect the correct location. When this document shows `~/smorch-brain`, substitute your machine's actual path.
+>
+> **Windows Setup (first time):**
+> ```powershell
+> # Windows: Run in PowerShell
+> Set-ExecutionPolicy RemoteSigned -Scope CurrentUser  # One-time only
+> git clone https://github.com/SMOrchestra-ai/smorch-brain.git $env:USERPROFILE\smorch-brain
+> cd $env:USERPROFILE\smorch-brain\scripts
+> .\smorch.ps1 pull -Profile <your-profile>
+> ```
 
 ---
 
@@ -18,20 +28,32 @@ Run these checks BEFORE creating any new skill. This prevents the #1 problem —
 ### Check 1: Does it already exist as a skill?
 
 ```bash
+# Mac/Linux
 smorch list | grep -i "<keyword>"
 # Example: smorch list | grep -i "linkedin"
+```
+
+```powershell
+# Windows (PowerShell)
+.\smorch.ps1 list | Select-String "<keyword>"
 ```
 
 ### Check 2: Does it exist in a plugin?
 
 ```bash
-# Check all plugin skills
+# Mac/Linux: Check all plugin skills
 # Use your machine's smorch-brain path (see Path Note above)
 SMORCH_BRAIN="${SMORCH_BRAIN:-$([ -d ~/Desktop/cowork-workspace/smorch-brain ] && echo ~/Desktop/cowork-workspace/smorch-brain || echo ~/smorch-brain)}"
 for plugin in "$SMORCH_BRAIN"/plugins/*/; do
   echo "=== $(basename $plugin) ==="
   ls "$plugin/skills/" 2>/dev/null
 done | grep -i "<keyword>"
+```
+
+```powershell
+# Windows (PowerShell):
+$SmorchBrain = if (Test-Path "$env:USERPROFILE\Desktop\cowork-workspace\smorch-brain") { "$env:USERPROFILE\Desktop\cowork-workspace\smorch-brain" } else { "$env:USERPROFILE\smorch-brain" }
+Get-ChildItem "$SmorchBrain\plugins\*\skills" -ErrorAction SilentlyContinue | Select-String "<keyword>"
 ```
 
 ### Check 3: Does it exist as an Anthropic built-in?
@@ -61,7 +83,13 @@ Sometimes the right move is to add a reference file to an existing skill rather 
 ### Step 1: Create the Skill Directory
 
 ```bash
+# Mac/Linux
 mkdir -p ~/Desktop/cowork-workspace/SKILLs/<skill-name>
+```
+
+```powershell
+# Windows (PowerShell)
+New-Item -ItemType Directory -Force -Path "$env:USERPROFILE\Desktop\cowork-workspace\SKILLs\<skill-name>"
 ```
 
 **Naming rules:**
@@ -100,11 +128,18 @@ description: "Third person. What it does AND when to use it. Include trigger wor
 ### Step 3: Add Metadata Files
 
 ```bash
+# Mac/Linux
 # Category determines where it goes in the registry
 echo "smorch-gtm" > ~/Desktop/cowork-workspace/SKILLs/<skill-name>/.smorch-category
 
 # Version tracking
 echo "1.0.0" > ~/Desktop/cowork-workspace/SKILLs/<skill-name>/.smorch-version
+```
+
+```powershell
+# Windows (PowerShell)
+"smorch-gtm" | Out-File -Encoding utf8 "$env:USERPROFILE\Desktop\cowork-workspace\SKILLs\<skill-name>\.smorch-category"
+"1.0.0" | Out-File -Encoding utf8 "$env:USERPROFILE\Desktop\cowork-workspace\SKILLs\<skill-name>\.smorch-version"
 ```
 
 **Categories:** `smorch-gtm`, `eo-training`, `eo-scoring`, `content`, `dev-meta`, `tools`, `personal`

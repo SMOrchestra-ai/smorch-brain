@@ -9,8 +9,18 @@
 > **Repository Path Note:** The `smorch-brain` repo location varies by machine:
 > - **Mac (Mamoun):** `~/Desktop/cowork-workspace/smorch-brain`
 > - **Linux servers:** `~/smorch-brain`
+> - **Windows:** `C:\Users\<you>\smorch-brain` or `C:\Users\<you>\Desktop\cowork-workspace\smorch-brain`
 >
 > The `smorch` CLI scripts auto-detect the correct location. When this document shows `~/smorch-brain`, substitute your machine's actual path. The first-time setup commands clone to `~/smorch-brain` by default; on Mac you may need to adjust the clone target.
+>
+> **Windows Setup (first time):**
+> ```powershell
+> # Windows: Run in PowerShell
+> Set-ExecutionPolicy RemoteSigned -Scope CurrentUser  # One-time only
+> git clone https://github.com/SMOrchestra-ai/smorch-brain.git $env:USERPROFILE\smorch-brain
+> cd $env:USERPROFILE\smorch-brain\scripts
+> .\smorch.ps1 pull -Profile <your-profile>
+> ```
 
 ---
 
@@ -90,6 +100,12 @@ git clone https://github.com/SMOrchestra-ai/smorch-brain.git ~/smorch-brain && \
   ~/smorch-brain/scripts/smorch-server-setup --profile developer
 ```
 
+> **Windows (PowerShell):**
+> ```powershell
+> git clone https://github.com/SMOrchestra-ai/smorch-brain.git $env:USERPROFILE\smorch-brain
+> & "$env:USERPROFILE\smorch-brain\scripts\smorch-server-setup.ps1" -Profile developer
+> ```
+
 **Daily routine:**
 
 ```bash
@@ -132,6 +148,7 @@ Most EO students will receive skills via the `eo-microsaas-os` plugin:
 If you have been granted repo access:
 
 ```bash
+# Mac/Linux
 # On Mac, replace ~/smorch-brain with ~/Desktop/cowork-workspace/smorch-brain
 git clone git@github.com:SMOrchestra-ai/smorch-brain.git ~/smorch-brain
 chmod +x ~/smorch-brain/scripts/smorch
@@ -140,6 +157,14 @@ ln -sf ~/smorch-brain/scripts/smorch ~/bin/smorch
 export PATH="$HOME/bin:$PATH"
 smorch init --profile eo-student
 ```
+
+> **Windows (PowerShell):**
+> ```powershell
+> Set-ExecutionPolicy RemoteSigned -Scope CurrentUser  # One-time only
+> git clone git@github.com:SMOrchestra-ai/smorch-brain.git $env:USERPROFILE\smorch-brain
+> cd $env:USERPROFILE\smorch-brain\scripts
+> .\smorch.ps1 pull -Profile eo-student
+> ```
 
 **Sync routine:**
 - Plugin users: Re-download and re-upload when a new version is announced in the course channel

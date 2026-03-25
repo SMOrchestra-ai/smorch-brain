@@ -7,6 +7,7 @@
 > **Repository Path Note:** The `smorch-brain` repo location varies by machine:
 > - **Mac (Mamoun):** `~/Desktop/cowork-workspace/smorch-brain`
 > - **Linux servers:** `~/smorch-brain`
+> - **Windows:** `C:\Users\<you>\smorch-brain` or `C:\Users\<you>\Desktop\cowork-workspace\smorch-brain`
 >
 > The `smorch` CLI scripts auto-detect the correct location. When this document references `smorch-brain/` paths, use your machine's full path.
 

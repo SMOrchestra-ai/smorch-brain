@@ -38,11 +38,13 @@ param(
 )
 
 $VERSION = "1.0.0"
-# Auto-detect repo location
-if (Test-Path "$env:USERPROFILE\Desktop\cowork-workspace\smorch-brain") {
-    $REPO_DIR = "$env:USERPROFILE\Desktop\cowork-workspace\smorch-brain"
-} elseif (Test-Path "$env:USERPROFILE\smorch-brain") {
-    $REPO_DIR = "$env:USERPROFILE\smorch-brain"
+# Auto-detect repo location (works on Windows, Mac via PowerShell Core, Linux)
+$cwPath = Join-Path $env:USERPROFILE "Desktop" "cowork-workspace" "smorch-brain"
+$homePath = Join-Path $env:USERPROFILE "smorch-brain"
+if (Test-Path $cwPath) {
+    $REPO_DIR = $cwPath
+} elseif (Test-Path $homePath) {
+    $REPO_DIR = $homePath
 } else {
     $REPO_DIR = Split-Path -Parent (Split-Path -Parent $MyInvocation.MyCommand.Path)
 }

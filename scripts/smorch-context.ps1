@@ -11,11 +11,13 @@ param(
 
 $Version = "1.0.0"
 $RepoUrl = "https://github.com/SMOrchestra-ai/smorch-context.git"
-# Auto-detect repo location
-if (Test-Path "$env:USERPROFILE\Desktop\cowork-workspace\smorch-context") {
-    $ContextDir = "$env:USERPROFILE\Desktop\cowork-workspace\smorch-context"
-} elseif (Test-Path "$env:USERPROFILE\smorch-context") {
-    $ContextDir = "$env:USERPROFILE\smorch-context"
+# Auto-detect repo location (works on Windows, Mac via PowerShell Core, Linux)
+$cwPath = Join-Path $env:USERPROFILE "Desktop" "cowork-workspace" "smorch-context"
+$homePath = Join-Path $env:USERPROFILE "smorch-context"
+if (Test-Path $cwPath) {
+    $ContextDir = $cwPath
+} elseif (Test-Path $homePath) {
+    $ContextDir = $homePath
 } else {
     $ContextDir = Join-Path (Split-Path -Parent (Split-Path -Parent $MyInvocation.MyCommand.Path)) "smorch-context"
 }
