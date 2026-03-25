@@ -1,0 +1,9 @@
+{
+  "name": "smorch-design",
+  "version": "1.0.0",
+  "description": "SMOrch design toolkit. Canvas design, document co-authoring, frontend design, brand system management, and web artifacts building.",
+  "author": {
+    "name": "Mamoun Alamouri",
+    "homepage": "https://smorchestra.ai"
+  }
+}

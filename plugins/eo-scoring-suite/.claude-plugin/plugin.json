@@ -1,0 +1,9 @@
+{
+  "name": "eo-scoring-suite",
+  "version": "1.0.0",
+  "description": "EO MicroSaaS scoring engines. ICP clarity, market attractiveness, GTM fitness, project definition, and strategy selection scoring for Entrepreneurs Oasis participants.",
+  "author": {
+    "name": "Mamoun Alamouri",
+    "homepage": "https://smorchestra.ai"
+  }
+}
