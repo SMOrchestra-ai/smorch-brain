@@ -12,10 +12,6 @@ version: "1.0"
 **Purpose:** Handle the plumbing between the student's MicroSaaS and the third-party services it needs. Produces typed API client wrappers with proper error handling, retry logic, and tests. No raw fetch calls, no untyped responses, no silent failures.
 **Status:** Production Ready
 
-**Reference Files:**
-- [patterns.md](patterns.md) - Client wrapper architecture, error handling, retry logic, webhook processing code patterns
-- [mena-integrations.md](mena-integrations.md) - MENA payment gateways, WhatsApp API, SMS providers, OAuth, currency reference
-
 ---
 
 ## TABLE OF CONTENTS
@@ -23,10 +19,14 @@ version: "1.0"
 1. [Role Definition](#role-definition)
 2. [Input Requirements](#input-requirements)
 3. [Integration Categories](#integration-categories)
-4. [Output Files](#output-files)
-5. [Execution Flow](#execution-flow)
-6. [Quality Gates](#quality-gates)
-7. [Cross-Skill Dependencies](#cross-skill-dependencies)
+4. [Client Wrapper Architecture](#client-wrapper-architecture)
+5. [Error Handling Patterns](#error-handling-patterns)
+6. [Webhook Processing](#webhook-processing)
+7. [Output Files](#output-files)
+8. [Execution Flow](#execution-flow)
+9. [Quality Gates](#quality-gates)
+10. [MENA Integration Considerations](#mena-integration-considerations)
+11. [Cross-Skill Dependencies](#cross-skill-dependencies)
 
 ---
 
@@ -132,6 +132,36 @@ Key patterns:
 
 **MVP-CRITICAL if:** Product uses WhatsApp or email for notifications
 
+```typescript
+// Messaging client pattern
+export async function sendWhatsAppMessage(
+  input: WhatsAppMessageInput
+): Promise<MessageResult> {
+  // Validate template exists and is approved
+  const template = await getApprovedTemplate(input.templateName, input.language);
+  if (!template) {
+    throw new IntegrationError('TEMPLATE_NOT_APPROVED', {
+      template: input.templateName,
+      language: input.language,
+    });
+  }
+
+  // Send with retry for rate limits
+  return withRetry(
+    () => whatsappClient.post('/messages', {
+      to: formatE164(input.phoneNumber),
+      type: 'template',
+      template: {
+        name: template.name,
+        language: { code: input.language },
+        components: input.parameters,
+      },
+    }),
+    { maxRetries: 3, backoff: 'exponential', retryOn: [429] }
+  );
+}
+```
+
 ### Category 3: Auth Providers (Complexity: MEDIUM)
 
 **Services:** Google OAuth, Apple Sign-In, Phone OTP
@@ -167,6 +197,34 @@ Key patterns:
 - Prompt template management
 - Response validation (AI output is untrusted data)
 
+```typescript
+// AI service client pattern with fallback
+export async function generateContent(
+  prompt: string,
+  options: AIOptions = {}
+): Promise<AIResponse> {
+  const providers = [
+    () => callClaude(prompt, options),
+    () => callOpenAI(prompt, options),    // fallback
+    () => getCachedResponse(prompt),       // last resort
+  ];
+
+  for (const provider of providers) {
+    try {
+      const result = await withTimeout(provider(), options.timeout ?? 30000);
+      return AIResponseSchema.parse(result);
+    } catch (error) {
+      if (error instanceof TimeoutError || error instanceof RateLimitError) {
+        continue; // try next provider
+      }
+      throw error; // unexpected error, don't retry
+    }
+  }
+
+  throw new IntegrationError('ALL_AI_PROVIDERS_FAILED');
+}
+```
+
 ### Category 6: Analytics (Complexity: LOW)
 
 **Services:** PostHog, Mixpanel, Google Analytics
@@ -178,8 +236,203 @@ Key patterns:
 - Server-side tracking for critical events (payments, signups)
 - Client-side tracking for UX events (clicks, page views)
 
-For detailed code patterns (base client, error handling, retry, circuit breaker, webhooks), see [patterns.md](patterns.md).
-For MENA-specific gateway and messaging details, see [mena-integrations.md](mena-integrations.md).
+---
+
+## CLIENT WRAPPER ARCHITECTURE
+
+Every integration follows this structure:
+
+```
+src/lib/integrations/
+  [service-name]/
+    client.ts         # Configured HTTP client with auth
+    types.ts          # Zod schemas for request/response
+    [service].ts      # Public API methods
+    webhooks.ts       # Webhook handlers (if applicable)
+    __tests__/
+      [service].test.ts
+```
+
+### Base Client Pattern
+
+```typescript
+// src/lib/integrations/base-client.ts
+import { z } from 'zod';
+
+interface ClientConfig {
+  baseUrl: string;
+  apiKey: string;
+  timeout?: number;
+  retryConfig?: RetryConfig;
+}
+
+interface RetryConfig {
+  maxRetries: number;
+  backoff: 'linear' | 'exponential';
+  retryOn: number[];  // HTTP status codes to retry
+}
+
+export function createApiClient(config: ClientConfig) {
+  return {
+    async get<T>(path: string, schema: z.ZodSchema<T>): Promise<T> {
+      const response = await fetchWithRetry(
+        `${config.baseUrl}${path}`,
+        { headers: { Authorization: `Bearer ${config.apiKey}` } },
+        config.retryConfig
+      );
+      return schema.parse(response);
+    },
+
+    async post<T>(path: string, body: unknown, schema: z.ZodSchema<T>): Promise<T> {
+      const response = await fetchWithRetry(
+        `${config.baseUrl}${path}`,
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${config.apiKey}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(body),
+        },
+        config.retryConfig
+      );
+      return schema.parse(response);
+    },
+    // ... put, patch, delete
+  };
+}
+```
+
+### Type Safety Rules
+
+1. **Every request body** validated with Zod schema before sending
+2. **Every response** validated with Zod schema before using
+3. **Every error** caught and wrapped in `IntegrationError` class
+4. **No `any` types** anywhere in integration code
+5. **No optional chaining (`?.`) on API responses** without explicit null handling
+
+---
+
+## ERROR HANDLING PATTERNS
+
+### IntegrationError Class
+
+```typescript
+export class IntegrationError extends Error {
+  constructor(
+    public code: string,
+    public details: Record<string, unknown> = {},
+    public retryable: boolean = false,
+    public statusCode?: number,
+  ) {
+    super(`Integration error: ${code}`);
+    this.name = 'IntegrationError';
+  }
+}
+
+// Error codes per category
+export const PaymentErrors = {
+  CARD_DECLINED: { retryable: false, userMessage: 'Payment declined. Please try a different card.' },
+  INSUFFICIENT_FUNDS: { retryable: false, userMessage: 'Insufficient funds. Please try a different payment method.' },
+  GATEWAY_TIMEOUT: { retryable: true, userMessage: 'Payment processing delayed. We will confirm shortly.' },
+  DUPLICATE_CHARGE: { retryable: false, userMessage: 'This payment was already processed.' },
+} as const;
+```
+
+### Retry Logic
+
+```typescript
+async function withRetry<T>(
+  fn: () => Promise<T>,
+  config: RetryConfig
+): Promise<T> {
+  let lastError: Error | undefined;
+
+  for (let attempt = 0; attempt <= config.maxRetries; attempt++) {
+    try {
+      return await fn();
+    } catch (error) {
+      lastError = error as Error;
+
+      if (error instanceof IntegrationError && !error.retryable) {
+        throw error; // Don't retry non-retryable errors
+      }
+
+      if (attempt < config.maxRetries) {
+        const delay = config.backoff === 'exponential'
+          ? Math.min(1000 * Math.pow(2, attempt), 30000)
+          : 1000 * (attempt + 1);
+        await sleep(delay);
+      }
+    }
+  }
+
+  throw lastError;
+}
+```
+
+### Circuit Breaker (for critical integrations)
+
+```typescript
+// If a service fails 5 times in 60 seconds, stop calling it for 30 seconds
+const circuitBreaker = createCircuitBreaker({
+  failureThreshold: 5,
+  resetTimeout: 30000,
+  monitorWindow: 60000,
+});
+
+export async function callExternalService() {
+  return circuitBreaker.execute(() => externalClient.get('/endpoint'));
+}
+```
+
+---
+
+## WEBHOOK PROCESSING
+
+### Webhook Handler Pattern
+
+```typescript
+// src/app/api/webhooks/[service]/route.ts
+export async function POST(request: Request) {
+  const body = await request.text();
+  const signature = request.headers.get('x-webhook-signature');
+
+  // 1. Verify signature (NEVER skip this)
+  if (!verifyWebhookSignature(body, signature, WEBHOOK_SECRET)) {
+    return new Response('Invalid signature', { status: 401 });
+  }
+
+  // 2. Parse and validate payload
+  const event = WebhookEventSchema.parse(JSON.parse(body));
+
+  // 3. Idempotency check (prevent double processing)
+  const processed = await checkIdempotency(event.id);
+  if (processed) {
+    return new Response('Already processed', { status: 200 });
+  }
+
+  // 4. Process event
+  try {
+    await processWebhookEvent(event);
+    await markProcessed(event.id);
+    return new Response('OK', { status: 200 });
+  } catch (error) {
+    // Log but return 200 to prevent retry storm
+    // Queue for manual retry instead
+    await queueFailedWebhook(event, error);
+    return new Response('Queued for retry', { status: 200 });
+  }
+}
+```
+
+### Webhook Security Rules
+1. Always verify webhook signatures
+2. Use HTTPS endpoints only
+3. Implement idempotency (webhooks can be delivered multiple times)
+4. Return 200 quickly, process asynchronously if needed
+5. Log all webhook payloads for debugging
+6. Never trust webhook data without server-side verification
 
 ---
 
@@ -273,6 +526,90 @@ src/lib/integrations/[service-name]/
 - [ ] Tests exist for every public method
 - [ ] Integration summary document is complete
 - [ ] .env.example updated with all required variables
+
+---
+
+## MENA INTEGRATION CONSIDERATIONS
+
+### Payment Gateways by Market
+
+| Market | Primary Gateway | Notes |
+|--------|----------------|-------|
+| UAE | Stripe or Tap Payments | Both work well, Stripe has better docs |
+| Saudi Arabia | Tap Payments or HyperPay | MADA debit required for Saudi market |
+| Egypt | Paymob or Fawry | Cash-on-delivery still common |
+| Jordan | Stripe (limited) or CliQ | Bank transfer integration may be needed |
+| Kuwait/Qatar/Bahrain | Tap Payments | Regional coverage |
+| Global | Stripe | Default for non-MENA users |
+
+**MADA Integration (Saudi Arabia):**
+- MADA is Saudi Arabia's debit card network
+- Required for Saudi consumers (most don't have Visa/Mastercard)
+- Tap Payments and HyperPay support MADA natively
+- Test with MADA sandbox cards
+
+### WhatsApp Business API
+
+WhatsApp is the primary business communication channel in MENA.
+
+Key requirements:
+- Business verification through Meta
+- Message templates must be pre-approved (24-72 hour review)
+- Template languages: Arabic (ar) and English (en) at minimum
+- Session messages (within 24h of user message) are free
+- Template messages (outside 24h window) are paid
+- Phone number format: E.164 with country code
+
+```typescript
+// MENA phone number formatting
+const MENA_COUNTRY_CODES = {
+  UAE: '+971',
+  SA: '+966',
+  EG: '+20',
+  JO: '+962',
+  KW: '+965',
+  QA: '+974',
+  BH: '+973',
+  OM: '+968',
+} as const;
+
+function formatWhatsAppNumber(phone: string, country: keyof typeof MENA_COUNTRY_CODES): string {
+  const cleaned = phone.replace(/[\s\-\(\)]/g, '');
+  const code = MENA_COUNTRY_CODES[country];
+  if (cleaned.startsWith(code)) return cleaned;
+  if (cleaned.startsWith('0')) return `${code}${cleaned.slice(1)}`;
+  return `${code}${cleaned}`;
+}
+```
+
+### SMS Providers for MENA
+
+| Provider | Arabic SMS | MENA Coverage | Notes |
+|----------|-----------|---------------|-------|
+| Twilio | Yes | Good | Expensive per-message in GCC |
+| Unifonic | Yes | Excellent (MENA-native) | Better rates for regional |
+| Vonage | Yes | Good | Decent API |
+
+- Arabic SMS: ensure UTF-8 encoding (70 chars/segment for Arabic vs 160 for Latin)
+- Sender ID registration required in Saudi Arabia and UAE
+- OTP delivery: test actual delivery times (can be 5-30 seconds in some networks)
+
+### OAuth Considerations
+
+- Google OAuth: works globally, good default
+- Apple Sign-In: required if iOS app planned, works in MENA
+- Phone OTP: preferred auth method for SME users in MENA
+  - Use Firebase Auth or Supabase Phone Auth
+  - Support +971, +966, +20, +962 country codes in dropdown
+  - Default country code based on user's locale/IP
+
+### Currency and Localization in API Calls
+
+- Always pass currency explicitly (don't assume USD)
+- Stripe: supports AED, SAR, EGP, JOD, KWD, QAR, BHD, OMR
+- Tap Payments: native MENA currency support
+- Format amounts according to locale (Arabic numerals optional, decimal separator varies)
+- KWD and BHD use 3 decimal places (not 2)
 
 ---
 

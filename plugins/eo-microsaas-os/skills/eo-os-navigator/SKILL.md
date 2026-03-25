@@ -19,21 +19,24 @@ Master orchestrator for the EO MicroSaaS Operating System. Guide founders throug
 
 The journey has 7 steps across 3 phases:
 
-### Phase 0: Assessment (Cowork Environment)
+### Phase 0: Assessment (External - eo-scoring-suite plugin or Web)
 - **Step 0**: Scorecard Assessment - 5 scorecards via 3 possible entry paths:
   - **Path A (Web)**: Complete at score.entrepreneursoasis.me, upload SC1-SC5 markdown results
-  - **Path B (DOCX)**: Upload scoring Word documents, plugin extracts and scores
-  - **Path C (Interactive)**: Run `/eo-score 1` through `/eo-score 5` to do scorecards inside Claude
-  - **Path D (Templates)**: Run `/eo-templates` for manual brain template entry (bypasses scorecards)
+  - **Path B (Scoring Plugin)**: Install the eo-scoring-suite plugin, run `/eo-score 1` through `/eo-score 5`
+  - **Path C (Templates)**: Run `/eo-templates` for manual brain template entry (bypasses scorecards)
+  - Note: Scoring engines are in the separate eo-scoring-suite plugin. This plugin checks for SC*.md result files.
 
-### Phase 1: Strategy (Cowork Environment)
+### Phase 1: Strategy + Architecture (Cowork Environment)
 - **Step 1**: Brain Ingestion (eo-brain-ingestion) - scorecards/templates become 12 structured brain files
 - **Step 2**: GTM Asset Factory (eo-gtm-asset-factory) - brain files become campaign assets
 - **Step 3**: Skill Extraction (eo-skill-extractor) - founder learns to create tool operator skills
-- **Step G**: Graduation (`/eo-graduate`) - generates handoff package for Claude Code
+- **Step 4**: Tech Architecture (eo-tech-architect) - brain files become BRD + architecture docs + CLAUDE.md
+  - Produces: tech-stack-decision.md, architecture-diagram.md, brd.md, mcp-integration-plan.md, CLAUDE.md
+  - CLAUDE.md = workspace instructions that tell Claude Code exactly what it is building, which skills to use, and how
+  - MCP setup instructions tell the founder which MCPs to install before switching to Claude Code
+- **Step G**: Graduation (`/eo-graduate`) - generates handoff package for Claude Code (includes architecture + CLAUDE.md)
 
 ### Phase 2: Build (Claude Code Environment)
-- **Step 4**: Tech Architecture (eo-tech-architect) - brain files become BRD + architecture docs
 - **Step 5**: Development Pipeline:
   - eo-db-architect - database schema, migrations, RLS
   - eo-microsaas-dev - application code, 5-phase build
@@ -54,9 +57,9 @@ When a founder asks "where am I" or "what's next", scan the workspace for these 
 | Step 1 | project-brain/companyprofile.md (+ 11 others) | Brain ingested |
 | Step 2 | assets/README.md, assets/core/ | GTM assets produced |
 | Step 3 | Any SKILL.md created by founder | Skill extraction done |
-| Step 4 | architecture/brd.md, architecture/tech-stack-decision.md | Architecture complete |
+| Step 4 | architecture/brd.md, architecture/tech-stack-decision.md, CLAUDE.md | Architecture complete |
 | Step 5a | schema.sql, migrations/ | Database designed |
-| Step 5b | src/ directory with application code, CLAUDE.md | App built |
+| Step 5b | src/ directory with application code | App built |
 | Step 5c | src/lib/integrations/ | APIs connected |
 | Step 5d | qa-report.md with PASS status | QA passed |
 | Step 5e | security-audit.md with zero CRITICAL | Security passed |
@@ -79,7 +82,7 @@ These gates CANNOT be bypassed. No override mechanism exists. Full enforcement p
 |------|--------------|----------|-------------|
 | Gate 0 | Brain Ingestion | SC1+SC2 files OR 8 filled templates | Offer 4 entry paths |
 | Gate 1 | GTM/Architecture | 12 brain files, each 200+ chars | List missing files, route to /eo |
-| Gate 2 | Any dev skill | brd.md + tech-stack-decision.md | Route to eo-tech-architect |
+| Gate 2 | Graduation/Handoff | brd.md + tech-stack-decision.md + CLAUDE.md | Route to eo-tech-architect |
 | Gate 3 | QA Testing | 5+ source code files in src/ | Route to eo-microsaas-dev |
 | Gate 4 | Security | qa-report.md with PASS status | Route to eo-qa-testing |
 | Gate 5 | Deployment | security-audit.md, zero CRITICAL | Route to eo-security-hardener |
@@ -146,21 +149,22 @@ Which path?"
 
 ## Phase Transition: Cowork to Claude Code
 
-When the founder completes Steps 1-3 and is ready for Step 4+, provide the handoff briefing:
+When the founder completes Steps 1-4 (Brain, GTM, Skills, Architecture) and graduates, provide the handoff briefing:
 
 **Handoff message:**
 
-"You've completed the strategy phase. Your brain files, GTM assets, and skill extractions are ready. Now we shift to building.
+"You've completed the strategy and architecture phase. Your brain files, GTM assets, architecture docs, and CLAUDE.md are ready. Now we shift to building.
 
-Steps 4-5 require Claude Code (a development environment with terminal access). Here's what to do:
+Step 5 requires Claude Code (a development environment with terminal access). Here's what to do:
 
-1. Open Claude Code in your project directory
-2. Make sure this plugin (eo-microsaas-os) is installed there too
-3. Copy your project-brain/ folder into the Claude Code project root
-4. Copy your architecture/ folder (if you already ran eo-tech-architect here)
-5. Say 'eo start' or 'what's next' and I'll pick up where we left off
+1. Install the MCPs listed in your architecture/mcp-integration-plan.md
+2. Run /eo-graduate to get your handoff package
+3. Copy the handoff package to your Claude Code project directory
+4. Install the eo-microsaas-os plugin in Claude Code
+5. Open Claude Code in that directory - it will read CLAUDE.md automatically
+6. Say 'eo start' and I'll pick up from Step 5a (Database Architecture)
 
-Your brain files ARE your context. They travel with you between environments."
+Your CLAUDE.md tells Claude Code everything: what you're building, which stack, which skills to use, and how. Zero cold-start."
 
 ## Routing Logic
 
@@ -176,8 +180,11 @@ IF scorecards exist BUT no brain files:
 IF brain files exist BUT no GTM assets:
   → Route to eo-gtm-asset-factory
 
-IF brain files exist BUT no architecture:
-  → Route to eo-tech-architect
+IF brain files + GTM assets exist BUT no architecture:
+  → Route to eo-tech-architect (runs in Cowork, produces BRD + CLAUDE.md)
+
+IF architecture + CLAUDE.md exist BUT no graduation:
+  → Route to /eo-graduate (handoff package)
 
 IF architecture exists BUT no code:
   → Route to eo-microsaas-dev
@@ -212,15 +219,15 @@ Phase 0: Assessment
 [x] SC4: Strategy Selector ...... 97/100 - Clear Path
 [x] SC5: GTM Fitness ............ 85/100 - Launch Ready
 
-Phase 1: Strategy (Cowork)
+Phase 1: Strategy + Architecture (Cowork)
 [x] Step 1: Brain Ingestion ...... COMPLETE (12/12 files)
 [ ] Step 2: GTM Assets ........... READY (brain files available)
 [ ] Step 3: Skill Extraction ..... AVAILABLE
+[ ] Step 4: Tech Architecture .... LOCKED (complete Step 1 first)
 
-→ GRADUATION: Run /eo-graduate when Steps 1-3 are done
+→ GRADUATION: Run /eo-graduate when Steps 1-4 are done
 
 Phase 2: Build (Claude Code)
-[ ] Step 4: Tech Architecture .... LOCKED (complete Step 1 first)
 [ ] Step 5: Development Pipeline
     [ ] Database Architecture .... LOCKED
     [ ] Application Build ........ LOCKED
