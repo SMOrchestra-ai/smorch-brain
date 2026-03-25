@@ -4,6 +4,5 @@
   "description": "EO MicroSaaS Operating System with Training Guide. Walks entrepreneurs from idea to live product through a gated 6-step journey. Includes pedagogical guide (/eo-guide) that maps training modules to hands-on actions, plus technical skills for brain ingestion, GTM assets, architecture, and full-stack development.",
   "author": {
     "name": "Mamoun Alamouri / SMOrchestra.ai"
-  },
-  "keywords": ["microsaas", "entrepreneur", "mena", "startup", "gtm", "deployment", "ai-builder"]
+  }
 }

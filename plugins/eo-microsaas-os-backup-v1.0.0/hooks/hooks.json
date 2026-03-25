@@ -1,0 +1,14 @@
+{
+  "SessionStart": [
+    {
+      "matcher": "",
+      "hooks": [
+        {
+          "type": "command",
+          "command": "echo '## EO MicroSaaS OS Active\n\nThis project has the EO MicroSaaS OS plugin installed. Available commands:\n- /eo - Start or continue your MicroSaaS journey\n- /eo-status - Check your progress\n- /eo-templates - Get brain templates for manual entry\n\nThe navigator skill (eo-os-navigator) will automatically detect your progress and route you to the right step. Quality gates are enforced between phases.'",
+          "timeout": 5
+        }
+      ]
+    }
+  ]
+}

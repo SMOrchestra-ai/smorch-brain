@@ -1,0 +1,13 @@
+{
+  "name": "smorch-gtm-engine",
+  "version": "1.0.0",
+  "description": "Signal-to-Trust GTM Engine — autonomous campaign management, signal-based outbound, multi-channel deployment, and cross-platform metrics for MENA and global B2B markets. Built by SMOrchestra.ai.",
+  "author": {
+    "name": "Mamoun Alamouri",
+    "homepage": "https://smorchestra.ai"
+  },
+  "keywords": [
+    "gtm", "signal-based", "outbound", "campaign", "mena", "b2b",
+    "sales", "marketing", "crm", "instantly", "heyreach", "ghl", "n8n"
+  ]
+}
