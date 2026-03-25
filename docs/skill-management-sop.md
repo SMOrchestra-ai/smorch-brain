@@ -153,15 +153,15 @@ smorch push
 
 ## Profile Segmentation
 
-| Profile | Who | Gets | Context Folders |
-|---------|-----|------|----------------|
-| `mamoun` | Mamoun's Mac | `*` (everything) | all |
-| `smo-brain` | Brain server (Linux #1) | dev-meta, eo-training, eo-scoring, tools | — |
-| `smo-dev` | Dev servers (#2, #3) | dev-meta, tools, operators | — |
-| `gtm-team` (EO) | GTM - EO team | smorch-gtm, content | EntrepreneurOasis |
-| `gtm-team` (SMO) | GTM - SMO team | smorch-gtm, content | SalesMfastGTM + CC_CX |
-| `developer` | Tech team | dev-meta, tools | EntrepreneurOasis + SalesMfastGTM |
-| `eo-student` | EO community (plugin) | eo-training, eo-scoring | — |
+| Profile | Who | Cowork Plugins | Code Plugins | Context |
+|---------|-----|---------------|-------------|---------|
+| `mamoun` | Mamoun's Mac | All 9 | 7 dev tools | all |
+| `gtm-eo-team` | GTM - EO team | 6 (context-brain, gtm-tools, gtm-engine, design, personal-branding, eo-microsaas-os) | None | EntrepreneurOasis |
+| `gtm-smo-team` | GTM - SMO team | 5 (context-brain, gtm-tools, gtm-engine, design, personal-branding) | None | SalesMfastGTM + CC_CX |
+| `developer` | Dev team | 1 (smorch-dev) | 7 dev tools | EntrepreneurOasis + SalesMfastGTM |
+| `eo-student` | EO student | 2 (eo-microsaas-os, smorch-dev) | 7 dev tools | None |
+| `smo-brain` | Brain server (#1) | — | 7 dev tools | — |
+| `smo-dev` | Dev servers (#2, #3) | — | 7 dev tools | — |
 
 ---
 
