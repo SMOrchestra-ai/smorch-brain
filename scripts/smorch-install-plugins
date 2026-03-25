@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# smorch-install-plugins — Install Claude Code plugins (CLI-only, not Cowork)
+# smorch-install-plugins — Install plugins for your role
 # Works on: macOS, Linux
-# Usage: smorch-install-plugins [--all | --lsp | --gtm | --official | --list-cowork]
+# Usage: smorch-install-plugins --role <gtm|dev|eo-student|mamoun>
 
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
@@ -12,31 +12,26 @@ CYAN='\033[0;36m'
 NC='\033[0m'
 
 show_help() {
-    echo "smorch-install-plugins — Install Claude Code plugins"
+    echo "smorch-install-plugins — Install the right plugins for your role"
     echo ""
-    echo "Usage: smorch-install-plugins [OPTIONS]"
+    echo "BY ROLE (recommended):"
+    echo "  --role gtm          GTM team: all Code plugins + shows Cowork plugin list"
+    echo "  --role dev          Dev team: official Code plugins + shows Cowork plugin list"
+    echo "  --role eo-student   EO student: official Code plugins + shows Cowork plugin list"
+    echo "  --role mamoun       Everything"
     echo ""
-    echo "Claude Code Only (these are NOT in Cowork):"
-    echo "  --all         Install all Claude Code plugins (default)"
-    echo "  --lsp         Install language server plugins only (dev team)"
-    echo "  --official    Install official Anthropic plugins only"
-    echo "  --gtm         Install GTM agents plugins only"
+    echo "MANUAL (pick what you want):"
+    echo "  --all               All Claude Code plugins (official + GTM agents)"
+    echo "  --official          Official Anthropic only (LSPs + code-review + frontend + github)"
+    echo "  --lsp               Language servers only (typescript, python, rust, go)"
+    echo "  --gtm               GTM agent plugins only"
     echo ""
-    echo "Individual Claude Code plugins:"
-    echo "  --typescript   TypeScript/JavaScript LSP"
-    echo "  --python       Python (Pyright) LSP"
-    echo "  --rust         Rust Analyzer LSP"
-    echo "  --go           Go (gopls) LSP"
-    echo "  --code-review  Code review plugin"
-    echo "  --frontend     Frontend design plugin"
-    echo "  --github       GitHub integration plugin"
+    echo "INDIVIDUAL:"
+    echo "  --typescript --python --rust --go --code-review --frontend --github"
     echo ""
-    echo "Info:"
-    echo "  --list-cowork  Show Cowork-only plugins (install via Desktop app)"
-    echo "  --help         Show this help"
-    echo ""
-    echo "Cowork plugins are installed via Desktop app (Customize > Plugins)."
-    echo "Use --list-cowork to see which plugins are Cowork-only."
+    echo "INFO:"
+    echo "  --list-cowork       Show Cowork-only plugins per role"
+    echo "  --help              This help"
 }
 
 install_plugin() {
@@ -50,58 +45,133 @@ install_plugin() {
     fi
 }
 
-list_cowork() {
-    echo -e "${CYAN}=== Cowork-Only Plugins (install via Claude Desktop > Customize > Plugins) ===${NC}"
-    echo ""
-    echo "These 9 plugins are available ONLY in Cowork Desktop."
-    echo "They are NOT installable via Claude Code CLI."
-    echo ""
-    echo "  Plugin                    Skills  Install Method"
-    echo "  ────────────────────────  ──────  ─────────────────────────────────"
-    echo "  eo-microsaas-os (v3.1.0)   13    Upload dist/eo-microsaas-os.plugin"
-    echo "  smorch-gtm-engine (v2.0.0) 12    Upload dist/smorch-gtm-engine.plugin"
-    echo "  eo-training-factory         1    Upload dist/eo-training-factory.plugin"
-    echo "  eo-scoring-suite            5    Already installed (marketplace)"
-    echo "  smorch-dev                 13    Already installed (marketplace)"
-    echo "  mamoun-personal-branding    5    Already installed (marketplace)"
-    echo "  smorch-context-brain        2    Already installed (marketplace)"
-    echo "  smorch-design               5    Already installed (marketplace)"
-    echo "  smorch-gtm-tools            5    Already installed (marketplace)"
-    echo ""
-    echo "  Anthropic built-in         16    Pre-installed with Cowork"
-    echo ""
-    echo "To upload a .plugin file: Cowork > Customize > Plugins > Upload"
-    echo "Plugin files are at: smorch-brain/dist/"
+install_official() {
+    echo -e "${CYAN}=== Official Anthropic Plugins (7) ===${NC}"
+    for p in typescript-lsp pyright-lsp rust-analyzer-lsp gopls-lsp code-review frontend-design github; do
+        install_plugin "$p" "claude-plugins-official"
+    done
 }
 
-MODE="${1:---all}"
+install_gtm_agents() {
+    echo -e "${CYAN}=== GTM Agent Plugins (9) ===${NC}"
+    for p in campaign-orchestration content-marketing customer-analytics email-marketing growth-experiments revenue-analytics sales-enablement sales-pipeline sales-prospecting; do
+        install_plugin "$p" "gtm-agents"
+    done
+}
+
+show_cowork_gtm() {
+    echo ""
+    echo -e "${CYAN}=== NOW: Install these in Cowork Desktop ===${NC}"
+    echo -e "${CYAN}   Go to: Customize > Plugins > Search marketplace${NC}"
+    echo ""
+    echo "  1. smorch-context-brain     — Project brain builder, about-me files"
+    echo "  2. smorch-gtm-tools         — Clay, GHL, Instantly, HeyReach, SalesNav"
+    echo "  3. smorch-gtm-engine        — Campaigns, signals, wedges, outbound"
+    echo "  4. smorch-design            — Frontend design, brand system, canvas art"
+    echo "  5. mamoun-personal-branding — LinkedIn writer, YouTube decks, content"
+}
+
+show_cowork_dev() {
+    echo ""
+    echo -e "${CYAN}=== NOW: Install this in Cowork Desktop ===${NC}"
+    echo -e "${CYAN}   Go to: Customize > Plugins > Search marketplace${NC}"
+    echo ""
+    echo "  1. smorch-dev — Debugging, code review, MCP builder, n8n, validation, API docs"
+}
+
+show_cowork_eo() {
+    echo ""
+    echo -e "${CYAN}=== NOW: Install these in Cowork Desktop ===${NC}"
+    echo -e "${CYAN}   Go to: Customize > Plugins > Search marketplace${NC}"
+    echo ""
+    echo "  1. eo-microsaas-os — Full MicroSaaS journey (scorecards, brain, dev, deploy)"
+    echo "  2. smorch-dev      — Debugging, code review, MCP builder, testing"
+}
+
+MODE="${1:---help}"
 
 case "$MODE" in
     --help|-h)
         show_help
         exit 0
         ;;
+    --role)
+        ROLE="${2:-}"
+        case "$ROLE" in
+            gtm)
+                echo -e "${GREEN}=== GTM Team Setup ===${NC}"
+                echo "Installing: 7 official + 9 GTM agent plugins (Claude Code only)"
+                echo ""
+                install_official
+                echo ""
+                install_gtm_agents
+                show_cowork_gtm
+                ;;
+            dev)
+                echo -e "${GREEN}=== Dev Team Setup ===${NC}"
+                echo "Installing: 7 official plugins (Claude Code only)"
+                echo ""
+                install_official
+                echo ""
+                echo -e "${YELLOW}NOTE: GTM agent plugins not included for dev role.${NC}"
+                show_cowork_dev
+                ;;
+            eo-student)
+                echo -e "${GREEN}=== EO Student Setup ===${NC}"
+                echo "Installing: 7 official plugins (Claude Code only)"
+                echo ""
+                install_official
+                echo ""
+                echo -e "${YELLOW}NOTE: GTM agent plugins not included for students.${NC}"
+                show_cowork_eo
+                ;;
+            mamoun)
+                echo -e "${GREEN}=== Mamoun (All Access) ===${NC}"
+                install_official
+                echo ""
+                install_gtm_agents
+                echo ""
+                echo -e "${CYAN}All Cowork plugins should already be installed.${NC}"
+                ;;
+            *)
+                echo "Unknown role: $ROLE"
+                echo "Available: gtm, dev, eo-student, mamoun"
+                exit 1
+                ;;
+        esac
+        ;;
     --list-cowork)
-        list_cowork
+        echo -e "${CYAN}=== Cowork Plugins by Role ===${NC}"
+        echo ""
+        echo "GTM Team (5 plugins):"
+        echo "  smorch-context-brain, smorch-gtm-tools, smorch-gtm-engine,"
+        echo "  smorch-design, mamoun-personal-branding"
+        echo ""
+        echo "Dev Team (1 plugin):"
+        echo "  smorch-dev"
+        echo ""
+        echo "EO Student (2 plugins):"
+        echo "  eo-microsaas-os, smorch-dev"
+        echo ""
+        echo "Install via: Cowork > Customize > Plugins > Search marketplace"
         exit 0
         ;;
     --lsp)
-        echo -e "${GREEN}Installing LSP plugins (Claude Code only)...${NC}"
+        echo -e "${GREEN}Installing LSP plugins...${NC}"
         for p in typescript-lsp pyright-lsp rust-analyzer-lsp gopls-lsp; do
             install_plugin "$p" "claude-plugins-official"
         done
         ;;
     --official)
-        echo -e "${GREEN}Installing official Anthropic plugins (Claude Code only)...${NC}"
-        for p in typescript-lsp pyright-lsp rust-analyzer-lsp gopls-lsp code-review frontend-design github; do
-            install_plugin "$p" "claude-plugins-official"
-        done
+        install_official
         ;;
     --gtm)
-        echo -e "${GREEN}Installing GTM agents plugins (Claude Code only)...${NC}"
-        for p in campaign-orchestration content-marketing customer-analytics email-marketing growth-experiments revenue-analytics sales-enablement sales-pipeline sales-prospecting; do
-            install_plugin "$p" "gtm-agents"
-        done
+        install_gtm_agents
+        ;;
+    --all)
+        install_official
+        echo ""
+        install_gtm_agents
         ;;
     --typescript) install_plugin "typescript-lsp" "claude-plugins-official" ;;
     --python) install_plugin "pyright-lsp" "claude-plugins-official" ;;
@@ -110,22 +180,6 @@ case "$MODE" in
     --code-review) install_plugin "code-review" "claude-plugins-official" ;;
     --frontend) install_plugin "frontend-design" "claude-plugins-official" ;;
     --github) install_plugin "github" "claude-plugins-official" ;;
-    --all)
-        echo -e "${GREEN}Installing ALL Claude Code plugins...${NC}"
-        echo ""
-        echo -e "${CYAN}=== Official Anthropic (7 plugins) ===${NC}"
-        for p in typescript-lsp pyright-lsp rust-analyzer-lsp gopls-lsp code-review frontend-design github; do
-            install_plugin "$p" "claude-plugins-official"
-        done
-        echo ""
-        echo -e "${CYAN}=== GTM Agents (9 plugins, 36 skills) ===${NC}"
-        for p in campaign-orchestration content-marketing customer-analytics email-marketing growth-experiments revenue-analytics sales-enablement sales-pipeline sales-prospecting; do
-            install_plugin "$p" "gtm-agents"
-        done
-        echo ""
-        echo -e "${YELLOW}NOTE: Cowork-only plugins (9 total) must be installed via Desktop app.${NC}"
-        echo -e "${YELLOW}Run: smorch-install-plugins --list-cowork${NC}"
-        ;;
     *)
         echo "Unknown option: $MODE"
         show_help
