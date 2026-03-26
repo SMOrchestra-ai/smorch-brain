@@ -1,0 +1,24 @@
+# .pluginignore — Exclude heavy assets from plugin builds
+# Patterns follow glob syntax (same as .gitignore)
+
+# Large HTML files (landing pages, viewers)
+*.html
+
+# Eval viewer directories (debugging tools, not needed in plugin)
+eval-viewer/
+
+# License files
+LICENSE
+LICENSE.*
+
+# Python cache
+__pycache__/
+*.pyc
+
+# OS artifacts
+.DS_Store
+Thumbs.db
+
+# Node artifacts
+node_modules/
+package-lock.json
