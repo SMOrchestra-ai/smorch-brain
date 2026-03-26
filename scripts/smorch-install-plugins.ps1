@@ -9,6 +9,17 @@ param(
     [switch]$Help
 )
 
+# --- Prerequisite checks ---
+function Test-Prerequisites {
+    $missing = @()
+    if (-not (Get-Command claude -ErrorAction SilentlyContinue)) { $missing += "claude" }
+    if ($missing.Count -gt 0) {
+        Write-Host "ERROR: Missing required tools: $($missing -join ', ')" -ForegroundColor Red
+        exit 1
+    }
+}
+Test-Prerequisites
+
 if ($Help -or (-not $Role -and -not $List)) {
     Write-Host "smorch-install-plugins -- Install plugins for your role"
     Write-Host ""

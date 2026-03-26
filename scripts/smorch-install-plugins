@@ -6,6 +6,18 @@ set -euo pipefail
 # Dev/EO roles: Cowork + 7 Claude Code dev tools
 # Works on: macOS, Linux
 
+# --- Prerequisite checks ---
+check_prereqs() {
+    local missing=()
+    command -v claude &>/dev/null || missing+=("claude")
+    if [ ${#missing[@]} -gt 0 ]; then
+        echo -e "\033[0;31mERROR: Missing required tools: ${missing[*]}\033[0m"
+        echo "Install them before running this script."
+        exit 1
+    fi
+}
+check_prereqs
+
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 BLUE='\033[0;34m'

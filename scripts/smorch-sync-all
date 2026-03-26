@@ -5,6 +5,19 @@ set -euo pipefail
 # Mamoun-only script. Reads server list from smorch-brain/servers.txt,
 # pushes the registry, SSHs to each server to pull, and builds plugins.
 
+# --- Prerequisite checks ---
+check_prereqs() {
+    local missing=()
+    command -v git &>/dev/null || missing+=("git")
+    command -v ssh &>/dev/null || missing+=("ssh")
+    if [ ${#missing[@]} -gt 0 ]; then
+        echo -e "\033[0;31mERROR: Missing required tools: ${missing[*]}\033[0m"
+        echo "Install them before running this script."
+        exit 1
+    fi
+}
+check_prereqs
+
 VERSION="1.0.0"
 # Auto-detect repo location
 if [[ -d "$HOME/Desktop/cowork-workspace/smorch-brain" ]]; then

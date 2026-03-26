@@ -28,6 +28,40 @@ param(
     [string[]]$Arguments
 )
 
+# --- Prerequisite checks ---
+function Test-Prerequisites {
+    $missing = @()
+    if (-not (Get-Command git -ErrorAction SilentlyContinue)) { $missing += "git" }
+    if (-not (Get-Command zip -ErrorAction SilentlyContinue)) {
+        # zip is needed for build-plugin; on Windows, Compress-Archive is used instead
+        # Only warn if not on Windows
+        if ($IsLinux -or $IsMacOS) { $missing += "zip" }
+    }
+    if ($missing.Count -gt 0) {
+        Write-Host "ERROR: Missing required tools: $($missing -join ', ')" -ForegroundColor Red
+        exit 1
+    }
+}
+Test-Prerequisites
+
+# --- Git retry helper ---
+function Invoke-GitWithRetry {
+    param([string[]]$GitArgs)
+    $attempts = 0
+    $max = 3
+    while ($attempts -lt $max) {
+        $result = & git @GitArgs 2>&1
+        if ($LASTEXITCODE -eq 0) { return $result }
+        $attempts++
+        if ($attempts -lt $max) {
+            Write-Host "  Network issue, retrying ($attempts/$max)..." -ForegroundColor Yellow
+            Start-Sleep -Seconds 5
+        }
+    }
+    Write-Host "  Failed after $max attempts. Check your network." -ForegroundColor Red
+    return $null
+}
+
 $VERSION = "2.0.0"
 # Auto-detect repo location (works on Windows, Mac via PowerShell Core, Linux)
 $cwPath = Join-Path (Join-Path (Join-Path $env:USERPROFILE "Desktop") "cowork-workspace") "smorch-brain"
@@ -342,7 +376,7 @@ function Invoke-Push {
     }
 
     # Git operations
-    Push-Location $REPO_DIR
+    Push-Location "$REPO_DIR"
     try {
         git add skills/
         $hasChanges = git diff --cached --quiet 2>&1; $exitCode = $LASTEXITCODE
@@ -381,17 +415,21 @@ function Invoke-Pull {
 
     Load-State
     $profile = $script:CURRENT_PROFILE
+    $forceFlag = $false
 
     # Use -Profile parameter if provided
     if (-not [string]::IsNullOrEmpty($ProfileParam)) {
         $profile = $ProfileParam
     }
 
-    # Also check remaining args for -Profile or --profile (backward compat)
+    # Also check remaining args for -Profile or --profile and --force (backward compat)
     for ($i = 0; $i -lt $Args.Count; $i++) {
         if ($Args[$i] -in @("-Profile", "--profile") -and ($i + 1) -lt $Args.Count) {
             $profile = $Args[$i + 1]
             $i++
+        }
+        if ($Args[$i] -in @("-Force", "--force")) {
+            $forceFlag = $true
         }
     }
 
@@ -407,14 +445,34 @@ function Invoke-Pull {
 
     Write-Color "smorch pull -- Syncing profile: $profile" Cyan
 
-    # Git pull
-    Push-Location $REPO_DIR
+    # Git pull with dirty tree handling
+    Push-Location "$REPO_DIR"
     try {
+        $dirtyWorktree = & git diff --quiet 2>&1; $wt = $LASTEXITCODE
+        $dirtyIndex = & git diff --cached --quiet 2>&1; $ix = $LASTEXITCODE
+        if ($wt -ne 0 -or $ix -ne 0) {
+            if ($forceFlag) {
+                Write-Host "Stashing local changes..." -ForegroundColor Yellow
+                git stash
+            } else {
+                Write-Color "Uncommitted changes detected. Use --force to stash and pull, or commit first." Red
+                return
+            }
+        }
         Write-Host "Pulling latest from GitHub..."
-        $result = git pull --rebase origin dev 2>&1
+        $result = Invoke-GitWithRetry @("pull", "--rebase", "origin", "dev")
         if ($LASTEXITCODE -ne 0) {
             Write-Color "Git pull failed. Resolve conflicts manually." Red
             return
+        }
+        if ($forceFlag) {
+            $stashList = git stash list 2>&1
+            if ($stashList -match "stash@\{0\}") {
+                git stash pop 2>$null
+                if ($LASTEXITCODE -ne 0) {
+                    Write-Host "Warning: Could not pop stash. Run 'git stash pop' manually." -ForegroundColor Yellow
+                }
+            }
         }
     }
     finally {
@@ -500,8 +558,8 @@ function Invoke-Install {
         return
     }
 
-    Push-Location $REPO_DIR
-    try { git pull --rebase origin dev 2>&1 | Out-Null } finally { Pop-Location }
+    Push-Location "$REPO_DIR"
+    try { Invoke-GitWithRetry @("pull", "--rebase", "origin", "dev") | Out-Null } finally { Pop-Location }
 
     $sourcePath = Join-Path $REPO_DIR "skills\$Target"
     if (Test-Path $sourcePath) {
@@ -634,7 +692,7 @@ function Invoke-List {
 }
 
 function Invoke-Diff {
-    Push-Location $REPO_DIR
+    Push-Location "$REPO_DIR"
     try {
         git fetch origin dev 2>$null
         $diffOutput = git diff HEAD..origin/dev --stat -- skills/ 2>$null
@@ -689,7 +747,7 @@ function Invoke-Status {
     Write-Host "Registry:   $registryCount skills"
 
     # Git status
-    Push-Location $REPO_DIR -ErrorAction SilentlyContinue
+    Push-Location "$REPO_DIR" -ErrorAction SilentlyContinue
     try {
         $branch = git branch --show-current 2>$null
         $behind = git rev-list HEAD..origin/dev --count 2>$null
@@ -741,7 +799,7 @@ function Invoke-Init {
     # Ensure repo is cloned
     if (-not (Test-Path $REPO_DIR)) {
         Write-Host "Cloning smorch-brain..."
-        git clone git@github.com:SMOrchestra-ai/smorch-brain.git $REPO_DIR
+        git clone git@github.com:SMOrchestra-ai/smorch-brain.git "$REPO_DIR"
     }
 
     # Pull and install

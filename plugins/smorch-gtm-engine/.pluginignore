@@ -11,9 +11,21 @@ eval-viewer/
 LICENSE
 LICENSE.*
 
+# Python scripts (not needed at runtime)
+*.py
+
 # Python cache
 __pycache__/
 *.pyc
+
+# Eval agents (not needed in plugin)
+agents/
+
+# HTML assets directory
+assets/
+
+# Build scripts (not needed in plugin)
+scripts/
 
 # OS artifacts
 .DS_Store
