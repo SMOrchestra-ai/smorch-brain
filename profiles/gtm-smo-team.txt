@@ -1,5 +1,6 @@
-smorch-gtm/*
-content/*
-dev-meta/smorch-github-ops
-dev-meta/changelog-generator
-dev-meta/systematic-debugging
+# GTM-SMO Team Profile
+# All skills come from Cowork plugins (5 plugins)
+# No Claude Code standalone skills needed
+# Cowork: smorch-context-brain, smorch-gtm-tools, smorch-gtm-engine,
+#         smorch-design, mamoun-personal-branding
+# Context: SalesMfastGTM + CC_CX

@@ -1,6 +1,6 @@
-smorch-gtm/*
-content/*
-eo-training/*
-dev-meta/smorch-github-ops
-dev-meta/changelog-generator
-dev-meta/systematic-debugging
+# GTM-EO Team Profile
+# All skills come from Cowork plugins (6 plugins)
+# No Claude Code standalone skills needed
+# Cowork: smorch-context-brain, smorch-gtm-tools, smorch-gtm-engine,
+#         smorch-design, mamoun-personal-branding, eo-microsaas-os
+# Context: EntrepreneurOasis

@@ -1,5 +1,3 @@
-smorch-gtm/*
-content/*
-dev-meta/smorch-github-ops
-dev-meta/changelog-generator
-dev-meta/systematic-debugging
+# GTM Team Profile (legacy - use gtm-eo-team or gtm-smo-team instead)
+# All skills come from Cowork plugins (5 plugins)
+# No Claude Code standalone skills needed
