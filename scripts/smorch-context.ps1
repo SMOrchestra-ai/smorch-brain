@@ -70,11 +70,11 @@ function Get-Folder {
     Push-Location $ContextDir
 
     Write-Host "Pulling latest from GitHub..." -ForegroundColor Cyan
-    git pull origin dev --rebase 2>&1 | Out-Null
+    git pull origin main --rebase 2>&1 | Out-Null
 
     if ($FolderName -eq "all") {
         git sparse-checkout disable 2>$null
-        git checkout dev 2>$null
+        git checkout main 2>$null
         Write-Host "Downloaded ALL context folders:" -ForegroundColor Green
         foreach ($f in $ValidFolders) {
             $path = Join-Path $ContextDir $f
@@ -85,7 +85,7 @@ function Get-Folder {
         }
     } else {
         git sparse-checkout set $FolderName README.md 2>$null
-        git checkout dev 2>$null
+        git checkout main 2>$null
 
         $path = Join-Path $ContextDir $FolderName
         if (Test-Path $path) {
@@ -111,7 +111,7 @@ function Update-Context {
     }
     Push-Location $ContextDir
     Write-Host "Updating context files..." -ForegroundColor Cyan
-    git pull origin dev --rebase
+    git pull origin main --rebase
     Write-Host "Updated." -ForegroundColor Green
     Pop-Location
     Show-Status

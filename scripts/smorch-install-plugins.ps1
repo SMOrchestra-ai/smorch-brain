@@ -80,7 +80,7 @@ switch ($Role) {
         Write-Host "  5. mamoun-personal-branding"
         Write-Host "  6. eo-microsaas-os"
     }
-    {$_ -in "gtm-smo", "gtm"} {
+    "gtm-smo" {
         Write-Host "=== GTM-SMO Team Setup ===" -ForegroundColor Green
         Write-Host ""
         Write-Host "No Claude Code plugins needed for GTM roles." -ForegroundColor Yellow

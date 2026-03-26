@@ -274,7 +274,8 @@ Report the full verification output.
 | smo-brain | smo-brain | ~22 (EO + scoring + core) |
 | smo-dev | smo-dev | ~11 (GTM + dev) |
 | Team developer | developer | ~15 (dev-meta + tools) |
-| GTM team member | gtm-team | ~20 (GTM + content + tools) |
+| GTM team (EO) | gtm-eo-team | ~26 (GTM + content + EO + tools) |
+| GTM team (SMO) | gtm-smo-team | ~20 (GTM + content + tools) |
 | EO student | eo-student | ~10 (EO training + scoring) |
 
 ---

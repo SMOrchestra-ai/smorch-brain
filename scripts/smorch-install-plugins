@@ -103,7 +103,7 @@ case "$MODE" in
                 echo "  5. mamoun-personal-branding"
                 echo "  6. eo-microsaas-os"
                 ;;
-            gtm-smo|gtm)
+            gtm-smo)
                 echo -e "${GREEN}=== GTM-SMO Team Setup ===${NC}"
                 echo ""
                 echo -e "${YELLOW}No Claude Code plugins needed for GTM roles.${NC}"

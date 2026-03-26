@@ -88,12 +88,12 @@ cmd_folder() {
 
     # Pull latest
     echo -e "${CYAN}Pulling latest from GitHub...${NC}"
-    git pull origin dev --rebase 2>&1 || git pull origin dev 2>&1
+    git pull origin main --rebase 2>&1 || git pull origin main 2>&1
 
     if [ "$folder" = "all" ]; then
         # Disable sparse-checkout to get everything
         git sparse-checkout disable 2>/dev/null || true
-        git checkout dev 2>/dev/null || git checkout HEAD
+        git checkout main 2>/dev/null || git checkout HEAD
         echo -e "${GREEN}Downloaded ALL context folders:${NC}"
         for f in $VALID_FOLDERS; do
             if [ -d "$CONTEXT_DIR/$f" ]; then
@@ -105,7 +105,7 @@ cmd_folder() {
     else
         # Use sparse-checkout for single folder
         git sparse-checkout set "$folder" README.md 2>/dev/null
-        git checkout dev 2>/dev/null || git checkout HEAD
+        git checkout main 2>/dev/null || git checkout HEAD
 
         if [ -d "$CONTEXT_DIR/$folder" ]; then
             local count
@@ -138,7 +138,7 @@ cmd_update() {
 
     cd "$CONTEXT_DIR"
     echo -e "${CYAN}Updating context files...${NC}"
-    git pull origin dev --rebase 2>&1
+    git pull origin main --rebase 2>&1
 
     echo -e "${GREEN}Updated.${NC}"
     cmd_status

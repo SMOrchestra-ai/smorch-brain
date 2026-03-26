@@ -247,7 +247,8 @@ Available Profiles
   mamoun (55 skills)
   smo-brain (11 skills)
   smo-dev (14 skills)
-  gtm-team (26 skills)
+  gtm-eo-team (26 skills)
+  gtm-smo-team (20 skills)
   developer (17 skills)
   eo-student (20 skills)
 ```
