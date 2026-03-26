@@ -21,13 +21,16 @@ param(
     [Parameter(Position = 0)]
     [string]$Command,
 
+    [Parameter()]
+    [string]$Profile,
+
     [Parameter(Position = 1, ValueFromRemainingArguments)]
     [string[]]$Arguments
 )
 
 $VERSION = "2.0.0"
 # Auto-detect repo location (works on Windows, Mac via PowerShell Core, Linux)
-$cwPath = Join-Path $env:USERPROFILE "Desktop" "cowork-workspace" "smorch-brain"
+$cwPath = Join-Path (Join-Path (Join-Path $env:USERPROFILE "Desktop") "cowork-workspace") "smorch-brain"
 $homePath = Join-Path $env:USERPROFILE "smorch-brain"
 if (Test-Path $cwPath) {
     $REPO_DIR = $cwPath
@@ -358,7 +361,7 @@ function Invoke-Push {
             else {
                 git checkout -b dev origin/dev 2>$null
                 if ($LASTEXITCODE -ne 0) { git checkout dev 2>$null }
-                git merge main --no-edit 2>$null
+                git merge dev --no-edit 2>$null
                 git push origin dev 2>&1 | Out-Null
                 Write-Color "Pushed to dev." Green
             }
@@ -371,14 +374,22 @@ function Invoke-Push {
 }
 
 function Invoke-Pull {
-    param([string[]]$Args)
+    param(
+        [string[]]$Args,
+        [string]$ProfileParam
+    )
 
     Load-State
     $profile = $script:CURRENT_PROFILE
 
-    # Parse --profile flag
+    # Use -Profile parameter if provided
+    if (-not [string]::IsNullOrEmpty($ProfileParam)) {
+        $profile = $ProfileParam
+    }
+
+    # Also check remaining args for -Profile or --profile (backward compat)
     for ($i = 0; $i -lt $Args.Count; $i++) {
-        if ($Args[$i] -eq "--profile" -and ($i + 1) -lt $Args.Count) {
+        if ($Args[$i] -in @("-Profile", "--profile") -and ($i + 1) -lt $Args.Count) {
             $profile = $Args[$i + 1]
             $i++
         }
@@ -400,7 +411,7 @@ function Invoke-Pull {
     Push-Location $REPO_DIR
     try {
         Write-Host "Pulling latest from GitHub..."
-        $result = git pull --rebase origin main 2>&1
+        $result = git pull --rebase origin dev 2>&1
         if ($LASTEXITCODE -ne 0) {
             Write-Color "Git pull failed. Resolve conflicts manually." Red
             return
@@ -490,7 +501,7 @@ function Invoke-Install {
     }
 
     Push-Location $REPO_DIR
-    try { git pull --rebase origin main 2>&1 | Out-Null } finally { Pop-Location }
+    try { git pull --rebase origin dev 2>&1 | Out-Null } finally { Pop-Location }
 
     $sourcePath = Join-Path $REPO_DIR "skills\$Target"
     if (Test-Path $sourcePath) {
@@ -625,8 +636,8 @@ function Invoke-List {
 function Invoke-Diff {
     Push-Location $REPO_DIR
     try {
-        git fetch origin main 2>$null
-        $diffOutput = git diff HEAD..origin/main --stat -- skills/ 2>$null
+        git fetch origin dev 2>$null
+        $diffOutput = git diff HEAD..origin/dev --stat -- skills/ 2>$null
         if ([string]::IsNullOrEmpty($diffOutput)) {
             Write-Color "No changes since last pull." Green
         }
@@ -681,7 +692,7 @@ function Invoke-Status {
     Push-Location $REPO_DIR -ErrorAction SilentlyContinue
     try {
         $branch = git branch --show-current 2>$null
-        $behind = git rev-list HEAD..origin/main --count 2>$null
+        $behind = git rev-list HEAD..origin/dev --count 2>$null
         if ([string]::IsNullOrEmpty($behind)) { $behind = "?" }
         Write-Host "Git branch: $branch ($behind commits behind)"
     }
@@ -695,11 +706,21 @@ function Invoke-Status {
 }
 
 function Invoke-Init {
-    param([string[]]$Args)
+    param(
+        [string[]]$Args,
+        [string]$ProfileParam
+    )
 
     $profile = ""
+
+    # Use -Profile parameter if provided
+    if (-not [string]::IsNullOrEmpty($ProfileParam)) {
+        $profile = $ProfileParam
+    }
+
+    # Also check remaining args for -Profile or --profile (backward compat)
     for ($i = 0; $i -lt $Args.Count; $i++) {
-        if ($Args[$i] -eq "--profile" -and ($i + 1) -lt $Args.Count) {
+        if ($Args[$i] -in @("-Profile", "--profile") -and ($i + 1) -lt $Args.Count) {
             $profile = $Args[$i + 1]
             $i++
         }
@@ -724,7 +745,7 @@ function Invoke-Init {
     }
 
     # Pull and install
-    Invoke-Pull -Args @("--profile", $profile)
+    Invoke-Pull -Args @() -ProfileParam $profile
 
     Write-Color "Setup complete! Run 'smorch.ps1 status' to verify." Green
 }
@@ -886,13 +907,13 @@ function Invoke-BuildPlugin {
 
 switch ($Command) {
     "push"          { Invoke-Push }
-    "pull"          { Invoke-Pull -Args $Arguments }
+    "pull"          { Invoke-Pull -Args $Arguments -ProfileParam $Profile }
     "install"       { Invoke-Install -Target ($Arguments | Select-Object -First 1) }
     "remove"        { Invoke-Remove -Target ($Arguments | Select-Object -First 1) }
     "list"          { Invoke-List -Args $Arguments }
     "diff"          { Invoke-Diff }
     "status"        { Invoke-Status }
-    "init"          { Invoke-Init -Args $Arguments }
+    "init"          { Invoke-Init -Args $Arguments -ProfileParam $Profile }
     "audit"         { Invoke-Audit }
     "build-plugin"  { Invoke-BuildPlugin -PluginName ($Arguments | Select-Object -First 1) }
     "--version"     { Write-Host "smorch v$VERSION" }

@@ -38,7 +38,7 @@ ${BOLD}Required:${NC}
 ${BOLD}Options:${NC}
   --repo-url <url>    Override default repo URL
                       (default: ${REPO_URL})
-  --branch <name>     Checkout specific branch (default: main)
+  --branch <name>     Checkout specific branch (default: dev)
   --skip-cleanup      Skip the duplicate cleanup step
   -h, --help          Show this help message
 
@@ -70,7 +70,7 @@ log_step()    { echo -e "\n${BOLD}[$1/6]${NC} $2"; }
 
 # Parse arguments
 PROFILE=""
-BRANCH="main"
+BRANCH="dev"
 SKIP_CLEANUP=false
 
 while [[ $# -gt 0 ]]; do

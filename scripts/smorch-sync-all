@@ -185,7 +185,7 @@ do_server_pulls() {
         fi
 
         # Run pull on remote server
-        if ssh -o ConnectTimeout=30 "$host" "cd ~/smorch-brain && git pull origin main && ~/smorch-brain/scripts/smorch pull --profile ${profile}" 2>&1; then
+        if ssh -o ConnectTimeout=30 "$host" "cd ~/smorch-brain && git pull origin dev && ~/smorch-brain/scripts/smorch pull --profile ${profile}" 2>&1; then
             log_success "${host} — pull complete"
             RESULTS+=("${host}:OK")
         else

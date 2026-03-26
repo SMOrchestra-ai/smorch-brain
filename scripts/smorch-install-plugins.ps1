@@ -1,4 +1,4 @@
-# smorch-install-plugins.ps1 — Install plugins for your role
+# smorch-install-plugins.ps1 -- Install plugins for your role
 # GTM roles: Cowork only (no Code plugins)
 # Dev/EO roles: Cowork + 7 Claude Code dev tools
 # Works on: Windows (PowerShell)
@@ -10,7 +10,7 @@ param(
 )
 
 if ($Help -or (-not $Role -and -not $List)) {
-    Write-Host "smorch-install-plugins — Install plugins for your role"
+    Write-Host "smorch-install-plugins -- Install plugins for your role"
     Write-Host ""
     Write-Host "ROLES:"
     Write-Host "  -Role gtm-eo       GTM-EO team (Cowork only)"

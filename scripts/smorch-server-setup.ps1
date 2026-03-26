@@ -13,7 +13,7 @@
     Override default repo URL.
 
 .PARAMETER Branch
-    Checkout specific branch (default: main).
+    Checkout specific branch (default: dev).
 
 .PARAMETER SkipCleanup
     Skip the duplicate cleanup step.
@@ -29,7 +29,7 @@ param(
 
     [string]$RepoUrl = "https://github.com/SMOrchestra-ai/smorch-brain.git",
 
-    [string]$Branch = "main",
+    [string]$Branch = "dev",
 
     [switch]$SkipCleanup,
 
@@ -39,7 +39,7 @@ param(
 
 $VERSION = "1.0.0"
 # Auto-detect repo location (works on Windows, Mac via PowerShell Core, Linux)
-$cwPath = Join-Path $env:USERPROFILE "Desktop" "cowork-workspace" "smorch-brain"
+$cwPath = Join-Path (Join-Path (Join-Path $env:USERPROFILE "Desktop") "cowork-workspace") "smorch-brain"
 $homePath = Join-Path $env:USERPROFILE "smorch-brain"
 if (Test-Path $cwPath) {
     $REPO_DIR = $cwPath
@@ -72,7 +72,7 @@ Required:
 Options:
   -RepoUrl <url>      Override default repo URL
                       (default: https://github.com/SMOrchestra-ai/smorch-brain.git)
-  -Branch <name>      Checkout specific branch (default: main)
+  -Branch <name>      Checkout specific branch (default: dev)
   -SkipCleanup        Skip the duplicate cleanup step
   -Help               Show this help message
 
@@ -192,7 +192,7 @@ function Install-Profile {
     Log-Step 3 "Pulling profile: $Profile"
 
     try {
-        & $SMORCH_BIN pull --profile $Profile
+        & $SMORCH_BIN pull -Profile $Profile
         if ($LASTEXITCODE -ne 0) {
             Log-Error "Failed to pull profile '$Profile'"
             Log-Info "Check available profiles with: smorch.ps1 list --profiles"
