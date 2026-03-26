@@ -958,7 +958,7 @@ function Invoke-BuildPlugin {
 
     $size = "{0:N1} KB" -f ((Get-Item $output).Length / 1024)
     Write-Color "Built: $output ($size)" Green
-    Write-Host "To install: Upload via Cowork > Customize > Plugins"
+    Write-Host "To install: Cowork > Customize > Workspace > point to smorch-brain > Save"
 }
 
 # --- Main dispatch ---

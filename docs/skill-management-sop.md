@@ -208,7 +208,12 @@ smorch-context --folder SalesMfastGTM
 
 Students get skills via plugins (no repo access):
 
-1. **Cowork Marketplace**: Publish plugin, students install via Customize > Plugins
+1. **Workspace method (recommended)**: Clone or download smorch-brain, then load plugins into Cowork Desktop:
+   1. Open Claude Desktop (Cowork)
+   2. Go to Customize > Workspace
+   3. Point workspace to your smorch-brain directory
+   4. Cowork scans and discovers all plugins automatically
+   5. Click Save -- plugins are now active
 2. **GitHub Release**: `smorch build-plugin eo-microsaas-os`, attach to release
 3. **Direct share**: Share `.plugin` file via course materials
 

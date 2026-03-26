@@ -131,12 +131,14 @@ smorch build-plugin smorch-gtm-engine
 .\smorch.ps1 build-plugin -Name smorch-gtm-engine
 ```
 
-### Step 4: Upload to Cowork
+### Step 4: Load Plugin into Cowork
 
 1. Open Claude Desktop (Cowork)
-2. Go to Customize > Plugins
-3. Click "Upload Plugin" or drag the .plugin file
-4. Verify the skill appears in the plugin's skill list
+2. Go to Customize > Workspace
+3. Point workspace to your smorch-brain directory
+4. Cowork scans and discovers all plugins automatically
+5. Click Save -- plugins are now active
+6. Verify the skill appears in the plugin's skill list
 
 ### Step 5: Remove from Session Skills
 
@@ -215,7 +217,7 @@ Content production, engagement, and validation skills for the SMOrchestra agency
 - smorch-about-me — Personal context file builder
 
 ## Installation
-Upload this .plugin file via Cowork > Customize > Plugins
+Load in Cowork: Customize > Workspace > point to smorch-brain directory > Save
 EOF
 ```
 
@@ -248,7 +250,8 @@ EOF
 ```bash
 # Mac/Linux
 smorch build-plugin smorch-agency-tools
-# Upload to Cowork, test skills fire correctly
+# Load in Cowork: Customize > Workspace > point to smorch-brain > Save
+# Cowork discovers all plugins automatically — test skills fire correctly
 ```
 
 ```powershell
@@ -304,7 +307,7 @@ mkdir -p ~/smorch-brain/plugins/<name>/{.claude-plugin,skills,commands}
 # Full migration cycle
 cp -a <skill> plugins/<plugin>/skills/   # copy
 smorch build-plugin <plugin>             # build
-# Upload .plugin to Cowork               # install
+# Load in Cowork: Customize > Workspace > point to smorch-brain > Save  # install
 # Remove from Customize > Skills         # deduplicate
 smorch push                              # sync to registry
 ```
@@ -328,7 +331,7 @@ New-Item -ItemType Directory -Force -Path "$base\.claude-plugin", "$base\skills"
 # Full migration cycle
 Copy-Item -Recurse <skill> "plugins\<plugin>\skills\"   # copy
 .\smorch.ps1 build-plugin -Name <plugin>                 # build
-# Upload .plugin to Cowork                               # install
+# Load in Cowork: Customize > Workspace > point to smorch-brain > Save  # install
 # Remove from Customize > Skills                         # deduplicate
 .\smorch.ps1 push                                        # sync to registry
 ```

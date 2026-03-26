@@ -82,43 +82,70 @@ switch ($Role) {
         Write-Host ""
         Write-Host "No Claude Code plugins needed for GTM roles." -ForegroundColor Yellow
         Write-Host ""
-        Write-Host "Install these 6 plugins in Cowork Desktop:" -ForegroundColor Cyan
-        Write-Host "Customize > Plugins > Search marketplace:" -ForegroundColor Cyan
-        Write-Host "  1. smorch-context-brain"
-        Write-Host "  2. smorch-gtm-tools"
-        Write-Host "  3. smorch-gtm-engine"
-        Write-Host "  4. smorch-design"
-        Write-Host "  5. mamoun-personal-branding"
-        Write-Host "  6. eo-microsaas-os"
+        Write-Host "Load plugins into Cowork Desktop:" -ForegroundColor Cyan
+        Write-Host "  1. Open Claude Desktop (Cowork)"
+        Write-Host "  2. Go to Customize > Workspace"
+        Write-Host "  3. Point workspace to your smorch-brain directory"
+        Write-Host "  4. Cowork scans and discovers all plugins automatically"
+        Write-Host "  5. Click Save -- plugins are now active"
+        Write-Host ""
+        Write-Host "Your role gets these plugins:" -ForegroundColor Cyan
+        Write-Host "  - smorch-context-brain"
+        Write-Host "  - smorch-gtm-tools"
+        Write-Host "  - smorch-gtm-engine"
+        Write-Host "  - smorch-design"
+        Write-Host "  - mamoun-personal-branding"
+        Write-Host "  - eo-microsaas-os"
     }
     "gtm-smo" {
         Write-Host "=== GTM-SMO Team Setup ===" -ForegroundColor Green
         Write-Host ""
         Write-Host "No Claude Code plugins needed for GTM roles." -ForegroundColor Yellow
         Write-Host ""
-        Write-Host "Install these 5 plugins in Cowork Desktop:" -ForegroundColor Cyan
-        Write-Host "  1. smorch-context-brain"
-        Write-Host "  2. smorch-gtm-tools"
-        Write-Host "  3. smorch-gtm-engine"
-        Write-Host "  4. smorch-design"
-        Write-Host "  5. mamoun-personal-branding"
+        Write-Host "Load plugins into Cowork Desktop:" -ForegroundColor Cyan
+        Write-Host "  1. Open Claude Desktop (Cowork)"
+        Write-Host "  2. Go to Customize > Workspace"
+        Write-Host "  3. Point workspace to your smorch-brain directory"
+        Write-Host "  4. Cowork scans and discovers all plugins automatically"
+        Write-Host "  5. Click Save -- plugins are now active"
+        Write-Host ""
+        Write-Host "Your role gets these plugins:" -ForegroundColor Cyan
+        Write-Host "  - smorch-context-brain"
+        Write-Host "  - smorch-gtm-tools"
+        Write-Host "  - smorch-gtm-engine"
+        Write-Host "  - smorch-design"
+        Write-Host "  - mamoun-personal-branding"
     }
     "dev" {
         Write-Host "=== Dev Team Setup ===" -ForegroundColor Green
         Write-Host ""
         Install-CodePlugins
         Write-Host ""
-        Write-Host "Install this plugin in Cowork Desktop:" -ForegroundColor Cyan
-        Write-Host "  1. smorch-dev"
+        Write-Host "Load plugins into Cowork Desktop:" -ForegroundColor Cyan
+        Write-Host "  1. Open Claude Desktop (Cowork)"
+        Write-Host "  2. Go to Customize > Workspace"
+        Write-Host "  3. Point workspace to your smorch-brain directory"
+        Write-Host "  4. Cowork scans and discovers all plugins automatically"
+        Write-Host "  5. Click Save -- plugins are now active"
+        Write-Host ""
+        Write-Host "Your role gets this plugin:" -ForegroundColor Cyan
+        Write-Host "  - smorch-dev"
     }
     "eo-student" {
         Write-Host "=== EO Student Setup ===" -ForegroundColor Green
         Write-Host ""
         Install-CodePlugins
         Write-Host ""
-        Write-Host "Install these 2 plugins in Cowork Desktop:" -ForegroundColor Cyan
-        Write-Host "  1. eo-microsaas-os"
-        Write-Host "  2. smorch-dev"
+        Write-Host "Load plugins into Cowork Desktop:" -ForegroundColor Cyan
+        Write-Host "  1. Open Claude Desktop (Cowork)"
+        Write-Host "  2. Go to Customize > Workspace"
+        Write-Host "  3. Point workspace to your smorch-brain directory"
+        Write-Host "  4. Cowork scans and discovers all plugins automatically"
+        Write-Host "  5. Click Save -- plugins are now active"
+        Write-Host ""
+        Write-Host "Your role gets these plugins:" -ForegroundColor Cyan
+        Write-Host "  - eo-microsaas-os"
+        Write-Host "  - smorch-dev"
     }
     "mamoun" {
         Write-Host "=== Mamoun (All Access) ===" -ForegroundColor Green

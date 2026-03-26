@@ -214,7 +214,8 @@ cp -a ~/Desktop/cowork-workspace/SKILLs/<skill-name> \
 # Rebuild plugin
 smorch build-plugin <plugin-name>
 
-# Upload to Cowork: Customize > Plugins > Upload
+# Load in Cowork: Customize > Workspace > point to smorch-brain > Save
+# Cowork discovers all plugins automatically
 # Remove standalone from: Customize > Skills (if it was there)
 ```
 

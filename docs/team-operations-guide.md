@@ -53,7 +53,20 @@ git clone https://github.com/SMOrchestra-ai/smorch-brain.git ~/smorch-brain && \
 ~/smorch-brain/scripts/smorch init --profile gtm-eo-team
 ```
 
-The script will list the 6 Cowork plugins to install manually in Desktop (Customize > Plugins > Search).
+Load plugins into Cowork Desktop:
+1. Open Claude Desktop (Cowork)
+2. Go to Customize > Workspace
+3. Point workspace to your smorch-brain directory
+4. Cowork scans and discovers all plugins automatically
+5. Click Save -- plugins are now active
+
+Your role gets these plugins:
+- smorch-context-brain
+- smorch-gtm-tools
+- smorch-gtm-engine
+- smorch-design
+- mamoun-personal-branding
+- eo-microsaas-os
 
 > **Windows:** `.\smorch-install-plugins.ps1 -Role gtm-eo`
 
@@ -73,6 +86,20 @@ git clone https://github.com/SMOrchestra-ai/smorch-brain.git ~/smorch-brain && \
 ~/smorch-brain/scripts/smorch-context --folder CC_CX
 ~/smorch-brain/scripts/smorch init --profile gtm-smo-team
 ```
+
+Load plugins into Cowork Desktop:
+1. Open Claude Desktop (Cowork)
+2. Go to Customize > Workspace
+3. Point workspace to your smorch-brain directory
+4. Cowork scans and discovers all plugins automatically
+5. Click Save -- plugins are now active
+
+Your role gets these plugins:
+- smorch-context-brain
+- smorch-gtm-tools
+- smorch-gtm-engine
+- smorch-design
+- mamoun-personal-branding
 
 > **Windows:** `.\smorch-install-plugins.ps1 -Role gtm-smo`
 
@@ -118,7 +145,15 @@ git clone https://github.com/SMOrchestra-ai/smorch-brain.git ~/smorch-brain && \
 ~/smorch-brain/scripts/smorch init --profile developer
 ```
 
-The script installs 7 Code dev tools + tells you to install smorch-dev in Cowork Desktop.
+The script installs 7 Code dev tools. Then load plugins into Cowork Desktop:
+1. Open Claude Desktop (Cowork)
+2. Go to Customize > Workspace
+3. Point workspace to your smorch-brain directory
+4. Cowork scans and discovers all plugins automatically
+5. Click Save -- plugins are now active
+
+Your role gets this plugin:
+- smorch-dev
 
 > **Windows:** `.\smorch-install-plugins.ps1 -Role dev`
 
@@ -159,14 +194,25 @@ git clone https://github.com/SMOrchestra-ai/smorch-brain.git ~/smorch-brain && \
 ~/smorch-brain/scripts/smorch init --profile eo-student
 ```
 
-The script installs 7 Code dev tools + tells you to install eo-microsaas-os and smorch-dev in Cowork Desktop.
+The script installs 7 Code dev tools. Then load plugins into Cowork Desktop:
+1. Open Claude Desktop (Cowork)
+2. Go to Customize > Workspace
+3. Point workspace to your smorch-brain directory
+4. Cowork scans and discovers all plugins automatically
+5. Click Save -- plugins are now active
+
+Your role gets these plugins:
+- eo-microsaas-os
+- smorch-dev
 
 > **Windows:** `.\smorch-install-plugins.ps1 -Role eo-student`
 
 **Without repo access (plugin only):**
 1. Download `.plugin` file from course materials
-2. Cowork Desktop > Customize > Plugins > Upload
-3. Skills are immediately available
+2. Open Claude Desktop (Cowork) > Customize > Workspace
+3. Point workspace to the directory containing the downloaded plugin
+4. Cowork scans and discovers the plugin automatically
+5. Click Save -- skills are immediately available
 
 **Sync routine:**
 - Plugin users: Re-download and re-upload when a new version is announced in the course channel
@@ -542,9 +588,9 @@ cp -r ~/smorch-brain/skills/<category>/<skill-name> \
 # 4. Rebuild the plugin
 smorch build-plugin <plugin-name>
 
-# 5. Test: Upload the .plugin file in a test Cowork session
-#    Cowork > Customize > Plugins > Upload
-#    File is at: ~/smorch-brain/dist/<plugin-name>.plugin
+# 5. Test: Load the plugin in a test Cowork session
+#    Cowork > Customize > Workspace > point to smorch-brain directory > Save
+#    Cowork will discover all plugins in plugins/ automatically
 
 # 6. If the standalone version should be removed (plugin takes precedence):
 #    Remove from smorch-brain/skills/<category>/<skill-name>
@@ -564,14 +610,13 @@ What it does:
 - Excludes `.DS_Store`, `node_modules`, `__pycache__`, `.git`
 - Reports the output file path and size
 
-### How to Upload to Cowork
+### How to Load Plugins into Cowork
 
-1. Open Cowork Desktop
-2. Go to Customize (gear icon or settings)
-3. Navigate to Plugins section
-4. Click Upload or Add Plugin
-5. Select the `.plugin` file from `~/smorch-brain/dist/`
-6. The plugin's skills, commands, and hooks are now active in all Cowork sessions
+1. Open Claude Desktop (Cowork)
+2. Go to Customize > Workspace
+3. Point workspace to your smorch-brain directory (e.g., `~/Desktop/cowork-workspace/smorch-brain`)
+4. Cowork scans the directory and discovers all plugins in `plugins/` automatically
+5. Click Save -- plugins are now active in all Cowork sessions
 
 ### How to Publish to Marketplace
 
@@ -624,7 +669,7 @@ Update profiles that referenced it directly (e.g., remove `category/skill-name` 
 
 ```bash
 smorch build-plugin <plugin-name>
-# Upload dist/<plugin-name>.plugin to Cowork
+# Load in Cowork: Customize > Workspace > point to smorch-brain > Save
 ```
 
 ### Plugin Directory Structure Reference
@@ -895,11 +940,13 @@ rm -rf ~/smorch-brain/skills/<category>/<skill-name>
 smorch build-plugin <plugin-name>
 ```
 
-### Step 5: Upload and Test
+### Step 5: Load into Cowork and Test
 
-1. Upload `~/smorch-brain/dist/<plugin-name>.plugin` to Cowork Desktop
-2. Open a new session
-3. Test that the migrated skill works:
+1. Open Claude Desktop (Cowork) > Customize > Workspace
+2. Point workspace to your smorch-brain directory > Click Save
+3. Cowork discovers updated plugins automatically
+4. Open a new session
+5. Test that the migrated skill works:
    - Test contextual triggers (say something that should activate it)
    - Test slash commands if applicable
    - Verify output quality matches the standalone version
@@ -939,7 +986,7 @@ After all migrations:
 smorch audit          # Verify no orphans or issues
 smorch build-plugin smorch-gtm-engine
 smorch build-plugin eo-microsaas-os
-# Upload both rebuilt plugins to Cowork
+# Load plugins in Cowork: Customize > Workspace > point to smorch-brain > Save
 # Create PR: dev -> main
 ```
 

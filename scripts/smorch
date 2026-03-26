@@ -830,7 +830,7 @@ cmd_build_plugin() {
     fi
 
     echo -e "${GREEN}Built: $output (${size_human})${NC}"
-    echo -e "To install: Upload via Cowork > Customize > Plugins"
+    echo -e "To install: Cowork > Customize > Workspace > point to smorch-brain > Save"
 }
 
 # Main dispatch
