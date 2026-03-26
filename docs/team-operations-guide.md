@@ -39,7 +39,7 @@
 
 ### GTM Team — EO Focus
 
-**Cowork plugins (6):** smorch-context-brain, smorch-gtm-tools, smorch-gtm-engine, smorch-design, mamoun-personal-branding, eo-microsaas-os
+**Cowork plugins (7):** smorch-context-brain, smorch-gtm-tools, smorch-gtm-engine, smorch-gtm-scoring, smorch-design, mamoun-personal-branding, eo-microsaas-os
 **Claude Code plugins:** None
 **Context:** EntrepreneurOasis
 
@@ -64,6 +64,7 @@ Your role gets these plugins:
 - smorch-context-brain
 - smorch-gtm-tools
 - smorch-gtm-engine
+- smorch-gtm-scoring
 - smorch-design
 - mamoun-personal-branding
 - eo-microsaas-os
@@ -72,7 +73,7 @@ Your role gets these plugins:
 
 ### GTM Team — SMO Focus
 
-**Cowork plugins (5):** smorch-context-brain, smorch-gtm-tools, smorch-gtm-engine, smorch-design, mamoun-personal-branding
+**Cowork plugins (6):** smorch-context-brain, smorch-gtm-tools, smorch-gtm-engine, smorch-gtm-scoring, smorch-design, mamoun-personal-branding
 **Claude Code plugins:** None
 **Context:** SalesMfastGTM + CC_CX
 
@@ -98,6 +99,7 @@ Your role gets these plugins:
 - smorch-context-brain
 - smorch-gtm-tools
 - smorch-gtm-engine
+- smorch-gtm-scoring
 - smorch-design
 - mamoun-personal-branding
 
@@ -130,7 +132,7 @@ smorch audit         # Check for issues on your machine
 
 ### Dev Team
 
-**Cowork plugins (1):** smorch-dev
+**Cowork plugins (2):** smorch-dev, smorch-dev-scoring
 **Claude Code plugins (7):** typescript-lsp, pyright-lsp, rust-analyzer-lsp, gopls-lsp, code-review, frontend-design, github
 **Context:** EntrepreneurOasis + SalesMfastGTM
 
@@ -152,8 +154,9 @@ The script installs 7 Code dev tools. Then load plugins into Cowork Desktop:
 4. Cowork scans and discovers all plugins automatically
 5. Click Save -- plugins are now active
 
-Your role gets this plugin:
+Your role gets these plugins:
 - smorch-dev
+- smorch-dev-scoring
 
 > **Windows:** `.\smorch-install-plugins.ps1 -Role dev`
 
@@ -181,7 +184,7 @@ smorch audit
 
 ### EO Student
 
-**Cowork plugins (2):** eo-microsaas-os, smorch-dev
+**Cowork plugins (3):** eo-microsaas-os, smorch-dev, smorch-dev-scoring
 **Claude Code plugins (7):** typescript-lsp, pyright-lsp, rust-analyzer-lsp, gopls-lsp, code-review, frontend-design, github
 **Context:** None
 
@@ -204,6 +207,7 @@ The script installs 7 Code dev tools. Then load plugins into Cowork Desktop:
 Your role gets these plugins:
 - eo-microsaas-os
 - smorch-dev
+- smorch-dev-scoring
 
 > **Windows:** `.\smorch-install-plugins.ps1 -Role eo-student`
 

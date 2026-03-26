@@ -155,11 +155,11 @@ smorch push
 
 | Profile | Who | Cowork Plugins | Code Plugins | Context |
 |---------|-----|---------------|-------------|---------|
-| `mamoun` | Mamoun's Mac | All 9 | 7 dev tools | all |
-| `gtm-eo-team` | GTM - EO team | 6 (context-brain, gtm-tools, gtm-engine, design, personal-branding, eo-microsaas-os) | None | EntrepreneurOasis |
-| `gtm-smo-team` | GTM - SMO team | 5 (context-brain, gtm-tools, gtm-engine, design, personal-branding) | None | SalesMfastGTM + CC_CX |
-| `developer` | Dev team | 1 (smorch-dev) | 7 dev tools | EntrepreneurOasis + SalesMfastGTM |
-| `eo-student` | EO student | 2 (eo-microsaas-os, smorch-dev) | 7 dev tools | None |
+| `mamoun` | Mamoun's Mac | All 11 | 7 dev tools | all |
+| `gtm-eo-team` | GTM - EO team | 7 (context-brain, gtm-tools, gtm-engine, gtm-scoring, design, personal-branding, eo-microsaas-os) | None | EntrepreneurOasis |
+| `gtm-smo-team` | GTM - SMO team | 6 (context-brain, gtm-tools, gtm-engine, gtm-scoring, design, personal-branding) | None | SalesMfastGTM + CC_CX |
+| `developer` | Dev team | 2 (smorch-dev, dev-scoring) | 7 dev tools | EntrepreneurOasis + SalesMfastGTM |
+| `eo-student` | EO student | 3 (eo-microsaas-os, smorch-dev, dev-scoring) | 7 dev tools | None |
 | `smo-brain` | Brain server (#1) | — | 7 dev tools | — |
 | `smo-dev` | Dev servers (#2, #3) | — | 7 dev tools | — |
 

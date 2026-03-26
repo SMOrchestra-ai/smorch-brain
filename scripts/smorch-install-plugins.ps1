@@ -57,21 +57,22 @@ if ($List) {
     Write-Host "=== What Each Role Gets ===" -ForegroundColor Cyan
     Write-Host ""
     Write-Host "GTM-EO:" -ForegroundColor Green
-    Write-Host "  Cowork (6): smorch-context-brain, smorch-gtm-tools, smorch-gtm-engine,"
-    Write-Host "              smorch-design, mamoun-personal-branding, eo-microsaas-os"
+    Write-Host "  Cowork (7): smorch-context-brain, smorch-gtm-tools, smorch-gtm-engine,"
+    Write-Host "              smorch-design, mamoun-personal-branding, smorch-gtm-scoring,"
+    Write-Host "              eo-microsaas-os"
     Write-Host "  Code: None"
     Write-Host ""
     Write-Host "GTM-SMO:" -ForegroundColor Green
-    Write-Host "  Cowork (5): smorch-context-brain, smorch-gtm-tools, smorch-gtm-engine,"
-    Write-Host "              smorch-design, mamoun-personal-branding"
+    Write-Host "  Cowork (6): smorch-context-brain, smorch-gtm-tools, smorch-gtm-engine,"
+    Write-Host "              smorch-design, mamoun-personal-branding, smorch-gtm-scoring"
     Write-Host "  Code: None"
     Write-Host ""
     Write-Host "Dev:" -ForegroundColor Green
-    Write-Host "  Cowork (1): smorch-dev"
+    Write-Host "  Cowork (2): smorch-dev, smorch-dev-scoring"
     Write-Host "  Code (7): 4 LSPs + code-review + frontend-design + github"
     Write-Host ""
     Write-Host "EO Student:" -ForegroundColor Green
-    Write-Host "  Cowork (2): eo-microsaas-os, smorch-dev"
+    Write-Host "  Cowork (3): eo-microsaas-os, smorch-dev, smorch-dev-scoring"
     Write-Host "  Code (7): 4 LSPs + code-review + frontend-design + github"
     exit 0
 }
@@ -89,12 +90,13 @@ switch ($Role) {
         Write-Host "  4. Cowork scans and discovers all plugins automatically"
         Write-Host "  5. Click Save -- plugins are now active"
         Write-Host ""
-        Write-Host "Your role gets these plugins:" -ForegroundColor Cyan
+        Write-Host "Your role gets these 7 plugins:" -ForegroundColor Cyan
         Write-Host "  - smorch-context-brain"
         Write-Host "  - smorch-gtm-tools"
         Write-Host "  - smorch-gtm-engine"
         Write-Host "  - smorch-design"
         Write-Host "  - mamoun-personal-branding"
+        Write-Host "  - smorch-gtm-scoring"
         Write-Host "  - eo-microsaas-os"
     }
     "gtm-smo" {
@@ -109,12 +111,13 @@ switch ($Role) {
         Write-Host "  4. Cowork scans and discovers all plugins automatically"
         Write-Host "  5. Click Save -- plugins are now active"
         Write-Host ""
-        Write-Host "Your role gets these plugins:" -ForegroundColor Cyan
+        Write-Host "Your role gets these 6 plugins:" -ForegroundColor Cyan
         Write-Host "  - smorch-context-brain"
         Write-Host "  - smorch-gtm-tools"
         Write-Host "  - smorch-gtm-engine"
         Write-Host "  - smorch-design"
         Write-Host "  - mamoun-personal-branding"
+        Write-Host "  - smorch-gtm-scoring"
     }
     "dev" {
         Write-Host "=== Dev Team Setup ===" -ForegroundColor Green
@@ -128,8 +131,9 @@ switch ($Role) {
         Write-Host "  4. Cowork scans and discovers all plugins automatically"
         Write-Host "  5. Click Save -- plugins are now active"
         Write-Host ""
-        Write-Host "Your role gets this plugin:" -ForegroundColor Cyan
+        Write-Host "Your role gets these 2 plugins:" -ForegroundColor Cyan
         Write-Host "  - smorch-dev"
+        Write-Host "  - smorch-dev-scoring"
     }
     "eo-student" {
         Write-Host "=== EO Student Setup ===" -ForegroundColor Green
@@ -143,9 +147,10 @@ switch ($Role) {
         Write-Host "  4. Cowork scans and discovers all plugins automatically"
         Write-Host "  5. Click Save -- plugins are now active"
         Write-Host ""
-        Write-Host "Your role gets these plugins:" -ForegroundColor Cyan
+        Write-Host "Your role gets these 3 plugins:" -ForegroundColor Cyan
         Write-Host "  - eo-microsaas-os"
         Write-Host "  - smorch-dev"
+        Write-Host "  - smorch-dev-scoring"
     }
     "mamoun" {
         Write-Host "=== Mamoun (All Access) ===" -ForegroundColor Green
