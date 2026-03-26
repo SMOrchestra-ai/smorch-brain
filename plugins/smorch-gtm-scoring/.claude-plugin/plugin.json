@@ -1,0 +1,9 @@
+{
+  "name": "smorch-gtm-scoring",
+  "version": "1.0.0",
+  "description": "Quality gate scoring systems for GTM deliverables. 6 battle-tested scoring systems (campaign strategy, offer/positioning, copywriting, social media, YouTube, LinkedIn branding) with 111 weighted criteria, cross-system dependency mapping, composite Campaign Health formula, and automated report generation. The quality standard for every campaign asset before it ships.",
+  "author": {
+    "name": "Mamoun Alamouri",
+    "homepage": "https://smorchestra.ai"
+  }
+}

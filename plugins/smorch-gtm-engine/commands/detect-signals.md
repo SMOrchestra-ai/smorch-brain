@@ -1,6 +1,6 @@
 ---
 description: Detect and validate buying signals for an ICP
-argument-hint: [icp-name or prospect-list-file]
+argument-hint: "[icp-name or prospect-list-file]"
 allowed-tools: Read, Write, Bash, Grep, Glob, Task, WebSearch, WebFetch, AskUserQuestion
 ---
 

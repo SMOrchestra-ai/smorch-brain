@@ -1,6 +1,6 @@
 ---
 description: Deep signal-based research on a prospect company or person
-argument-hint: [company-name or person-name]
+argument-hint: "[company-name or person-name]"
 allowed-tools: Read, Write, Bash, Grep, Glob, Task, WebSearch, WebFetch, AskUserQuestion
 ---
 

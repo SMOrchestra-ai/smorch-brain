@@ -1,6 +1,6 @@
 ---
 description: Launch a full Signal-to-Trust campaign from a BRD
-argument-hint: [brd-file-path]
+argument-hint: "[brd-file-path]"
 allowed-tools: Read, Write, Edit, Bash, Grep, Glob, Task, AskUserQuestion
 ---
 

@@ -1,6 +1,6 @@
 ---
 description: Generate weekly campaign assets from wedges
-argument-hint: [campaign-name] [week-number]
+argument-hint: "[campaign-name] [week-number]"
 allowed-tools: Read, Write, Edit, Glob, Task, AskUserQuestion
 ---
 

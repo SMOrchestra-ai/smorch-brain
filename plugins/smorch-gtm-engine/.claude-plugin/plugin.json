@@ -1,7 +1,7 @@
 {
   "name": "smorch-gtm-engine",
-  "version": "2.0.0",
-  "description": "Signal-to-Trust GTM campaign engine. Strategy, positioning, signals, wedges, asset generation, outbound orchestration, and campaign management. Run /launch-campaign to start.",
+  "version": "2.1.0",
+  "description": "Signal-to-Trust GTM campaign engine. Strategy, positioning, signals, wedges, asset generation, outbound orchestration, campaign management, and 9-phase campaign guide. Run /launch-campaign to start.",
   "author": {
     "name": "Mamoun Alamouri",
     "homepage": "https://smorchestra.ai"

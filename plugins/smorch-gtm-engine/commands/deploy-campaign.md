@@ -1,6 +1,6 @@
 ---
 description: Deploy approved campaign assets to Instantly, HeyReach, and GHL
-argument-hint: [campaign-name]
+argument-hint: "[campaign-name]"
 allowed-tools: Read, Write, Bash, Grep, Glob, Task, AskUserQuestion
 ---
 

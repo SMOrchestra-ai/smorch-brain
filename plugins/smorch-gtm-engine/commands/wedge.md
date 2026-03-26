@@ -1,6 +1,6 @@
 ---
 description: Generate a signal-based wedge with outreach sequence
-argument-hint: [signal-description]
+argument-hint: "[signal-description]"
 allowed-tools: Read, Write, Task, AskUserQuestion
 ---
 
