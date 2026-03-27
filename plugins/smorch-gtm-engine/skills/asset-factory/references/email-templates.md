@@ -1,103 +1,185 @@
-## Email Templates by ICP
+## Cold Email Templates: Vulnerability Arc
 
-### MENA SaaS Founders (High-Context, Trust-First)
+### Template Architecture
 
-**Week 1, Email 1, Variant A (Data-Driven)**
-```markdown
-Subject: {{first_name}}, your sales data across 7 tools?
+Every cold email sequence follows the 3-Email Vulnerability Arc. The arc tells one story across 3 emails, not 3 independent pitches.
 
-Hi {{first_name}},
+| Email | Day | Story Beat | Emotional Register | Primary Trigger |
+|-------|-----|------------|-------------------|----------------|
+| E1 | 1 | Vulnerable Origin: "I failed, studied what works, cracked it" | Vulnerable + credible | Identity Threat |
+| E2 | 3 | Trust-as-Science Confession: "My weakness became my edge" | Confessional + intellectually surprising | Identity Threat + Costly Signal |
+| E3 | 6 | System Proof: "Now AI/system runs it" | Confident + operational | Costly Signal + Temporal Window |
 
-I noticed [Company] is scaling fast—congrats on the growth.
+### Rules (Apply to ALL Templates)
 
-Many MENA SaaS founders we work with face a similar challenge around this stage: sales data scattered across HubSpot, Pipedrive, Notion, and multiple spreadsheets.
+- 75-95 words per email body. Tight enough for mobile, long enough for story arc
+- Subject lines: 3-7 words, curiosity-driven, no spam triggers
+- No links. No HTML. Plain text only
+- No P.S. lines unless they add genuine value
+- One idea per email. Not a list
+- CTA: single question. Low friction. Binary response
+- Merge fields: {{firstName}}, {{company}}, {{signal}}
+- No em dashes. Colons, commas, semicolons, hyphens only
 
-The hidden cost? Decision paralysis. When your data lives in 7 different places, forecasting becomes guesswork.
+---
 
-After consolidating to a unified dashboard, founders in Dubai and Riyadh closed 40% more deals in the same quarter.
+### MENA B2B Founders (Trust-First, High-Context)
 
-Worth a quick conversation to see if this resonates with your current setup?
+**Email 1: Vulnerable Origin Story (Day 1)**
 
-Best,
-[Name]
+```
+Subject: {{firstName}} <> [Sender]
 
-P.S. - Happy to share the 3-step consolidation framework we used with [Peer Company] if helpful.
+{{firstName}},
+
+After [X] years of [credible corporate role], I took [role] at a [smaller company]. [Timeframe]. [Failure admission]. Complete failure.
+
+So I [studied/cracked/extracted]. [Specific study: number of companies, specific geography, specific outcome criteria]. [What I extracted: the methodology/system].
+
+Results: [specific outcome with numbers and timeframe]. Then helped others crack the same.
+
+Now I'm [offer framing: cohort/program/system] with [scarcity number] [buyer type] who've [qualifying stage]. Interested?
+
+[Sender first name]
 ```
 
-**Week 1, Email 1, Variant B (Story-Driven)**
-```markdown
-Subject: The scattered data problem (I noticed this with [Company])
+**Score target**: 9.0+ | **Word count**: 75-95
+**Key elements**: Vulnerability hook, specific study numbers, credible corporate names, binary CTA
 
-Hi {{first_name}},
+---
 
-I was looking at [Company]'s growth trajectory—impressive.
+**Email 2: Trust-as-Science Confession (Day 3)**
 
-I'm reaching out because I recently worked with Ahmed at [Peer Company] on something you might be facing too.
+```
+Subject: I was terrible at [the thing they value]
 
-He was managing sales data across 7 different systems. Every forecast felt like a guess. Every pipeline review surfaced new surprises.
+{{firstName}},
 
-After unifying everything into one view, his team closed 40% more deals. Not because they worked harder—because they finally had clarity.
+Confession: [the valued skill] was always my weakness. Still is. Great [corporate role] because [external trust mechanism]. [Company names]. [How external trust carried you].
 
-Worth exploring if this is relevant for [Company]?
+[Transition to smaller/harder context] exposed that. No [external trust]. Just me.
 
-Best,
-[Name]
+So I studied how to [engineer/systematize the thing]. Not from [expected sources]. From [unexpected sources: behavioral scientists, hostage negotiators, trial lawyers]. People who [build the thing] in minutes.
 
-P.S. - Ahmed mentioned you both faced similar challenges at the last [MENA SaaS event]. Thought this might resonate.
+What I found: [core insight]. [Supporting insight with specific number].
+
+Teaching the exact frameworks in [the offer]. Worth a call?
+
+[Sender first name]
+```
+
+**Score target**: 9.0+ | **Word count**: 75-95
+**Key elements**: Confession hook, unexpected credibility sources, "Still is" vulnerability, intellectual surprise
+
+---
+
+**Email 3: System Proof (Day 6)**
+
+```
+Subject: [AI/System] runs [percentage]% of my [function]
+
+{{firstName}},
+
+[Timeframe] ago I had [number] [people/resources] running [functions].
+
+Today [AI/system] runs [percentage]% of it. Better. [List of what it does]. Not "[thing]-assisted." [Thing]-operated. I make [small number] decisions a day. The system does the rest.
+
+That's what I'm [teaching/installing] in [the offer]. The exact [system name] I run daily. [Specifics: number of components, scored to business, installed in timeframe].
+
+Last few spots. Worth [low-friction time commitment]?
+
+[Sender first name]
+```
+
+**Score target**: 8.9+ | **Word count**: 75-95
+**Key elements**: Before/after contrast, "not assisted, operated" distinction, temporal window close
+
+---
+
+### US B2B SaaS (Data-First, Low-Context)
+
+**Email 1: Origin Story (Day 1)**
+
+```
+Subject: {{firstName}} <> [Sender]
+
+{{firstName}},
+
+[Timeframe] building [function] for [credible companies]. Then I [transition to harder context]. [Timeframe]. [Specific failure metric].
+
+So I [studied/analyzed/extracted]. [Number] companies that [specific achievement in specific timeframe]. Found the pattern.
+
+The ones stuck at [revenue band] ran [low number] [motions/strategies]. The ones that broke through ran [higher number] [motions/strategies] matched to [specific variable].
+
+Results after applying: [specific outcome]. Now packaging this for [scarcity number] [buyer type].
+
+Interested?
+
+[Sender first name]
 ```
 
 ---
 
-### US Real Estate Brokers (Low-Context, Task-First)
+**Email 2: Method Confession (Day 3)**
 
-**Week 1, Email 1, Variant A (Data-Driven)**
-```markdown
-Subject: You're losing leads in the first 30 minutes
+```
+Subject: I was wrong about [conventional wisdom]
 
-{{first_name}},
+{{firstName}},
 
-Your leads are booking with competitors before you even see the form fill.
+Confession: [conventional approach] never worked for me. [Credible career] because [external factor], not [personal skill].
 
-Here's why: Responding after 30 minutes costs you 21x in conversion. The first 5 minutes is everything.
+[Harder context] exposed that. So I studied [the alternative].
 
-Real scenario:
-- 2:00pm: Lead fills your form
-- 2:07pm: They book with a faster broker
-- 5:00pm: You reply to dead lead
+Not from [expected sources]. From [unexpected credible sources].
 
-We help brokers capture leads in <60 seconds with instant auto-reply + mobile notifications.
+Key finding: [core insight with specific number or percentage].
 
-15-minute call to show you the system?
+[Teaching/sharing] the framework in [the offer]. Worth 15 minutes?
 
-[Book Here]
-
-- [Name]
-
-P.S. - [Broker Name] recovered $2.1M in commission using this. Happy to share how.
+[Sender first name]
 ```
 
-**Week 1, Email 1, Variant B (Story-Driven)**
-```markdown
-Subject: They booked at 2:07pm. You replied at 5pm.
+---
 
-{{first_name}},
+**Email 3: System Proof (Day 6)**
 
-Scenario from last week:
+```
+Subject: [System metric that sounds impossible]
 
-A family walked your open house Saturday. Loved the property. Filled your form at 2:00pm asking to see it again Monday.
+{{firstName}},
 
-By 2:07pm, they'd booked with another broker who replied instantly.
+[Before state with specific numbers]. [After state with specific numbers].
 
-You replied at 5pm to a dead lead.
+The system: [Name].
+[Number] components. Each one [action verb]. Installed in [timeframe].
 
-This isn't about working harder. It's about the Golden Window—the first 5 minutes where 21x more conversions happen.
+Setup cost: [low number]. First [result]: [fast timeframe].
 
-Want to see how [Broker] automated instant response without hiring more staff?
+Last [number] spots for [quarter/cohort]. Worth a call?
 
-15 minutes: [Book Here]
-
-- [Name]
-
-P.S. - Mobile app + auto-reply = never miss another Golden Window.
+[Sender first name]
 ```
 
+---
+
+### Template Customization Rules
+
+When adapting templates to a specific campaign:
+
+1. **Replace bracketed fields** with real data from the positioning document
+2. **Preserve the emotional arc**: E1 vulnerability → E2 confession + intellectual surprise → E3 confident proof
+3. **Maintain word count**: 75-95 words per email, never exceed 100
+4. **Keep subject lines under 7 words**
+5. **CTA must be binary**: "Interested?", "Worth a call?", "Worth 15 minutes?"
+6. **Add {{signal}} sentence** to E1 opening at deployment: "Noticed {{company}} just {{signal}}."
+7. **Score every email** against Copywriting Scorer (3A) before shipping. Minimum 9.0
+
+### What NOT to Do
+
+- Do NOT create A/B email variants by default. One elite arc > two mediocre ones
+- Do NOT add P.S. lines as micro-commitments
+- Do NOT include links, images, or HTML formatting
+- Do NOT use "I hope this email finds you well" or any variant
+- Do NOT write emails longer than 95 words
+- Do NOT use company names without anonymization rules

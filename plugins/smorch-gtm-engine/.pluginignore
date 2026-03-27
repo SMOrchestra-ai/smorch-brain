@@ -21,8 +21,8 @@ __pycache__/
 # Eval agents (not needed in plugin)
 agents/
 
-# HTML assets directory
-assets/
+# HTML assets in smo-offer-assets (large landing page templates)
+skills/smo-offer-assets/assets/
 
 # Build scripts (not needed in plugin)
 scripts/
