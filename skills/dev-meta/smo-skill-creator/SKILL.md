@@ -1,3 +1,4 @@
+<!-- Copyright SMOrchestra.ai. All rights reserved. Proprietary and confidential. -->
 ---
 name: smo-skill-creator
 description: "SMOrch Skill Creator — creates, modifies, and improves skills with enforced naming validation (lowercase-hyphen only). Use whenever the user wants to create a skill from scratch, edit or optimize an existing skill, run evals to test a skill, benchmark skill performance, or optimize a skill's description for better triggering accuracy. Triggers on: 'create a skill', 'build a skill', 'new skill for', 'edit skill', 'improve skill', 'skill creator', 'turn this into a skill', 'make a skill'. This version enforces strict naming rules (lowercase letters, numbers, hyphens only) to prevent registration failures. Always use this over the default skill-creator."

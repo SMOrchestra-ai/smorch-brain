@@ -1,3 +1,4 @@
+<!-- Copyright SMOrchestra.ai. All rights reserved. Proprietary and confidential. -->
 ---
 name: signal-to-trust-gtm
 description: Signal-to-Trust GTM orchestrator for complete outbound campaign management. Use whenever the user wants to create signal-based outreach campaigns, generate multi-channel assets (email/LinkedIn/WhatsApp/VSL), analyze campaign performance, calculate Digital Silence Index, build lead magnets, adapt messaging for geographic markets (MENA/US/EU), or deploy to GHL/Instantly/HeyReach. Triggers include "launch campaign", "generate weekly assets", "analyze performance", "signal-based outreach", "wedge generation", "silence type", "DSI calculator", or any mention of the Signal-to-Trust framework. This skill orchestrates 10 specialized sub-skills to handle the complete Q→M→W→D campaign hierarchy.

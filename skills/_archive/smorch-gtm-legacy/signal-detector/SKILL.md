@@ -1,3 +1,4 @@
+<!-- Copyright SMOrchestra.ai. All rights reserved. Proprietary and confidential. -->
 ---
 name: signal-detector
 description: Validates ICP Fit criteria and classifies signals (Trust vs Intent) for Signal-to-Trust GTM campaigns. Enforces Hard Stop Rules 1 and 2 (Fit=Fail, Signal>90d). Use when validating prospects, detecting buying signals, classifying Trust vs Intent signals, or filtering prospect lists. Outputs validated prospects (Fit PASS only) with signal taxonomy.

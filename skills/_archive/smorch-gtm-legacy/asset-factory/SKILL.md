@@ -1,3 +1,4 @@
+<!-- Copyright SMOrchestra.ai. All rights reserved. Proprietary and confidential. -->
 ---
 name: asset-factory
 description: Produces multi-channel sequences (email, LinkedIn, WhatsApp, social) from validated wedges. Generates 18 emails, 12 LinkedIn messages, 9 WhatsApp variants, and 3 social posts per campaign. Use when creating campaign assets, generating sequences, producing A/B variants, or scaling content production. Outputs complete asset bundle ready for deployment.

@@ -1,3 +1,4 @@
+<!-- Copyright SMOrchestra.ai. All rights reserved. Proprietary and confidential. -->
 ---
 name: arabic-localizer
 description: Arabic Localization — RTL validation, bilingual content, Gulf Arabic tone, and MENA market adaptation for all SMOrchestra products

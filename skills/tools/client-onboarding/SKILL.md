@@ -1,3 +1,4 @@
+<!-- Copyright SMOrchestra.ai. All rights reserved. Proprietary and confidential. -->
 ---
 name: client-onboarding
 description: Client Management — onboarding, status reports, SOW generation, engagement tracking for SMOrchestra agency clients

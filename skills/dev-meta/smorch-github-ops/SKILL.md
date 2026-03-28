@@ -1,3 +1,4 @@
+<!-- Copyright SMOrchestra.ai. All rights reserved. Proprietary and confidential. -->
 ---
 name: smorch-github-ops
 description: "SMOrchestra GitHub Operations Enforcer — enforces the complete AI-Native GitHub Architecture in every Claude Code session. Use whenever working in any git repo to enforce branch naming, conventional commits, SemVer, release protocol, changelog maintenance, documentation standards, and PR management. Triggers on: any git operation, 'commit', 'push', 'release', 'deploy', 'new repo', 'create repo', 'branch', 'merge', 'PR', 'pull request', 'tag', 'version', 'changelog'. This is THE enforcement layer that makes GitHub discipline automatic. Always load this skill at session start when working in any repository."

@@ -1,3 +1,4 @@
+<!-- Copyright SMOrchestra.ai. All rights reserved. Proprietary and confidential. -->
 ---
 name: eo-microsaas-dev
 description: EO MicroSaaS Dev - the primary development skill that takes the BRD from eo-tech-architect and produces a deployable MicroSaaS application through a 5-phase build pipeline (BRD Parsing, Project Scaffold, Core Build, Integration, Deploy). Generates CLAUDE.md for the codebase. Triggers on 'build my app', 'start building', 'scaffold project', 'code my MVP', 'development mode', 'build from BRD', 'start the build', 'microsaas dev'. This is the core Step 5 skill of the EO Training System.

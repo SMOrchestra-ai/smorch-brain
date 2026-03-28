@@ -1,3 +1,4 @@
+<!-- Copyright SMOrchestra.ai. All rights reserved. Proprietary and confidential. -->
 ---
 name: content-systems
 description: "Content Systems — systematic content production framework combining Matt Gray's Content GPS, Brendan Kane's Hook Points, Alex Hormozi's Content-to-Paid Pipeline, and Tibo's build-in-public strategy. Triggers: 'content system', 'content calendar', 'batch creation', 'repurpose', 'content waterfall', '30-in-30', 'content GPS', 'build in public', 'creator', 'content strategy', 'weekly content'. Use when: building founder authority, creating content strategy, scaling founder visibility, planning content calendar, teaching content production. Do NOT trigger for: campaign mechanics (signal-to-trust-gtm), product building (validation-sprint)."

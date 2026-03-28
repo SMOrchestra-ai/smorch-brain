@@ -1,3 +1,4 @@
+<!-- Copyright SMOrchestra.ai. All rights reserved. Proprietary and confidential. -->
 ---
 name: smorch-perfect-webinar
 description: "Perfect Webinar Asset Factory - builds complete webinar campaign bundles: 20-slide deck, 5 social posts, 3-email sequence, 2 LinkedIn DMs, stories file, VSL registration page. Uses Brunson's Perfect Webinar framework. Triggers on: 'perfect webinar', 'webinar deck', 'speaking gig', 'build webinar assets', 'webinar campaign', 'speaking engagement', 'build a talk', 'conference deck', 'event assets', 'build my webinar', or partial requests like 'posts for the webinar', 'email sequence for talk', 'landing page for my event'. Do NOT trigger for: pitch decks (smo-offer-assets), YouTube decks (eo-youtube-mamoun), campaigns without webinar context (signal-to-trust-gtm)."

@@ -1,3 +1,4 @@
+<!-- Copyright SMOrchestra.ai. All rights reserved. Proprietary and confidential. -->
 ---
 name: smorch-project-brain
 description: "Project Brain System — creates structured project context files from raw inputs (slides, docs, verbal context, web research). Supports 7 project types with deep/quick modes. Triggers on: 'create project brain', 'new project', 'start a project', 'build project files', 'project brain for [client]', 'set up [client name]', 'initialize project', 'brain for [project]', or any upload of client files (PPTX, DOCX, PDF) with context suggesting new project setup. Also triggers on: 'update project brain', 'add to brain', 'brain has changed', 'new input for [project]'. Do NOT trigger for: EO student brain ingestion (eo-brain-ingestion), campaign asset creation without project setup (signal-to-trust-gtm), individual file creation (positioning only, ICP only)."
