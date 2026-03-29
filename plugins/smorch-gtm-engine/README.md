@@ -58,6 +58,7 @@ The core thesis: relationship-based selling is a tax on growth. Signal-based tru
 | smorch-skill-creator | Skill creation and optimization with enforced naming validation |
 | lead-research-assistant | Lead identification with ICP-matched contact strategies |
 
+<!-- IP:START - Signal-to-Trust framework summary -->
 ## Signal-to-Trust Framework
 
 The plugin implements the complete Signal-to-Trust GTM methodology:
@@ -92,6 +93,8 @@ The plugin implements the complete Signal-to-Trust GTM methodology:
 - Trust Silence — they don't trust you yet
 - Timing Silence — it's not the right time
 - Clarity Silence — they don't understand what you do
+
+<!-- IP:END -->
 
 ## Scoring Gates
 

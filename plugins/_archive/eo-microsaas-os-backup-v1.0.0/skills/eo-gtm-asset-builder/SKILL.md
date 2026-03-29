@@ -1,3 +1,4 @@
+<!-- Copyright SMOrchestra.ai. All rights reserved. Proprietary and confidential. -->
 ---
 name: eo-gtm-asset-builder
 description: Production renderer that converts EO MENA GTM markdown blueprints into deployable files (HTML landing pages, PPTX slide decks, PDF lead magnets, DOCX one-pagers, XLSX spreadsheets). Applies EO brand system (orange/gray/gold palette, Cairo/Tajawal/Inter fonts, RTL Arabic). Triggers on 'build GTM production files', 'render assets', 'produce deployable files', 'convert assets to production'.

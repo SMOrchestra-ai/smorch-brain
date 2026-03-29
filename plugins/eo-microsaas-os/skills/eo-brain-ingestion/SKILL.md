@@ -1,3 +1,4 @@
+<!-- Copyright SMOrchestra.ai. All rights reserved. Proprietary and confidential. -->
 ---
 name: eo-brain-ingestion
 description: EO Brain Ingestion Engine - reads all 5 EO scorecard results, validates quality gates, coaches weak dimensions, and produces 13 structured files (10 business context + 3 AI instruction layers) that become the student's MicroSaaS Operating System brain. Triggers on 'ingest scorecards', 'build my brain', 'load my project', 'brain ingestion', 'create project files', 'process my scorecards'. This is Skill 1 of the EO Training System.

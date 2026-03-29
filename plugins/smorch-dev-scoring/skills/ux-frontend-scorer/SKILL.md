@@ -1,3 +1,4 @@
+<!-- Copyright SMOrchestra.ai. All rights reserved. Proprietary and confidential. -->
 ---
 name: ux-frontend-scorer
 description: >-
@@ -9,6 +10,12 @@ description: >-
 Score frontend quality, design consistency, and user experience implementation. Hat 5 of the 5-Hat Quality Scorecard System.
 
 The core question: **Would a designer be proud to claim this as their work?**
+
+## When This Fires
+- Composite scorer runs this as Hat 5
+- User asks to "score UX", "rate the frontend", "UI quality check"
+- Frontend code exists (check for /app, /pages, /components, CSS/Tailwind files)
+- Skip if: no frontend exists (API-only project), or frontend is a third-party template with no customization
 
 ## Scoring Process
 
@@ -103,7 +110,7 @@ Phase: [phase] | Components: [count] | Styling: [approach] | RTL: [yes/no]
 
 ### Hard Stops
 - RTL/Bilingual < 5 (if MENA-targeted): [PASS/FAIL/N-A]
-- Accessibility < 5: [PASS/FAIL]
+- Accessibility < 5: [PASS/FAIL] — Note: While not a formal hard stop in the composite system, Accessibility scores below 5 should be flagged as a quality concern.
 ```
 
 ### Skip Conditions

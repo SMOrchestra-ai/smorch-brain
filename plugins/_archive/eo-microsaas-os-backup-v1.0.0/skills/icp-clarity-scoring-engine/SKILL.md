@@ -1,3 +1,4 @@
+<!-- Copyright SMOrchestra.ai. All rights reserved. Proprietary and confidential. -->
 ---
 name: icp-clarity-scoring-engine
 description: Scorecard 2 of 5 — Evaluates ICP clarity across WHO, Pain, Pleasure, Hero Journey, and Access dimensions. Scores /100 with hybrid MC + AI-evaluated questions.

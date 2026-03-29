@@ -1,3 +1,4 @@
+<!-- Copyright SMOrchestra.ai. All rights reserved. Proprietary and confidential. -->
 ---
 name: architecture-scorer
 description: >-
@@ -9,6 +10,12 @@ description: >-
 Score architecture decisions, data design, and production readiness. This is Hat 2 of the 5-Hat Quality Scorecard System.
 
 The core question: **Will this architecture survive production, scale, and the inevitable change requests?**
+
+## When This Fires
+- Composite scorer runs this as Hat 2
+- User asks to "score architecture", "evaluate tech stack", "system design review"
+- Architecture artifacts exist (schema files, API routes, config files, docker/deploy configs)
+- Skip if: no code written yet (pre-build phase only needs product-scorer)
 
 ## Scoring Process
 

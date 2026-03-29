@@ -1,0 +1,97 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# smorch-setup-github-teams — Configure GitHub org for IP protection
+# Run once. Requires gh CLI authenticated with org admin.
+
+ORG="SMOrchestra-ai"
+SOURCE_REPO="smorch-brain"
+DIST_REPO="smorch-dist"
+
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+CYAN='\033[0;36m'
+NC='\033[0m'
+
+echo -e "${CYAN}Setting up GitHub teams for IP protection${NC}"
+echo "Org: $ORG"
+echo ""
+
+# --- Step 1: Create teams ---
+echo -e "${CYAN}Step 1: Creating teams...${NC}"
+
+create_team() {
+    local name="$1"
+    local desc="$2"
+    if gh api "orgs/$ORG/teams" --paginate -q ".[].slug" 2>/dev/null | grep -q "^${name}$"; then
+        echo -e "  ${GREEN}Team '$name' already exists${NC}"
+    else
+        gh api "orgs/$ORG/teams" -f name="$name" -f description="$desc" -f privacy="secret" 2>/dev/null \
+            && echo -e "  ${GREEN}Created team: $name${NC}" \
+            || echo -e "  ${RED}Failed to create team: $name${NC}"
+    fi
+}
+
+create_team "founders" "Founder access — all repos, admin"
+create_team "dev-team" "Development team — smorch-dist read only"
+create_team "gtm-team" "GTM operators — smorch-dist read only"
+create_team "eo-students" "EO training students — smorch-dist read only"
+
+# --- Step 2: Set repo permissions ---
+echo -e "\n${CYAN}Step 2: Setting repository permissions...${NC}"
+
+set_team_permission() {
+    local team="$1"
+    local repo="$2"
+    local permission="$3"
+    gh api "orgs/$ORG/teams/$team/repos/$ORG/$repo" -X PUT -f permission="$permission" 2>/dev/null \
+        && echo -e "  ${GREEN}$team → $repo: $permission${NC}" \
+        || echo -e "  ${RED}Failed: $team → $repo${NC}"
+}
+
+# smorch-brain: founders only
+set_team_permission "founders" "$SOURCE_REPO" "admin"
+
+# smorch-dist: all teams get read
+set_team_permission "founders" "$DIST_REPO" "admin"
+set_team_permission "dev-team" "$DIST_REPO" "pull"
+set_team_permission "gtm-team" "$DIST_REPO" "pull"
+set_team_permission "eo-students" "$DIST_REPO" "pull"
+
+# --- Step 3: Remove direct collaborators from smorch-brain ---
+echo -e "\n${CYAN}Step 3: Checking direct collaborators on $SOURCE_REPO...${NC}"
+echo -e "${YELLOW}Review these collaborators and remove non-founders:${NC}"
+gh api "repos/$ORG/$SOURCE_REPO/collaborators" -q '.[] | "\(.login) — \(.permissions | to_entries | map(select(.value)) | map(.key) | join(", "))"' 2>/dev/null || echo "  (could not fetch)"
+
+# --- Step 4: Disable forking ---
+echo -e "\n${CYAN}Step 4: Disabling forking...${NC}"
+echo -e "${YELLOW}NOTE: Disabling forks requires org admin settings.${NC}"
+echo -e "Go to: https://github.com/organizations/$ORG/settings/member_privileges"
+echo -e "Set 'Repository forking' to: Disabled"
+
+# --- Step 5: Branch protection ---
+echo -e "\n${CYAN}Step 5: Setting branch protection...${NC}"
+
+# smorch-brain main branch protection
+gh api "repos/$ORG/$SOURCE_REPO/branches/main/protection" -X PUT \
+    --input - <<'JSON' 2>/dev/null && echo -e "  ${GREEN}$SOURCE_REPO/main protected${NC}" || echo -e "  ${YELLOW}Manual setup needed for $SOURCE_REPO/main${NC}"
+{
+    "required_status_checks": null,
+    "enforce_admins": false,
+    "required_pull_request_reviews": {
+        "required_approving_review_count": 1,
+        "dismiss_stale_reviews": true
+    },
+    "restrictions": null,
+    "allow_force_pushes": false,
+    "allow_deletions": false
+}
+JSON
+
+echo -e "\n${GREEN}GitHub teams configured.${NC}"
+echo -e "\nNext steps:"
+echo -e "  1. Add team members: gh api orgs/$ORG/teams/dev-team/memberships/<username> -X PUT"
+echo -e "  2. Remove non-founders from smorch-brain collaborators"
+echo -e "  3. Disable forking in org settings"
+echo -e "  4. Have all team members sign legal/contributor-agreement.md"

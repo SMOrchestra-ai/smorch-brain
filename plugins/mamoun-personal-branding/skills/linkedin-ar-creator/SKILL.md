@@ -1,3 +1,4 @@
+<!-- Copyright SMOrchestra.ai. All rights reserved. Proprietary and confidential. -->
 ---
 name: linkedin-ar-creator
 description: "Arabic AI/MicroSaaS LinkedIn posts for Mamoun Alamouri. Three input modes: direct input, YouTube repurpose, English post arabization. Models Donnelly, Ruben Hassid, Eric Vyacheslav, Charlie Hills. Posts Sunday/Monday. Triggers on: 'Arabic post', 'Sunday post', 'Monday post', 'Track A', 'AI post', 'MicroSaaS post', 'Claude post', 'EO post', 'repurpose YouTube', 'YouTube to LinkedIn', 'arabize this post', 'make this Arabic', 'translate to Arabic', or any Arabic LinkedIn content request. Do NOT trigger for: English GTM posts (linkedin-en-gtm), LinkedIn outreach (heyreach-operator), or profile scraping (smorch-salesnav-operator)."

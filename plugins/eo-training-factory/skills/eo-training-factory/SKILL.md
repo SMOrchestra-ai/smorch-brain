@@ -1,3 +1,4 @@
+<!-- Copyright SMOrchestra.ai. All rights reserved. Proprietary and confidential. -->
 ---
 name: eo-training-factory
 description: "EO Training Factory - builds complete training products for Entrepreneurs Oasis MENA. Triggers: 'create training', 'build training', 'new training program', 'EO training', 'build a course', 'training for [topic]'. Also triggers on partial requests: 'build slides for step 3', 'arabize the student guide', 'create outbound sequences', 'YouTube videos', 'launch webinar', 'revamp scripts', 'update slide decks'. ENTRY POINT for all EO training work. Routes to 6 engines: training-content (slides, scripts, guides), gtm-assets (outbound, LinkedIn, VSL, landing pages), tools-builder (scorecards, frameworks, lead magnets), youtube-prep (5 attraction videos), webinar-launcher (Perfect Webinar), arabization (RTL Arabic). Do NOT trigger for: GTM campaigns unrelated to training (signal-to-trust-gtm), CRM ops (ghl-operator)."

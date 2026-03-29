@@ -1,3 +1,4 @@
+<!-- Copyright SMOrchestra.ai. All rights reserved. Proprietary and confidential. -->
 ---
 name: campaign-strategy-scorer
 description: Scores campaign strategy and GTM architecture against 10 weighted criteria (signal clarity, ICP precision, channel-market fit, wedge specificity, Q>M>W>D hierarchy, timing, multi-channel coordination, measurement, risk mitigation, MENA contextualization). Triggers on 'score campaign', 'rate my campaign strategy', 'campaign quality check', 'is this campaign ready', 'GTM strategy score', 'outbound strategy review', 'campaign architecture review'. Fires for ANY campaign strategy evaluation, even partial.
@@ -77,7 +78,7 @@ A wedge is a one-sentence message angle derived from a validated signal, sharp e
 
 ---
 
-### C5: Q>M>W>D Hierarchy — Weight: 10%
+### C5: Q>M>W>D Hierarchy — Weight: 8%
 
 The domino effect: Quarterly theme cascades to Monthly campaign, which produces Weekly wedges, which drive Daily execution. Each level derives from and amplifies the level above. Without this hierarchy, campaigns are random acts of outbound.
 
@@ -137,7 +138,7 @@ Pre-defined KPIs per stage with specific targets. If you can't measure it, you c
 
 ---
 
-### C9: Risk Mitigation — Weight: 5%
+### C9: Risk Mitigation — Weight: 7%
 
 Deliverability, sender reputation, compliance, and fallback planning. A campaign that triggers spam filters or burns domains is worse than no campaign.
 
@@ -189,6 +190,27 @@ If the user hasn't specified these, infer from context or ask briefly: "Scoring 
 7. Present the score report
 8. Offer to fix the top issues immediately
 
+### Output Format
+
+Use the standard score report format from `${CLAUDE_PLUGIN_ROOT}/skills/scoring-orchestrator/references/score-bands.md`. Quick reference:
+
+```
+SCORE REPORT: [Campaign Name]
+System: Campaign Strategy
+Date: [YYYY-MM-DD]
+
+CRITERIA BREAKDOWN:
+| # | Criterion | Weight | Score | Status |
+[10 rows]
+
+OVERALL: [X.X] / 10
+VERDICT: [SHIP / TWEAK / IMPROVE / REWORK / RESTART]
+HARD STOPS: [None / List]
+TOP 3 FIXES: [by impact, with estimated lift]
+```
+
+For partial campaigns where only 6-8 of 10 criteria apply (e.g., single-channel campaign skips C7 Multi-Channel Coordination), normalize weights: `Adjusted Weight = Original Weight / Sum of Applicable Weights`. Flag which criteria were excluded and why.
+
 ### Scoring Mindset
 
 Think like a GTM strategist who has run 200+ campaigns in MENA markets. You've seen what works and what fails. You know that:
@@ -198,6 +220,31 @@ Think like a GTM strategist who has run 200+ campaigns in MENA markets. You've s
 - Measurement without action is vanity; measurement with weekly reviews is management
 
 Score honestly. An 8.0 with clear fix actions is more useful than a generous 9.0 that hides gaps.
+
+---
+
+## Calibration Anchor: Scored Example
+
+**Scenario:** Q2 2026 campaign for SalesMfast Signal Engine targeting Series A-B SaaS companies in UAE/Saudi expanding sales teams.
+
+| # | Criterion | Weight | Score | Rationale |
+|---|-----------|--------|-------|-----------|
+| C1 | Signal Clarity | 15% | 9.0 | 4 signals defined (VP Sales hire, funding round, headcount growth >20%, tech stack change). Detection via Clay + LinkedIn alerts. Freshness <60 days. Missing: signal-to-touch workflow not fully automated (manual step between Clay alert and Instantly sequence). |
+| C2 | ICP Precision | 15% | 9.5 | 3-Level Niche: SaaS > Series A-B with 20-100 employees > Recently hired VP Sales or expanded to new Gulf market. Hard disqualifiers: <$1M ARR, no English-speaking decision maker, already using agency for outbound. |
+| C3 | Channel-Market Fit | 12% | 8.5 | Email for cold (Instantly), LinkedIn for trust (HeyReach), WhatsApp for warm (GHL). WhatsApp only after engagement signal. Minor gap: no phone channel for hot leads from MENA enterprise. |
+| C4 | Wedge Specificity | 12% | 8.0 | "Your new VP Sales inherited a pipeline built on relationship-selling. In the Gulf, that means 47 coffee meetings before the first deal. Here's a faster path." Strong but same wedge used across 2 segments. |
+| C5 | Q>M>W>D Hierarchy | 8% | 7.5 | Q: "Signal-based GTM replaces relationship-selling in Gulf." M: "VP Sales hires as entry signal." W: 3 wedge angles. D: Email Mon/Wed, LinkedIn Tue/Thu, WhatsApp Fri (warm only). Monthly and weekly connected; daily execution slightly ad hoc. |
+| C6 | Timing & Velocity | 10% | 8.0 | Signal-to-first-touch target: 72 hours (not 48). Clay alerts daily. First-touch template ready. Gap: LinkedIn connection request can add 3-5 day delay before DM. |
+| C7 | Multi-Channel Coordination | 8% | 7.5 | Channels staggered: LinkedIn Day 1, Email Day 3, Email 2 Day 6. WhatsApp only after email reply or LinkedIn accept. Minor gap: no formal cross-channel deduplication beyond manual check. |
+| C8 | Measurement Framework | 8% | 8.5 | KPIs defined: reply rate >5% email, >15% LinkedIn, meeting book rate >2%. Weekly review scheduled Friday 2pm. Tracking in GHL + Instantly dashboards. Gap: no unified dashboard; attribution requires manual reconciliation. |
+| C9 | Risk Mitigation | 7% | 9.0 | 3 sending domains warmed 4 weeks. DMARC/DKIM/SPF confirmed. Backup domain ready. Instantly spam checker passed. Bounce monitoring active. |
+| C10 | MENA Contextualization | 5% | 9.0 | Sunday-Thursday send schedule. Arabic greeting in WhatsApp. Regional logos in social proof (Careem, Talabat ecosystem). Ramadan timing plan documented. WhatsApp voice notes for warm leads. |
+
+**OVERALL: 8.52 / 10 — VERDICT: STRONG (Ship with minor tweaks)**
+**HARD STOPS: None**
+**TOP FIX: C7 Multi-Channel Coordination — add automated deduplication rule in n8n: if prospect exists in HeyReach active campaign, exclude from Instantly list. Estimated lift: +1.0 point on C7.**
+
+This example demonstrates: a real campaign can score 8.5 and still have clear improvements. A 9.0+ requires zero manual gaps in any criterion.
 
 ---
 

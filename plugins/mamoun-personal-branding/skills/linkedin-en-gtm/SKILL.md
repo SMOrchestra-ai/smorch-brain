@@ -1,3 +1,4 @@
+<!-- Copyright SMOrchestra.ai. All rights reserved. Proprietary and confidential. -->
 ---
 name: linkedin-en-gtm
 description: "English B2B GTM LinkedIn posts for Mamoun Alamouri. Signal-based trust engineering, outbound orchestration, MENA market intelligence. Operator-to-operator depth modeled on Michel Lieben, Alex Vacca, Matt Lakajev. Posts Tuesday/Thursday. Triggers on: 'English post', 'GTM post', 'signal post', 'B2B post', 'Tuesday post', 'Thursday post', 'outbound post', 'trust engineering post', 'MENA GTM', 'pipeline post', 'write English LinkedIn', or any English LinkedIn content request about B2B, GTM, signals, outbound, or MENA market. Do NOT trigger for: Arabic posts (linkedin-ar-creator), YouTube repurpose, LinkedIn outreach (heyreach-operator), profile scraping (smorch-salesnav-operator)."

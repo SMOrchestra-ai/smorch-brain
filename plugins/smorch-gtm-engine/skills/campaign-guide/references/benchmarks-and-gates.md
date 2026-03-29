@@ -1,3 +1,4 @@
+<!-- IP:START - Campaign benchmarks, quality gates, and composite scoring -->
 # Benchmarks, Gates, and Diagnosis Reference
 
 Reference data for the campaign guide. Read specific sections as needed during
@@ -171,3 +172,5 @@ Social Media (15%) + YouTube/LinkedIn (15%)
 - Score one thing: `smorch-gtm-scoring:score` (auto-routes to right scorer)
 - Score everything: `smorch-gtm-scoring:score-all` (composite Campaign Health)
 - Generate report: `smorch-gtm-scoring:score-report` (produces formatted docx)
+
+<!-- IP:END -->

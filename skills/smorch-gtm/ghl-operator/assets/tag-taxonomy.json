@@ -1,0 +1,128 @@
+{
+  "version": "1.0",
+  "last_updated": "2026-02-21",
+  "description": "SalesMfast GHL tag taxonomy — category:value format",
+  "categories": {
+    "signal": {
+      "description": "Engagement/intent level — drives routing and nurture",
+      "mutually_exclusive_levels": true,
+      "tags": {
+        "signal:hot": {
+          "description": "High intent, ready for direct outreach",
+          "criteria": "Signal score >= 7 OR replied with clear interest",
+          "triggers_workflow": "Hot Lead Alert — WhatsApp/SMS + Slack + pipeline move",
+          "auto_pipeline_stage": "Qualified"
+        },
+        "signal:warm": {
+          "description": "Some engagement, needs nurturing",
+          "criteria": "Signal score 4-6, opened/clicked but no reply",
+          "triggers_workflow": "Warm Nurture Enrollment — email sequence",
+          "auto_pipeline_stage": null
+        },
+        "signal:cold": {
+          "description": "Low/no engagement",
+          "criteria": "Signal score <= 3, or >90 days since last signal",
+          "triggers_workflow": "Cold Lead Processing — remove from sequences",
+          "auto_pipeline_stage": null
+        },
+        "signal:meeting_booked": {
+          "description": "Meeting confirmed on calendar",
+          "criteria": "Calendar appointment created",
+          "triggers_workflow": "Meeting Prep — confirmation + prep materials",
+          "auto_pipeline_stage": "Meeting Booked"
+        },
+        "signal:no_show": {
+          "description": "Missed scheduled meeting",
+          "criteria": "Meeting time passed, no attendance",
+          "triggers_workflow": "No-Show Recovery — WhatsApp follow-up",
+          "auto_pipeline_stage": null
+        },
+        "signal:replied": {
+          "description": "Contact replied to any channel (permanent marker)",
+          "criteria": "Any inbound message detected",
+          "triggers_workflow": null,
+          "auto_pipeline_stage": null,
+          "permanent": true
+        }
+      }
+    },
+    "source": {
+      "description": "Where the contact originated — never removed, accumulates",
+      "mutually_exclusive_levels": false,
+      "permanent": true,
+      "tags": {
+        "source:instantly": { "description": "Came from cold email campaign via Instantly" },
+        "source:heyreach": { "description": "Came from LinkedIn outreach via HeyReach" },
+        "source:website": { "description": "Came from website form submission" },
+        "source:clay": { "description": "Enriched via Clay data enrichment" },
+        "source:referral": { "description": "Warm referral from existing contact" },
+        "source:event": { "description": "Met at conference, webinar, or event" },
+        "source:inbound": { "description": "Inbound inquiry (direct email/call)" },
+        "source:manual": { "description": "Manually added to CRM" }
+      }
+    },
+    "icp": {
+      "description": "Ideal Customer Profile match — determines pipeline routing",
+      "mutually_exclusive_levels": true,
+      "tags": {
+        "icp:mena_saas": { "pipeline": "MENA SaaS Pipeline", "market": "UAE, KSA, Qatar, Kuwait", "deal_range": "$25K-$100K" },
+        "icp:us_realestate": { "pipeline": "US Real Estate Pipeline", "market": "United States", "deal_range": "$5K-$20K" },
+        "icp:mena_sme": { "pipeline": "MENA SME Pipeline", "market": "UAE, KSA", "deal_range": "$2K-$10K" },
+        "icp:cxmfast": { "pipeline": "CXMfast Pipeline", "market": "MENA + Global", "deal_range": "$50K-$500K" },
+        "icp:beauty_clinic": { "pipeline": "Beauty Clinics Pipeline", "market": "UAE, KSA", "deal_range": "$3K-$15K" },
+        "icp:unclassified": { "pipeline": null, "market": "Unknown", "deal_range": "Unknown" }
+      }
+    },
+    "channel": {
+      "description": "Available communication channels for this contact",
+      "mutually_exclusive_levels": false,
+      "tags": {
+        "channel:whatsapp": { "description": "WhatsApp-enabled phone number", "auto_detect": "MENA phone prefix" },
+        "channel:sms": { "description": "SMS-capable phone number", "auto_detect": "US phone prefix (+1)" },
+        "channel:email": { "description": "Has verified email address" },
+        "channel:linkedin": { "description": "Has LinkedIn profile URL" },
+        "channel:phone": { "description": "Accepts phone calls" }
+      }
+    },
+    "status": {
+      "description": "Contact lifecycle position",
+      "mutually_exclusive_levels": false,
+      "tags": {
+        "status:new": { "description": "Just created, not yet engaged" },
+        "status:engaged": { "description": "Has interacted at least once" },
+        "status:meeting_booked": { "description": "Meeting scheduled" },
+        "status:proposal_sent": { "description": "Proposal delivered" },
+        "status:negotiating": { "description": "In active negotiation" },
+        "status:closed_won": { "description": "Deal closed successfully", "triggers": "Remove from outbound, add to client nurture" },
+        "status:closed_lost": { "description": "Deal lost", "requires": "loss_reason field" },
+        "status:nurture": { "description": "In long-term nurture sequence" },
+        "status:dormant": { "description": "No activity >90 days" },
+        "status:disqualified": { "description": "Doesn't fit any ICP" },
+        "status:duplicate": { "description": "Duplicate record flagged" },
+        "status:needs_review": { "description": "Data conflict needs human check" },
+        "status:do_not_contact": { "description": "Opted out or DNC request", "triggers": "Remove from ALL sequences" }
+      }
+    },
+    "campaign": {
+      "description": "Which outbound campaign generated this contact — permanent, accumulates",
+      "mutually_exclusive_levels": false,
+      "permanent": true,
+      "naming_pattern": "campaign:{campaign_slug}",
+      "examples": [
+        "campaign:gulf_saas_q1_2026",
+        "campaign:us_realestate_feb_2026",
+        "campaign:mena_beauty_launch",
+        "campaign:cxmfast_enterprise_q1"
+      ]
+    },
+    "enrichment": {
+      "description": "Data enrichment status flags",
+      "tags": {
+        "enrichment:pending": { "description": "Queued for Clay enrichment" },
+        "enrichment:complete": { "description": "Successfully enriched" },
+        "enrichment:failed": { "description": "Enrichment failed — no data found" },
+        "enrichment:partial": { "description": "Some enrichment fields populated" }
+      }
+    }
+  }
+}

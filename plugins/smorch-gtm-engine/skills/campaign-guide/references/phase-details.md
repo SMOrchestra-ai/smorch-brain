@@ -1,3 +1,4 @@
+<!-- IP:START - 9-phase campaign execution methodology -->
 # Phase Details Reference
 
 Detailed instructions for each of the 9 campaign phases. The SKILL.md orchestrator
@@ -357,3 +358,5 @@ After Phase 9 passes, announce:
 "Campaign cycle complete. Results logged.
 Next cycle starts Sunday with Phase 1 (new brief or brief revision).
 Want to start the next cycle, or pause?"
+
+<!-- IP:END -->

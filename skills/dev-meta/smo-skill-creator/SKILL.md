@@ -533,45 +533,4 @@ Repeating one more time the core loop here for emphasis:
 
 Please add steps to your TodoList, if you have such a thing, to make sure you don't forget. If you're in Cowork, please specifically put "Create evals JSON and run `eval-viewer/generate_review.py` so human can review test cases" in your TodoList to make sure it happens.
 
----
-
-## Post-Creation/Modification: Sync to smorch-brain
-
-**This step is mandatory after every skill creation or modification.** smorch-brain is the single source of truth for all skills and plugins.
-
-### When to trigger this step
-
-After ANY of these events:
-- A new skill is created and the user confirms it's done
-- An existing skill is modified (content, description, references)
-- A skill is packaged as .skill or .plugin
-- The user says "done", "ship it", "looks good", or otherwise signals completion
-
-### What to do
-
-1. **Identify the target plugin.** Based on the skill's domain:
-   - `eo-*` skills: `plugins/eo-microsaas-os/` or `plugins/eo-training-factory/`
-   - GTM skills (`signal-*`, `wedge-*`, `campaign-*`, `positioning-*`, `asset-factory`, `outbound-*`, `scraper-*`): `plugins/smorch-gtm-engine/`
-   - Tool operators (`clay-*`, `ghl-*`, `heyreach-*`, `instantly-*`, `salesnav-*`): `smorch-gtm-tools` plugin
-   - Dev/meta skills: `skills/dev-meta/` (top-level, not inside a plugin)
-   - If unsure, ask the user
-
-2. **Copy the skill directory** to smorch-brain:
-   ```bash
-   cp -r <skill-directory>/ <smorch-brain>/plugins/<plugin-name>/skills/<skill-name>/
-   ```
-
-3. **Bump the plugin version** in `.claude-plugin/plugin.json` (patch for mods, minor for new skills)
-
-4. **Rebuild the .plugin file**:
-   ```bash
-   cd <smorch-brain>/plugins/<plugin-name> && zip -r ../../dist/<plugin-name>.plugin . -x "*.DS_Store"
-   ```
-
-5. **Remind the user**: "Skill synced to smorch-brain. To deploy: upload the rebuilt .plugin from `dist/` to Cowork. For Claude Code: run `smorch push`."
-
-### If smorch-brain is not accessible
-
-Tell the user: "This skill was created outside smorch-brain. To prevent drift, copy it to smorch-brain and rebuild the plugin. Run `smorch push` from Claude Code."
-
 Good luck!

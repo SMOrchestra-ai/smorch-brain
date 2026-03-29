@@ -1,3 +1,4 @@
+<!-- Copyright SMOrchestra.ai. All rights reserved. Proprietary and confidential. -->
 ---
 name: project-definition-scoring-engine
 description: Scorecard 1 of 5 — Validates project definition with 3-Level Niche, Problem-Solution-Positioning framework. Scores /100 with hybrid MC + AI-evaluated questions.

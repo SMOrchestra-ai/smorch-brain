@@ -1,3 +1,4 @@
+<!-- Copyright SMOrchestra.ai. All rights reserved. Proprietary and confidential. -->
 ---
 name: smorch-about-me
 description: "About Me File Builder - creates structured personal context files for AI-assisted work. Supports 3 personas (Founder, Employee, Generic) with 4 input modes: raw text extraction, interactive Q&A, existing file gap-fill, and LinkedIn/CV upload parsing. Configurable language (English, Arabic, Bilingual). Triggers on: 'about me', 'build my about me', 'create about me files', 'personal context', 'who am I file', 'build my profile', 'context files', 'about me for AI', 'personal operating manual', 'user manual', 'tell AI about me'. Also triggers on: 'update my about me', 'fill gaps in my profile', 'parse my LinkedIn', 'extract from my resume'. Do NOT trigger for: EO scorecard ingestion (eo-brain-ingestion), project-level CLAUDE.md generation, or CRM contact creation."

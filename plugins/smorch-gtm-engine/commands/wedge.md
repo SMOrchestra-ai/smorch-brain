@@ -1,3 +1,4 @@
+<!-- IP:START - Command routing with methodology references -->
 ---
 description: Generate a signal-based wedge with outreach sequence
 argument-hint: "[signal-description]"
@@ -54,3 +55,4 @@ Quick wedge generation from a described signal. This is the fast-path for when y
    - "Want me to add this to an active campaign?"
    - "Want me to deploy this as a one-off outreach?"
    - "Want me to generate a full week of assets around this wedge angle?"
+<!-- IP:END -->

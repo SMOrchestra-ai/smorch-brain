@@ -1,3 +1,4 @@
+<!-- Copyright SMOrchestra.ai. All rights reserved. Proprietary and confidential. -->
 ---
 name: wedge-generator
 description: Creates one-sentence wedges from validated signals using ICP-specific templates. Enforces Hard Stop Rules 3 and 4 (one-sentence test, Intent>Trust). Use when generating wedges from signals, creating weekly messaging themes, or refining wedges based on performance. Outputs 3 validated weekly wedges ready for asset production.

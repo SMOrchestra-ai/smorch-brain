@@ -1,3 +1,4 @@
+<!-- Copyright SMOrchestra.ai. All rights reserved. Proprietary and confidential. -->
 ---
 name: movement-builder
 description: "Movement Builder — applies Russell Brunson's Movement Building framework to help founders build engaged communities and teach EO students how to become movement leaders in their niches. Triggers: 'movement', 'attractive character', 'epiphany bridge', 'value ladder', 'tribe', 'belief shift', 'story', 'narrative', 'brand character', 'build a community', 'create a movement'. Use when: designing founder positioning, building founder narrative, creating community strategy, storytelling for content, or evaluating whether founder can lead a movement. Do NOT trigger for: campaign mechanics (signal-to-trust-gtm), technical product details."

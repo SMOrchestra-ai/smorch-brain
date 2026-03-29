@@ -1,9 +1,10 @@
+<!-- Copyright SMOrchestra.ai. All rights reserved. Proprietary and confidential. -->
 ---
 name: scoring-orchestrator
 description: >-
-  Quality gate for all SMOrch GTM deliverables. Routes to 6 scoring systems
+  Quality gate for all SMOrch GTM deliverables. Routes to 7 scoring systems
   (campaign strategy, offer/positioning, copywriting, social media, YouTube,
-  LinkedIn branding) and computes composite Campaign Health scores. Triggers on
+  LinkedIn branding, scorecard/lead magnet effectiveness) and computes composite Campaign Health scores. Triggers on
   "score this", "rate this", "quality check", "is this ready to ship", "score my
   campaign", "score my email", "score my post", "how good is this", "grade this",
   "scoring", "quality gate", "ready to deploy", "ship check". Also triggers when
@@ -33,6 +34,7 @@ When the user presents content for scoring, determine which system applies:
 | Organic social post (LinkedIn/Twitter/Instagram) | System 4: Social Media | social-media-scorer |
 | YouTube thumbnail, title, script, or description | System 5: YouTube | youtube-scorer |
 | LinkedIn personal brand post (English B2B or Arabic EO) | System 6: LinkedIn Branding | linkedin-branding-scorer |
+| Lead magnet, scorecard, quiz, self-assessment, diagnostic tool, ROI calculator | System 7: Scorecard Effectiveness | scorecard-effectiveness |
 
 If the content spans multiple systems (e.g., "score my entire campaign"), run each applicable scorer and then compute the composite.
 
@@ -69,6 +71,30 @@ Campaign Health = (Campaign Strategy x 0.25) +
 ```
 
 Normalize weights for systems not scored.
+
+**Worked example:**
+
+Campaign: Q2 MENA SaaS expansion
+- Campaign Strategy: 8.5
+- Offer/Positioning: 8.7
+- Email Copy (primary channel): 8.2
+- LinkedIn Posts (authority layer): 7.8
+- YouTube: not scored (no video assets this campaign)
+
+Applicable weights: 0.25 + 0.20 + 0.25 + 0.15 = 0.85 (YouTube excluded)
+
+Normalized weights:
+- Strategy: 0.25 / 0.85 = 0.294
+- Offer: 0.20 / 0.85 = 0.235
+- Email: 0.25 / 0.85 = 0.294
+- LinkedIn: 0.15 / 0.85 = 0.176
+
+Campaign Health = (8.5 × 0.294) + (8.7 × 0.235) + (8.2 × 0.294) + (7.8 × 0.176)
+= 2.499 + 2.045 + 2.411 + 1.373
+= **8.33 / 10 — YELLOW (Deploy with monitoring)**
+
+Weakest link: LinkedIn Posts at 7.8. Fix: sharpen authority signal and contrarian angle.
+Strongest asset: Offer/Positioning at 8.7. The value prop is clear; copy and content need to express it better.
 
 ### Step 5: Assign Improvement Priority
 
@@ -187,6 +213,23 @@ Use these anchor examples to maintain consistent scoring across sessions:
 
 When you're unsure whether something is a 7 or an 8, ask: "Would this survive in a competitive market against other well-crafted versions?" If yes, it's 8+. If it would work but wouldn't stand out, it's 7. If a busy prospect would skip it, it's below 7.
 
+**Calibration anchors by system (what 9.0+ looks like):**
+
+| System | What a 9.0+ looks like |
+|--------|----------------------|
+| Campaign Strategy | All 10 criteria above 7.5. Signals defined with detection infrastructure. ICP at 3-level niche. Channel mix MENA-native. Full Q>M>W>D hierarchy documented. 48-hour signal-to-touch. |
+| Offer/Positioning | Hormozi Value Equation ratio >4.0. Dunford 5/5 present with narrative coherence. Named mechanism with diagram. Explicit ROI math. Performance guarantee. |
+| Copywriting (Email) | Timeline hook from verified signal. Under 80 words. Zero spam triggers. Single binary CTA. 3-layer personalization. 4-7 email sequence with new value per follow-up. |
+| Copywriting (LinkedIn DM) | Under 300 char connection note with shared context. No pitch until message 3+. Value-first content shared. Conversation, not sequence. |
+| Copywriting (WhatsApp) | Gulf Arabic greeting. Under 60 words. Voice note ready. Sunday-Thursday timing. 2-3 follow-ups max. One-tap CTA. |
+| Social Media (TOFU) | Scroll-stopping hook with specific number. Shareability trigger. Authority through specificity. Brand signature present. |
+| Social Media (MOFU) | Framework that changes thinking. Vulnerable behind-the-scenes. Case study with before/after numbers. |
+| Social Media (BOFU) | Legitimate urgency. One-step CTA. Stacked proof (metric + quote + screenshot). |
+| YouTube (Thumbnail) | Readable at 120x90px. Emotional expression. 0-3 words. High contrast. Brand consistent. |
+| YouTube (Script) | Hook in first 15 seconds with bold claim. Pattern interrupts every 90s. Actionable frameworks with stories. |
+| LinkedIn Branding (Track A) | Contrarian take backed by Gulf data. Client trigger density. 80%+ value. Named framework. |
+| LinkedIn Branding (Track B) | Gulf Arabic. Build-in-public energy. Aspiration trigger with specific transformation. AI demystified. Movement language. |
+
 ### Cross-System Dependency Protocol
 
 When a scorer flags a criterion below 6.0, check the cross-system dependency table in that scorer's SKILL.md. If the dependency traces upstream:
@@ -196,12 +239,38 @@ When a scorer flags a criterion below 6.0, check the cross-system dependency tab
 3. Recommend fixing upstream first before re-scoring downstream
 4. In the improvement roadmap, order the fix as: upstream fix → downstream re-score → downstream fix (if still needed)
 
+### System Disagreement Protocol
+
+When upstream and downstream systems show contradictory scores (e.g., Offer scores 9.0 but Copywriting scores 5.0), diagnose:
+
+| Pattern | Likely Cause | Action |
+|---------|-------------|--------|
+| Strategy high, Copy low | Good plan, poor execution | Fix copy. Strategy is sound. |
+| Strategy low, Copy high | Polished lipstick on a pig | Fix strategy first. Good copy on bad strategy wastes it. |
+| Offer high, Copy low | Strong value prop, weak articulation | Copy fix. The raw material exists. |
+| Offer low, Copy high | Great writing, nothing to say | Fix offer. No amount of wordsmithing saves a weak offer. |
+| Offer high, Social/YouTube low | Product-market fit exists, visibility gap | Fix content. The offer sells when people hear it. |
+| All systems 6-7 | Mediocre everything, nothing great | Pick the highest-weighted system and push it to 9.0. One excellent system lifts the composite more than incremental improvement across all. |
+
+**Rule of thumb:** When scores disagree, always fix upstream first. Strategy feeds Offer feeds Copy feeds Social/YouTube. A downstream fix on an upstream problem is temporary.
+
 ### After Scoring: Track and Trend
 
 If the workspace has a `scores/` directory, append the JSON output. Over time, this creates a scoring history that reveals:
 - Which systems consistently score lowest
 - Which criteria are perennial weak spots
 - Whether scores are trending up or down after process changes
+
+### Score Presentation Guidelines
+
+When presenting scores to the user:
+
+1. **Lead with the verdict**, not the number. "This campaign is ready to ship with monitoring" > "Your score is 8.33."
+2. **Always present the full criteria table.** Even when all criteria are green, the table shows what's working.
+3. **Top 3 fixes are mandatory** for any score below 9.0. Each fix must include: which criterion, what to do specifically, and estimated point lift.
+4. **Hard stops are highlighted first**, before any narrative. Use bold or emphasis.
+5. **Offer to fix.** After every score report, offer to implement the #1 fix immediately. "Want me to rewrite the opening line with a timeline hook? That should lift C2 by 1-2 points."
+6. **Save JSON.** If in a project workspace, always save the score JSON. Trends matter more than individual scores.
 
 ---
 

@@ -1,3 +1,4 @@
+<!-- Copyright SMOrchestra.ai. All rights reserved. Proprietary and confidential. -->
 ---
 name: gap-bridger
 description: >-
@@ -132,6 +133,8 @@ Phase: [phase] | Current Composite: X.X | Target: X.X | Date: [date]
 [repeat for top 10 gaps]
 
 ## Sprint Recommendation
+Default sprint velocity: 40 dev-hours per week (solo founder) or 80 dev-hours per week (2-person team). Adjust based on actual capacity.
+
 Based on effort estimates, a realistic sprint plan:
 
 **Sprint 1 (this week)**: Tasks 1-3 → Expected composite: X.X (+X.X)
@@ -148,8 +151,8 @@ Based on effort estimates, a realistic sprint plan:
 For MENA-targeted products, boost priority of these gaps regardless of impact/effort ratio:
 
 - **RTL/Bilingual (Hat 5)**: Any score below 7 gets priority boost. Broken Arabic layout is a trust-killer in the Gulf; users leave before they evaluate your features.
-- **Arabic input handling (Hat 4)**: Form inputs that break with Arabic text are show-stoppers for Arabic-first products.
-- **WhatsApp integration (Hat 4)**: If WhatsApp is a channel, message template compliance and media handling gaps are revenue-blocking.
+- **Arabic input handling (QA: Edge Case Coverage)**: Form inputs that break with Arabic text are show-stoppers for Arabic-first products.
+- **WhatsApp integration (QA: Functional Completeness)**: If WhatsApp is a channel, message template compliance and media handling gaps are revenue-blocking.
 
 ### Using with Scoring History
 

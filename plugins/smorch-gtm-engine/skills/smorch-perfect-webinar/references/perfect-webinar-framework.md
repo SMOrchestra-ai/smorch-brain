@@ -1,3 +1,4 @@
+<!-- IP:START - Perfect Webinar with Signal-to-Trust extensions -->
 # Perfect Webinar Framework (Enhanced v2)
 
 Russell Brunson's Perfect Webinar is a proven structure for selling from the stage. This version enhances it with Mamoun's Signal-to-Trust extensions: Big Promise spine, 4 Silent Killers, Hormozi Value Equation lens, and MENA contextualization.
@@ -197,3 +198,5 @@ Every slide needs speaker notes that include:
 5. **Don't teach the full system.** The webinar teases and proves frameworks, it doesn't give all the steps. Students should feel inspired, not complete.
 6. **Don't skip the Epiphany Bridge.** Every story needs: Setup - Conflict - Dark Night - Epiphany - New Belief.
 7. **Mode mismatch kills trust.** Teaching event with hard sell = disaster.
+
+<!-- IP:END -->

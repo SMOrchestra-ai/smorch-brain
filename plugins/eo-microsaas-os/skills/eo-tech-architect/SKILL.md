@@ -1,3 +1,4 @@
+<!-- Copyright SMOrchestra.ai. All rights reserved. Proprietary and confidential. -->
 ---
 name: eo-tech-architect
 description: EO Tech Architect - analyzes the student's 12 project brain files and recommends a complete tech architecture for their MicroSaaS. Produces tech stack decision docs, architecture diagrams, BRD, and MCP integration plan that drive all Step 5 development skills. Triggers on 'design my architecture', 'tech stack', 'build my BRD', 'architecture plan', 'what tech should I use', 'tech architect', 'system design', 'choose my stack'. This is Skill 4 of the EO Training System.

@@ -1,3 +1,4 @@
+<!-- Copyright SMOrchestra.ai. All rights reserved. Proprietary and confidential. -->
 ---
 name: smorch-perfect-webinar
 description: "Perfect Webinar Engine - builds scored, production-ready webinar decks with full speaker scripts using Russell Brunson's Perfect Webinar framework + Mamoun's Signal-to-Trust extensions (Big Promise spine, 4 Silent Killers, Hormozi value equation, MENA contextualization). Starts with dimension-based intake questions that drive a 10-dimension quality score. Produces: 23-slide PPTX deck with speaker scripts, campaign assets (social posts, email sequence, LinkedIn DMs), stories document, and VSL registration page. Triggers on: 'perfect webinar', 'webinar deck', 'speaking gig', 'build webinar assets', 'webinar campaign', 'speaking engagement', 'build a talk', 'conference deck', 'event assets', 'build my webinar', or partial requests like 'posts for the webinar', 'email sequence for talk', 'landing page for my event'. Do NOT trigger for: pitch decks (smo-offer-assets), YouTube decks (eo-youtube-mamoun), campaigns without webinar context (signal-to-trust-gtm)."
@@ -353,6 +354,7 @@ Read these before starting each phase:
 
 ---
 
+<!-- IP:START - Perfect Webinar hard stop rules -->
 ## HARD STOP RULES
 
 These kill the webinar. Check before every phase:
@@ -364,6 +366,7 @@ These kill the webinar. Check before every phase:
 5. **Mode mismatch = audience trust broken.** Teaching event with hard sell = disaster. Sales event with no CTA = wasted opportunity.
 6. **No speaker scripts = unprepared speaker.** Every slide needs exact dialogue, timing, pauses.
 7. **Icons rendered without # prefix = black icons on dark background.** ALWAYS prefix colors with # for react-icons rendering.
+<!-- IP:END -->
 
 ---
 

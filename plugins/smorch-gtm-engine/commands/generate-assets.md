@@ -1,3 +1,4 @@
+<!-- IP:START - Command routing with methodology references -->
 ---
 description: Generate weekly campaign assets from wedges
 argument-hint: "[campaign-name] [week-number]"
@@ -55,3 +56,4 @@ If arguments are missing, ask the user which campaign and week.
    - `social/` — post.md
 
 Present all assets for review before marking as ready for deployment.
+<!-- IP:END -->

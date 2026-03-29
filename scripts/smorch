@@ -77,6 +77,11 @@ Commands:
   init --profile <name>   First-time setup on a new machine
   audit                   Check for issues (unmapped, oversized, missing versions)
   build-plugin <name>     Build .plugin zip from plugins/<name>/
+  compile <name> <dir>    Compile plugin (strip IP) for distribution
+  compile --all <dir>     Compile all plugins
+  compile --test <name>   Dry run: show what would be stripped
+  publish-dist            Compile all + publish to smorch-dist repo
+  publish-dist --dry-run  Preview without publishing
 
 Registry: ${REPO_DIR}
 Skills:   ${SKILLS_TARGET}
@@ -345,7 +350,7 @@ cmd_push() {
     else
         local changes
         changes=$(git diff --cached --stat | tail -1)
-        git commit -m "skills: export from Cowork — $changes"
+        git commit -m "chore(skills): export from Cowork — $changes"
         echo -e "${GREEN}Committed.${NC}"
         # Push to dev first (safe — no branch protection bypass needed)
         git push origin dev 2>&1 && echo -e "${GREEN}Pushed to dev.${NC}" || {
@@ -845,6 +850,8 @@ case "${1:-}" in
     init)       shift; cmd_init "$@" ;;
     audit)      cmd_audit ;;
     build-plugin) shift; cmd_build_plugin "$@" ;;
+    compile) shift; exec "$REPO_DIR/scripts/smorch-compile" "$@" ;;
+    publish-dist) shift; exec "$REPO_DIR/scripts/smorch-publish-dist" "$@" ;;
     --version)  echo "smorch v${VERSION}" ;;
     -h|--help|"") usage ;;
     *)          echo "Unknown command: $1"; usage; exit 1 ;;

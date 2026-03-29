@@ -1,3 +1,4 @@
+<!-- Copyright SMOrchestra.ai. All rights reserved. Proprietary and confidential. -->
 ---
 name: youtube-scorer
 description: Scores YouTube content across 4 subsystems (thumbnail, title, script, description) with channel-specific criteria calibrated to 2026 YouTube algorithm mechanics, VidIQ data, and retention benchmarks. Triggers on 'score my YouTube', 'rate my thumbnail', 'title quality check', 'script review', 'YouTube description score', 'video quality audit', 'is my video ready to publish', 'YouTube content review'. Fires for ANY YouTube content evaluation.
@@ -22,7 +23,7 @@ description: Scores YouTube content across 4 subsystems (thumbnail, title, scrip
 | Thumbnail image/design | 5A: Thumbnail | 7 criteria |
 | Video title text | 5B: Title | 6 criteria |
 | Video script/outline | 5C: Script | 8 criteria |
-| Video description text | 5D: Description | 5 criteria |
+| Video description text | 5D: Description | 6 criteria |
 
 Score each subsystem independently. For a complete video review, score all 4 and report composite.
 
@@ -97,29 +98,31 @@ The thumbnail is the billboard. At 120x90 pixels on mobile, it has less than 1 s
 
 ---
 
-### C6: Curiosity Gap — Weight: 10%
+### C6: Standalone Impact — Weight: 10%
+
+Does the thumbnail work even without the title? A strong thumbnail creates intrigue on its own.
 
 | Level | Score | Description |
 |-------|-------|-------------|
-| 10/10 | Excellence | Thumbnail creates a question in the viewer's mind that the title completes (or vice versa). Together they create irresistible "I need to know" feeling. |
-| 7/10 | Good | Thumbnail and title work together. Some curiosity generated. |
-| 5/10 | Mediocre | Thumbnail and title are redundant. Both say the same thing. No gap. |
-| 1/10 | Failure | Disconnected. Or thumbnail reveals the answer, killing the reason to click. |
+| 10/10 | Excellence | Thumbnail alone creates a question in the viewer's mind. The visual tells a story or teases a result that demands context. Works in browse/suggested where title may be truncated. |
+| 7/10 | Good | Thumbnail is interesting alone. Creates mild curiosity. Still benefits significantly from the title for context. |
+| 5/10 | Mediocre | Thumbnail requires the title to make any sense. Without context, it's just a face or generic graphic. |
+| 1/10 | Failure | Thumbnail reveals everything — no reason to click. Or so abstract it communicates nothing. |
 
-**Fix Action:** Show the REACTION or RESULT in the thumbnail (shocked face, big number, before/after). Let the title explain the CONTEXT. Gap = "Why that reaction?" + Title answers.
+**Fix Action:** Cover the title and look at the thumbnail alone. Does it create a "what's this about?" reaction? If not, add a visual element that teases the content: before/after, surprising number, or reaction shot.
 
 ---
 
-### C7: A/B Test Readiness — Weight: 10%
+### C7: Production Quality — Weight: 10%
 
 | Level | Score | Description |
 |-------|-------|-------------|
-| 10/10 | Excellence | 2-3 variants designed for YouTube Studio A/B testing. Different approaches (with face vs without, different text, different color) ready to test. |
-| 7/10 | Good | 2 variants available. Different enough to test meaningfully. |
-| 5/10 | Mediocre | One version only. No testing plan. |
-| 1/10 | Failure | Untestable. One generic thumbnail with no strategic thinking. |
+| 10/10 | Excellence | Thumbnail is professionally produced or high-quality DIY that matches professional standards. Consistent with channel style guide. 2-3 variants designed for A/B testing. Ready to publish without revision. |
+| 7/10 | Good | Good quality. One variant ready. Could benefit from A/B testing but publishable as-is. Minor design polish needed. |
+| 5/10 | Mediocre | Acceptable but clearly amateur. No variants. Would benefit from a designer's touch. |
+| 1/10 | Failure | Auto-generated or clearly rushed. Damages channel credibility. |
 
-**Fix Action:** Create 2 variants: one with face (emotion) and one without (graphic/text focus). Run YouTube Studio's built-in A/B test. 20% CTR lift is the average for creators who test.
+**Fix Action:** Create 2 thumbnail variants: one with face (emotion) + one with graphic/text focus. Run YouTube Studio A/B test. Even basic testing yields 20% average CTR lift.
 
 ---
 
@@ -309,9 +312,9 @@ The thumbnail is the billboard. At 120x90 pixels on mobile, it has less than 1 s
 
 ---
 
-## SUBSYSTEM 5D: DESCRIPTION — 5 Criteria
+## SUBSYSTEM 5D: DESCRIPTION — 6 Criteria
 
-### C1: First 2 Lines (Above Fold) — Weight: 30%
+### C1: First 2 Lines (Above Fold) — Weight: 25%
 
 | Level | Score | Description |
 |-------|-------|-------------|
@@ -363,7 +366,7 @@ The thumbnail is the billboard. At 120x90 pixels on mobile, it has less than 1 s
 
 ---
 
-### C5: Content Funnel Connection — Weight: 20%
+### C5: Content Funnel Connection — Weight: 15%
 
 | Level | Score | Description |
 |-------|-------|-------------|
@@ -373,6 +376,40 @@ The thumbnail is the billboard. At 120x90 pixels on mobile, it has less than 1 s
 | 1/10 | Failure | Video is a standalone dead end. No path to next engagement. |
 
 **Fix Action:** Add: (1) "Watch next: [specific related video with link]", (2) "Download: [free resource related to video topic]", (3) "Join: [community/newsletter/training]."
+
+---
+
+### C6: Engagement & Community Hooks — Weight: 10%
+
+| Level | Score | Description |
+|-------|-------|-------------|
+| 10/10 | Excellence | Description includes a pinned comment strategy: specific question for viewers, community note, or call for stories. "Drop a comment: what's the biggest outbound mistake you've seen in the Gulf?" Drives comment velocity in first 60 minutes (critical for algorithm). |
+| 7/10 | Good | Includes a question or prompt for viewers. May not be in pinned comment but encourages interaction. |
+| 5/10 | Mediocre | Generic "Subscribe and hit the bell!" No specific engagement hook. |
+| 1/10 | Failure | No engagement mechanism. Description is purely informational. |
+
+**Fix Action:** Write one specific, topic-relevant question for the pinned comment. Post it within 5 minutes of publishing. First-hour comment velocity signals quality to YouTube's algorithm.
+
+---
+
+## Video Composite Score
+
+When scoring a complete video (all 4 subsystems), calculate the Video Readiness Score:
+
+```
+Video Readiness = (Thumbnail × 0.30) +
+                  (Title × 0.25) +
+                  (Script × 0.30) +
+                  (Description × 0.15)
+```
+
+### Weight Rationale
+
+Thumbnail gets 30% because it's responsible for 60%+ of CTR. A great video nobody clicks on is wasted. Script gets 30% because retention determines whether YouTube promotes the video. Title gets 25% as the second-highest CTR driver and the primary search surface. Description gets 15% as the SEO and funnel layer — important for long-term discovery but not the primary performance driver.
+
+### Video Hard Stop
+
+If Thumbnail OR Script score below 6.0, the video should not be published regardless of overall composite. These are the two systems that directly control whether anyone clicks AND whether anyone watches.
 
 ---
 
@@ -393,6 +430,35 @@ Think like a YouTube growth strategist who has analyzed 10,000+ videos and their
 - Custom thumbnails outperform auto-generated by 60-70%
 - Emotional expressions increase CTR by 30%
 - Open loops increase mid-video retention by 15-25%
+
+---
+
+## Calibration Anchor: Scored Example (Title + Script)
+
+**Scenario:** Arabic YouTube video for @MamounAlamouri channel: "كيف تبني SaaS بدون برمجة في 48 ساعة" (How to Build a SaaS Without Coding in 48 Hours)
+
+**Title Score (5B):**
+
+| # | Criterion | Weight | Score | Rationale |
+|---|-----------|--------|-------|-----------|
+| C1 | Curiosity Trigger | 25% | 9.0 | "48 ساعة" creates urgency. "بدون برمجة" is the pattern interrupt for the target audience. Specific, bold, counterintuitive. |
+| C2 | Specificity | 20% | 9.0 | Timeframe (48 hours), method (no coding), outcome (SaaS). Three specific elements. |
+| C3 | Keyword Integration | 15% | 8.0 | "SaaS" and "بدون برمجة" are search terms. Arabic keyword volume is lower but these are the terms the ICP uses. Could add "MicroSaaS" for trending term. |
+| C4 | Length Optimization | 10% | 8.5 | Bilingual titles run slightly long. Arabic + subtext fits within mobile display. |
+| C5 | Promise Clarity | 15% | 9.0 | Viewer knows exactly what they'll learn: how to build a SaaS product without coding skills in 2 days. |
+| C6 | Thumbnail-Title Synergy | 15% | 8.5 | Title provides context; thumbnail (assumed) should show reaction to working product on screen. |
+
+**Title Overall: 8.68 / 10 — STRONG**
+
+**Script Score (5C, first 3 criteria for brevity):**
+
+| # | Criterion | Weight | Score |
+|---|-----------|--------|-------|
+| C1 | Hook | 20% | 9.0 | "قبل 48 ساعة ما كان عندي أي كود. اليوم عندي SaaS شغال فيه مشتركين يدفعوا. بوريكم بالضبط كيف." — Bold claim, specific, conversational Gulf Arabic. |
+| C2 | Retention Architecture | 15% | 8.0 | Open loops planned every 90 seconds. "بعد شوي بوريكم الغلطة اللي كلفتني 6 ساعات." Pacing varies. Could add one more pattern interrupt. |
+| C3 | Value Delivery | 15% | 9.0 | Step-by-step build shown live. Specific tools named (Claude, Supabase, Vercel). Viewer can replicate. |
+
+**Script Partial: 8.67 / 10**
 
 ---
 

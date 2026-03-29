@@ -2,3 +2,5 @@
 # Format: user@host:profile
 # Example: root@server1.example.com:smo-brain
 # Add your servers below:
+root@100.89.148.62:smo-brain
+root@100.117.35.19:smo-dev

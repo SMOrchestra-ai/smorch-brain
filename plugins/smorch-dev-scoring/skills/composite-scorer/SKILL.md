@@ -1,3 +1,4 @@
+<!-- Copyright SMOrchestra.ai. All rights reserved. Proprietary and confidential. -->
 ---
 name: composite-scorer
 description: >-
@@ -27,15 +28,7 @@ If phase is ambiguous, **ask the user**. Phase selection changes weight distribu
 
 ### Step 2: Apply Phase-Based Category Weights
 
-Read `references/phase-weights.md` for the weight matrix.
-
-| Category | Pre-Build | During Build | Pre-Launch | Post-Launch |
-|----------|-----------|-------------|------------|-------------|
-| Product (Hat 1) | 30% | 20% | 15% | 20% |
-| Architecture (Hat 2) | 30% | 25% | 15% | 15% |
-| Engineering (Hat 3) | 15% | 25% | 25% | 25% |
-| QA (Hat 4) | 10% | 15% | 25% | 25% |
-| UX Frontend (Hat 5) | 15% | 15% | 20% | 15% |
+Phase weights determine how much each hat matters at each project stage. See `references/phase-weights.md` for the full weights table.
 
 ### Step 3: Run Each Scorer Sequentially
 
@@ -65,21 +58,9 @@ Example (During Build phase):
 
 ### Step 5: Enforce Hard Stop Gates
 
-Read `references/hard-stops.md` for the complete hard stop rules.
+Hard stops block project advancement regardless of composite score. See `references/hard-stops.md` for all 7 rules with thresholds and resolution criteria.
 
-These dimension-level scores trigger a FAIL regardless of composite:
-
-| Hard Stop | Trigger | Scope |
-|-----------|---------|-------|
-| Security Architecture (Hat 2) | Score < 5 | All phases |
-| Security Practices (Hat 3) | Score < 5 | All phases |
-| Security Testing (Hat 4) | Score < 5 | Pre-Launch, Post-Launch |
-| Data Integrity (Hat 4) | Score < 5 | All phases |
-| Problem Clarity (Hat 1) | Score < 4 | Pre-Build |
-| Functional Completeness (Hat 4) | Score < 5 | Pre-Launch, Post-Launch |
-| RTL/Bilingual (Hat 5) | Score < 5 | All phases (MENA products only) |
-
-Hard stop triggered = project cannot advance to next phase until resolved.
+7 hard stops covering Security Architecture, Security Practices, Security Testing, Data Integrity, Problem Clarity, Functional Completeness, and RTL/Bilingual Support.
 
 ### Step 6: Grade Assignment
 

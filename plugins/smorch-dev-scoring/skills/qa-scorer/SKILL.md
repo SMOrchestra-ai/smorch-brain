@@ -1,3 +1,4 @@
+<!-- Copyright SMOrchestra.ai. All rights reserved. Proprietary and confidential. -->
 ---
 name: qa-scorer
 description: >-
@@ -9,6 +10,12 @@ description: >-
 Score application reliability, edge case coverage, and user-facing quality. Hat 4 of the 5-Hat Quality Scorecard System.
 
 The core question: **Would a paying customer trust this product?**
+
+## When This Fires
+- Composite scorer runs this as Hat 4
+- User asks to "score QA", "quality check", "test coverage review", "pre-launch check"
+- Testable application exists (can be run/deployed)
+- Skip if: project has no runnable code or is in early scaffold phase
 
 ## Scoring Process
 

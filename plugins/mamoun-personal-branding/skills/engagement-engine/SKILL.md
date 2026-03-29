@@ -1,3 +1,4 @@
+<!-- Copyright SMOrchestra.ai. All rights reserved. Proprietary and confidential. -->
 ---
 name: engagement-engine
 description: "Training Engagement Engine — applies Nir Eyal's Hook Model + Brendan Kane's Pattern Interrupts to make EO training itself more engaging and teach founders how to build engaging products. Triggers: 'make training engaging', 'engagement mechanics', 'hook model', 'pattern interrupt', 'stop the scroll', 'retention', 'habit loop', 'variable reward'. Use when: designing training flow engagement, adding pattern interrupts to content, evaluating product stickiness, improving completion rates, or teaching founders engagement frameworks. Do NOT trigger for: campaign content (signal-to-trust-gtm), outbound sequences (outbound-orchestrator)."

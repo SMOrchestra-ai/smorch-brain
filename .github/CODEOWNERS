@@ -2,6 +2,17 @@
 # Mamoun reviews everything by default
 *                       @smorchestraai-code
 
+# Core IP directories — Mamoun only
+/plugins/               @smorchestraai-code
+/skills/                @smorchestraai-code
+/profiles/              @smorchestraai-code
+/scripts/               @smorchestraai-code
+/legal/                 @smorchestraai-code
+/claude-dist/           @smorchestraai-code
+/docs/                  @smorchestraai-code
+CLAUDE.md               @smorchestraai-code
+LICENSE                 @smorchestraai-code
+
 # Locked directories — require Mamoun
 /infra/                 @smorchestraai-code
 /agents/openclaw/       @smorchestraai-code

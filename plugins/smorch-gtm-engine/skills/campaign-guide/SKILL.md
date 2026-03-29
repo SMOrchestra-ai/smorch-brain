@@ -1,3 +1,4 @@
+<!-- Copyright SMOrchestra.ai. All rights reserved. Proprietary and confidential. -->
 ---
 name: campaign-guide
 description: "B2B Signal Sales Campaign step-by-step orchestrator. Walks operators through all 9 phases of the SalesMfast Signal Engine campaign SOP (Brief, Data QA, Signal Scoring, Offer Scoring, Wedge + Message Assembly, Score-All Gate, Compliance Gate, Launch, and Weekly Review). Enforces quality gates between phases. Invokes the correct Claude skill at each step (signal-detector, wedge-generator, asset-factory, scoring, tool operators). Triggers on 'campaign guide', 'start campaign', 'kick off campaign', 'new campaign', 'run campaign', 'campaign SOP', 'next phase', 'campaign setup', 'launch campaign for [client]', 'where am I in the campaign'. Also triggers when an operator seems to be doing campaign work without a structured process."

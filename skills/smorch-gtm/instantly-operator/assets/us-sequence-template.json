@@ -1,0 +1,97 @@
+{
+  "template_id": "us_b2b_4step",
+  "name": "US B2B — Signal-Based Outbound",
+  "description": "4-step cold email sequence targeting VP Marketing, Revenue leaders, and Heads of Growth in US companies. Professional, data-driven, direct tone.",
+  "target_market": "US",
+  "target_icp": "VP Marketing, Revenue leaders, Heads of Growth — US companies",
+  "schedule": {
+    "timezone": "America/Chicago",
+    "timing": {
+      "from": "09:00",
+      "to": "17:00"
+    },
+    "days": {
+      "0": false,
+      "1": true,
+      "2": true,
+      "3": true,
+      "4": true,
+      "5": true,
+      "6": false
+    },
+    "note": "Mon-Fri sending. Central Time covers most US business hours well."
+  },
+  "campaign_defaults": {
+    "daily_limit": 30,
+    "email_gap": 12,
+    "stop_on_reply": true,
+    "stop_on_auto_reply": true,
+    "text_only": true,
+    "open_tracking": false,
+    "link_tracking": false
+  },
+  "sequence_steps": [
+    {
+      "type": "email",
+      "delay": 0,
+      "step_name": "The Hook",
+      "step_purpose": "Pattern interrupt with relevant observation — relevance",
+      "variants": [
+        {
+          "subject": "{{firstName}} — quick question about {{companyName}}'s outbound",
+          "body": "Hi {{firstName}},\n\n{{personalization}}.\n\nI work with B2B teams that want to scale outbound without adding headcount. The usual playbook (more SDRs, more calls, more spray-and-pray) has diminishing returns after a point.\n\nWe take a different approach — detecting buying signals before your competitors do and responding with precision instead of volume.\n\nWould 15 minutes be worth it to see if this applies to {{companyName}}?\n\nMamoun"
+        }
+      ]
+    },
+    {
+      "type": "email",
+      "delay": 3,
+      "step_name": "The Value Drop",
+      "step_purpose": "Concrete value with data — credibility",
+      "variants": [
+        {
+          "subject": "Re: quick question about {{companyName}}'s outbound",
+          "body": "Hi {{firstName}},\n\nFollowing up with something concrete — we published a breakdown of how signal-based outbound outperforms traditional SDR models by 3x on reply rates.\n\nThe core idea: instead of more volume, detect the 5% who are actually in-market right now and hit them with precision.\n\nWorth a look if you're thinking about Q2 pipeline.\n\nMamoun"
+        }
+      ]
+    },
+    {
+      "type": "email",
+      "delay": 4,
+      "step_name": "Social Proof",
+      "step_purpose": "Case study from similar company — validation",
+      "variants": [
+        {
+          "subject": "What [company] did differently",
+          "body": "{{firstName}},\n\n[Company name] was running the standard playbook — 10 SDRs, 200 calls/day, 2% connect rate.\n\nThey switched to signal-based targeting last quarter. Result: 8x more qualified meetings with 60% less effort.\n\nHappy to share the specifics if relevant to what {{companyName}} is building.\n\nMamoun"
+        }
+      ]
+    },
+    {
+      "type": "email",
+      "delay": 4,
+      "step_name": "The Breakup",
+      "step_purpose": "Graceful exit — respect",
+      "variants": [
+        {
+          "subject": "Closing the loop",
+          "body": "{{firstName}},\n\nI don't want to be that person who keeps emailing. If outbound optimization isn't a priority right now, no worries at all.\n\nIf it becomes one, I'm easy to find.\n\nMamoun"
+        }
+      ]
+    }
+  ],
+  "personalization_variables": [
+    "{{firstName}}",
+    "{{lastName}}",
+    "{{companyName}}",
+    "{{personalization}}",
+    "{{email}}",
+    "{{website}}"
+  ],
+  "customization_notes": {
+    "social_proof_step": "Replace [Company name] and [company] with real case studies. US audience responds well to specific metrics (8x, 60% less, exact numbers).",
+    "personalization_line": "Reference something from their LinkedIn, recent company news, or tech stack. US recipients are more skeptical of generic outreach than MENA.",
+    "subject_lines": "US audience prefers shorter subjects. Test: name-based vs curiosity-based vs direct question.",
+    "timing": "3-4 day gaps standard for US. Tuesday-Thursday sends tend to perform best. Avoid Monday mornings and Friday afternoons."
+  }
+}

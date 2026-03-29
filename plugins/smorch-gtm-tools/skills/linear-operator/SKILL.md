@@ -1,3 +1,4 @@
+<!-- Copyright SMOrchestra.ai. All rights reserved. Proprietary and confidential. -->
 ---
 name: linear-operator
 description: "Linear Project Management Operator for SMOrchestra GTM team. Enforces 90-minute sprint tickets, shipment clarity, quality gates, and ADR process. Triggers on: 'create ticket', 'linear', 'plan my day', 'what should I work on', 'assign task', 'sprint', 'ship report', 'ADR', 'decision record', 'break this down', 'crack this ticket', 'weekly review', 'cycle report'. Also triggers when Claude detects a task needs Linear tracking, a ticket is vague, or an operator asks what to work on next."

@@ -1,3 +1,4 @@
+<!-- Copyright SMOrchestra.ai. All rights reserved. Proprietary and confidential. -->
 ---
 name: smo-offer-assets
 description: "SMOrchestra Offer Asset Factory — produces complete offer asset bundles (landing page + slide deck + one-pager) in SMO's signature dark/orange design system. Trigger whenever the user says 'offer assets', 'provide the assets', 'build the offer package', 'create the landing page and deck', 'SMO style assets', or any request for client-facing sales collateral bundles including landing pages, pitch decks, and one-pagers. Also triggers on individual asset requests like 'build me an SMO landing page', 'create an offer deck', 'make a one-pager for this offer'. For landing pages, always asks 'VSL page or Big headline?' before producing. This skill should fire for ANY request involving SMOrchestra/SalesMfast offer presentation materials — even partial requests for just one of the three asset types."

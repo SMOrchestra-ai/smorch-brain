@@ -1,3 +1,4 @@
+<!-- Copyright SMOrchestra.ai. All rights reserved. Proprietary and confidential. -->
 ---
 name: campaign-strategist
 description: Aligns Quarterly -> Monthly -> Weekly -> Daily campaign hierarchy for Signal-to-Trust GTM. Use when creating campaign strategy, aligning Q->M->W->D domino effect, narrowing from quarterly theme to weekly wedges, or generating campaign briefs. Ensures each level derives from the one above for compounding impact.

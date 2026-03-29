@@ -1,3 +1,4 @@
+<!-- Copyright SMOrchestra.ai. All rights reserved. Proprietary and confidential. -->
 ---
 name: offer-positioning-scorer
 description: Scores offer structure and market positioning against 10 weighted criteria using Hormozi Value Equation, Dunford 5-Component Positioning, and Signal-to-Trust framework. Evaluates dream outcome clarity, perceived likelihood, time to value, effort minimization, unique mechanism, competitive alternatives, price-to-value gap, risk reversal, ICP-offer alignment, and positioning statement. Triggers on 'score my offer', 'rate my positioning', 'offer quality check', 'is my offer strong enough', 'positioning review', 'value prop score', 'offer audit'.
@@ -35,6 +36,21 @@ All 5 components must be explicitly defined:
 5. Market category (the context that makes the value obvious)
 
 Missing any component = incomplete positioning.
+
+### Narrative Coherence Test
+
+Beyond the 5-component check, run this coherence test: read components 1-5 in sequence. Do they tell one consistent story? Or do they contradict each other?
+
+| Test | Pass | Fail |
+|------|------|------|
+| Target customer (4) would actually face the competitive alternatives (1) | Target aligns with alternatives | Target wouldn't consider those alternatives |
+| Unique attributes (2) directly address why alternatives fail for this target | Attributes solve the target's specific gap | Attributes are generic, not tied to the alternative's weakness |
+| Value/proof (3) comes from the target customer type (4), not a different segment | Proof from same ICP | Proof from unrelated segment |
+| Market category (5) makes the unique attributes (2) obviously relevant | Category frames the value | Category is too broad or too narrow for the attributes |
+
+If any test fails, the positioning has internal contradictions. Fix the weakest component to align with the strongest one.
+
+A positioning that fails narrative coherence gets -1.5 on C10 (Positioning Statement Clarity) regardless of how each component scores individually.
 
 ---
 
@@ -115,7 +131,7 @@ A named, proprietary framework that explains WHY this works differently. "Signal
 
 ---
 
-### C6: Competitive Alternative Clarity — Weight: 8%
+### C6: Competitive Alternative Clarity — Weight: 7%
 
 The prospect needs to understand what happens if they don't buy from you. Not "they go to a competitor" but the real alternative: they hire 2 more SDRs ($180K loaded cost), they keep doing 47 coffee meetings, they use a generic tool and get generic results.
 
@@ -160,7 +176,7 @@ Strong guarantees reduce buyer risk to near zero. The guarantee demonstrates con
 
 ---
 
-### C9: ICP-Offer Alignment — Weight: 8%
+### C9: ICP-Offer Alignment — Weight: 7%
 
 The offer must be built for a specific buyer with specific pain. Enterprise B2B in Gulf with 50+ person sales team = different offer than SME in Dubai wanting more WhatsApp leads. One-size-fits-all offers sell to no one.
 
@@ -175,7 +191,7 @@ The offer must be built for a specific buyer with specific pain. Enterprise B2B 
 
 ---
 
-### C10: Positioning Statement Clarity — Weight: 7%
+### C10: Positioning Statement Clarity — Weight: 9%
 
 The "bar test": if someone asks at a networking event "what do you do?", the answer takes 15 seconds and the person immediately knows if they're a prospect or not.
 
@@ -190,19 +206,7 @@ The "bar test": if someone asks at a networking event "what do you do?", the ans
 
 ---
 
-## Dunford Positioning Completeness Check
-
-After scoring C1-C10, run this quick validation on the overall positioning:
-
-| Component | Present? | Notes |
-|-----------|----------|-------|
-| 1. Competitive alternatives | Y/N | What would they do without you? |
-| 2. Unique attributes | Y/N | What do you have that alternatives lack? |
-| 3. Value/proof | Y/N | What benefit do those attributes deliver, with evidence? |
-| 4. Target customer | Y/N | Who cares most about that value? |
-| 5. Market category | Y/N | What context makes the value obvious? |
-
-All 5 must be "Y" for complete positioning. Each missing component reduces positioning score by -1.0 from whatever C10 scored.
+Run the Dunford Positioning Completeness Check and Narrative Coherence Test (see above) after scoring all 10 criteria.
 
 ---
 
@@ -223,6 +227,39 @@ Think like Alex Hormozi evaluating a business owner's offer at a workshop. You'v
 - The unique mechanism is what makes an offer defensible against copycats
 - Risk reversal is the single fastest way to increase conversion on a strong offer
 - MENA buyers need more proof and longer trust-building than US buyers; the offer must account for this
+
+### Output Format
+
+Use the standard score report from `${CLAUDE_PLUGIN_ROOT}/skills/scoring-orchestrator/references/score-bands.md`. Additionally, always include:
+
+1. **Hormozi Value Equation calculation:** Numerator (C1 × C2), Denominator (inverse C3 × inverse C4), Ratio
+2. **Dunford Completeness Check:** 5-component Y/N table
+3. **Narrative Coherence Test:** Pass/Fail with notes
+
+---
+
+## Calibration Anchor: Scored Example
+
+**Scenario:** SalesMfast Signal Engine offer for Series A-B SaaS companies expanding into Gulf markets.
+
+| # | Criterion | Weight | Score | Rationale |
+|---|-----------|--------|-------|-----------|
+| C1 | Dream Outcome Clarity | 15% | 9.0 | "Go from 3 meetings/month to 15+ qualified meetings/month within 90 days, without hiring SDRs or flying to coffee meetings." Vivid, measurable, desirable. Minor: "qualified" could be more precisely defined (what qualification criteria?). |
+| C2 | Perceived Likelihood | 12% | 8.0 | 2 case studies with numbers (SaaS company in Riyadh: 3→14 meetings in 60 days). Named framework (Signal-to-Trust Engine). Missing: third proof layer (no live demo or third-party validation). |
+| C3 | Time to Value | 10% | 9.0 | "Week 1: signal infrastructure live. Week 3: first meetings booked. Day 60: pipeline running at full capacity." 4 milestones, specific, measurable. |
+| C4 | Effort Minimization | 10% | 8.5 | Done-for-you with 30 min/week client commitment. Client provides: ICP description, CRM access, messaging approval. Clear scope. Gap: onboarding still takes 5 hours of client time in week 1. |
+| C5 | Unique Mechanism | 12% | 9.5 | "Signal-to-Trust Engine" — named, diagrammed, explainable in 60 seconds. 3-step visual: Detect Signal → Score Intent → Sequence Trust Proof. Defensible against generic "AI outbound" competitors. |
+| C6 | Competitive Alternative Clarity | 7% | 8.5 | 3 alternatives quantified: (1) Hire 2 SDRs: $180K+/year loaded cost, (2) Relationship-selling: 47 coffee meetings per quarter, (3) Generic agency: $8-12K/month with batch-and-blast. Each compared on cost AND outcome. |
+| C7 | Price-to-Value Gap | 10% | 8.5 | ROI math explicit: 15 meetings × 20% close rate × $50K avg deal = $150K pipeline/month. Price: $5-8K/month. 18-30x ROI. Math is in the proposal. Gap: ROI assumes prospect's close rate, which varies. |
+| C8 | Risk Reversal | 8% | 8.0 | "60-day pilot. If fewer than 10 qualified meetings in 60 days, month 2 is free." Performance-based but not full money-back. Adequate for MENA trust threshold. |
+| C9 | ICP-Offer Alignment | 7% | 9.0 | Enterprise tier (50+ employees): done-for-you at $8K/month. Growth tier (20-50): done-with-you at $5K/month. Messaging, proof, and pricing differentiated per tier. |
+| C10 | Positioning Statement | 9% | 9.0 | "We build signal-based outbound engines for B2B companies entering Gulf markets. Our clients book 15+ qualified meetings per month without a single coffee meeting." Passes bar test. 12 seconds. Listener immediately knows if they're a prospect. |
+
+**OVERALL: 8.72 / 10 — VERDICT: STRONG**
+**HARD STOPS: None**
+**Dunford Check: 5/5 present. Narrative coherence: PASS.**
+**Value Equation: Numerator (9.0 × 8.0 = 72) / Denominator (9.0⁻¹ × 8.5⁻¹ ≈ low effort, fast time) = strong ratio >4.0.**
+**TOP FIX: C2 Perceived Likelihood — add a third proof type (live demo walkthrough or third-party validation). Lift: +1.0.**
 
 ---
 

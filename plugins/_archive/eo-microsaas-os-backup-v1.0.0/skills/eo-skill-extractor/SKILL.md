@@ -1,3 +1,4 @@
+<!-- Copyright SMOrchestra.ai. All rights reserved. Proprietary and confidential. -->
 ---
 name: eo-skill-extractor
 description: EO Skill Extractor - teaches students how to create Claude operator skills for their SaaS tools. Guides through tool discovery, operation mapping, SKILL.md construction, and testing. Uses smorch-tool-super-admin-creator as underlying engine but wraps it in a teaching framework. Triggers on 'extract skill', 'build a tool skill', 'create operator skill', 'skill for my tool', 'turn this tool into a skill', 'skill extraction', 'tool mastery'. This is Skill 3 of the EO Training System. Built live during recording to teach the methodology.

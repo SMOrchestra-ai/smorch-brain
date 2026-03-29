@@ -1,3 +1,4 @@
+<!-- Copyright SMOrchestra.ai. All rights reserved. Proprietary and confidential. -->
 ---
 name: engineering-scorer
 description: >-
@@ -9,6 +10,12 @@ description: >-
 Score code quality, maintainability, and engineering practices. Hat 3 of the 5-Hat Quality Scorecard System.
 
 The core question: **Would you be comfortable maintaining this code at 3am when it breaks in production?**
+
+## When This Fires
+- Composite scorer runs this as Hat 3
+- User asks to "score code quality", "engineering review", "code standards check"
+- Source code exists with meaningful implementation (not just scaffold)
+- Skip if: project is in design/architecture phase with no implementation
 
 ## Scoring Process
 

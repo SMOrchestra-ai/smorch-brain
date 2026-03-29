@@ -1,3 +1,4 @@
+<!-- Copyright SMOrchestra.ai. All rights reserved. Proprietary and confidential. -->
 ---
 name: linkedin-branding-scorer
 description: Scores LinkedIn personal brand posts across 2 tracks. Track A (English B2B) evaluates authority building and client acquisition triggers with 9 criteria. Track B (Arabic Entrepreneurs) evaluates aspiration, AI demystification, training funnel, and community building with 8 criteria. Triggers on 'score my LinkedIn post', 'LinkedIn branding review', 'is this post ready', 'LinkedIn quality check', 'authority post score', 'Arabic post review', 'Track A score', 'Track B score', 'personal brand audit'.
@@ -25,6 +26,34 @@ description: Scores LinkedIn personal brand posts across 2 tracks. Track A (Engl
 If the user doesn't specify the track, determine from the post language and content focus.
 
 **Key difference from social-media-scorer:** Social media scorer evaluates any organic post against funnel-stage criteria. LinkedIn branding scorer evaluates whether posts serve the dual-track personal branding strategy with track-specific criteria. A post can score well on social-media-scorer but poorly on linkedin-branding-scorer if it doesn't serve the strategic goal.
+
+### Track A Weight Distribution
+| Criterion | Weight |
+|-----------|--------|
+| C1: Hook & Pattern Interrupt | 18% |
+| C2: Authority Signal | 15% |
+| C3: Framework Delivery | 12% |
+| C4: Client Acquisition Trigger | 15% |
+| C5: Engagement Mechanics | 10% |
+| C6: Contrarian Angle | 10% |
+| C7: Platform Optimization | 8% |
+| C8: Social Proof Integration | 7% |
+| C9: Content-to-Commerce Bridge | 5% |
+| **Total** | **100%** |
+
+### Track B Weight Distribution
+| Criterion | Weight |
+|-----------|--------|
+| C1: Hook Quality | 16% |
+| C2: Aspiration Trigger | 13% |
+| C3: Practical Framework | 12% |
+| C4: AI Demystification | 12% |
+| C5: Training Funnel Integration | 14% |
+| C6: Community Building | 10% |
+| C7: Arabic Language Quality | 10% |
+| C8: Social Proof | 8% |
+| C9: Build-in-Public Energy | 5% |
+| **Total** | **100%** |
 
 ---
 
@@ -138,16 +167,18 @@ This is the money criterion. Does the post make an ideal client think "I need to
 
 ---
 
-### C9: Consistency & Frequency — Weight: 5%
+### C9: Content Pillar Rotation — Weight: 5%
+
+This post's role within the weekly content mix. A single post is evaluated for how it contributes to the overall pillar rotation, not for frequency (frequency is an operational metric, not a post quality metric).
 
 | Level | Score | Description |
 |-------|-------|-------------|
-| 10/10 | Excellence | 4+ posts per week. Content pillars rotated (hot take, case study, framework, behind-the-scenes). Consistent voice. Regular enough to stay in algorithm and top-of-mind. |
-| 7/10 | Good | 3 posts per week. Some pillar rotation. Consistent quality. |
-| 5/10 | Mediocre | 1-2 posts per week. Inconsistent quality or frequency. Algorithm forgets you. |
-| 1/10 | Failure | Once a month or less. LinkedIn dormant. |
+| 10/10 | Excellence | Post clearly serves a specific content pillar (hot take, case study, framework, behind-the-scenes). Pillar is different from the previous 2 posts. Rotation creates a varied, engaging feed that gives different reasons to follow. |
+| 7/10 | Good | Post has a clear pillar identity. May overlap slightly with recent posts but still adds variety. |
+| 5/10 | Mediocre | Same pillar as last 2-3 posts. Feed feels repetitive. Follower fatigue risk. |
+| 1/10 | Failure | No pillar awareness. Random content. Or every post is the same format/angle. |
 
-**Fix Action:** Batch create: Sunday = plan 4 posts. Monday = write all 4. Schedule Tue/Thu/Sat/Sun. 2 hours per week, not 30 minutes daily.
+**Fix Action:** Before posting, check the last 2 posts. If both were frameworks, this one should be a story or hot take. Rotate: framework → case study → hot take → behind-the-scenes.
 
 ---
 
@@ -164,7 +195,7 @@ This is the money criterion. Does the post make an ideal client think "I need to
 
 **Strategic purpose:** Build a movement around AI-powered entrepreneurship in MENA. Position Mamoun as the gateway for aspiring founders wanting to build MicroSaaS and AI businesses. Every post is a free sample of the EO training methodology. Drive traffic from LinkedIn to EO MENA training.
 
-### C1: Hook Power (Arabic) — Weight: 18%
+### C1: Hook Power (Arabic) — Weight: 16%
 
 | Level | Score | Description |
 |-------|-------|-------------|
@@ -177,7 +208,7 @@ This is the money criterion. Does the post make an ideal client think "I need to
 
 ---
 
-### C2: Aspiration Trigger — Weight: 15%
+### C2: Aspiration Trigger — Weight: 13%
 
 | Level | Score | Description |
 |-------|-------|-------------|
@@ -216,7 +247,7 @@ This is the money criterion. Does the post make an ideal client think "I need to
 
 ---
 
-### C5: Training Funnel Integration — Weight: 15%
+### C5: Training Funnel Integration — Weight: 14%
 
 | Level | Score | Description |
 |-------|-------|-------------|
@@ -268,6 +299,21 @@ This is the money criterion. Does the post make an ideal client think "I need to
 
 ---
 
+### C9: Build-in-Public Energy — Weight: 5%
+
+Arabic build-in-public content is massively underserved on LinkedIn. Posts showing the messy, real process of building something get 3-5x more engagement than polished "expert" content in Arabic markets. This criterion evaluates whether the post taps into that energy.
+
+| Level | Score | Description |
+|-------|-------|-------------|
+| 10/10 | Excellence | Shows real work in progress. Screenshots of actual builds, real revenue numbers, genuine mistakes. "بديت الساعة 9 الصبح. الحين الساعة 3 وعندي MVP شغال. شوفوا..." Raw, authentic, inspiring. Makes aspiring founders think "I could do that." |
+| 7/10 | Good | Some build-in-public elements. References real work but more polished than raw. Still feels authentic. |
+| 5/10 | Mediocre | Polished expert content. Well-written but no raw build-in-public energy. Reads like a blog post, not a founder sharing in real-time. |
+| 1/10 | Failure | Pure theoretical or motivational content. No connection to actual building. "AI will change the world" without showing how. |
+
+**Fix Action:** Share one thing you built or did TODAY with a screenshot or specific metric. "اليوم سويت [thing]. النتيجة: [result]. الخطوة الجاي: [next step]." Real-time > polished.
+
+---
+
 ### Track B Benchmarks
 - Engagement rate on Arabic posts: >4% = strong
 - Training registration clicks per post: 5-10 = working, 20+ = viral
@@ -294,6 +340,111 @@ Think like a LinkedIn personal branding strategist who has built 5 founder brand
 - 4-5 posts/week is the sweet spot; fewer than 3 and the algorithm forgets you
 - Carousels dominate at 6.6% engagement; but hot takes in text format create the most inbound DMs
 - Track B's "movement" framing creates a moat that competitors can't replicate with generic content
+
+---
+
+## Calibration Anchor: Scored Examples
+
+### Track A Example (English B2B)
+
+**Post being scored:**
+
+```
+Everyone says build relationships first in the Gulf.
+
+I disagree.
+
+Build proof of competence first.
+
+In MENA B2B, trust is everything. But trust doesn't come from 47 coffee meetings.
+
+Trust comes from demonstrating you know your stuff before the first handshake.
+
+Over the last quarter, we tested this with 127 outbound campaigns across UAE and Saudi:
+
+→ Signal-based outreach with proof-first messaging: 8.3% reply rate
+→ Relationship-first approach (warm intros, events, coffees): 2.1% reply rate
+
+The signal-based approach was 4x faster and cost 60% less per meeting booked.
+
+The Gulf rewards competence signaled early, not relationships built slowly.
+
+If your outbound reply rate in MENA is below 5%, you're probably leading with the wrong thing.
+
+The first touchpoint should prove you understand their problem — not ask for 30 minutes of their time.
+
+What's your reply rate on Gulf-targeted outbound?
+```
+
+| # | Criterion | Weight | Score | Rationale |
+|---|-----------|--------|-------|-----------|
+| C1 | Hook Power | 18% | 9.5 | "Everyone says build relationships first in the Gulf. I disagree." Contrarian, specific to ICP, bold. VP of Sales stops scrolling. |
+| C2 | Authority Signal | 15% | 9.0 | "127 outbound campaigns" shows volume. Specific reply rates (8.3% vs 2.1%). Shows the work. |
+| C3 | Contrarian Angle | 12% | 9.5 | Challenges the #1 conventional wisdom in Gulf B2B. Backed by data, not opinion. |
+| C4 | Client Trigger Density | 15% | 9.0 | "If your outbound reply rate in MENA is below 5%" — direct trigger. ICP thinks "that's us." |
+| C5 | Value-to-Promotion Ratio | 10% | 9.0 | 90% value, 10% implied authority. No pitch. No CTA to book a call. |
+| C6 | MENA Market Specificity | 10% | 9.5 | Gulf-specific data. "47 coffee meetings" — only someone in MENA B2B would say this. |
+| C7 | Format & Readability | 8% | 8.5 | Text post (correct for hot take). Good white space. Short paragraphs. Could be stronger as carousel with the data comparison. |
+| C8 | Engagement Architecture | 7% | 8.0 | Question at end targets the right audience. Could be sharper: asking for their specific reply rate number would force more engagement. |
+| C9 | Content Pillar Rotation | 5% | 8.5 | Clear hot take / data-backed contrarian pillar. Assume it follows a framework or case study post. |
+
+**Track A Overall: 9.05 / 10 — VERDICT: ELITE (Ship immediately)**
+**TOP FIX: C8 — Sharpen closing question to "Drop your Gulf outbound reply rate below. Under 5%? I'll tell you where the leak is." Forces engagement AND opens DM conversations.**
+
+---
+
+### Track B Calibration Example: Arabic AI/MicroSaaS Post
+
+**Scenario:** Sunday Arabic LinkedIn post for @MamounAlamouri about using Claude to build a SaaS product in 48 hours.
+
+**Post being scored:**
+"قبل 48 ساعة ما كان عندي أي كود.
+اليوم عندي SaaS شغال فيه 3 مشتركين يدفعوا.
+
+السر؟ Claude + Supabase + فكرة واضحة.
+
+أغلب الناس يعتقدوا إنك تحتاج:
+❌ فريق مبرمجين
+❌ 6 شهور تطوير
+❌ $50K ميزانية
+
+الحقيقة:
+✅ شخص واحد + AI = MVP في يومين
+✅ $0 تكلفة تطوير
+✅ أول عميل يدفع قبل ما تكتب سطر كود واحد
+
+الخطوات بالضبط:
+1. حددت المشكلة (clinic no-shows في الإمارات)
+2. بنيت brain files بـ5 scorecards
+3. Claude كتب الكود كامل
+4. Deploy على Vercel + Supabase
+5. أول 3 عملاء من WhatsApp outreach
+
+مو لازم تكون مبرمج.
+لازم تكون واضح في المشكلة اللي تحلها.
+
+AI هو الأداة. أنت المفكر.
+
+🔥 الأسبوع الجاي بنزل فيديو يوتيوب أشرح كل خطوة بالتفصيل.
+تابعوني عشان ما تفوتكم."
+
+**Score:**
+
+| # | Criterion | Weight | Score | Rationale |
+|---|-----------|--------|-------|-----------|
+| C1 | Hook | 16% | 9.5 | "قبل 48 ساعة ما كان عندي أي كود" — pattern interrupt, specific timeline, creates curiosity gap. First-person, vulnerable, bold. |
+| C2 | Aspiration Trigger | 13% | 9.0 | "شخص واحد + AI = MVP في يومين" is aspirational and achievable. Shows the path, not just the destination. |
+| C3 | Practical Framework | 12% | 9.0 | 5 exact steps. Numbered. Specific tools named. Reader could replicate this weekend. |
+| C4 | AI Demystification | 12% | 9.0 | "Claude كتب الكود كامل" and "مو لازم تكون مبرمج" directly addresses the intimidation barrier. Makes AI accessible. |
+| C5 | Training Funnel Integration | 14% | 8.5 | YouTube tease at the end. Could be stronger — missing link to training or lead magnet. "بنزل فيديو" is good but no direct CTA to join something. |
+| C6 | Community Building | 10% | 8.0 | "تابعوني" is standard. Missing: question that drives comments ("شو المشكلة اللي تحبوا تحلوها بالـAI؟"). Build-in-public energy is strong but community call is weak. |
+| C7 | Arabic Language Quality | 10% | 9.0 | Conversational Gulf Arabic. English tech terms mixed naturally (Claude, Supabase, Vercel, Deploy, MVP). Not MSA formal. Reads like talking to a friend. |
+| C8 | Social Proof | 8% | 8.5 | "3 مشتركين يدفعوا" — real, specific, humble. Build-in-public transparency. Could add monthly revenue number for stronger proof. |
+| C9 | Build-in-Public Energy | 5% | 9.0 | Raw, real-time sharing. "قبل 48 ساعة..." creates the build-in-public timeline. Authentic without being performative. |
+
+**OVERALL: 8.87 / 10 — VERDICT: STRONG**
+**HARD STOPS: None**
+**TOP FIX: C6 Community Building — add a closing question: "شو المشكلة اللي تبون تحلوها بالـAI؟ نزلوها بالكومنتات." Drives comment velocity and signals community building.**
 
 ---
 

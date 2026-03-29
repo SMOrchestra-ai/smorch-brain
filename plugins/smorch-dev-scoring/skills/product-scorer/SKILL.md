@@ -1,3 +1,4 @@
+<!-- Copyright SMOrchestra.ai. All rights reserved. Proprietary and confidential. -->
 ---
 name: product-scorer
 description: >-
@@ -83,7 +84,7 @@ Phase: [phase] | Date: [date]
 - Problem Clarity < 4: [PASS/FAIL] — [explanation if fail]
 ```
 
-Grade thresholds: Elite (9+), Strong (7.5-8.9), Acceptable (6-7.4), Below Standard (4-5.9), Critical (1-3.9).
+Grade thresholds: A+ (9.0-10.0), A (8.0-8.9), B (7.0-7.9), C (6.0-6.9), D (5.0-5.9), F (below 5.0).
 
 ## MENA-Specific Considerations
 

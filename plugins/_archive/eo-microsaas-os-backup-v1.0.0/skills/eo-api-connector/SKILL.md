@@ -1,3 +1,4 @@
+<!-- Copyright SMOrchestra.ai. All rights reserved. Proprietary and confidential. -->
 ---
 name: eo-api-connector
 description: EO API Connector - handles third-party API integrations with typed client wrappers, error handling, retry logic, and MENA-specific payment/messaging requirements. Called by eo-microsaas-dev during Phase 3-4 or independently when adding new integrations. Triggers on 'API integration', 'connect API', 'payment gateway', 'WhatsApp API', 'Stripe', 'Tap Payments', 'HyperPay', 'SendGrid', 'Twilio', 'OAuth', 'webhook', 'third-party integration', 'API client'. This is a Step 5 skill of the EO Training System.

@@ -1,3 +1,4 @@
+<!-- Copyright SMOrchestra.ai. All rights reserved. Proprietary and confidential. -->
 ---
 name: gtm-fitness-scoring-engine
 description: Scorecard 5 of 5 — Evaluates readiness across 13 GTM motions using composite scoring (Fit x 0.4 + Readiness x 0.3 + MENA x 0.3). Assigns PRIMARY/SECONDARY/CONDITIONAL/SKIP tiers.

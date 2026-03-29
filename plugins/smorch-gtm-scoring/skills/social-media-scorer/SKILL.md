@@ -1,3 +1,4 @@
+<!-- Copyright SMOrchestra.ai. All rights reserved. Proprietary and confidential. -->
 ---
 name: social-media-scorer
 description: Scores organic social media posts across TOFU/MOFU/BOFU funnel stages with 6 universal criteria plus stage-specific criteria. Evaluates hooks, value density, format optimization, engagement triggers, CTA alignment, and authenticity against 2026 LinkedIn/social algorithm data. Triggers on 'score my post', 'rate this social post', 'social media quality check', 'is this post ready', 'post review', 'content score', 'organic post audit', 'funnel stage check'.
@@ -26,6 +27,25 @@ Before scoring, identify the funnel stage:
 | BOFU | Conversion & action | Trust you, deciding | DMs, link clicks, meetings booked |
 
 If the user doesn't specify, infer from the content: is it designed to attract new audience (TOFU), build trust with existing followers (MOFU), or trigger action from warm prospects (BOFU)?
+
+---
+
+## Platform Calibration
+
+While criteria are universal, benchmarks shift by platform. Default to LinkedIn for B2B.
+
+| Platform | Engagement Benchmark | Format Sweet Spot | Key Difference |
+|----------|---------------------|-------------------|----------------|
+| LinkedIn | >5% (personal brand) | Carousels (6.6%), Text | Expert engagement carries 5x weight. Dwell time tracked. |
+| Twitter/X | >2% | Threads, images | Speed and hot takes. Shorter shelf life. Thread structure replaces carousel. |
+| Instagram | >3% | Reels, carousels | Visual-first. B2B works for brand building, not direct conversion. |
+
+When scoring for non-LinkedIn platforms, apply these adjustments:
+- **Twitter/X:** C3 Format Optimization — threads replace carousels as top format. Character limits apply.
+- **Instagram:** C3 Format Optimization — visual quality becomes a hard requirement. Text-only posts don't exist.
+- **All platforms:** C5 CTA Alignment — platform norms differ. "DM me" works on LinkedIn/Instagram, less so on Twitter/X.
+
+If no platform is specified, assume LinkedIn.
 
 ---
 
@@ -222,7 +242,7 @@ MOFU readers need evidence that your methods work in the real world, not just in
 
 ## BOFU Stage-Specific Criteria (3 additional criteria, 25% weight)
 
-### B1: Urgency & Relevance — Weight: 5%
+### B1: Urgency & Relevance — Weight: 4%
 
 BOFU content must give warm prospects a reason to act NOW, not "someday." Real urgency comes from genuine scarcity (limited cohort spots, closing a program, genuine market timing) or compelling relevance (this applies to a decision they're making this quarter). Manufactured urgency ("LAST CHANCE! Offer expires!") posted every week destroys credibility.
 
@@ -237,7 +257,7 @@ BOFU content must give warm prospects a reason to act NOW, not "someday." Real u
 
 ---
 
-### B2: Friction Reduction — Weight: 5%
+### B2: Friction Reduction — Weight: 8%
 
 BOFU prospects have already decided they're interested. The only thing between them and action is friction. Every click, every form field, every ambiguous instruction loses a percentage of warm prospects. The CTA must be dead simple: one action, one step, zero confusion.
 
@@ -275,7 +295,152 @@ Stage-specific criteria: 25% (T1-T4 for TOFU, M1-M3 for MOFU, B1-B3 for BOFU)
 Stage-specific weights are normalized within the 25% allocation:
 - TOFU: T1(8%) + T2(5%) + T3(7%) + T4(5%) = 25%
 - MOFU: M1(8%) + M2(7%) + M3(5%) = 20% → normalized to 25%
-- BOFU: B1(5%) + B2(5%) + B3(5%) = 15% → normalized to 25%
+- BOFU: B1(4%) + B2(8%) + B3(5%) = 17% → normalized to 25%
+
+---
+
+## Calibration Anchor: Scored Example (TOFU LinkedIn Post)
+
+**Post being scored:**
+
+```
+I stopped sending connection requests for 30 days.
+
+My inbound DMs doubled.
+
+Here's the counterintuitive thing about LinkedIn outbound in the Gulf:
+
+The harder you push, the less you get.
+
+For 30 days, I only posted content. No connection requests. No cold DMs. No "I'd love to connect" notes.
+
+What happened:
+- Profile views went from 180/week to 450/week
+- Inbound DMs from qualified prospects: 2/week → 5/week
+- 3 of those DMs turned into proposals worth $45K total
+
+The mechanism: every post was a free sample of the work.
+
+Signal-based GTM frameworks. MENA market data. Real campaign results with numbers.
+
+People who consumed 3+ posts before reaching out had a 40% close rate. Cold outreach? 3%.
+
+Content isn't a marketing channel. It's a trust engine.
+
+The Gulf rewards proof of competence over proof of persistence.
+
+What's driving YOUR inbound right now?
+```
+
+**Funnel Stage: TOFU (awareness, reach, new audience attraction)**
+
+**Universal Criteria:**
+
+| # | Criterion | Weight | Score | Rationale |
+|---|-----------|--------|-------|-----------|
+| C1 | Hook | 20% | 9.5 | "I stopped sending connection requests for 30 days." Counterintuitive, specific, personal. VP of Sales stops scrolling. Works in preview before "see more." |
+| C2 | Value Density | 15% | 9.0 | Every line teaches or reveals data. Specific numbers (180→450, 2→5, $45K, 40% vs 3%). Zero filler. |
+| C3 | Format Optimization | 10% | 8.5 | Text post (correct for hot take/story). Good white space, short paragraphs. Could be stronger as a carousel showing the 30-day data progression. |
+| C4 | Engagement Trigger | 12% | 8.0 | Ends with relevant question. "What's driving YOUR inbound right now?" targets the right audience. Could be sharper: "What percentage of your pipeline comes from inbound vs outbound?" forces a more interesting answer. |
+| C5 | CTA Alignment | 8% | 9.0 | TOFU-appropriate: question for engagement, no pitch, no link. Pure value-first. |
+| C6 | Authenticity | 10% | 9.5 | Specific personal experiment. Real numbers. Real money. Hot take backed by data. Unmistakably personal voice. |
+
+**TOFU Stage-Specific Criteria:**
+
+| # | Criterion | Weight | Score | Rationale |
+|---|-----------|--------|-------|-----------|
+| T1 | Shareability | 8% | 9.0 | Counterintuitive finding with data. "My network needs to see this" trigger. Framework worth saving (content = trust engine). |
+| T2 | New Audience Attraction | 5% | 8.5 | Accessible to anyone in B2B. No jargon. Universal pain (outbound not working). Gulf context adds specificity without excluding. |
+| T3 | Authority Signal | 7% | 9.0 | Shows the work: real experiment, real data, real revenue. Only someone who actually did this could write it. |
+| T4 | Brand Memorability | 5% | 8.5 | "Trust engine" and "signal-based GTM" reinforce positioning. Missing: could reference the named framework (Signal-to-Trust Engine) for stronger brand association. |
+
+**OVERALL: 8.92 / 10 — VERDICT: STRONG (Ship with minor tweaks)**
+**HARD STOPS: None**
+**TOP FIX: C4 Engagement Trigger — replace "What's driving YOUR inbound?" with "What percentage of your pipeline is inbound vs outbound? Drop a number below." Forces specific engagement from the right audience. Estimated lift: +1.0 on C4.**
+
+---
+
+### MOFU Calibration Example: LinkedIn Case Study Post
+
+**Scenario:** LinkedIn post sharing a client case study for SalesMfast Signal Engine. Funnel stage: MOFU (nurturing engaged audience who already knows the brand).
+
+**Post being scored:**
+"3 meetings to 14 in 60 days. Here's how.
+
+A Series A SaaS company in Riyadh hired a new Head of Sales. Old playbook: coffee meetings. 47 per quarter. 3 closed deals.
+
+We deployed the Signal-to-Trust Engine in week 1:
+→ Signal layer: tracked 12 buying signals across LinkedIn + job boards + tech stack changes
+→ Scoring: intent scores prioritized the 15% worth reaching
+→ Sequencing: proof of competence delivered within 48 hours of signal detection
+
+Day 60 results:
+• 14 qualified meetings/month (was 3)
+• Zero coffee meetings
+• 40% shorter sales cycle
+
+The insight: Gulf buyers don't resist outbound. They resist irrelevant outbound. When you show up with proof at the exact moment they're evaluating, you skip the trust tax.
+
+[Tagged: client CEO with permission]"
+
+**Score:**
+
+| # | Criterion | Weight | Score | Rationale |
+|---|-----------|--------|-------|-----------|
+| C1 | Hook Quality | 15% | 9.0 | "3 meetings to 14 in 60 days." Number-first, specific, creates curiosity gap. Scroll-stopper. |
+| C2 | Value Density | 15% | 9.0 | Concrete framework (3 steps), real numbers, timeline. Actionable insight at the end. |
+| C3 | Format Optimization | 10% | 8.5 | Uses line breaks, arrows, bullet points. Scannable. Could be slightly shorter for mobile. |
+| C4 | Engagement Triggers | 10% | 8.0 | Tagged client CEO. "Gulf buyers don't resist outbound" is debate-worthy. Missing: explicit question for comments. |
+| C5 | CTA Alignment | 10% | 8.0 | No explicit CTA — appropriate for MOFU (not selling yet). Implicit CTA via case study interest. Could add "DM me for the full playbook" for warmer leads. |
+| C6 | Authenticity & Voice | 15% | 9.0 | Specific, backs claims with data, not humble-bragging. Client tagged for verification. |
+| M1 | Depth of Insight | 10% | 9.0 | "Gulf buyers don't resist outbound — they resist irrelevant outbound" is a framework-level insight. Reframeable. |
+| M2 | Trust Signal Integration | 10% | 9.0 | Named client (with permission), specific numbers, timeline. All verifiable. |
+| M3 | Nurture Progression | 5% | 8.0 | Moves reader from awareness to consideration. Missing: link to longer-form content or next step in funnel. |
+
+**OVERALL: 8.72 / 10 — VERDICT: STRONG**
+**HARD STOPS: None**
+**TOP FIX: C4 Engagement Triggers — add a closing question: "What's the biggest outbound challenge you're facing in Gulf markets?" to drive comment velocity.**
+
+---
+
+### BOFU Calibration Example: LinkedIn Offer Post
+
+**Scenario:** LinkedIn post announcing a limited pilot program for SalesMfast Signal Engine. Funnel stage: BOFU (converting warm audience to customers).
+
+**Post being scored:**
+"Opening 3 pilot slots for Q2.
+
+We've run the Signal-to-Trust Engine for 8 B2B companies in the Gulf this year. Average result: 12 qualified meetings/month from zero outbound infrastructure.
+
+If you're a Series A-B SaaS company expanding into UAE, KSA, or Qatar — and you're tired of coffee-meeting-based selling — this might fit.
+
+What the pilot includes:
+• Full signal infrastructure (12 buying signals tracked)
+• Done-for-you outbound across email + LinkedIn + WhatsApp
+• 60-day commitment, cancel anytime
+• Target: 10+ qualified meetings in 60 days or month 2 is free
+
+3 slots. First-come, first-qualified.
+
+DM me 'PILOT' + your company name. I'll send the 2-page brief."
+
+**Score:**
+
+| # | Criterion | Weight | Score | Rationale |
+|---|-----------|--------|-------|-----------|
+| C1 | Hook Quality | 15% | 8.5 | "Opening 3 pilot slots" creates urgency. Specific but could be sharper — missing a contrarian angle or number-first hook. |
+| C2 | Value Density | 15% | 9.0 | Concrete deliverables, timeline, guarantee, social proof (8 companies). Every line earns its place. |
+| C3 | Format Optimization | 10% | 9.0 | Short paragraphs, bullet list for deliverables, clear CTA section. Mobile-optimized. |
+| C4 | Engagement Triggers | 10% | 8.5 | Scarcity (3 slots). DM action. Could add "Tag a founder who should see this" for amplification. |
+| C5 | CTA Alignment | 10% | 9.5 | "DM me 'PILOT' + your company name" — ultra low friction, one action, self-qualifying. Perfect BOFU CTA. |
+| C6 | Authenticity & Voice | 15% | 9.0 | Specific numbers, performance guarantee, cancel-anytime. Confidence without aggression. |
+| B1 | Conversion Mechanism | 10% | 9.0 | One-word DM trigger. Self-qualifying ("Series A-B SaaS... expanding into Gulf"). Scarcity + guarantee reduces risk. |
+| B2 | Urgency Authenticity | 10% | 8.5 | 3 slots is believable for a boutique service. "First-come, first-qualified" adds qualification layer. Not fake urgency. |
+| B3 | Risk Reduction | 5% | 9.0 | "60-day commitment, cancel anytime" + "10+ meetings or month 2 free." Double risk reversal. Strong for MENA trust dynamics. |
+
+**OVERALL: 8.89 / 10 — VERDICT: STRONG**
+**HARD STOPS: None**
+**TOP FIX: C1 Hook Quality — lead with a specific number: "12 qualified meetings/month from zero infrastructure. Opening 3 pilot slots." Number-first hook is stronger for BOFU.**
 
 ---
 
