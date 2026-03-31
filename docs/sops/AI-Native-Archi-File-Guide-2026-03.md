@@ -46,7 +46,8 @@ project-root/
     ├── SOP-QA-Protocol.md
     ├── SOP-Pre-Upload-Scoring.md
     ├── SOP-Github-Standards.md
-    └── SOP-Team-Distribution.md
+    ├── SOP-Team-Distribution.md
+    └── SOP-Dev-Roles-Hierarchy.md
 ```
 
 ---
@@ -104,13 +105,14 @@ project-root/
 **Format:** `ADR-XXX-title.md` with Context, Decision, Consequences, Alternatives.
 
 ### SOPs/ (Project-Level Standard Operating Procedures)
-**What:** 4 SOP files that govern how Claude Code operates on this project.
+**What:** 5 SOP files that govern how Claude Code and the team operate on this project.
 **Why:** Makes every session consistent. Claude reads these and follows them.
 **Files:**
 1. `SOP-QA-Protocol.md` — How to run QA (60 min max, 5-hat scoring)
 2. `SOP-Pre-Upload-Scoring.md` — Score before push, bridge gaps to 10/10
 3. `SOP-Github-Standards.md` — Repo management, branch naming, commits, releases
 4. `SOP-Team-Distribution.md` — When and how to involve team members
+5. `SOP-Dev-Roles-Hierarchy.md` — Role definitions: Mamoun (Founder) → AI (Execution) → Lana (QA/Review)
 
 ---
 

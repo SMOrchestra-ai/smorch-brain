@@ -187,10 +187,13 @@ Description:
 
 ## GitHub Access for Lana
 
-### Current Setup
+### Current Setup (GitHub Team Plan — Decided March 31, 2026)
 - GitHub: @lanaalkurdsmo
+- Org: SMOrchestra-ai (GitHub Team Plan, $4/user/month)
 - Team: `engineering` (write access to all repos)
 - Review permissions: Can approve PRs on dev
+- Branch protection: Enforced by GitHub Team Plan (required reviewers + CODEOWNERS)
+- Role definition: See SOP-5 (Dev Roles & Hierarchy)
 
 ### What Lana Can Do
 - Review and comment on PRs

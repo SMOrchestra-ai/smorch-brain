@@ -55,7 +55,8 @@ SMOrchestra uses two GitHub locations with strict separation:
 **Rules for org:**
 - Every live product MUST be here
 - All team members access repos through the org
-- Branch protection enforced on main + dev
+- **GitHub Team Plan** ($4/user/month) — enforced branch protection + required reviewers + CODEOWNERS
+- Branch protection enforced on main + dev (required 1 approving review)
 - CODEOWNERS, AGENTS.md, CHANGELOG.md required
 
 ### How to Verify (Claude Code runs this every session)
