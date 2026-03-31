@@ -1,28 +1,117 @@
 # SOP-3: GitHub Standards & Repo Management
 
-**Version:** 1.0 | **Date:** March 2026
+**Version:** 2.0 | **Date:** March 2026
 **Scope:** Every project in the SMOrchestra GitHub org
 **GitHub Org:** SMOrchestra-ai
-**Admin Account:** smorchestraai-code
+**User Account:** smorchestraai-code
 **Team Member:** @lanaalkurdsmo (when collaborating)
 
 ---
 
-## Rule 1: Always Push to the Org, Never Personal Accounts
+## Claude Code's Role: GitHub Admin + CPO
 
-**THE RULE:** All code goes to `SMOrchestra-ai` org repos. Never to personal GitHub accounts.
+Claude Code acts as the **GitHub administrator** and **Chief Product Officer** for all SMOrchestra repos. This means:
+
+1. **Own the dev pipeline** — enforce branch model, conventional commits, release protocol, QA gates
+2. **Own version control** — decide when to bump major/minor/patch, enforce SemVer, create releases
+3. **Own documentation** — CHANGELOG, AGENTS.md, README, ADRs must be current at all times
+4. **Own repo hygiene** — flag stale branches, orphaned tags, missing files, incorrect remotes
+5. **Own governance** — verify every push goes to the right account, every PR follows the template, every release passes QA
+
+**Claude Code does NOT:**
+- Merge to main without Mamoun's approval (MAMOUN-REQUIRED)
+- Create or delete repos without Mamoun's approval
+- Change team membership or permissions
+- Make architecture decisions — only recommend
+
+---
+
+## Rule 0: Two-Account Architecture
+
+SMOrchestra uses two GitHub locations with strict separation:
+
+### smorchestraai-code (User Account) — Parking + Open Source
+
+| What Goes Here | Examples |
+|---------------|---------|
+| **Forked open source repos** | gstack, paperclip, superpowers |
+| **Parking repos** (pre-production, lead magnets, experiments) | gtm-fitness-scorecard |
+| **Archived repos** (retired versions, superseded code) | Signal-Sales-Engine-v1, Signal-Based- |
+
+**Rules for user account:**
+- NO production code lives here
+- Archived repos are reviewed every 4 weeks — delete if no longer needed
+- Forks stay as-is (upstream reference)
+- Parking repos move to org when they become production
+
+### SMOrchestra-ai (Org) — All Live/Production Repos
+
+| What Goes Here | Examples |
+|---------------|---------|
+| **All production products** | SaaSFast, EO-Scorecard-Platform, Signal-Sales-Engine, eo-mena |
+| **Internal tools & infrastructure** | smorch-brain, smorch-dist, smorch-context, supervibes |
+| **Team collaboration repos** | Any repo the team works on |
+
+**Rules for org:**
+- Every live product MUST be here
+- All team members access repos through the org
+- Branch protection enforced on main + dev
+- CODEOWNERS, AGENTS.md, CHANGELOG.md required
+
+### How to Verify (Claude Code runs this every session)
+```bash
+git remote -v | grep -E "(SMOrchestra-ai|smorchestraai-code)"
+```
+
+| If Remote Shows | And Repo Is | Action |
+|----------------|-------------|--------|
+| `SMOrchestra-ai` | Production code | CORRECT — proceed |
+| `smorchestraai-code` | Production code | WRONG — STOP. Ask Mamoun. Likely needs transfer to org. |
+| `smorchestraai-code` | Fork/parking/archived | CORRECT — proceed |
+| Any other account | Anything | WRONG — STOP immediately. Ask Mamoun. |
+
+### Current Repo Inventory (as of March 2026)
+
+**smorchestraai-code (User):**
+| Repo | Type | Status |
+|------|------|--------|
+| gstack | Fork (open source) | Active |
+| paperclip | Fork (open source) | Active |
+| superpowers | Fork (open source) | Active |
+| gtm-fitness-scorecard | Parking (lead magnet) | Active |
+| Signal-Sales-Engine-v1 | Archived | 4-week review pending |
+| Signal-Based- | Archived | 4-week review pending |
+
+**SMOrchestra-ai (Org):**
+| Repo | Product | Status |
+|------|---------|--------|
+| SaaSFast | MicroSaaS Launcher Platform | Live v3.0.0 |
+| EO-Scorecard-Platform | EO Assessment Scorecards | Live |
+| Signal-Sales-Engine | B2B Signal Intelligence Stack | Live v3 |
+| eo-mena | EO MENA Regional Platform | Live |
+| smorch-brain | Skills Registry + CLI | Live |
+| smorch-dist | Plugin Distribution | Live |
+| smorch-context | Business Context Files | Live |
+| supervibes | Parallel Claude Code Orchestration | Live |
+
+---
+
+## Rule 1: Always Push to the Org for Production Code
+
+**THE RULE:** All production code goes to `SMOrchestra-ai` org repos. Never to the user account.
 
 Before every push, Claude Code MUST verify:
 ```bash
 git remote -v | grep "SMOrchestra-ai"
 ```
 
-If the remote points anywhere other than `SMOrchestra-ai`, STOP and ask Mamoun.
+If the remote points to `smorchestraai-code` for production code, STOP and ask Mamoun.
 
 | Right | Wrong |
 |-------|-------|
-| `github.com/SMOrchestra-ai/SaaSFast.git` | `github.com/mamounalamouri/SaaSFast.git` |
-| `github.com/SMOrchestra-ai/eo-assessment-system.git` | `github.com/lanaalkurdsmo/eo-assessment-system.git` |
+| `github.com/SMOrchestra-ai/SaaSFast.git` | `github.com/smorchestraai-code/SaaSFast.git` |
+| `github.com/SMOrchestra-ai/Signal-Sales-Engine.git` | `github.com/smorchestraai-code/Signal-Sales-Engine.git` |
+| `github.com/smorchestraai-code/gstack.git` (fork) | `github.com/SMOrchestra-ai/gstack.git` (wrong location for fork) |
 
 ---
 
@@ -176,6 +265,71 @@ Claude Code must STOP and ASK Mamoun before:
 | Commit .env files | Credential leak | Use .env.example only |
 | Make architecture decisions without ADR | Decision rationale lost | Create docs/adr/ADR-XXX.md for every arch decision |
 | Merge without QA score | Quality unknown | Always run SOP-1 or SOP-2 first |
+
+---
+
+## Rule 9: Archive Cleanup Cycle (Every 4 Weeks)
+
+Claude Code flags archived repos for review on the 1st of each month:
+
+```
+For each archived repo on smorchestraai-code:
+1. When was it archived?
+2. Has anyone accessed it in 4 weeks?
+3. Is there any code worth preserving that isn't in the org?
+4. Recommendation: DELETE or KEEP (with reason)
+```
+
+**MAMOUN-REQUIRED:** Deleting archived repos is irreversible. Claude Code recommends, Mamoun decides.
+
+### Repo Lifecycle
+
+```
+Parking (user) → Production (org) → Archived (user) → Deleted (after 4-week review)
+                                          ↑
+Fork (user) ← stays here permanently
+```
+
+---
+
+## Rule 10: Moving Repos Between Accounts
+
+### Parking → Production (user → org)
+When a repo graduates from parking to production:
+```bash
+# 1. Create repo on org
+gh repo create SMOrchestra-ai/REPO-NAME --private --default-branch dev
+
+# 2. Push all branches and tags from local clone
+cd ~/local-clone
+git remote add org https://github.com/SMOrchestra-ai/REPO-NAME.git
+git push org --all
+git push org --tags
+
+# 3. Update local remote
+git remote remove origin
+git remote rename org origin
+
+# 4. Set up branch protection on org
+gh api -X PUT repos/SMOrchestra-ai/REPO-NAME/branches/main/protection \
+  -f required_pull_request_reviews[required_approving_review_count]=1
+gh api -X PUT repos/SMOrchestra-ai/REPO-NAME/branches/dev/protection \
+  -f required_pull_request_reviews[required_approving_review_count]=1
+
+# 5. Archive the old repo on user account
+gh repo archive smorchestraai-code/REPO-NAME --yes
+
+# 6. Update repo description on org
+gh repo edit SMOrchestra-ai/REPO-NAME --description "..." --add-topic ...
+```
+
+### Production → Archived (org → user archive)
+When a product is retired:
+```bash
+# 1. Ensure final release is tagged and released
+# 2. Archive on org: gh repo archive SMOrchestra-ai/REPO-NAME --yes
+# 3. Repo stays on org (archived) — do NOT move to user
+```
 
 ---
 
