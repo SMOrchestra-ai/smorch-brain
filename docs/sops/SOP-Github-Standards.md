@@ -83,13 +83,32 @@ Never create `product-v2` as a separate repo. Tag versions in the same repo.
 ### Release Protocol
 ```
 1. dev is stable, all target PRs merged
-2. Create release PR: dev → main
-3. Mamoun reviews and approves                    ← MAMOUN-REQUIRED
-4. Merge to main (merge commit, NOT squash)
-5. Tag: git tag -a vX.Y.Z -m "description"
-6. Push tag: git push origin vX.Y.Z
-7. Create GitHub Release: gh release create vX.Y.Z ...
-8. Update CHANGELOG.md on dev
+2. Run SOP-1 QA Protocol — must score 90+
+3. Create release PR: dev → main
+4. Mamoun reviews and approves                    ← MAMOUN-REQUIRED
+5. Merge to main (merge commit, NOT squash)
+6. Tag: git tag -a vX.Y.Z -m "description"
+7. Push tag: git push origin vX.Y.Z
+8. Create GitHub Release: gh release create vX.Y.Z --notes-file RELEASE_NOTES.md
+9. Update CHANGELOG.md on dev
+10. Verify: gh api repos/SMOrchestra-ai/REPO/releases --jq '.[0].tag_name'
+```
+
+### Hotfix Protocol
+```
+1. Branch: git checkout -b hotfix/[slug] from main
+2. Fix the issue
+3. PR to main — Mamoun reviews                    ← MAMOUN-REQUIRED
+4. After merge to main: tag, release, CHANGELOG
+5. CRITICAL: Merge hotfix back to dev             ← Prevents drift
+   git checkout dev && git merge hotfix/[slug]
+```
+
+### Agent Commits Must Include Co-Authored-By
+```
+agent(TASK-XXX): description of change
+
+Co-Authored-By: Claude Opus 4.6 (1M context) <noreply@anthropic.com>
 ```
 
 ---
@@ -155,6 +174,8 @@ Claude Code must STOP and ASK Mamoun before:
 | Create tags without GitHub Releases | Tags are invisible | Always create Release for each tag |
 | Delete branches without checking | May contain work | Archive or merge first |
 | Commit .env files | Credential leak | Use .env.example only |
+| Make architecture decisions without ADR | Decision rationale lost | Create docs/adr/ADR-XXX.md for every arch decision |
+| Merge without QA score | Quality unknown | Always run SOP-1 or SOP-2 first |
 
 ---
 

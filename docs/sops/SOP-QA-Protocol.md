@@ -59,7 +59,16 @@ Critical: [count]
 
 ## Phase 2: Functional Testing (20 min)
 
-### Step 2.1 — Run Webapp Testing
+### Step 2.1 — Determine Test Approach
+
+| Project Type | Approach |
+|-------------|----------|
+| **Web app (frontend)** | Run `/webapp-testing` with Playwright |
+| **API-only / backend** | Run test suite (`npm test`, `pytest`, etc.) + manual curl/Postman checks |
+| **CLI tool / script** | Run with sample inputs, verify outputs |
+| **No tests exist** | Create basic smoke tests first (happy path only), THEN run QA. Flag "no test coverage" as a HIGH issue in the report. |
+
+### Step 2.1a — For Web Apps: Run Webapp Testing
 ```
 /webapp-testing
 ```
@@ -83,9 +92,16 @@ Test these scenarios manually or via Playwright:
 | **Mobile** | Touch targets >44px, no horizontal scroll, readable text |
 | **Auth** | Logged out redirect, expired session, role-based access |
 
+### Step 2.2a — For Bugs Found: Run Systematic Debugging
+If a bug is discovered during testing:
+```
+/systematic-debugging
+```
+This skill enforces root cause analysis before proposing fixes — prevents the "change random things until it works" anti-pattern.
+
 ### Step 2.3 — Report Issues
 For each issue found:
-1. Screenshot the issue
+1. Screenshot the issue (webapp) or paste the error output (API/CLI)
 2. Describe: what happened vs what should happen
 3. Rate severity: CRITICAL / HIGH / MEDIUM / LOW
 4. Create a spec if Claude can fix it immediately

@@ -38,6 +38,7 @@ project-root/
 ├── product/                        ← Shippable product code
 ├── tests/                          ← All tests
 ├── infra/                          ← LOCKED — deployment, CI, environments
+├── .gitignore                      ← Git ignore rules (node_modules, .env, etc.)
 ├── AGENTS.md                       ← AI agent behavior rules (cross-tool)
 ├── CHANGELOG.md                    ← Release history
 ├── README.md                       ← What this project is
@@ -132,8 +133,8 @@ README.md, AGENTS.md only. No scaffold, no SOPs.
 # 1. Create repo with dev as default branch
 gh repo create SMOrchestra-ai/NEW-REPO --public --default-branch dev
 
-# 2. Clone locally
-git clone git@github.com:SMOrchestra-ai/NEW-REPO.git
+# 2. Clone locally (use HTTPS — matches our gh auth setup)
+git clone https://github.com/SMOrchestra-ai/NEW-REPO.git
 cd NEW-REPO
 
 # 3. Copy SOP files from smorch-brain templates
@@ -161,9 +162,60 @@ git push origin dev
 
 # 7. Create main branch and protect both
 git checkout -b main && git push origin main
-gh api -X PUT repos/SMOrchestra-ai/NEW-REPO/branches/main/protection ...
-gh api -X PUT repos/SMOrchestra-ai/NEW-REPO/branches/dev/protection ...
+gh api -X PUT repos/SMOrchestra-ai/NEW-REPO/branches/main/protection \
+  -f required_pull_request_reviews[required_approving_review_count]=1 \
+  -f enforce_admins=true
+gh api -X PUT repos/SMOrchestra-ai/NEW-REPO/branches/dev/protection \
+  -f required_pull_request_reviews[required_approving_review_count]=1
 
 # 8. Set repo metadata
-gh repo edit SMOrchestra-ai/NEW-REPO --description "..." --add-topic ...
+gh repo edit SMOrchestra-ai/NEW-REPO --description "Description here" \
+  --add-topic topic1 --add-topic topic2
+
+# 9. Install git commit hook
+cp ~/smorch-brain/hooks/commit-msg .git/hooks/commit-msg
+chmod +x .git/hooks/commit-msg
+
+# 10. Add .gitignore
+cat > .gitignore << 'GITIGNORE'
+node_modules/
+.env
+.env.local
+.DS_Store
+dist/
+build/
+*.log
+GITIGNORE
+```
+
+### CLAUDE.md Template for New Projects
+When creating the first CLAUDE.md for a project, include:
+```markdown
+# [Project Name]
+
+[One paragraph: what this project does, who it serves, what tech it uses.]
+
+## Tech Stack
+- Frontend: [framework]
+- Backend: [framework]
+- Database: [Supabase/etc]
+- Hosting: [Contabo/Vercel/etc]
+
+## Build & Test Commands
+- Dev: `npm run dev`
+- Build: `npm run build`
+- Test: `npm test`
+- Lint: `npm run lint`
+
+## Required Skills
+When working on this project, use these skills from the smorch-brain registry:
+- [category]/[skill-name]
+- [category]/[skill-name]
+
+## SOPs
+Follow these operating procedures in every session:
+@SOPs/SOP-QA-Protocol.md
+@SOPs/SOP-Pre-Upload-Scoring.md
+@SOPs/SOP-Github-Standards.md
+@SOPs/SOP-Team-Distribution.md
 ```

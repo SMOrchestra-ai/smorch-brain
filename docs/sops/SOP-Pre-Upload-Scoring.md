@@ -142,6 +142,30 @@ MAMOUN reviewed: Yes/No
 | Release PR | Full 5-hat composite + release gate |
 | Score below 80 | STOP and ask Mamoun |
 
+---
+
+## First Commit / No Baseline
+
+On the very first commit of a new project (before any code exists to score):
+1. Skip scoring — there's nothing to score yet
+2. After the first feature is complete, run the first baseline score
+3. Save as `docs/qa-scores/baseline-[date].md`
+4. All future scores are measured against this baseline
+
+---
+
+## Score History & Trend Tracking
+
+After every scoring run, append to `docs/qa-scores/score-history.csv`:
+```csv
+date,version,product,architecture,engineering,qa,ux,composite,gap_bridge,notes
+2026-03-24,v1.0.0,88,92,85,90,87,88.4,yes,pre-release QA
+```
+
+This enables trend analysis: are scores improving, stable, or declining?
+
+---
+
 ## MAMOUN-REQUIRED Actions
 - Releasing with composite below 90
 - Skipping scoring on any PR

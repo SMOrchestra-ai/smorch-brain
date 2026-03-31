@@ -221,6 +221,25 @@ Description:
 
 ---
 
+## SLA / Turnaround Expectations
+
+| Task Type | Expected Turnaround | Escalation If Missed |
+|-----------|-------------------|---------------------|
+| Code review (MEDIUM risk) | 4 hours | Mamoun reviews instead |
+| Code review (HIGH risk) | 2 hours | Mamoun reviews regardless |
+| QA testing | 8 hours (same business day) | Claude Code runs automated QA as fallback |
+| Debugging | 24 hours | Mamoun + Claude Code pair-debug |
+| User testing | 48 hours | Defer to next sprint |
+
+### If Lana Is Unavailable
+1. Claude Code asks Mamoun: "Lana is not responding to TASK-XXX (assigned [X] hours ago). Options: (A) I run automated QA/review, (B) You review, (C) Extend deadline."
+2. Mamoun decides.
+3. For code review: Claude Code's `code-reviewer` agent can provide first-pass review as stopgap.
+4. For QA: Claude Code runs `/webapp-testing` + `/score-project` as automated substitute.
+5. For user testing: This cannot be substituted. Defer or Mamoun tests.
+
+---
+
 ## Escalation
 
 If Lana finds a CRITICAL issue:
