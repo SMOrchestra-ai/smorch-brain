@@ -8,15 +8,15 @@
 ## The Short Answer
 
 ```
-Mamoun writes BRD → Sends to @SMOQueueBot (Telegram, CEO inbox)
+Mamoun writes BRD → Sends to @SMO-AI-CEO (Telegram, CEO inbox)
 → Paperclip (Company OS) analyzes BRD, decomposes into tasks, assigns to agents
 → al-Jazari (VP Eng, OpenClaw :18790) receives CODE tasks
 → al-Jazari executes via Claude Code on smo-dev
-→ If al-Jazari needs approval → sends back to @SMOQueueBot (CEO)
+→ If al-Jazari needs approval → sends back to @SMO-AI-CEO (CEO)
 → QA Lead scores → PR merged to dev branch
 ```
 
-**Key distinction:** @SMOQueueBot is the CEO inbox — that's where BRDs enter. Paperclip (Layer 1) owns decomposition and assignment. al-Jazari (Layer 2) is VP Engineering — it receives and executes code tasks, it does NOT receive BRDs directly.
+**Key distinction:** @SMO-AI-CEO is the CEO inbox — that's where BRDs enter. Paperclip (Layer 1) owns decomposition and assignment. al-Jazari (Layer 2) is VP Engineering — it receives and executes code tasks, it does NOT receive BRDs directly.
 
 ---
 
@@ -37,13 +37,13 @@ Mamoun writes BRD → Sends to @SMOQueueBot (Telegram, CEO inbox)
 - Template: See `EmailVerification/BRD-email-verification-l1-l2.md` for example
 - Must include: business problem, technical scope, success criteria, target branch
 
-### Step 2: Send BRD to @SMOQueueBot via Telegram
-- Bot: `@SMOQueueBot` (CEO inbox — decisions, BRD intake)
+### Step 2: Send BRD to @SMO-AI-CEO via Telegram
+- Bot: `@SMO-AI-CEO` (CEO inbox — decisions, BRD intake)
 - Send the BRD as a message or file
 - This is the ONLY entry point for BRDs. Never send BRDs directly to al-Jazari.
 
 ### Step 3: Paperclip (CEO Layer) Analyzes & Decomposes
-- Paperclip receives BRD through @SMOQueueBot
+- Paperclip receives BRD through @SMO-AI-CEO
 - Analyzes scope, identifies tasks, sets dependencies
 - Creates work items in Paperclip's issue tracker
 - Assigns each task to the correct agent role
@@ -100,9 +100,9 @@ For the soak test period or when agent pipeline isn't fully operational:
 The SSE V3 project is the **soak test** for this infrastructure. The flow should be:
 
 1. SSE V3 BRD written from requirements at `smorch-context/SalesMfastGTM/Project6-SSEngineTech/`
-2. BRD sent to **@SMOQueueBot** via Telegram (CEO inbox, NOT al-Jazari)
+2. BRD sent to **@SMO-AI-CEO** via Telegram (CEO inbox, NOT al-Jazari)
 3. Paperclip decomposes → al-Jazari (VP Eng) gets code tasks
-4. If al-Jazari needs approval → routes back to @SMOQueueBot
+4. If al-Jazari needs approval → routes back to @SMO-AI-CEO
 5. If agent execution fails → diagnose and fix the pipeline (NOT bypass into manual coding)
 6. If agent execution succeeds → validate output, score, merge
 

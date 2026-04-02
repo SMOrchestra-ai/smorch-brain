@@ -4,7 +4,7 @@
 |-----|-------|--------|------|----------|
 | [ADR-001](ADR-001-sqlite-vs-postgresql.md) | SQLite over PostgreSQL for Queue Engine | ACCEPTED | 2026-03-30 | Use SQLite (WAL mode) now. Migrate to PostgreSQL at >500 tasks or multi-dispatcher. |
 | ADR-002 | Parameterized SQL Wrapper (db.sh) | ACCEPTED | 2026-03-30 | All scripts source db.sh. No raw sqlite3 with user input. Positional :1,:2,:3 placeholders. |
-| ADR-003 | CEO/COO Bot Separation | ACCEPTED | 2026-03-30 | @SMOQueueBot = CEO inbox (decisions). @SulaimanMoltbot = COO voice (strategy). Queue Engine = COO brain. |
+| ADR-003 | CEO/COO Bot Separation | ACCEPTED | 2026-03-30 | @SMO-AI-CEO = CEO inbox (decisions). @SulaimanMoltbot = COO voice (strategy). Queue Engine = COO brain. |
 | ADR-004 | OAuth Account-Based Cost Control | ACCEPTED | 2026-03-30 | Each OAuth account = $200 hard cap. Scale by adding accounts + nodes. No API keys. |
 | ADR-005 | Paperclip as Core Visual Command Center | ACCEPTED | 2026-03-30 | Paperclip is NOT optional. Dual BRD entry (Telegram + Paperclip). Real-time agent status. Productization enabler. |
 

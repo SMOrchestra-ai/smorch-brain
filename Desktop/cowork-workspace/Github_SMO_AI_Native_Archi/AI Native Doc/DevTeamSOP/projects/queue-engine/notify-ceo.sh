@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# notify-ceo.sh — Proactive CEO notifications via @SMOQueueBot
+# notify-ceo.sh — Proactive CEO notifications via @SMO-AI-CEO
 # Deploy to: smo-brain at /root/.smo/queue/notify-ceo.sh
 # Usage: ./notify-ceo.sh EVENT [TASK_ID] [DETAILS]
 #
@@ -19,7 +19,7 @@ set -euo pipefail
 QUEUE_DB="/root/.smo/queue/queue.db"
 source "$(dirname "$0")/db.sh"
 
-# Telegram Bot Token and Chat ID for @SMOQueueBot
+# Telegram Bot Token and Chat ID for @SMO-AI-CEO
 # These should be set as environment variables on smo-brain
 BOT_TOKEN="${SMO_QUEUE_BOT_TOKEN:-}"
 CHAT_ID="${SMO_QUEUE_CHAT_ID:-}"

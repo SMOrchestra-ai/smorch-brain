@@ -28,7 +28,7 @@ All SOPs are in `AI Native Doc/DevTeamSOP/sops/`:
 - **PRs to `dev`** for Signal-Sales-Engine and EO repos. Never to `main`.
 - **Agent compute uses ALL nodes** — smo-brain, smo-dev, desktop. Never consolidate.
 - **No API keys — except Google.** OAuth/subscription auth only. Google API keys are allowed.
-- **BRD flow:** BRD → @SMOQueueBot (CEO inbox) → Paperclip decomposes → al-Jazari (VP Eng) executes → PR. Never bypass for production work.
+- **BRD flow:** BRD → @SMO-AI-CEO (CEO inbox) → Paperclip decomposes → al-Jazari (VP Eng) executes → PR. Never bypass for production work.
 
 ## Directory Layout
 

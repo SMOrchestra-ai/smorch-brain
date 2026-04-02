@@ -374,7 +374,7 @@ gh api /orgs/SMOrchestra-ai/hooks \
 
 ## Telegram Bot Setup
 
-1. Create bot via @BotFather: `SMOQueueBot`
+1. Create bot via @BotFather: `SMO-AI-CEO` (handle: @SMOQueueBot)
 2. Get bot token
 3. Store in n8n credentials (Telegram API)
 4. Use Telegram Trigger node in polling mode (no public endpoint needed)

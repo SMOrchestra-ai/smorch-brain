@@ -8,7 +8,7 @@
 ```mermaid
 flowchart TD
     subgraph CEO["CEO Layer (Mamoun)"]
-        TG["@SMOQueueBot<br/>Telegram"]
+        TG["@SMO-AI-CEO<br/>Telegram"]
         PP["Paperclip<br/>localhost:3100"]
     end
 
@@ -110,7 +110,7 @@ flowchart TD
 ```mermaid
 sequenceDiagram
     actor CEO as Mamoun (CEO)
-    participant TG as @SMOQueueBot
+    participant TG as @SMO-AI-CEO
     participant N8N as n8n
     participant DEC as decompose-brd.sh
     participant DB as queue.db
@@ -223,7 +223,7 @@ graph LR
     D <-->|Tailscale| K
 
     GH["GitHub<br/>SMOrchestra-ai/*"]
-    TG["Telegram API<br/>@SMOQueueBot"]
+    TG["Telegram API<br/>@SMO-AI-CEO"]
 
     B -->|webhooks| GH
     B -->|bot API| TG

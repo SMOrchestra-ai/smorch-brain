@@ -196,7 +196,7 @@ Primary server for code execution AND application deployment. All `supabase func
 ### Desktop (100.100.239.103) — YOUR WINDOW + OVERFLOW COMPUTE
 - Browser access to Paperclip UI: `http://100.89.148.62:3100`
 - Browser access to OpenClaw Control UI: `http://100.89.148.62:18789`
-- Telegram on phone for @SMOQueueBot and @SulaimanMoltbot
+- Telegram on phone for @SMO-AI-CEO and @SulaimanMoltbot
 - Claude Code CLI (Account A shared with smo-brain) — overflow execution
 - Codex CLI available for fast-track tasks
 
@@ -335,7 +335,7 @@ Every component can fail. Here's what happens and how the system recovers.
 | Queue DB | `sqlite3 /root/.smo/queue/queue.db "SELECT 1"` | Returns `1` | Every 5min (n8n cron) |
 | smo-dev | `ssh smo-dev 'echo ok'` via Tailscale | Returns `ok` | Every 5min (n8n cron) |
 
-### Alerting Rules (all via Telegram to @SMOQueueBot)
+### Alerting Rules (all via Telegram to @SMO-AI-CEO)
 
 | Alert | Condition | Severity | Action |
 |-------|-----------|----------|--------|
@@ -491,7 +491,7 @@ config:
 ### Flow 1: BRD via Telegram (detailed)
 
 ```
-1. Mamoun sends /brd "Build health check page" to @SMOQueueBot
+1. Mamoun sends /brd "Build health check page" to @SMO-AI-CEO
 2. n8n Telegram Handler (workflow kMx8VkZHvFptWq3f) receives
 3. n8n calls decompose-brd.sh with BRD text
 4. decompose-brd.sh → Claude Code (one-shot) decomposes into tasks

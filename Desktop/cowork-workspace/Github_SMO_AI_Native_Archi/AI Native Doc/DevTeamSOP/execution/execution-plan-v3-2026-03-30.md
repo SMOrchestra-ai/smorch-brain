@@ -14,7 +14,7 @@
 - [x] Claude Code on smo-dev (v2.1.85+, Account B OAuth)
 - [x] Tailscale mesh: smo-brain ↔ smo-dev ↔ desktop
 - [x] Queue DB (SQLite) at `/root/.smo/queue/queue.db`
-- [x] Telegram bots: @SMOQueueBot + @SulaimanMoltbot
+- [x] Telegram bots: @SMO-AI-CEO + @SulaimanMoltbot
 - [x] Architecture document locked and scored 100/100
 - [x] ADRs 012-015 written and indexed
 
