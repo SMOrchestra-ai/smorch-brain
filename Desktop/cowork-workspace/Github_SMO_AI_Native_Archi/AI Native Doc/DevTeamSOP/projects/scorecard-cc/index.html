@@ -1,0 +1,1890 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LAB Experience | CC Intelligence Practice</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+
+:root {
+  --bg: #0D0D0D;
+  --bg-deep: #080808;
+  --bg-card: #1A1A1A;
+  --bg-card-hover: #222222;
+  --border: #2A2A2A;
+  --gold: #C8A24E;
+  --gold-dim: #8B7234;
+  --gold-glow: rgba(200,162,78,0.12);
+  --gold-glow-strong: rgba(200,162,78,0.25);
+  --white: #FFFFFF;
+  --light: #E0E0E0;
+  --muted: #C8C8C8;
+  --dim: #919191;
+  --font-display: 'Outfit', sans-serif;
+  --font-body: 'DM Sans', sans-serif;
+  --green: #10B981;
+  --blue: #3B82F6;
+  --red: #EF4444;
+  --teal: #14B8A6;
+  --purple: #8B5CF6;
+  --amber: #F59E0B;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--light);
+  font-family: var(--font-body);
+  font-size: 17px;
+  line-height: 1.7;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* === UTILITY === */
+.container { max-width: 1140px; margin: 0 auto; padding: 0 24px; }
+.gold { color: var(--gold); }
+.reveal { opacity: 0; transform: translateY(40px); transition: opacity 0.8s ease, transform 0.8s ease; }
+.reveal.visible { opacity: 1; transform: translateY(0); }
+.reveal-delay-1 { transition-delay: 0.1s; }
+.reveal-delay-2 { transition-delay: 0.2s; }
+.reveal-delay-3 { transition-delay: 0.3s; }
+.reveal-delay-4 { transition-delay: 0.4s; }
+
+/* === NAV === */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: rgba(13,13,13,0.92);
+  backdrop-filter: blur(24px);
+  border-bottom: 1px solid var(--border);
+  padding: 16px 0;
+  transition: all 0.3s ease;
+}
+nav .container { display: flex; justify-content: space-between; align-items: center; }
+.nav-logo {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 20px;
+  color: var(--white);
+  letter-spacing: -0.5px;
+  text-decoration: none;
+}
+.nav-logo span { color: var(--gold); }
+.nav-cta {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--gold);
+  color: var(--bg);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 14px;
+  padding: 10px 24px;
+  border-radius: 6px;
+  text-decoration: none;
+  letter-spacing: 0.3px;
+  transition: all 0.3s ease;
+}
+.nav-cta:hover { background: #D4AF5A; transform: translateY(-1px); box-shadow: 0 8px 24px rgba(200,162,78,0.25); }
+
+/* === HERO === */
+.hero {
+  min-height: 100vh;
+  display: flex; align-items: center;
+  padding: 120px 0 80px;
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  top: -200px; right: -200px;
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, var(--gold-glow) 0%, transparent 70%);
+  pointer-events: none;
+}
+.hero::after {
+  content: '';
+  position: absolute;
+  bottom: -100px; left: -100px;
+  width: 400px; height: 400px;
+  background: radial-gradient(circle, rgba(59,130,246,0.06) 0%, transparent 70%);
+  pointer-events: none;
+}
+.hero-content { position: relative; z-index: 2; max-width: 780px; }
+.hero-pill {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--gold-glow);
+  border: 1px solid var(--gold-dim);
+  border-radius: 50px;
+  padding: 8px 20px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--gold);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin-bottom: 32px;
+  font-family: var(--font-display);
+}
+.hero-pill::before {
+  content: '';
+  width: 8px; height: 8px;
+  background: var(--gold);
+  border-radius: 50%;
+  animation: pulse-dot 2s infinite;
+}
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(1.4); }
+}
+.hero h1 {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: clamp(40px, 5.5vw, 64px);
+  line-height: 1.08;
+  color: var(--white);
+  letter-spacing: -2px;
+  margin-bottom: 28px;
+}
+.hero h1 em {
+  font-style: normal;
+  background: linear-gradient(135deg, var(--gold) 0%, #E8C96A 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.hero p {
+  font-size: 19px;
+  color: var(--muted);
+  max-width: 600px;
+  margin-bottom: 44px;
+  line-height: 1.7;
+}
+.hero-cta {
+  display: inline-flex; align-items: center; gap: 12px;
+  background: var(--gold);
+  color: var(--bg);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 17px;
+  padding: 18px 40px;
+  border-radius: 8px;
+  text-decoration: none;
+  letter-spacing: 0.3px;
+  transition: all 0.35s ease;
+  position: relative;
+  overflow: hidden;
+}
+.hero-cta::after {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%;
+  width: 100%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+  transition: left 0.6s ease;
+}
+.hero-cta:hover::after { left: 100%; }
+.hero-cta:hover { background: #D4AF5A; transform: translateY(-2px); box-shadow: 0 12px 40px rgba(200,162,78,0.3); }
+.hero-cta svg { width: 20px; height: 20px; }
+
+.hero-stats {
+  display: flex; gap: 48px;
+  margin-top: 64px;
+  padding-top: 40px;
+  border-top: 1px solid var(--border);
+}
+.hero-stat h3 {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 36px;
+  color: var(--gold);
+  letter-spacing: -1px;
+}
+.hero-stat p {
+  font-size: 14px;
+  color: var(--dim);
+  margin-bottom: 0;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 500;
+}
+
+/* === PRESSURE === */
+.pressure {
+  padding: 100px 0;
+  background: var(--bg-deep);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+.section-label {
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  color: var(--gold);
+  margin-bottom: 16px;
+}
+.section-title {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(28px, 3.5vw, 42px);
+  color: var(--white);
+  letter-spacing: -1.5px;
+  line-height: 1.15;
+  margin-bottom: 20px;
+}
+.section-subtitle {
+  font-size: 18px;
+  color: var(--muted);
+  max-width: 640px;
+  margin-bottom: 56px;
+  line-height: 1.7;
+}
+.pressure-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+}
+.pressure-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 32px;
+  position: relative;
+  transition: all 0.35s ease;
+  overflow: hidden;
+}
+.pressure-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--red);
+  opacity: 0.8;
+}
+.pressure-card:nth-child(1)::before { background: var(--red); }
+.pressure-card:nth-child(2)::before { background: var(--amber); }
+.pressure-card:nth-child(3)::before { background: var(--teal); }
+.pressure-card:nth-child(4)::before { background: var(--red); }
+.pressure-card:nth-child(5)::before { background: var(--blue); }
+.pressure-card:nth-child(6)::before { background: var(--green); }
+.pressure-card:nth-child(7)::before { background: var(--purple); }
+.pressure-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 48px rgba(0,0,0,0.4);
+}
+.pressure-card:nth-child(1):hover { border-color: rgba(239,68,68,0.3); }
+.pressure-card:nth-child(2):hover { border-color: rgba(245,158,11,0.3); }
+.pressure-card:nth-child(3):hover { border-color: rgba(20,184,166,0.3); }
+.pressure-card:nth-child(4):hover { border-color: rgba(239,68,68,0.3); }
+.pressure-card:nth-child(5):hover { border-color: rgba(59,130,246,0.3); }
+.pressure-card:nth-child(6):hover { border-color: rgba(16,185,129,0.3); }
+.pressure-card:nth-child(7):hover { border-color: rgba(139,92,246,0.3); }
+.pressure-icon {
+  width: 44px; height: 44px;
+  background: rgba(239,68,68,0.1);
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 20px;
+  font-size: 20px;
+}
+.pressure-card h3 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 18px;
+  color: var(--white);
+  margin-bottom: 10px;
+}
+.pressure-card p {
+  font-size: 15px;
+  color: var(--muted);
+  line-height: 1.65;
+}
+
+/* === WHAT WE DO === */
+.what-we-do { padding: 100px 0; }
+.approach-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  margin-bottom: 24px;
+}
+.approach-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 40px 32px;
+  text-align: center;
+  position: relative;
+  transition: all 0.35s ease;
+  overflow: hidden;
+}
+.approach-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 4px;
+  border-radius: 12px 12px 0 0;
+}
+.approach-card:nth-child(1) { background: linear-gradient(180deg, rgba(200,162,78,0.08) 0%, var(--bg-card) 40%); }
+.approach-card:nth-child(1)::before { background: linear-gradient(90deg, var(--gold), var(--gold-dim)); }
+.approach-card:nth-child(2) { background: linear-gradient(180deg, rgba(59,130,246,0.08) 0%, var(--bg-card) 40%); }
+.approach-card:nth-child(2)::before { background: linear-gradient(90deg, #3B82F6, #2563EB); }
+.approach-card:nth-child(3) { background: linear-gradient(180deg, rgba(16,185,129,0.08) 0%, var(--bg-card) 40%); }
+.approach-card:nth-child(3)::before { background: linear-gradient(90deg, #10B981, #059669); }
+.approach-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 24px 64px rgba(0,0,0,0.5);
+}
+.approach-card:nth-child(1):hover { border-color: var(--gold); box-shadow: 0 24px 64px rgba(200,162,78,0.15); }
+.approach-card:nth-child(2):hover { border-color: var(--blue); box-shadow: 0 24px 64px rgba(59,130,246,0.15); }
+.approach-card:nth-child(3):hover { border-color: var(--green); box-shadow: 0 24px 64px rgba(16,185,129,0.15); }
+.approach-step {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 52px;
+  line-height: 1;
+  margin-bottom: 16px;
+}
+.approach-card:nth-child(1) .approach-step { color: var(--gold); }
+.approach-card:nth-child(2) .approach-step { color: var(--blue); }
+.approach-card:nth-child(3) .approach-step { color: var(--green); }
+.approach-card h3 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 22px;
+  color: var(--white);
+  margin-bottom: 12px;
+}
+.approach-card p {
+  font-size: 15px;
+  color: var(--muted);
+  line-height: 1.65;
+}
+
+/* === OFFER === */
+.offer {
+  padding: 100px 0;
+  background: var(--bg-deep);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+.offer-tiers {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.tier-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-left: 4px solid transparent;
+  border-radius: 14px;
+  padding: 36px 40px;
+  display: grid;
+  grid-template-columns: 120px 1fr auto;
+  align-items: start;
+  gap: 32px;
+  transition: all 0.35s ease;
+  position: relative;
+}
+.tier-card:nth-child(1) { border-left-color: var(--gold); }
+.tier-card:nth-child(2) { border-left-color: var(--gold-dim); }
+.tier-card:nth-child(3) { border-left-color: var(--blue); }
+.tier-card:nth-child(4) { border-left-color: var(--purple); }
+.tier-card:nth-child(5) { border-left-color: var(--green); }
+.tier-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 16px 48px rgba(0,0,0,0.4);
+}
+.tier-card:nth-child(1):hover { border-color: var(--gold); border-left-color: var(--gold); }
+.tier-card:nth-child(2):hover { border-color: var(--gold-dim); border-left-color: var(--gold-dim); }
+.tier-card:nth-child(3):hover { border-color: var(--blue); border-left-color: var(--blue); }
+.tier-card:nth-child(4):hover { border-color: var(--purple); border-left-color: var(--purple); }
+.tier-card:nth-child(5):hover { border-color: var(--green); border-left-color: var(--green); }
+.tier-card.featured {
+  border-color: var(--gold-dim);
+  border-left-color: var(--gold);
+  background: linear-gradient(135deg, var(--bg-card) 0%, rgba(200,162,78,0.06) 100%);
+}
+.tier-card.featured::before {
+  content: 'START HERE';
+  position: absolute;
+  top: -1px; right: 32px;
+  background: var(--gold);
+  color: var(--bg);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  padding: 6px 16px;
+  border-radius: 0 0 8px 8px;
+}
+.tier-badge {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 28px;
+  color: var(--gold);
+  padding-top: 4px;
+}
+.tier-badge span {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--dim);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin-top: 4px;
+}
+.tier-content h3 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 20px;
+  color: var(--white);
+  margin-bottom: 8px;
+}
+.tier-content p {
+  font-size: 15px;
+  color: var(--muted);
+  line-height: 1.65;
+  margin-bottom: 16px;
+}
+.tier-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+.tier-tag {
+  background: rgba(200,162,78,0.08);
+  border: 1px solid rgba(200,162,78,0.2);
+  color: var(--gold);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 5px 14px;
+  border-radius: 50px;
+  font-family: var(--font-display);
+}
+.tier-arrow {
+  display: flex; align-items: center; justify-content: center;
+  width: 44px; height: 44px;
+  background: rgba(200,162,78,0.08);
+  border: 1px solid rgba(200,162,78,0.2);
+  border-radius: 50%;
+  color: var(--gold);
+  font-size: 20px;
+  margin-top: 4px;
+  flex-shrink: 0;
+  transition: all 0.3s ease;
+}
+.tier-card:hover .tier-arrow {
+  background: var(--gold);
+  color: var(--bg);
+  transform: translateX(4px);
+}
+
+.offer-cta-wrap {
+  text-align: center;
+  margin-top: 56px;
+}
+.offer-cta-wrap .hero-cta {
+  font-size: 18px;
+  padding: 20px 48px;
+}
+.offer-cta-subtext {
+  font-size: 14px;
+  color: var(--dim);
+  margin-top: 16px;
+}
+
+/* === DIMENSIONS === */
+.dimensions { padding: 100px 0; }
+.dim-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+.dim-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 28px 24px;
+  text-align: center;
+  transition: all 0.35s ease;
+  position: relative;
+  overflow: hidden;
+  border-top: 3px solid transparent;
+}
+.dim-card:nth-child(1) { border-top-color: var(--gold); }
+.dim-card:nth-child(2) { border-top-color: var(--blue); }
+.dim-card:nth-child(3) { border-top-color: var(--green); }
+.dim-card:nth-child(4) { border-top-color: var(--teal); }
+.dim-card:nth-child(5) { border-top-color: var(--purple); }
+.dim-card:nth-child(6) { border-top-color: var(--amber); }
+.dim-card:nth-child(7) { border-top-color: var(--red); }
+.dim-card:nth-child(8) { border-top-color: var(--blue); }
+.dim-card:hover {
+  transform: translateY(-4px);
+}
+.dim-card:nth-child(1):hover { border-color: var(--gold); box-shadow: 0 12px 36px rgba(200,162,78,0.12); }
+.dim-card:nth-child(2):hover { border-color: var(--blue); box-shadow: 0 12px 36px rgba(59,130,246,0.12); }
+.dim-card:nth-child(3):hover { border-color: var(--green); box-shadow: 0 12px 36px rgba(16,185,129,0.12); }
+.dim-card:nth-child(4):hover { border-color: var(--teal); box-shadow: 0 12px 36px rgba(20,184,166,0.12); }
+.dim-card:nth-child(5):hover { border-color: var(--purple); box-shadow: 0 12px 36px rgba(139,92,246,0.12); }
+.dim-card:nth-child(6):hover { border-color: var(--amber); box-shadow: 0 12px 36px rgba(245,158,11,0.12); }
+.dim-card:nth-child(7):hover { border-color: var(--red); box-shadow: 0 12px 36px rgba(239,68,68,0.12); }
+.dim-card:nth-child(8):hover { border-color: var(--blue); box-shadow: 0 12px 36px rgba(59,130,246,0.12); }
+.dim-card .dim-icon {
+  width: 48px; height: 48px;
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 14px;
+  font-size: 24px;
+}
+.dim-card:nth-child(1) .dim-icon { background: rgba(200,162,78,0.12); }
+.dim-card:nth-child(2) .dim-icon { background: rgba(59,130,246,0.12); }
+.dim-card:nth-child(3) .dim-icon { background: rgba(16,185,129,0.12); }
+.dim-card:nth-child(4) .dim-icon { background: rgba(20,184,166,0.12); }
+.dim-card:nth-child(5) .dim-icon { background: rgba(139,92,246,0.12); }
+.dim-card:nth-child(6) .dim-icon { background: rgba(245,158,11,0.12); }
+.dim-card:nth-child(7) .dim-icon { background: rgba(239,68,68,0.12); }
+.dim-card:nth-child(8) .dim-icon { background: rgba(59,130,246,0.12); }
+.dim-card h4 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--white);
+  margin-bottom: 6px;
+}
+.dim-card p {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+/* === HOW IT WORKS (30-30-60) === */
+.how-it-works { padding: 100px 0; background: var(--bg-deep); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+.hiw-price-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(200,162,78,0.08);
+  border: 1px solid rgba(200,162,78,0.25);
+  border-radius: 50px;
+  padding: 10px 28px;
+  margin-bottom: 20px;
+}
+.hiw-price-badge .price {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 28px;
+  color: var(--gold);
+}
+.hiw-price-badge .divider {
+  width: 1px;
+  height: 24px;
+  background: rgba(200,162,78,0.3);
+}
+.hiw-price-badge .duration {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--white);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+.hiw-timeline {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 0;
+  margin-top: 20px;
+  position: relative;
+}
+.hiw-timeline::before {
+  content: '';
+  position: absolute;
+  top: 60px;
+  left: 10%;
+  right: 10%;
+  height: 2px;
+  background: linear-gradient(90deg, var(--gold), var(--blue), var(--green));
+  z-index: 1;
+}
+.hiw-step {
+  text-align: center;
+  padding: 0 20px;
+  position: relative;
+  z-index: 2;
+}
+.hiw-step-num {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px;
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 20px;
+  position: relative;
+}
+.hiw-step:nth-child(1) .hiw-step-num { background: rgba(200,162,78,0.15); border: 2px solid var(--gold); color: var(--gold); }
+.hiw-step:nth-child(2) .hiw-step-num { background: rgba(59,130,246,0.15); border: 2px solid var(--blue); color: var(--blue); }
+.hiw-step:nth-child(3) .hiw-step-num { background: rgba(16,185,129,0.15); border: 2px solid var(--green); color: var(--green); }
+.hiw-step-time {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 13px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.hiw-step:nth-child(1) .hiw-step-time { color: var(--gold); }
+.hiw-step:nth-child(2) .hiw-step-time { color: var(--blue); }
+.hiw-step:nth-child(3) .hiw-step-time { color: var(--green); }
+.hiw-step h4 {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 18px;
+  color: var(--white);
+  margin-bottom: 10px;
+}
+.hiw-step p {
+  font-size: 14px;
+  color: var(--muted);
+  line-height: 1.65;
+  max-width: 300px;
+  margin: 0 auto;
+}
+.hiw-step .hiw-lead {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-top: 12px;
+  padding: 4px 12px;
+  border-radius: 20px;
+  display: inline-block;
+}
+.hiw-step:nth-child(1) .hiw-lead { background: rgba(200,162,78,0.1); color: var(--gold); }
+.hiw-step:nth-child(2) .hiw-lead { background: rgba(59,130,246,0.1); color: var(--blue); }
+.hiw-step:nth-child(3) .hiw-lead { background: rgba(16,185,129,0.1); color: var(--green); }
+.hiw-deliverables {
+  margin-top: 40px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.hiw-deliverable {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 20px 24px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+.hiw-deliverable .hiw-d-icon {
+  font-size: 20px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.hiw-deliverable h5 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--white);
+  margin-bottom: 4px;
+}
+.hiw-deliverable p {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+@media (max-width: 768px) {
+  .hiw-timeline { grid-template-columns: 1fr; gap: 32px; }
+  .hiw-timeline::before { display: none; }
+  .hiw-deliverables { grid-template-columns: 1fr; }
+}
+
+/* === AI INTELLIGENCE LAYER === */
+.ai-layer { padding: 100px 0; background: var(--bg-deep); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+.ai-layer-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  margin-top: 20px;
+}
+.ai-layer-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 32px 24px;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.35s ease;
+}
+.ai-layer-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+}
+.ai-layer-card:nth-child(1)::before { background: var(--gold); }
+.ai-layer-card:nth-child(2)::before { background: var(--blue); }
+.ai-layer-card:nth-child(3)::before { background: var(--teal); }
+.ai-layer-card:nth-child(4)::before { background: var(--purple); }
+.ai-layer-card:hover { transform: translateY(-4px); }
+.ai-layer-card:nth-child(1):hover { border-color: var(--gold); box-shadow: 0 16px 48px rgba(200,162,78,0.12); }
+.ai-layer-card:nth-child(2):hover { border-color: var(--blue); box-shadow: 0 16px 48px rgba(59,130,246,0.12); }
+.ai-layer-card:nth-child(3):hover { border-color: var(--teal); box-shadow: 0 16px 48px rgba(20,184,166,0.12); }
+.ai-layer-card:nth-child(4):hover { border-color: var(--purple); box-shadow: 0 16px 48px rgba(139,92,246,0.12); }
+.ai-layer-tier {
+  display: inline-block;
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 20px;
+  margin-bottom: 16px;
+  font-family: var(--font-display);
+}
+.ai-layer-card:nth-child(1) .ai-layer-tier { background: rgba(200,162,78,0.12); color: var(--gold); }
+.ai-layer-card:nth-child(2) .ai-layer-tier { background: rgba(59,130,246,0.12); color: var(--blue); }
+.ai-layer-card:nth-child(3) .ai-layer-tier { background: rgba(20,184,166,0.12); color: var(--teal); }
+.ai-layer-card:nth-child(4) .ai-layer-tier { background: rgba(139,92,246,0.12); color: var(--purple); }
+.ai-layer-card h4 {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 17px;
+  color: var(--white);
+  margin-bottom: 8px;
+}
+.ai-layer-card .ai-tech {
+  font-size: 11px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  font-weight: 600;
+  margin-bottom: 12px;
+  font-family: var(--font-display);
+}
+.ai-layer-card:nth-child(1) .ai-tech { color: var(--gold); }
+.ai-layer-card:nth-child(2) .ai-tech { color: var(--blue); }
+.ai-layer-card:nth-child(3) .ai-tech { color: var(--teal); }
+.ai-layer-card:nth-child(4) .ai-tech { color: var(--purple); }
+.ai-layer-card p {
+  font-size: 14px;
+  color: var(--muted);
+  line-height: 1.65;
+}
+.ai-compound-note {
+  text-align: center;
+  margin-top: 32px;
+  padding: 20px;
+  border: 1px dashed rgba(200,162,78,0.25);
+  border-radius: 12px;
+  background: rgba(200,162,78,0.03);
+}
+.ai-compound-note p {
+  font-size: 15px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+.ai-compound-note strong { color: var(--gold); }
+@media (max-width: 768px) {
+  .ai-layer-grid { grid-template-columns: 1fr; }
+}
+
+/* === EXPECTED OUTCOMES === */
+.outcomes { padding: 100px 0; }
+.outcomes-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+.outcome-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 36px 28px;
+  text-align: center;
+  transition: all 0.35s ease;
+  position: relative;
+  overflow: hidden;
+}
+.outcome-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(200,162,78,0.3);
+  box-shadow: 0 16px 48px rgba(200,162,78,0.08);
+}
+.outcome-number {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: clamp(36px, 4vw, 52px);
+  line-height: 1;
+  margin-bottom: 4px;
+  background: linear-gradient(135deg, var(--gold), #e8c86a);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.outcome-label {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--white);
+  margin-bottom: 8px;
+}
+.outcome-detail {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+@media (max-width: 768px) {
+  .outcomes-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* === SCORECARD PREVIEW CTA === */
+.scorecard-preview-cta {
+  text-align: center;
+  margin-top: 48px;
+  padding: 40px 32px;
+  background: linear-gradient(135deg, rgba(200,162,78,0.06) 0%, rgba(200,162,78,0.02) 100%);
+  border: 1px solid rgba(200,162,78,0.18);
+  border-radius: 16px;
+  position: relative;
+  overflow: hidden;
+}
+.scorecard-preview-cta::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+}
+.scorecard-preview-cta .preview-label {
+  font-size: 11px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 12px;
+  font-weight: 600;
+}
+.scorecard-preview-cta h3 {
+  font-family: var(--font-display);
+  font-size: clamp(20px, 2.5vw, 28px);
+  font-weight: 800;
+  color: var(--white);
+  margin-bottom: 8px;
+}
+.scorecard-preview-cta .preview-desc {
+  font-size: 15px;
+  color: var(--muted);
+  max-width: 600px;
+  margin: 0 auto 24px;
+  line-height: 1.6;
+}
+.scorecard-preview-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 36px;
+  background: transparent;
+  border: 2px solid var(--gold);
+  color: var(--gold);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 15px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+}
+.scorecard-preview-btn:hover {
+  background: var(--gold);
+  color: #0D0D0D;
+  box-shadow: 0 8px 32px rgba(200,162,78,0.3);
+  transform: translateY(-2px);
+}
+.scorecard-preview-btn .btn-icon {
+  font-size: 20px;
+  transition: transform 0.3s ease;
+}
+.scorecard-preview-btn:hover .btn-icon {
+  transform: scale(1.15);
+}
+
+/* === SCORECARD MODAL === */
+.scorecard-modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.85);
+  backdrop-filter: blur(8px);
+  z-index: 10000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.scorecard-modal-overlay.active {
+  display: flex;
+  opacity: 1;
+}
+.scorecard-modal {
+  width: 100%;
+  max-width: 1200px;
+  height: 85vh;
+  background: #0a0a0b;
+  border: 1px solid rgba(200,162,78,0.25);
+  border-radius: 16px;
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 32px 64px rgba(0,0,0,0.6), 0 0 80px rgba(200,162,78,0.08);
+  transform: scale(0.95);
+  transition: transform 0.3s ease;
+}
+.scorecard-modal-overlay.active .scorecard-modal {
+  transform: scale(1);
+}
+.scorecard-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 24px;
+  border-bottom: 1px solid rgba(200,162,78,0.15);
+  background: rgba(200,162,78,0.04);
+}
+.scorecard-modal-header h4 {
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--gold);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+.scorecard-modal-header .sample-badge {
+  font-size: 10px;
+  padding: 4px 12px;
+  background: rgba(200,162,78,0.12);
+  border: 1px solid rgba(200,162,78,0.25);
+  border-radius: 20px;
+  color: var(--gold);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+.scorecard-modal-close {
+  width: 36px; height: 36px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.05);
+  color: var(--white);
+  font-size: 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+.scorecard-modal-close:hover {
+  background: rgba(239,68,68,0.15);
+  border-color: rgba(239,68,68,0.3);
+  color: #ef4444;
+}
+.scorecard-modal iframe {
+  width: 100%;
+  height: calc(85vh - 56px);
+  border: none;
+}
+@media (max-width: 768px) {
+  .scorecard-modal { height: 90vh; border-radius: 12px; }
+  .scorecard-modal iframe { height: calc(90vh - 56px); }
+}
+
+/* === TEAM === */
+.team {
+  padding: 100px 0;
+  background: var(--bg-deep);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+.team-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+.team-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 40px 32px;
+  text-align: center;
+  transition: all 0.35s ease;
+  position: relative;
+  overflow: hidden;
+}
+.team-card::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 3px;
+}
+.team-card:nth-child(1) { background: linear-gradient(180deg, rgba(200,162,78,0.06) 0%, var(--bg-card) 30%); }
+.team-card:nth-child(1)::after { background: var(--gold); }
+.team-card:nth-child(2) { background: linear-gradient(180deg, rgba(59,130,246,0.06) 0%, var(--bg-card) 30%); }
+.team-card:nth-child(2)::after { background: var(--blue); }
+.team-card:nth-child(3) { background: linear-gradient(180deg, rgba(20,184,166,0.06) 0%, var(--bg-card) 30%); }
+.team-card:nth-child(3)::after { background: var(--teal); }
+.team-card:hover {
+  transform: translateY(-6px);
+}
+.team-card:nth-child(1):hover { border-color: var(--gold); box-shadow: 0 20px 56px rgba(200,162,78,0.15); }
+.team-card:nth-child(2):hover { border-color: var(--blue); box-shadow: 0 20px 56px rgba(59,130,246,0.15); }
+.team-card:nth-child(3):hover { border-color: var(--teal); box-shadow: 0 20px 56px rgba(20,184,166,0.15); }
+.team-avatar {
+  width: 80px; height: 80px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 20px;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 24px;
+  color: var(--white);
+}
+.team-card:nth-child(1) .team-avatar { background: linear-gradient(135deg, var(--gold), var(--gold-dim)); border: 2px solid var(--gold); }
+.team-card:nth-child(2) .team-avatar { background: linear-gradient(135deg, #3B82F6, #2563EB); border: 2px solid var(--blue); }
+.team-card:nth-child(3) .team-avatar { background: linear-gradient(135deg, #14B8A6, #0d9488); border: 2px solid var(--teal); }
+.team-card h3 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 20px;
+  color: var(--white);
+  margin-bottom: 4px;
+}
+.team-card .team-role {
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 16px;
+  font-family: var(--font-display);
+}
+.team-card:nth-child(1) .team-role { color: var(--gold); }
+.team-card:nth-child(2) .team-role { color: var(--blue); }
+.team-card:nth-child(3) .team-role { color: var(--teal); }
+.team-card p {
+  font-size: 15px;
+  color: var(--muted);
+  line-height: 1.65;
+}
+.team-years {
+  display: inline-flex;
+  border-radius: 50px;
+  padding: 6px 16px;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 13px;
+  margin-top: 20px;
+}
+.team-card:nth-child(1) .team-years { background: rgba(200,162,78,0.15); border: 1px solid var(--gold-dim); color: var(--gold); }
+.team-card:nth-child(2) .team-years { background: rgba(59,130,246,0.15); border: 1px solid rgba(59,130,246,0.4); color: var(--blue); }
+.team-card:nth-child(3) .team-years { background: rgba(20,184,166,0.15); border: 1px solid rgba(20,184,166,0.4); color: var(--teal); }
+
+/* === PROOF === */
+.proof { padding: 100px 0; }
+.proof-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+  align-items: center;
+}
+.proof-text h3 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--gold);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 16px;
+}
+.proof-text h2 {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 32px;
+  color: var(--white);
+  letter-spacing: -1px;
+  line-height: 1.2;
+  margin-bottom: 20px;
+}
+.proof-text p {
+  font-size: 16px;
+  color: var(--muted);
+  line-height: 1.7;
+  margin-bottom: 16px;
+}
+.proof-list { list-style: none; padding: 0; }
+.proof-list li {
+  padding: 10px 0;
+  font-size: 15px;
+  color: var(--light);
+  display: flex; align-items: flex-start; gap: 12px;
+}
+.proof-list li::before {
+  content: '';
+  width: 8px; height: 8px;
+  background: var(--gold);
+  border-radius: 50%;
+  margin-top: 8px;
+  flex-shrink: 0;
+}
+.proof-visual {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 40px;
+}
+.proof-visual .pv-label {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--dim);
+  margin-bottom: 24px;
+  font-family: var(--font-display);
+}
+.pv-bar-group { margin-bottom: 20px; }
+.pv-bar-label {
+  font-size: 14px;
+  color: var(--muted);
+  margin-bottom: 6px;
+  display: flex; justify-content: space-between;
+}
+.pv-bar-label span { color: var(--gold); font-weight: 700; }
+.pv-bar {
+  height: 8px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.pv-bar-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 1.5s ease;
+  width: 0;
+}
+.pv-bar-fill.gold { background: linear-gradient(90deg, var(--gold-dim), var(--gold)); }
+.pv-bar-fill.green { background: linear-gradient(90deg, #0d9668, var(--green)); }
+.pv-bar-fill.blue { background: linear-gradient(90deg, #2563eb, var(--blue)); }
+.pv-bar-fill.teal { background: linear-gradient(90deg, #0d9488, var(--teal)); }
+
+/* === FINAL CTA === */
+.final-cta {
+  padding: 120px 0;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  background: var(--bg-deep);
+  border-top: 1px solid var(--border);
+}
+.final-cta::before {
+  content: '';
+  position: absolute;
+  top: -50%; left: 50%; transform: translateX(-50%);
+  width: 800px; height: 800px;
+  background: radial-gradient(circle, var(--gold-glow) 0%, transparent 60%);
+  pointer-events: none;
+}
+.final-cta .container { position: relative; z-index: 2; }
+.final-cta h2 {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: clamp(32px, 4vw, 48px);
+  color: var(--white);
+  letter-spacing: -1.5px;
+  line-height: 1.15;
+  margin-bottom: 20px;
+}
+.final-cta h2 em {
+  font-style: normal;
+  background: linear-gradient(135deg, var(--gold) 0%, #E8C96A 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.final-cta p {
+  font-size: 18px;
+  color: var(--muted);
+  max-width: 580px;
+  margin: 0 auto 40px;
+  line-height: 1.7;
+}
+.final-cta .hero-cta {
+  font-size: 18px;
+  padding: 20px 48px;
+}
+.final-cta .offer-cta-subtext { margin-top: 16px; }
+
+/* === FOOTER === */
+footer {
+  padding: 40px 0;
+  border-top: 1px solid var(--border);
+  text-align: center;
+}
+footer p {
+  font-size: 14px;
+  color: var(--dim);
+}
+footer a { color: var(--gold); text-decoration: none; }
+
+/* === COST ANCHOR OVERRIDE === */
+.pressure-grid .pressure-card:last-child h3 { color: var(--gold); }
+
+/* === RESPONSIVE === */
+@media (max-width: 900px) {
+  .approach-grid, .team-grid { grid-template-columns: 1fr; }
+  .dim-grid { grid-template-columns: repeat(2, 1fr); }
+  .proof-content { grid-template-columns: 1fr; }
+  .tier-card { grid-template-columns: 80px 1fr; gap: 20px; }
+  .tier-arrow { display: none; }
+  .hero-stats { flex-direction: column; gap: 24px; }
+}
+
+@media (max-width: 600px) {
+  .dim-grid { grid-template-columns: 1fr; }
+  .tier-card { grid-template-columns: 1fr; }
+  .tier-badge { display: flex; align-items: center; gap: 12px; }
+  .tier-badge span { display: inline; margin-top: 0; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="container">
+    <a href="#" class="nav-logo">LAB<span>.</span>Experience</a>
+    <a href="#book" class="nav-cta">$1,000 / 48 Hours to Truth</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-content">
+      <div class="hero-pill reveal">CC Intelligence Practice</div>
+      <h1 class="reveal reveal-delay-1"><em>CC Intelligence:</em> 47 Data Points<br>Your Vendor Will Never Show You.</h1>
+      <p class="reveal reveal-delay-2">Nobody who sells you CC technology will ever tell you what's actually wrong with it. What your renewal dashboard doesn't show: where $2M-$7M in operational value is trapped, which competitor outperforms you on 6 of 8 dimensions, and why your Arabic CX would fail an independent audit. Three principals. 80 years combined. Built careers inside the same tech and BPO vendors you buy from. We know exactly what they're not telling you.</p>
+      <a href="#book" class="hero-cta reveal reveal-delay-3">
+        $1,000 / 48 Hours to Independent Truth
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+      </a>
+      <div class="hero-stats reveal reveal-delay-4">
+        <div class="hero-stat">
+          <h3>$1,000</h3>
+          <p>2-Day Engagement</p>
+        </div>
+        <div class="hero-stat">
+          <h3>47</h3>
+          <p>Data Points Scored</p>
+        </div>
+        <div class="hero-stat">
+          <h3>48h</h3>
+          <p>To Independent Truth</p>
+        </div>
+        <div class="hero-stat">
+          <h3>80+</h3>
+          <p>Years Inside CC Vendors</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 7 OPERATIONAL PAIN TRIGGERS -->
+<section class="pressure">
+  <div class="container">
+    <div class="section-label reveal">The Real Numbers</div>
+    <h2 class="section-title reveal reveal-delay-1">Seven Problems Your CC Vendor<br>Will Never Volunteer to Solve</h2>
+    <p class="section-subtitle reveal reveal-delay-2">These aren't hypothetical risks. These are line items bleeding cash from your P&L right now. Every CC manager in the Gulf knows at least four of these. Most can't quantify any of them.</p>
+    <div class="pressure-grid">
+
+      <div class="pressure-card reveal">
+        <div class="pressure-icon">&#128176;</div>
+        <h3>The Training Tax</h3>
+        <p>Industry turnover: 31-45% annually. Replacing one agent costs $10K-$20K (McKinsey). New hires take 90 days to reach full productivity. For a 200-seat center, that's $700K+ per year in churn cost alone, before counting lost CSAT during ramp-up. Your training budget is a recurring leak, not an investment.</p>
+        <div style="margin-top: 14px; font-family: var(--font-display); font-weight: 700; font-size: 13px; color: var(--red); text-transform: uppercase; letter-spacing: 1px;">$10K-$20K per agent lost</div>
+      </div>
+
+      <div class="pressure-card reveal reveal-delay-1">
+        <div class="pressure-icon">&#128101;</div>
+        <h3>The BPO Misalignment Trap</h3>
+        <p>Your BPO is paid per seat or per call. Their incentive: more agents, faster handle times. Your incentive: fewer calls, higher resolution, better CX. These are opposite goals. You need 1 internal FTE per 30-50 outsourced agents just to manage the relationship. That's $100K-$150K/year of invisible overhead nobody budgeted for. And quality? They optimize for speed, not for your customer.</p>
+        <div style="margin-top: 14px; font-family: var(--font-display); font-weight: 700; font-size: 13px; color: var(--red); text-transform: uppercase; letter-spacing: 1px;">Interests structurally misaligned</div>
+      </div>
+
+      <div class="pressure-card reveal reveal-delay-2">
+        <div class="pressure-icon">&#129302;</div>
+        <h3>AI Is Eating Your Peers Alive</h3>
+        <p>88% of contact centers have deployed AI in some form. But only 25% have operationalized it into daily workflows. 91% of CC leaders feel pressure to implement AI. 27% say their job is at risk if they don't deliver results. The gap between "we have an AI pilot" and "AI runs our operations" is where your competitors are winning while you're still in POC.</p>
+        <div style="margin-top: 14px; font-family: var(--font-display); font-weight: 700; font-size: 13px; color: var(--amber); text-transform: uppercase; letter-spacing: 1px;">88% deployed, 25% operationalized</div>
+      </div>
+
+      <div class="pressure-card reveal reveal-delay-3">
+        <div class="pressure-icon">&#9888;&#65039;</div>
+        <h3>Your DR Plan Is a PowerPoint Slide</h3>
+        <p>When call volume triples overnight (and it will), what actually happens? Not what the document says. What actually happens. Most CC disaster recovery plans have never been stress-tested against real surge scenarios. The ones that have were designed for a different era of traffic patterns. An untested DR plan is more dangerous than no plan: it gives you false confidence until the moment it fails.</p>
+        <div style="margin-top: 14px; font-family: var(--font-display); font-weight: 700; font-size: 13px; color: var(--red); text-transform: uppercase; letter-spacing: 1px;">Untested = Nonexistent</div>
+      </div>
+
+      <div class="pressure-card reveal reveal-delay-4">
+        <div class="pressure-icon">&#9729;&#65039;</div>
+        <h3>Cloud vs. On-Prem: You're Asking the Wrong Question</h3>
+        <p>Everyone says cloud. But 31% of CX leaders still run on-premise CC platforms (Calabrio 2025). The real question isn't migration. It's architecture optimization. Cloud egress costs, on-prem redundancy expenses, hybrid complexity. Maybe your on-prem setup is right but needs smarter design. Maybe cloud saves you money but your data sovereignty requirements say no. Nobody is giving you vendor-neutral architecture truth.</p>
+        <div style="margin-top: 14px; font-family: var(--font-display); font-weight: 700; font-size: 13px; color: var(--blue); text-transform: uppercase; letter-spacing: 1px;">31% still on-premise for a reason</div>
+      </div>
+
+      <div class="pressure-card reveal">
+        <div class="pressure-icon">&#128202;</div>
+        <h3>AI Should Guide Your Team, Not Just Score Them</h3>
+        <p>Most CC "AI" scores agent calls. That's surveillance, not intelligence. What if AI scored your SOPs against best practices, your KPIs against regional benchmarks, and your training gaps against competency frameworks, then gave your team a path to close each gap? No IT dependency. No 6-month project. An AI-driven best practice engine that makes your existing team better every week.</p>
+        <div style="margin-top: 14px; font-family: var(--font-display); font-weight: 700; font-size: 13px; color: var(--green); text-transform: uppercase; letter-spacing: 1px;">Score SOPs, not just agents</div>
+      </div>
+
+      <div class="pressure-card reveal reveal-delay-1">
+        <div class="pressure-icon">&#128200;</div>
+        <h3>"Revenue Center" Is a Tagline, Not a Result</h3>
+        <p>66% of CX leaders say "positioning CC as a profit center" is a top priority. Sounds great on a strategy slide. In practice, almost no one has done it. The ones who did had systematic intelligence: knowing which customer segments generate upsell, which interactions predict churn, which agents convert service-to-sales. Without diagnostic data, "revenue center" stays a conference buzzword your CFO stopped believing two years ago.</p>
+        <div style="margin-top: 14px; font-family: var(--font-display); font-weight: 700; font-size: 13px; color: var(--purple); text-transform: uppercase; letter-spacing: 1px;">66% say it. Nearly 0% did it.</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- WHAT WE DO -->
+<section class="what-we-do">
+  <div class="container">
+    <div class="section-label reveal">How We Work</div>
+    <h2 class="section-title reveal reveal-delay-1">Diagnose. Architect. Operate.</h2>
+    <p class="section-subtitle reveal reveal-delay-2">Not another consulting deck that joins the graveyard. A systematic intelligence engine that exposes the $700K in agent churn, the untested DR plan, the BPO misalignment, and the AI gap between your pilot and your competitors' production deployment. Then stays to close every gap.</p>
+    <div class="approach-grid">
+      <div class="approach-card reveal">
+        <div class="approach-step">01</div>
+        <h3>Diagnose</h3>
+        <p>AI-powered scoring across 8 dimensions. We analyze your CC from the outside in: channels, reputation, technology, Arabic capability, competitive position. Results in 48 hours, not 8 weeks.</p>
+      </div>
+      <div class="approach-card reveal reveal-delay-1">
+        <div class="approach-step">02</div>
+        <h3>Architect</h3>
+        <p>Vendor-neutral transformation roadmap built on diagnostic evidence. Every recommendation is tied to revenue impact and implementation timeline. No theoretical frameworks. Executable strategy.</p>
+      </div>
+      <div class="approach-card reveal reveal-delay-2">
+        <div class="approach-step">03</div>
+        <h3>Operate</h3>
+        <p>Continuous intelligence: monitoring, optimization, Arabic AI training, and disaster readiness. We don't hand you a report and walk away. We stay until the numbers move.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS: 30-30-60 -->
+<section class="how-it-works" id="how-it-works">
+  <div class="container">
+    <div class="section-label reveal">How It Works</div>
+    <div class="hiw-price-badge reveal reveal-delay-1">
+      <span class="price">$1,000</span>
+      <span class="divider"></span>
+      <span class="duration">2-Day Engagement</span>
+    </div>
+    <h2 class="section-title reveal reveal-delay-1">30 Minutes. 30 Minutes. 60 Minutes.<br>48 Hours to Know What Your Vendor Won't Tell You.</h2>
+    <p class="section-subtitle reveal reveal-delay-2">We send you AI-generated diagnostic questions before the calls. You give us 2 hours of structured conversation. We give you 48 hours of vendor-independent truth.</p>
+
+    <div class="hiw-timeline">
+      <div class="hiw-step reveal">
+        <div class="hiw-step-num">30'</div>
+        <div class="hiw-step-time">Day 1, Session 1</div>
+        <h4>Structured Business Review</h4>
+        <p>CX maturity assessment, operational process mapping, agent performance patterns, BPO contract structure, SLA gaps, revenue-from-service opportunity sizing. Ladislau's proprietary methodology, refined across 40+ countries.</p>
+        <div class="hiw-lead">Led by Ladislau Batalha</div>
+      </div>
+      <div class="hiw-step reveal reveal-delay-1">
+        <div class="hiw-step-num">30'</div>
+        <div class="hiw-step-time">Day 1, Session 2</div>
+        <h4>Structured Tech Review</h4>
+        <p>Platform architecture audit, DR readiness assessment, AI deployment maturity, integration health, cloud-vs-on-prem reality check, vendor lock-in analysis. Infrastructure truth from someone who built these systems.</p>
+        <div class="hiw-lead">Led by Gabor Schonekker</div>
+      </div>
+      <div class="hiw-step reveal reveal-delay-2">
+        <div class="hiw-step-num">60'</div>
+        <div class="hiw-step-time">Day 2</div>
+        <h4>Intelligence Report Presentation</h4>
+        <p>All three principals present your AI-enhanced scorecard: 47 data points, 8 dimensions, competitive benchmarks. Plus your top 3 highest-ROI actions and 3 blind spots your vendor hasn't shown you. Not slides. Decisions.</p>
+        <div class="hiw-lead">All Three Principals</div>
+      </div>
+    </div>
+
+    <div class="hiw-deliverables reveal">
+      <div class="hiw-deliverable">
+        <div class="hiw-d-icon">&#128202;</div>
+        <div>
+          <h5>Top 3 Highest-ROI Actions</h5>
+          <p>Ranked by implementation speed and financial impact. Not 47 recommendations. Three that move the needle this quarter.</p>
+        </div>
+      </div>
+      <div class="hiw-deliverable">
+        <div class="hiw-d-icon">&#128065;</div>
+        <div>
+          <h5>3 Blind Spots Your Vendor Missed</h5>
+          <p>Data points your renewal dashboard will never show. If we don't find at least 3, you pay nothing.</p>
+        </div>
+      </div>
+      <div class="hiw-deliverable">
+        <div class="hiw-d-icon">&#127942;</div>
+        <div>
+          <h5>Competitive Benchmark Report</h5>
+          <p>Your CC scored against 5+ direct competitors across every dimension. Where you lead, where you bleed.</p>
+        </div>
+      </div>
+      <div class="hiw-deliverable">
+        <div class="hiw-d-icon">&#129302;</div>
+        <div>
+          <h5>AI-Enhanced Scorecard</h5>
+          <p>Automated intelligence from public data, enhanced with internal context from your structured review. No other consultancy can produce this in 48 hours.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 8 DIMENSIONS -->
+<section class="dimensions">
+  <div class="container">
+    <div class="section-label reveal">What We Score</div>
+    <h2 class="section-title reveal reveal-delay-1">8 Dimensions of CC Intelligence</h2>
+    <p class="section-subtitle reveal reveal-delay-2">Each dimension is scored, benchmarked against competitors, and mapped to specific revenue impact.</p>
+    <div class="dim-grid">
+      <div class="dim-card reveal">
+        <div class="dim-icon">&#128222;</div>
+        <h4>Channel Accessibility</h4>
+        <p>Omnichannel coverage and friction audit</p>
+      </div>
+      <div class="dim-card reveal reveal-delay-1">
+        <div class="dim-icon">&#129302;</div>
+        <h4>AI Readiness</h4>
+        <p>Automation maturity and implementation gaps</p>
+      </div>
+      <div class="dim-card reveal reveal-delay-2">
+        <div class="dim-icon">&#11088;</div>
+        <h4>Reputation &amp; Sentiment</h4>
+        <p>Public perception and review analysis</p>
+      </div>
+      <div class="dim-card reveal reveal-delay-3">
+        <div class="dim-icon">&#127466;&#127462;</div>
+        <h4>Arabic CX Capability</h4>
+        <p>Dialect handling and Arabic-first scoring</p>
+      </div>
+      <div class="dim-card reveal">
+        <div class="dim-icon">&#128241;</div>
+        <h4>Digital Self-Service</h4>
+        <p>App, portal, and chatbot effectiveness</p>
+      </div>
+      <div class="dim-card reveal reveal-delay-1">
+        <div class="dim-icon">&#9881;&#65039;</div>
+        <h4>Technology Stack</h4>
+        <p>Platform age, integration health, debt</p>
+      </div>
+      <div class="dim-card reveal reveal-delay-2">
+        <div class="dim-icon">&#9889;</div>
+        <h4>Response Velocity</h4>
+        <p>Speed to resolution across all channels</p>
+      </div>
+      <div class="dim-card reveal reveal-delay-3">
+        <div class="dim-icon">&#127942;</div>
+        <h4>Competitive Position</h4>
+        <p>Head-to-head benchmark vs. 5+ peers</p>
+      </div>
+    </div>
+
+    <!-- SCORECARD PREVIEW CTA -->
+    <div class="scorecard-preview-cta reveal">
+      <div class="preview-label">Sample Deliverable</div>
+      <h3>See What Your Scorecard Looks Like</h3>
+      <p class="preview-desc">This is a real CC Intelligence Scorecard for a fictional Gulf bank. 47 data points, 8 dimensions, competitive benchmarks, revenue-at-risk calculations. Yours will look like this in 48 hours.</p>
+      <button class="scorecard-preview-btn" onclick="openScorecardModal()">
+        <span class="btn-icon">&#128202;</span>
+        View Sample Scorecard
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- SCORECARD MODAL -->
+<div class="scorecard-modal-overlay" id="scorecardModal">
+  <div class="scorecard-modal">
+    <div class="scorecard-modal-header">
+      <h4>CC Intelligence Scorecard</h4>
+      <span class="sample-badge">Sample Report</span>
+      <button class="scorecard-modal-close" onclick="closeScorecardModal()">&times;</button>
+    </div>
+    <iframe src="CC-Intelligence-Scorecard-Mock.html" loading="lazy"></iframe>
+  </div>
+</div>
+
+<!-- AI INTELLIGENCE LAYER -->
+<section class="ai-layer">
+  <div class="container">
+    <div class="section-label reveal">AI-Powered Differentiation</div>
+    <h2 class="section-title reveal reveal-delay-1">AI Is Embedded at Every Tier.<br>Not Bolted On at the End.</h2>
+    <p class="section-subtitle reveal reveal-delay-2">Most CC consultants recommend AI. We build it into every engagement layer. Intelligence compounds as you go deeper.</p>
+    <div class="ai-layer-grid">
+      <div class="ai-layer-card reveal">
+        <div class="ai-layer-tier">$1K Briefing - Automated Layer</div>
+        <h4>AI-Powered Signal Scan</h4>
+        <div class="ai-tech">Web Scraping + NLP + Custom Scoring</div>
+        <p>Before your first call, AI has already scraped and scored your public CX footprint: IVR recordings, chatbot performance, social sentiment, review platforms. Intelligence starts before we meet.</p>
+      </div>
+      <div class="ai-layer-card reveal reveal-delay-1">
+        <div class="ai-layer-tier">$1K Briefing - Discovery Layer</div>
+        <h4>AI-Structured 30-30-60</h4>
+        <div class="ai-tech">AI-Driven Q&A + Diagnostic Framework</div>
+        <p>AI generates targeted question trees for your 30-minute business and tech reviews. Every answer feeds the intelligence layer. Overnight AI processing. 60-minute presentation with all three principals.</p>
+      </div>
+      <div class="ai-layer-card reveal reveal-delay-2">
+        <div class="ai-layer-tier">L1 - Living Diagnostic</div>
+        <h4>RAG Knowledge Brain</h4>
+        <div class="ai-tech">LLM + RAG Architecture</div>
+        <p>Every interview, document, and data point becomes a queryable intelligence brain built DURING the diagnostic, not after. Your CC knowledge, permanently captured and continuously accessible.</p>
+      </div>
+      <div class="ai-layer-card reveal reveal-delay-3">
+        <div class="ai-layer-tier">L2-L3 - Transform & Operate</div>
+        <h4>AI Training Simulator + Scoring Engine</h4>
+        <div class="ai-tech">Custom LLM Skills + Speech AI</div>
+        <p>Custom AI that simulates real customer interactions in Arabic. Agents practice with AI that behaves like their actual customers. Real-time AI scoring feeds back into training and executive dashboards. Continuous improvement loops.</p>
+      </div>
+    </div>
+    <div class="ai-compound-note reveal">
+      <p><strong>Intelligence compounds.</strong> The $1K Briefing feeds L1. L1's RAG brain powers L2's transformation. L2's scoring engine drives L3's continuous optimization. Each tier makes the next one more precise. No other CC consultancy can offer this because no other CC consultancy has built the AI layer.</p>
+    </div>
+  </div>
+</section>
+
+<!-- EXPECTED OUTCOMES -->
+<section class="outcomes">
+  <div class="container">
+    <div class="section-label reveal">What Changes</div>
+    <h2 class="section-title reveal reveal-delay-1">Expected Outcomes</h2>
+    <p class="section-subtitle reveal reveal-delay-2">Based on diagnostic and transformation engagements across Gulf enterprise contact centers.</p>
+    <div class="outcomes-grid">
+      <div class="outcome-card reveal">
+        <div class="outcome-number">25-40%</div>
+        <div class="outcome-label">Average Handle Time Reduction</div>
+        <div class="outcome-detail">After AI-driven workflow optimization and intelligent routing</div>
+      </div>
+      <div class="outcome-card reveal reveal-delay-1">
+        <div class="outcome-number">60-80%</div>
+        <div class="outcome-label">First Contact Resolution Improvement</div>
+        <div class="outcome-detail">With AI-powered knowledge base and agent assist</div>
+      </div>
+      <div class="outcome-card reveal reveal-delay-2">
+        <div class="outcome-number">100%</div>
+        <div class="outcome-label">Quality Monitoring Coverage</div>
+        <div class="outcome-detail">vs. 2% industry average with manual sampling</div>
+      </div>
+      <div class="outcome-card reveal">
+        <div class="outcome-number">50%+</div>
+        <div class="outcome-label">Agent Ramp Time Reduction</div>
+        <div class="outcome-detail">Via AI training simulator with Arabic customer personas</div>
+      </div>
+      <div class="outcome-card reveal reveal-delay-1">
+        <div class="outcome-number">3-6mo</div>
+        <div class="outcome-label">Time to Measurable ROI</div>
+        <div class="outcome-detail">vs. 12-18 months with traditional consulting engagements</div>
+      </div>
+      <div class="outcome-card reveal reveal-delay-2">
+        <div class="outcome-number">30%+</div>
+        <div class="outcome-label">Operating Cost Reduction</div>
+        <div class="outcome-detail">Within 12 months through AI scoring, routing, and training</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- OFFER TIERS -->
+<section class="offer" id="offer">
+  <div class="container">
+    <div class="section-label reveal">The Engagement Model</div>
+    <h2 class="section-title reveal reveal-delay-1">$1,000 to Start. Go Deep When Ready.</h2>
+    <p class="section-subtitle reveal reveal-delay-2">No long-term commitments. No vendor pitch. $1,000 buys you 2 hours with three principals, an AI-enhanced scorecard, and 48 hours to independent truth. Go deeper only when the data tells you to.</p>
+
+    <div class="offer-tiers">
+      <div class="tier-card featured reveal">
+        <div class="tier-badge">START <span>$1,000</span></div>
+        <div class="tier-content">
+          <h3>CC Intelligence Briefing</h3>
+          <p>2-day engagement. 30-minute structured business review (Ladislau). 30-minute structured tech review (Gabor). AI processes everything overnight. 60-minute intelligence presentation with all three principals: 47 data points, 8 dimensions, your top 3 highest-ROI actions, and 3 blind spots your vendor hasn't shown you.</p>
+          <div class="tier-tags">
+            <span class="tier-tag">30min Business Review</span>
+            <span class="tier-tag">30min Tech Review</span>
+            <span class="tier-tag">AI-Enhanced Scorecard</span>
+            <span class="tier-tag">60min Intelligence Report</span>
+            <span class="tier-tag">48-Hour Delivery</span>
+          </div>
+        </div>
+        <div class="tier-arrow">&rarr;</div>
+      </div>
+
+      <div class="tier-card reveal reveal-delay-1">
+        <div class="tier-badge">L1</div>
+        <div class="tier-content">
+          <h3>Living Diagnostic</h3>
+          <p>Deep-dive assessment using our proprietary Living Diagnostic Protocol. Every interview, document, and data point becomes a queryable intelligence brain. You own it forever. 4-6 week engagement.</p>
+          <div class="tier-tags">
+            <span class="tier-tag">RAG Knowledge Brain</span>
+            <span class="tier-tag">Agent Shadowing</span>
+            <span class="tier-tag">Resilience Simulation</span>
+          </div>
+        </div>
+        <div class="tier-arrow">&rarr;</div>
+      </div>
+
+      <div class="tier-card reveal reveal-delay-2">
+        <div class="tier-badge">L2</div>
+        <div class="tier-content">
+          <h3>Transformation</h3>
+          <p>Vendor-neutral implementation of diagnostic recommendations. Technology selection, Arabic AI training engine deployment, process re-engineering, and disaster readiness architecture. 3-6 month engagement.</p>
+          <div class="tier-tags">
+            <span class="tier-tag">Technology Selection</span>
+            <span class="tier-tag">Arabic AI Engine</span>
+            <span class="tier-tag">Disaster Readiness</span>
+          </div>
+        </div>
+        <div class="tier-arrow">&rarr;</div>
+      </div>
+
+      <div class="tier-card reveal reveal-delay-3">
+        <div class="tier-badge">L3</div>
+        <div class="tier-content">
+          <h3>Managed Intelligence</h3>
+          <p>AI becomes your CC's best practice driver. Continuously scores SOPs against industry benchmarks, tracks KPIs against regional peers, identifies training gaps by competency framework, and gives each team lead a clear path to close gaps, week by week. No IT tickets. No 6-month projects. Your team gets smarter every cycle. Monthly executive intelligence briefings. Ongoing retainer.</p>
+          <div class="tier-tags">
+            <span class="tier-tag">Continuous Monitoring</span>
+            <span class="tier-tag">AI Performance Scoring</span>
+            <span class="tier-tag">Monthly Intelligence</span>
+          </div>
+        </div>
+        <div class="tier-arrow">&rarr;</div>
+      </div>
+    </div>
+
+    <div class="offer-cta-wrap reveal">
+      <a href="#book" class="hero-cta">
+        $1,000 / Get Your CC Intelligence Briefing
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+      </a>
+      <p class="offer-cta-subtext">$1,000. 2 hours of your time. 48 hours to independent truth. If we don't find at least 3 blind spots, you pay nothing.</p>
+    </div>
+  </div>
+</section>
+
+<!-- TEAM -->
+<section class="team">
+  <div class="container">
+    <div class="section-label reveal">The Team</div>
+    <h2 class="section-title reveal reveal-delay-1">80 Years of Combined Expertise.<br>Three Principals. Every Engagement.</h2>
+    <p class="section-subtitle reveal reveal-delay-2">You don't get junior consultants. You get three operators who have built, broken, and rebuilt contact centers across the Gulf.</p>
+    <div class="team-grid">
+      <div class="team-card reveal">
+        <div class="team-avatar">LB</div>
+        <h3>Ladislau Batalha</h3>
+        <div class="team-role">CX Strategy Leader</div>
+        <p>Pioneered CX maturity scoring in the Gulf. Personally scored and transformed institutions you interact with daily across the region: utilities, aviation, enterprise services. Took them from underperforming to recognized CX excellence. 40+ country footprint.</p>
+        <div class="team-years">30+ Years</div>
+      </div>
+      <div class="team-card reveal reveal-delay-1">
+        <div class="team-avatar">GS</div>
+        <h3>Gabor Schonekker</h3>
+        <div class="team-role">CC Technology Leader</div>
+        <p>Contact center technology architecture and disaster readiness design. Deep expertise across Genesys, Avaya, and emerging AI platforms. Stress-tests infrastructure before reality does it for you.</p>
+        <div class="team-years">30+ Years</div>
+      </div>
+      <div class="team-card reveal reveal-delay-2">
+        <div class="team-avatar">MA</div>
+        <h3>Mamoun Alamouri</h3>
+        <div class="team-role">AI &amp; MENA Activation</div>
+        <p>Arabic AI optimization, signal-based GTM, and automation architecture. Enterprise revenue leadership across Cisco, Avaya, and Uniphore in the Gulf. Bridges the gap between AI capability and regional reality.</p>
+        <div class="team-years">20+ Years</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROOF -->
+<section class="proof">
+  <div class="container">
+    <div class="proof-content">
+      <div class="proof-text reveal">
+        <h3>Why LAB Experience</h3>
+        <h2>The Same Methodology That Transformed Gulf Institutions You Use Daily</h2>
+        <p>The utility you call when the power goes out. The airport you fly through. The enterprise services that run government operations. We scored them, found the gaps their vendors missed, and took them from underperforming CX to recognized excellence.</p>
+        <p>Now AI-powered. What used to take 6-8 weeks of manual assessment delivers in 48 hours. But the real difference: AI doesn't just diagnose anymore. It continuously scores SOPs against best practices, benchmarks KPIs against regional peers, identifies training gaps, and gives your team a clear path to close each one. No IT dependency. No 6-month project plan.</p>
+        <ul class="proof-list">
+          <li>Vendor-independent: we sell zero products. Our only incentive is your operational improvement</li>
+          <li>AI scores SOPs, KPIs, and agent competencies continuously, not just call recordings</li>
+          <li>Arabic-first: 6 Gulf dialects analyzed, not a Western model with Arabic bolted on</li>
+          <li>DR stress-testing: we simulate what happens when volume triples, before reality does it for you</li>
+          <li>BPO contract intelligence: we identify where your outsourcer's incentives diverge from yours</li>
+        </ul>
+      </div>
+      <div class="proof-visual reveal reveal-delay-2">
+        <div class="pv-label">Sample CC Intelligence Briefing Output</div>
+        <div class="pv-bar-group">
+          <div class="pv-bar-label">Channel Accessibility <span>72%</span></div>
+          <div class="pv-bar"><div class="pv-bar-fill gold" data-width="72%"></div></div>
+        </div>
+        <div class="pv-bar-group">
+          <div class="pv-bar-label">AI Readiness <span>41%</span></div>
+          <div class="pv-bar"><div class="pv-bar-fill blue" data-width="41%"></div></div>
+        </div>
+        <div class="pv-bar-group">
+          <div class="pv-bar-label">Arabic CX Capability <span>28%</span></div>
+          <div class="pv-bar"><div class="pv-bar-fill teal" data-width="28%"></div></div>
+        </div>
+        <div class="pv-bar-group">
+          <div class="pv-bar-label">Reputation &amp; Sentiment <span>65%</span></div>
+          <div class="pv-bar"><div class="pv-bar-fill green" data-width="65%"></div></div>
+        </div>
+        <div class="pv-bar-group">
+          <div class="pv-bar-label">Response Velocity <span>53%</span></div>
+          <div class="pv-bar"><div class="pv-bar-fill gold" data-width="53%"></div></div>
+        </div>
+        <div class="pv-bar-group">
+          <div class="pv-bar-label">Competitive Position <span>47%</span></div>
+          <div class="pv-bar"><div class="pv-bar-fill blue" data-width="47%"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COST ANCHOR -->
+<section class="pressure" style="background: var(--bg);">
+  <div class="container">
+    <div class="section-label reveal">The Alternative</div>
+    <h2 class="section-title reveal reveal-delay-1">Three Ways to Get CC Intelligence.<br>Two Are Expensive Mistakes.</h2>
+    <p class="section-subtitle reveal reveal-delay-2">The math is simple. The decision should be too.</p>
+    <div class="pressure-grid" style="grid-template-columns: repeat(3, 1fr);">
+      <div class="pressure-card reveal" style="border-top: none;">
+        <div class="pressure-icon" style="background: rgba(239,68,68,0.1);">&#10006;</div>
+        <h3>Hire Internally</h3>
+        <p>CX analyst + CC architect + Arabic AI specialist = $30,000+/month loaded cost. 6 months to recruit. 12 months before they deliver what our AI does in 48 hours. And when one of them leaves? Back to square one with another $10K-$20K replacement cost.</p>
+        <div style="margin-top: 16px; font-family: var(--font-display); font-weight: 800; font-size: 24px; color: var(--red);">$360K+/year</div>
+      </div>
+      <div class="pressure-card reveal reveal-delay-1" style="border-top: none;">
+        <div class="pressure-icon" style="background: rgba(239,68,68,0.1);">&#10006;</div>
+        <h3>Big 4 Consultancy</h3>
+        <p>6-8 week engagement. Junior consultants running your interviews. Generic frameworks built for London, localized for the Gulf in a footnote. No Arabic AI. No CC technology depth. Deliverable: a PDF that joins the graveyard of unimplemented strategy decks.</p>
+        <div style="margin-top: 16px; font-family: var(--font-display); font-weight: 800; font-size: 24px; color: var(--red);">$200K-$500K</div>
+      </div>
+      <div class="pressure-card reveal reveal-delay-2" style="border-top: none; border-color: var(--gold-dim);">
+        <div class="pressure-icon" style="background: rgba(200,162,78,0.12);">&#10004;</div>
+        <h3>LAB Experience</h3>
+        <p>$1,000 for the full CC Intelligence Briefing. 30-30-60 structured discovery. AI-enhanced scorecard in 48 hours. Three principals on every engagement, not junior associates. Vendor-neutral. Arabic-first. Top 3 highest-ROI actions delivered on day 2.</p>
+        <div style="margin-top: 16px; font-family: var(--font-display); font-weight: 800; font-size: 24px; color: var(--gold);">$1,000 / 48 Hours</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- GUARANTEE -->
+<section style="padding: 80px 0; background: var(--bg-deep); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
+  <div class="container" style="text-align: center; max-width: 720px;">
+    <div class="section-label reveal">Our Guarantee</div>
+    <h2 class="section-title reveal reveal-delay-1" style="font-size: clamp(24px, 3vw, 36px);">If We Don't Find At Least 3 Blind Spots<br>Your Current Vendor Hasn't Shown You,<br>You Pay Nothing.</h2>
+    <p class="reveal reveal-delay-2" style="font-size: 17px; color: var(--muted); line-height: 1.7; margin-top: 20px;">Untested DR plans. SOPs that haven't been benchmarked in years. Training programs that leak $700K annually. BPO contracts that incentivize the wrong outcomes. Architecture choices nobody has pressure-tested. Every CX Signal Scan we've run has uncovered operational blind spots the CC team knew existed but couldn't quantify. If yours doesn't, we'll upgrade you to a full Expert Briefing at zero cost.</p>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section class="final-cta" id="book">
+  <div class="container">
+    <h2 class="reveal">Your CC Runs on Instinct Today.<br><em>What If It Ran on Intelligence?</em></h2>
+    <p class="reveal reveal-delay-1">$1,000. Two hours of structured discovery. 48 hours of AI-enhanced analysis. Three principals who built careers inside the same vendors you buy from. You get your top 3 highest-ROI actions, 3 blind spots your vendor hasn't shown you, and a competitive benchmark that tells you exactly where you stand. If we don't find at least 3 blind spots, you pay nothing.</p>
+    <a href="https://calendly.com" class="hero-cta reveal reveal-delay-2" target="_blank">
+      $1,000 / Get Your CC Intelligence Briefing
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+    </a>
+    <p class="offer-cta-subtext reveal reveal-delay-3">30min business review + 30min tech review + AI analysis + 60min intelligence presentation. No vendor agenda.</p>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <p>LAB Experience &middot; CC Intelligence Practice &middot; Dubai &middot; <a href="mailto:hello@labexperience.cx">hello@labexperience.cx</a></p>
+  </div>
+</footer>
+
+<script>
+// Scroll-triggered reveal
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// Animate bars on scroll
+const barObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.querySelectorAll('.pv-bar-fill').forEach(bar => {
+        bar.style.width = bar.dataset.width;
+      });
+    }
+  });
+}, { threshold: 0.3 });
+
+document.querySelectorAll('.proof-visual').forEach(el => barObserver.observe(el));
+
+// Smooth scroll for anchor links
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+  anchor.addEventListener('click', function(e) {
+    e.preventDefault();
+    const target = document.querySelector(this.getAttribute('href'));
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  });
+});
+
+// Scorecard modal
+function openScorecardModal() {
+  const modal = document.getElementById('scorecardModal');
+  modal.style.display = 'flex';
+  requestAnimationFrame(() => modal.classList.add('active'));
+  document.body.style.overflow = 'hidden';
+}
+function closeScorecardModal() {
+  const modal = document.getElementById('scorecardModal');
+  modal.classList.remove('active');
+  setTimeout(() => {
+    modal.style.display = 'none';
+    document.body.style.overflow = '';
+  }, 300);
+}
+document.getElementById('scorecardModal').addEventListener('click', function(e) {
+  if (e.target === this) closeScorecardModal();
+});
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeScorecardModal();
+});
+</script>
+
+</body>
+</html>

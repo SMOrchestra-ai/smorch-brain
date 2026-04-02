@@ -1,0 +1,34 @@
+{
+  "name": "SMO Queue - Agent Executor Bridge",
+  "nodes": [
+    {
+      "name": "Execute Task Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "position": [250, 300],
+      "parameters": {
+        "path": "execute-task",
+        "httpMethod": "POST",
+        "responseMode": "onReceived",
+        "responseCode": 200
+      },
+      "typeVersion": 2,
+      "id": "exec-wh-001"
+    },
+    {
+      "name": "Run Agent",
+      "type": "n8n-nodes-base.code",
+      "position": [500, 300],
+      "parameters": {
+        "jsCode": "const { execSync, spawn } = require('child_process');\nconst { writeFileSync, mkdirSync, existsSync, openSync } = require('fs');\nconst body = $input.first().json.body || $input.first().json;\nconst { taskId, repo, branch, goal, tier, skills, declaredFiles, constraints, role, callbackUrl } = body;\nif (!taskId || !repo || !goal) return [{ json: { error: 'Missing fields' } }];\nconst WORKSPACES = '/workspaces/smo';\nconst LOG_DIR = '/root/.smo/logs';\nmkdirSync(LOG_DIR, { recursive: true });\nconst repoName = repo.split('/').pop();\nconst repoDir = WORKSPACES + '/' + repoName;\nif (!existsSync(repoDir)) {\n  try { execSync('git clone git@github.com:' + repo + '.git ' + repoDir, { timeout: 120000 }); }\n  catch(e) { return [{ json: { taskId, status: 'error', error: e.message.slice(0,200) } }]; }\n}\ntry {\n  execSync('cd ' + repoDir + ' && git fetch origin && (git checkout -b ' + branch + ' origin/main 2>/dev/null || git checkout ' + branch + ')', { timeout: 30000 });\n} catch(e) { return [{ json: { taskId, status: 'error', error: e.message.slice(0,200) } }]; }\nconst effectiveTier = tier || 'staged_hybrid';\nlet script = '#!/bin/bash\\nset -euo pipefail\\ncd ' + repoDir + '\\n';\nconst sq = (s) => s.replace(/'/g, \"'\\\\''\" );\nif (effectiveTier === 'fast_track') {\n  script += \"codex --auto-edit --message '\" + sq(goal) + \"' --timeout 1800 --approval-mode auto-edit\\n\";\n} else if (effectiveTier === 'staged_hybrid') {\n  script += \"claude -p 'Plan: \" + sq(goal) + \". Output JSON spec.' --output-file /tmp/SPEC-\" + taskId + \".json\\n\";\n  script += 'SPEC=$(cat /tmp/SPEC-' + taskId + '.json)\\n';\n  script += 'codex --auto-edit --message \"Execute: $SPEC\" --timeout 3600\\n';\n} else {\n  script += \"claude -p 'You are \" + (role || 'engineer') + \". \" + (skills ? 'Skills: ' + skills + '. ' : '') + 'Task: ' + sq(goal) + \"' --max-turns 50\\n\";\n}\nscript += '\\ngit add -A\\ngit commit -m \"agent(' + taskId + '): auto\" --allow-empty || true\\ngit push origin ' + branch + ' 2>/dev/null || git push --set-upstream origin ' + branch + '\\n';\nif (callbackUrl) {\n  script += '\\ncurl -s -X POST ' + callbackUrl + ' -H \"Content-Type: application/json\" -d \\'{\"taskId\":\"' + taskId + '\",\"exitCode\":0}\\' || true\\n';\n}\nconst scriptPath = '/tmp/exec-' + taskId + '.sh';\nwriteFileSync(scriptPath, script);\nexecSync('chmod +x ' + scriptPath);\nconst out = openSync(LOG_DIR + '/' + taskId + '.log', 'a');\nconst child = spawn('bash', [scriptPath], { detached: true, stdio: ['ignore', out, out] });\nchild.unref();\nreturn [{ json: { taskId, status: 'executing', pid: child.pid, tier: effectiveTier } }];"
+      },
+      "typeVersion": 2,
+      "id": "exec-run-001"
+    }
+  ],
+  "connections": {
+    "Execute Task Webhook": {
+      "main": [[{ "node": "Run Agent", "type": "main", "index": 0 }]]
+    }
+  },
+  "settings": { "executionOrder": "v1" }
+}

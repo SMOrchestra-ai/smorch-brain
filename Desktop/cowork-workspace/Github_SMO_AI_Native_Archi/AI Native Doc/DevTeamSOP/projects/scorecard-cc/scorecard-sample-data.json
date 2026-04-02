@@ -1,0 +1,139 @@
+{
+  "report_meta": {
+    "id": "CCI-2026-0147",
+    "date": "March 21, 2026",
+    "classification": "Confidential"
+  },
+  "client": {
+    "name": "Gulf National Bank",
+    "location": "Abu Dhabi, UAE",
+    "industry": "Banking & Financial Services",
+    "agent_count_estimate": "~450 agents, 3 sites",
+    "url": "https://www.gulfnationalbank.ae"
+  },
+  "overall_score": 41,
+  "maturity_band": "Developing",
+  "dimensions": [
+    { "name": "Channel Accessibility", "score": 28, "icon": "\ud83d\udcde", "color": "red", "verdict": "Critical Gap", "weight": 0.15 },
+    { "name": "AI Readiness", "score": 35, "icon": "\ud83e\udd16", "color": "amber", "verdict": "Below Threshold", "weight": 0.15 },
+    { "name": "Reputation & Sentiment", "score": 62, "icon": "\u2b50", "color": "blue", "verdict": "Adequate", "weight": 0.12 },
+    { "name": "Arabic CX Capability", "score": 22, "icon": "\ud83c\udf10", "color": "red", "verdict": "Critical Gap", "weight": 0.15 },
+    { "name": "Digital Self-Service", "score": 38, "icon": "\ud83d\udd0d", "color": "amber", "verdict": "Below Threshold", "weight": 0.12 },
+    { "name": "Technology Stack", "score": 71, "icon": "\ud83c\udfd7\ufe0f", "color": "green", "verdict": "Strong Foundation", "weight": 0.10 },
+    { "name": "Response Velocity", "score": 44, "icon": "\u26a1", "color": "amber", "verdict": "Below Threshold", "weight": 0.10 },
+    { "name": "Competitive Position", "score": 33, "icon": "\ud83d\udcca", "color": "amber", "verdict": "Below Peers", "weight": 0.11 }
+  ],
+  "channel_audit": [
+    { "channel": "Phone Support", "status": "pass", "description": "Detected. IVR system active, estimated 4-level deep menu." },
+    { "channel": "WhatsApp Business", "status": "fail", "description": "Not detected. 87% of UAE banking customers prefer WhatsApp for quick inquiries." },
+    { "channel": "Live Chat Widget", "status": "fail", "description": "No chat widget found on main site or mobile app landing page." },
+    { "channel": "Email Support", "status": "warn", "description": "Generic info@ address only. No dedicated support channel found." },
+    { "channel": "Mobile App", "status": "pass", "description": "App detected (iOS/Android). In-app support unclear." },
+    { "channel": "Social Media Support", "status": "fail", "description": "No dedicated support handles. DMs closed on Instagram." },
+    { "channel": "Arabic Chatbot", "status": "fail", "description": "No Arabic conversational AI detected on any channel." },
+    { "channel": "Callback Option", "status": "warn", "description": "Not found. Competitors FAB and ADIB offer callback within IVR." }
+  ],
+  "reputation": {
+    "google_rating": 3.4,
+    "google_count": 1247,
+    "facebook_rating": 2.8,
+    "facebook_count": 89,
+    "reply_rate": "47%",
+    "reply_time_avg": "8-14 day avg",
+    "complaint_themes": [
+      { "theme": "Wait Times", "percentage": "34%", "severity": "high" },
+      { "theme": "IVR Frustration", "percentage": "21%", "severity": "high" },
+      { "theme": "Arabic Support", "percentage": "18%", "severity": "medium" },
+      { "theme": "Transfer Loops", "percentage": "14%", "severity": "medium" },
+      { "theme": "App Issues", "percentage": "8%", "severity": "low" },
+      { "theme": "Other", "percentage": "5%", "severity": "low" }
+    ],
+    "sentiment_snapshot": {
+      "positive": 22,
+      "neutral": 33,
+      "negative": 45
+    }
+  },
+  "competitors": [
+    { "name": "Emirates NBD", "overall": 76, "channels": "6/6", "ai_ready": "High", "arabic": "Strong", "score": 76, "color": "green" },
+    { "name": "FAB", "overall": 68, "channels": "5/6", "ai_ready": "Med", "arabic": "Good", "score": 68, "color": "blue" },
+    { "name": "ADIB", "overall": 61, "channels": "5/6", "ai_ready": "Low", "arabic": "Strong", "score": 61, "color": "blue" }
+  ],
+  "findings": [
+    {
+      "title": "No WhatsApp or Chat Channel Available",
+      "severity": "high",
+      "impact_tag": "HIGH IMPACT",
+      "narrative": "87% of UAE banking customers under 40 prefer messaging for routine inquiries. Your competitors Emirates NBD and FAB both offer WhatsApp banking. Estimated 15-20% of inbound calls could be deflected to async messaging, reducing AHT by ~25% on those interactions."
+    },
+    {
+      "title": "Arabic Conversational AI: Zero Capability Detected",
+      "severity": "high",
+      "impact_tag": "HIGH IMPACT",
+      "narrative": "No Arabic chatbot, no Arabic IVR NLU, no Arabic self-service detected. In a market where 60%+ of customer interactions are in Arabic (Gulf dialect), this forces all Arabic-speaking customers into agent-handled calls. Competitors ADIB and Emirates NBD have Arabic chatbots processing ~30% of routine queries."
+    },
+    {
+      "title": "Review Response Time: 8-14 Days Average",
+      "severity": "medium",
+      "impact_tag": "MEDIUM",
+      "narrative": "Industry best practice is under 24 hours. Negative reviews mentioning \"wait times\" and \"IVR frustration\" account for 55% of 1-star reviews. 53% of reviews receive no response at all. This signals a disconnected QA-to-reputation feedback loop."
+    },
+    {
+      "title": "IVR Depth: 4+ Levels Detected",
+      "severity": "medium",
+      "impact_tag": "MEDIUM",
+      "narrative": "Automated call testing detected a minimum 4-level IVR menu before reaching an agent. Best-in-class UAE banks use NLU-driven IVR with 1-2 levels maximum. Deep IVR trees correlate with 30-40% higher abandonment rates in MENA banking."
+    },
+    {
+      "title": "Strong Technology Foundation Under-Utilized",
+      "severity": "low",
+      "impact_tag": "OPPORTUNITY",
+      "narrative": "Genesys Cloud platform detected with modern API capabilities. Current utilization appears limited to voice routing. Platform supports AI-powered routing, agent assist, and analytics modules that are not activated. Estimated 40-60% of platform value is dormant."
+    }
+  ],
+  "opportunities": [
+    {
+      "tier": "quick_win",
+      "timeline": "0-3 months",
+      "title": "WhatsApp Business Channel Launch",
+      "description": "Deploy WhatsApp Business API with automated FAQ handling. Deflect 15-20% of voice calls. No infrastructure change required.",
+      "impact_estimate": "$280K-$420K annual savings"
+    },
+    {
+      "tier": "quick_win",
+      "timeline": "0-3 months",
+      "title": "Review Response Automation",
+      "description": "AI-drafted review responses with human approval. Reduce response time from 8-14 days to under 4 hours.",
+      "impact_estimate": "0.4-0.6 star rating improvement in 90 days"
+    },
+    {
+      "tier": "strategic",
+      "timeline": "3-6 months",
+      "title": "Arabic Conversational AI",
+      "description": "Gulf-dialect chatbot handling balance inquiries, card blocks, branch lookup, and complaint logging. Estimated 30% containment rate.",
+      "impact_estimate": "$600K-$900K annual savings + CX score improvement"
+    },
+    {
+      "tier": "strategic",
+      "timeline": "3-6 months",
+      "title": "IVR Modernization with NLU",
+      "description": "Replace 4-level tree with intent-based routing. Leverage existing Genesys Cloud capabilities. Reduce abandonment 30-40%.",
+      "impact_estimate": "25-35% reduction in call abandonment"
+    },
+    {
+      "tier": "transformational",
+      "timeline": "6-12 months",
+      "title": "AI QA Scoring (100% Coverage)",
+      "description": "Move from 2% manual QA sampling to 100% AI-scored interactions. Real-time feedback loop to agent training.",
+      "impact_estimate": "20-30% improvement in FCR within 6 months"
+    },
+    {
+      "tier": "transformational",
+      "timeline": "6-12 months",
+      "title": "AI Training Simulator Deployment",
+      "description": "Arabic-native agent training AI. Reduce onboarding from 6 weeks to 3 weeks. Continuous skills development linked to QA data.",
+      "impact_estimate": "50% reduction in agent ramp time"
+    }
+  ],
+  "radar_peer_average": [65, 52, 58, 55, 54, 62, 56, 50]
+}

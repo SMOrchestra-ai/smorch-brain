@@ -1,0 +1,153 @@
+# Claude Code vs Codex Routing SOP
+# Machine-readable policy for the Queue Processor
+# Source: Agentic Coding Orchestration SOP.md
+# Deploy to: smo-brain at /root/.smo/queue/routing-sop.yaml
+
+routing_policy:
+  # Complexity score thresholds (from 13-dimension scoring)
+  fast_track_max_score: 7       # S < 8 → Codex only
+  staged_min_score: 8           # S 8-15 → Claude plans, Codex executes, Claude reviews
+  team_min_score: 15            # S > 15 → Claude Agent Teams
+  human_escalation_min_score: 20  # S > 20 → human required
+
+  # Forbidden zones — always HALT, require human
+  forbidden_zones:
+    paths:
+      - "**/auth/**"
+      - "**/payments/**"
+      - "**/infra/**"
+      - "**/migrations/**"
+      - "**/secrets/**"
+      - "**/.env*"
+    tasks:
+      - "database_migration"
+      - "auth_flow_change"
+      - "payment_integration"
+      - "infrastructure_change"
+      - "secret_rotation"
+
+  # Tier definitions
+  tiers:
+    fast_track:
+      description: "Single Codex session, auto-edit mode"
+      agent: "codex"
+      mode: "auto-edit"
+      timeout_seconds: 1800     # 30 minutes
+      max_turns: 15
+      examples:
+        - "Fix typo in README"
+        - "Add missing import"
+        - "Update docs"
+        - "Fix lint errors"
+        - "Add unit test for existing function"
+
+    staged_hybrid:
+      description: "Claude plans, Codex executes, Claude reviews"
+      planner: "claude"
+      executor: "codex"
+      reviewer: "claude"
+      timeout_seconds: 3600     # 60 minutes total
+      max_turns: 25
+      artifacts:
+        plan: "SPEC.json"       # Planner → Executor
+        report: "REPORT.json"   # Executor → Reviewer
+        approval: "APPROVAL.json"  # Reviewer → Lead
+      examples:
+        - "Build new API endpoint"
+        - "Add feature to existing module"
+        - "Refactor single service"
+        - "Create new component with tests"
+
+    agent_team:
+      description: "Claude Agent Teams with shared task list"
+      agent: "claude"
+      mode: "agent-team"
+      timeout_seconds: 7200     # 2 hours
+      max_turns: 50
+      examples:
+        - "Multi-service feature"
+        - "Complex refactoring across modules"
+        - "New subsystem with DB + API + UI"
+
+    forbidden:
+      description: "HALT — human design memo required"
+      action: "halt"
+      notification: "telegram"
+      allowed_actions:
+        - "read-only analysis"
+        - "impact assessment"
+        - "dependency mapping"
+
+  # Enforcement rules
+  enforcement:
+    plan_approval:
+      condition: "score > 5"
+      action: "require_lead_approval"
+    max_diff_lines: 500           # Flag PRs with > 500 lines changed
+    max_turns: 25                 # Default turn limit
+    error_budget: 3               # Max CI failures before human escalation
+    session_ttl_minutes: 60       # Hard kill at 60 minutes
+    session_warn_minutes: 45      # Warn at 45 minutes
+
+  # Validation requirements (must pass before PR creation)
+  validation_required:
+    - unit_tests
+    - linter_check
+    - security_scan
+
+  # Quality gate
+  quality_gate:
+    min_score: 8.0
+    max_retry: 2
+    on_fail_after_retry: "create_pr_with_label"
+    fail_label: "needs-quality-review"
+
+# Dimension weights for complexity scoring
+# Each dimension scored 1-10, weighted sum = complexity score S
+scoring_dimensions:
+  ambiguity:
+    weight: 1.5
+    description: "How underspecified is the task prompt?"
+  blast_radius:
+    weight: 1.5
+    description: "Files + cross-service deps affected"
+  context_width:
+    weight: 1.0
+    description: "Tokens of source code needed"
+  reasoning_intensity:
+    weight: 1.5
+    description: "Logical depth before first edit"
+  implementation_volume:
+    weight: 0.5
+    description: "Lines of code to write"
+  verification_simplicity:
+    weight: 0.5
+    description: "Test coverage available"
+  architectural_sensitivity:
+    weight: 1.5
+    description: "Impact on shared libs/contracts"
+  security_risk:
+    weight: 2.0
+    description: "Auth, PII, secrets exposure — FORBIDDEN if high"
+  production_criticality:
+    weight: 1.5
+    description: "User-facing latency/reliability impact"
+  requirement_confidence:
+    weight: 1.0
+    description: "Stability of intent"
+  repo_familiarity:
+    weight: 0.5
+    description: "Existing memory/indexing for this repo"
+  dependency_coupling:
+    weight: 1.0
+    description: "Cross-module impact"
+  reversibility:
+    weight: 0.5
+    description: "Git rollback ease"
+
+# Expected distribution with proper routing
+expected_distribution:
+  fast_track_percent: 40
+  staged_hybrid_percent: 30
+  claude_code_percent: 20
+  agent_team_percent: 10

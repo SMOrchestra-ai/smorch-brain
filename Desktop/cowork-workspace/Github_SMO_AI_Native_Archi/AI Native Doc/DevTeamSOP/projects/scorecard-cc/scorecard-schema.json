@@ -1,0 +1,169 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CC Intelligence Scorecard Data",
+  "description": "Master JSON schema — the contract between the n8n pipeline and the HTML template. Every field here must be produced by the pipeline and consumed by the template.",
+  "type": "object",
+  "required": ["report_meta", "client", "overall_score", "maturity_band", "dimensions", "channel_audit", "reputation", "competitors", "findings", "opportunities"],
+  "properties": {
+    "report_meta": {
+      "type": "object",
+      "required": ["id", "date", "classification"],
+      "properties": {
+        "id": { "type": "string", "description": "Sequential report ID, e.g. CCI-2026-0147" },
+        "date": { "type": "string", "description": "Report generation date, e.g. March 21, 2026" },
+        "classification": { "type": "string", "enum": ["Confidential", "Internal", "Public"], "default": "Confidential" }
+      }
+    },
+    "client": {
+      "type": "object",
+      "required": ["name", "location", "industry", "url"],
+      "properties": {
+        "name": { "type": "string", "description": "Company name, e.g. Gulf National Bank" },
+        "location": { "type": "string", "description": "City + Country, e.g. Abu Dhabi, UAE" },
+        "industry": { "type": "string", "description": "Industry vertical, e.g. Banking & Financial Services" },
+        "agent_count_estimate": { "type": "string", "description": "Estimated CC agent count, e.g. ~450 agents, 3 sites. Label as estimate." },
+        "url": { "type": "string", "description": "Target company website URL" }
+      }
+    },
+    "overall_score": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 100,
+      "description": "Weighted average of 8 dimension scores"
+    },
+    "maturity_band": {
+      "type": "string",
+      "enum": ["Critical", "Reactive", "Developing", "Optimized", "Intelligent"],
+      "description": "Derived from overall_score: 0-20=Critical, 21-40=Reactive, 41-60=Developing, 61-80=Optimized, 81-100=Intelligent"
+    },
+    "dimensions": {
+      "type": "array",
+      "minItems": 8,
+      "maxItems": 8,
+      "description": "The 8 scoring dimensions in display order",
+      "items": {
+        "type": "object",
+        "required": ["name", "score", "icon", "color", "verdict", "weight"],
+        "properties": {
+          "name": { "type": "string", "description": "Dimension display name, e.g. Channel Accessibility" },
+          "score": { "type": "integer", "minimum": 0, "maximum": 100 },
+          "icon": { "type": "string", "description": "Emoji icon for the card" },
+          "color": {
+            "type": "string",
+            "enum": ["red", "amber", "blue", "green"],
+            "description": "Color tier: red (0-25 critical), amber (26-45 weak), blue (46-70 adequate), green (71-100 strong)"
+          },
+          "verdict": { "type": "string", "description": "Short verdict label, e.g. Critical Gap, Below Threshold, Adequate, Strong Foundation" },
+          "weight": { "type": "number", "description": "Weight as decimal, e.g. 0.15 for 15%" }
+        }
+      }
+    },
+    "channel_audit": {
+      "type": "array",
+      "description": "Channel accessibility audit checklist items",
+      "items": {
+        "type": "object",
+        "required": ["channel", "status", "description"],
+        "properties": {
+          "channel": { "type": "string", "description": "Channel name, e.g. Phone Support, WhatsApp Business" },
+          "status": { "type": "string", "enum": ["pass", "fail", "warn"], "description": "Detection result" },
+          "description": { "type": "string", "description": "Detail text explaining the finding" }
+        }
+      }
+    },
+    "reputation": {
+      "type": "object",
+      "required": ["google_rating", "google_count", "reply_rate", "reply_time_avg", "complaint_themes"],
+      "properties": {
+        "google_rating": { "type": "number", "description": "Google Maps rating, e.g. 3.4" },
+        "google_count": { "type": "integer", "description": "Number of Google reviews, e.g. 1247" },
+        "facebook_rating": { "type": ["number", "null"], "description": "Facebook rating or null if unavailable" },
+        "facebook_count": { "type": ["integer", "null"], "description": "Number of Facebook reviews or null" },
+        "reply_rate": { "type": "string", "description": "Reply rate percentage, e.g. 47%" },
+        "reply_time_avg": { "type": "string", "description": "Average reply time, e.g. 8-14 day avg" },
+        "complaint_themes": {
+          "type": "array",
+          "description": "NLP-extracted complaint themes from reviews",
+          "items": {
+            "type": "object",
+            "required": ["theme", "percentage", "severity"],
+            "properties": {
+              "theme": { "type": "string", "description": "Theme label, e.g. Wait Times" },
+              "percentage": { "type": "string", "description": "Relative frequency, e.g. 34%" },
+              "severity": { "type": "string", "enum": ["high", "medium", "low"], "description": "Maps to color: high=red, medium=amber, low=gray" }
+            }
+          }
+        },
+        "sentiment_snapshot": {
+          "type": "object",
+          "description": "Current sentiment distribution (MVP: snapshot only, no trend)",
+          "properties": {
+            "positive": { "type": "integer", "description": "Percentage of positive reviews" },
+            "neutral": { "type": "integer", "description": "Percentage of neutral reviews" },
+            "negative": { "type": "integer", "description": "Percentage of negative reviews" }
+          }
+        }
+      }
+    },
+    "competitors": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "description": "3 competitor benchmarks (MVP scope)",
+      "items": {
+        "type": "object",
+        "required": ["name", "overall", "channels", "ai_ready", "arabic", "score"],
+        "properties": {
+          "name": { "type": "string", "description": "Competitor company name" },
+          "overall": { "type": "integer", "minimum": 0, "maximum": 100 },
+          "channels": { "type": "string", "description": "Channel count summary, e.g. 6/6 or 5/6" },
+          "ai_ready": { "type": "string", "enum": ["High", "Med", "Low"] },
+          "arabic": { "type": "string", "enum": ["Strong", "Good", "Weak"] },
+          "score": { "type": "integer", "minimum": 0, "maximum": 100, "description": "Overall competitor score" },
+          "color": { "type": "string", "enum": ["red", "amber", "blue", "green"], "description": "Score color tier" }
+        }
+      }
+    },
+    "findings": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 5,
+      "description": "Key findings prioritized by impact",
+      "items": {
+        "type": "object",
+        "required": ["title", "severity", "impact_tag", "narrative"],
+        "properties": {
+          "title": { "type": "string", "description": "Finding headline" },
+          "severity": { "type": "string", "enum": ["high", "medium", "low"], "description": "Maps to color: high=red, medium=amber, low=blue" },
+          "impact_tag": { "type": "string", "description": "Tag label, e.g. HIGH IMPACT, MEDIUM, OPPORTUNITY" },
+          "narrative": { "type": "string", "description": "Detailed finding description with stats and context" }
+        }
+      }
+    },
+    "opportunities": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 6,
+      "description": "Opportunity-to-impact map cards",
+      "items": {
+        "type": "object",
+        "required": ["tier", "timeline", "title", "description", "impact_estimate"],
+        "properties": {
+          "tier": { "type": "string", "enum": ["quick_win", "strategic", "transformational"] },
+          "timeline": { "type": "string", "description": "Timeline label, e.g. 0-3 months" },
+          "title": { "type": "string", "description": "Opportunity title" },
+          "description": { "type": "string", "description": "Opportunity detail" },
+          "impact_estimate": { "type": "string", "description": "ROI or impact estimate, e.g. $280K-$420K annual savings" },
+          "color": { "type": "string", "enum": ["green", "blue", "purple"], "description": "Tier color: quick_win=green, strategic=blue, transformational=purple" }
+        }
+      }
+    },
+    "radar_peer_average": {
+      "type": "array",
+      "minItems": 8,
+      "maxItems": 8,
+      "description": "Peer average scores per dimension (computed from competitor data) for radar chart overlay",
+      "items": { "type": "integer", "minimum": 0, "maximum": 100 }
+    }
+  }
+}

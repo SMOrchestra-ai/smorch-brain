@@ -1,0 +1,23 @@
+{
+  "skill_name": "campaign-guide",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "campaign guide - I want to kick off a new campaign for RSC (our Dubai-based enterprise client). They sell HR tech to companies in UAE and Saudi. Let's go.",
+      "expected_output": "Should start Phase 0 (setup): ask to load project brain from smorch-context/rsc/, verify context files exist, ask about Linear ticket, then transition to Phase 1 (Brief) with specific fields to fill from RSC context.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "We just finished scoring the signals for the Acme campaign - 45 accounts in Tier 3, 120 in Tier 2, 30 suppressed. Offer score came back at 5.2. What's next?",
+      "expected_output": "Should BLOCK advancement. Offer score 5.2 is below the 6.0 gate threshold. Should tell operator to fix the offer before writing any outreach. Should identify which of the 10 offer dimensions scored lowest and suggest specific fixes. Should NOT proceed to Phase 5.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "resume campaign for SalesMfast SME - we paused at Phase 7 last time, compliance gate passed. Ready to launch.",
+      "expected_output": "Should recognize resume at Phase 8 (Launch). Should invoke outbound-orchestrator in launch mode. Should enforce batched launch sequence (50-100 seed, then expand). Should mention cross-channel coordination rules (LinkedIn before email, WhatsApp only after engagement).",
+      "files": []
+    }
+  ]
+}

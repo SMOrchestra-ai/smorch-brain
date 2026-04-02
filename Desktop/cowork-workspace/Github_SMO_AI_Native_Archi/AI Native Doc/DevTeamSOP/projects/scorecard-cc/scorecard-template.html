@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CC Intelligence Scorecard - {{client.name}}</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root {
+  --bg: #0a0a0b;
+  --surface: #111113;
+  --card: #16161a;
+  --border: #222228;
+  --gold: #c8a24e;
+  --gold-dim: rgba(200,162,78,0.15);
+  --gold-glow: rgba(200,162,78,0.3);
+  --white: #f0ede6;
+  --gray: #8a8a96;
+  --light-gray: #b0b0ba;
+  --red: #ef4444;
+  --red-dim: rgba(239,68,68,0.12);
+  --green: #10b981;
+  --green-dim: rgba(16,185,129,0.12);
+  --blue: #3b82f6;
+  --blue-dim: rgba(59,130,246,0.12);
+  --teal: #14b8a6;
+  --teal-dim: rgba(20,184,166,0.12);
+  --amber: #f59e0b;
+  --amber-dim: rgba(245,158,11,0.12);
+  --purple: #8b5cf6;
+  --purple-dim: rgba(139,92,246,0.12);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  background: var(--bg);
+  color: var(--white);
+  font-family: 'DM Sans', sans-serif;
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+body::before {
+  content:'';
+  position:fixed; top:0; left:0; right:0; bottom:0;
+  background-image:
+    linear-gradient(rgba(200,162,78,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(200,162,78,0.03) 1px, transparent 1px);
+  background-size: 60px 60px;
+  pointer-events:none;
+  z-index:0;
+}
+
+.container { max-width:1200px; margin:0 auto; padding:0 24px; position:relative; z-index:1; }
+
+/* ===== HEADER ===== */
+.header {
+  padding: 32px 0 24px;
+  border-bottom: 1px solid var(--border);
+}
+.header-top { display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; }
+.logo { display:flex; align-items:center; gap:12px; }
+.logo-mark {
+  width:36px; height:36px; border-radius:8px;
+  background: linear-gradient(135deg, var(--gold), #e8c86a);
+  display:flex; align-items:center; justify-content:center;
+  font-weight:700; font-size:14px; color:#0a0a0b;
+}
+.logo-text { font-family:'Playfair Display',serif; font-size:18px; font-weight:600; color:var(--white); }
+.logo-sub { font-size:11px; color:var(--gray); letter-spacing:2px; text-transform:uppercase; }
+.report-meta { text-align:right; font-size:12px; color:var(--gray); }
+.report-meta span { color:var(--gold); }
+
+.client-banner {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 28px 32px;
+  display:flex; justify-content:space-between; align-items:center;
+  margin-top:20px;
+}
+.client-info h1 {
+  font-family:'Playfair Display',serif;
+  font-size:28px; font-weight:700; color:var(--white);
+  margin-bottom:4px;
+}
+.client-info p { font-size:13px; color:var(--gray); }
+.client-info p span { color:var(--light-gray); }
+
+.overall-score-ring {
+  width:110px; height:110px; position:relative;
+}
+.score-ring-bg {
+  width:110px; height:110px; border-radius:50%;
+  background: conic-gradient(
+    var(--gold) 0deg, var(--gold) calc(var(--score) * 3.6deg),
+    var(--border) calc(var(--score) * 3.6deg), var(--border) 360deg
+  );
+  display:flex; align-items:center; justify-content:center;
+  animation: ringFill 1.5s ease-out;
+}
+.score-ring-inner {
+  width:88px; height:88px; border-radius:50%; background:var(--card);
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+}
+.score-ring-inner .num { font-size:32px; font-weight:700; color:var(--gold); line-height:1; }
+.score-ring-inner .lbl { font-size:9px; color:var(--gray); text-transform:uppercase; letter-spacing:1.5px; margin-top:2px; }
+
+@keyframes ringFill { from { opacity:0.3; transform:scale(0.9); } to { opacity:1; transform:scale(1); } }
+
+/* ===== SCORE BAND ===== */
+.score-band {
+  margin:24px 0;
+  background: var(--card);
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:20px 28px;
+}
+.score-band-label { font-size:11px; color:var(--gray); text-transform:uppercase; letter-spacing:1.5px; margin-bottom:12px; }
+.band-bar {
+  height:8px; border-radius:4px; display:flex; overflow:hidden; margin-bottom:8px;
+  background: var(--border);
+}
+.band-bar .seg { height:100%; transition:width 1s ease; }
+.band-labels { display:flex; justify-content:space-between; font-size:10px; color:var(--gray); }
+.band-marker {
+  position:relative; margin-top:-22px; margin-bottom:14px;
+  transition: margin-left 1s ease;
+}
+.band-marker::after {
+  content:''; display:block; width:0; height:0;
+  border-left:6px solid transparent; border-right:6px solid transparent;
+  border-top:8px solid var(--gold);
+}
+
+/* ===== DIMENSION GRID ===== */
+.section-title {
+  font-family:'Playfair Display',serif;
+  font-size:22px; font-weight:600; color:var(--white);
+  margin: 36px 0 4px;
+  display:flex; align-items:center; gap:10px;
+}
+.section-title::before {
+  content:''; display:block; width:3px; height:22px; background:var(--gold); border-radius:2px;
+}
+.section-sub { font-size:13px; color:var(--gray); margin-bottom:20px; }
+
+.dim-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:28px; }
+.dim-card {
+  background:var(--card); border:1px solid var(--border); border-radius:10px;
+  padding:20px 18px; position:relative; overflow:hidden;
+  transition: border-color 0.3s, transform 0.2s;
+  cursor:default;
+}
+.dim-card:hover { border-color: var(--gold-glow); transform:translateY(-2px); }
+.dim-card .accent-bar { position:absolute; top:0; left:0; right:0; height:3px; }
+.dim-card .dim-icon { font-size:20px; margin-bottom:10px; }
+.dim-card .dim-name { font-size:12px; color:var(--gray); text-transform:uppercase; letter-spacing:1px; margin-bottom:8px; }
+.dim-card .dim-score-row { display:flex; align-items:baseline; gap:6px; margin-bottom:10px; }
+.dim-card .dim-score { font-size:28px; font-weight:700; line-height:1; }
+.dim-card .dim-max { font-size:13px; color:var(--gray); }
+.dim-card .dim-bar { height:4px; border-radius:2px; background:var(--border); overflow:hidden; margin-bottom:10px; }
+.dim-card .dim-bar-fill { height:100%; border-radius:2px; transition:width 1.2s ease; }
+.dim-card .dim-verdict { font-size:11px; padding:3px 8px; border-radius:4px; display:inline-block; }
+
+.verdict-critical { background:var(--red-dim); color:var(--red); }
+.verdict-weak { background:var(--amber-dim); color:var(--amber); }
+.verdict-adequate { background:var(--blue-dim); color:var(--blue); }
+.verdict-strong { background:var(--green-dim); color:var(--green); }
+
+/* ===== DETAIL SECTIONS ===== */
+.detail-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:28px; }
+.detail-card {
+  background:var(--card); border:1px solid var(--border); border-radius:10px;
+  padding:24px; position:relative;
+}
+.detail-card h3 {
+  font-size:15px; font-weight:600; color:var(--white); margin-bottom:14px;
+  display:flex; align-items:center; gap:8px;
+}
+.detail-card h3 .badge {
+  font-size:11px; padding:2px 8px; border-radius:4px; font-weight:500;
+}
+
+.check-list { list-style:none; }
+.check-list li {
+  display:flex; align-items:flex-start; gap:10px;
+  padding:8px 0; border-bottom:1px solid var(--border);
+  font-size:13px; color:var(--light-gray);
+}
+.check-list li:last-child { border-bottom:none; }
+.check-icon { width:18px; height:18px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:10px; flex-shrink:0; margin-top:2px; }
+.check-pass { background:var(--green-dim); color:var(--green); }
+.check-fail { background:var(--red-dim); color:var(--red); }
+.check-warn { background:var(--amber-dim); color:var(--amber); }
+
+.chart-container { position:relative; height:260px; margin:10px 0; }
+.chart-container-sm { position:relative; height:200px; margin:10px 0; }
+
+/* ===== COMPETITOR TABLE ===== */
+.comp-table {
+  width:100%; border-collapse:collapse; font-size:13px; margin:10px 0;
+}
+.comp-table th {
+  text-align:left; padding:10px 12px; font-size:11px; color:var(--gray);
+  text-transform:uppercase; letter-spacing:1px; border-bottom:1px solid var(--border);
+  font-weight:500;
+}
+.comp-table td {
+  padding:10px 12px; border-bottom:1px solid var(--border); color:var(--light-gray);
+}
+.comp-table tr.highlight td { color:var(--gold); font-weight:600; }
+.comp-table .bar-cell { width:120px; }
+.mini-bar { height:6px; border-radius:3px; background:var(--border); overflow:hidden; }
+.mini-bar-fill { height:100%; border-radius:3px; }
+
+/* ===== FINDINGS ===== */
+.finding-row {
+  display:flex; gap:12px; padding:14px 0;
+  border-bottom:1px solid var(--border);
+  align-items:flex-start;
+}
+.finding-row:last-child { border-bottom:none; }
+.finding-sev {
+  width:6px; min-height:40px; border-radius:3px; flex-shrink:0; margin-top:4px;
+}
+.finding-content { flex:1; }
+.finding-content strong { font-size:14px; color:var(--white); display:block; margin-bottom:2px; }
+.finding-content p { font-size:12px; color:var(--gray); line-height:1.5; }
+.finding-tag {
+  font-size:10px; padding:2px 6px; border-radius:3px; margin-left:8px;
+  vertical-align:middle;
+}
+
+/* ===== OPPORTUNITY MAP ===== */
+.opp-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:12px; margin:16px 0; }
+.opp-card {
+  background: var(--surface);
+  border:1px solid var(--border);
+  border-radius:8px;
+  padding:16px 18px;
+  border-left:3px solid;
+}
+.opp-card .opp-label { font-size:10px; text-transform:uppercase; letter-spacing:1px; margin-bottom:6px; }
+.opp-card h4 { font-size:14px; color:var(--white); margin-bottom:4px; }
+.opp-card p { font-size:12px; color:var(--gray); }
+.opp-card .opp-impact { font-size:11px; margin-top:8px; font-weight:600; }
+
+/* ===== CTA FOOTER ===== */
+.cta-section {
+  background: linear-gradient(135deg, var(--card), #1a1812);
+  border:1px solid var(--gold-dim);
+  border-radius:12px;
+  padding:40px;
+  text-align:center;
+  margin:40px 0;
+}
+.cta-section h2 {
+  font-family:'Playfair Display',serif;
+  font-size:26px; color:var(--white); margin-bottom:8px;
+}
+.cta-section p { font-size:14px; color:var(--gray); margin-bottom:24px; max-width:600px; margin-left:auto; margin-right:auto; }
+.cta-btn {
+  display:inline-block;
+  background: linear-gradient(135deg, var(--gold), #e8c86a);
+  color:#0a0a0b; font-weight:700; font-size:14px;
+  padding:14px 36px; border-radius:8px;
+  text-decoration:none; letter-spacing:0.5px;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.cta-btn:hover { transform:translateY(-2px); box-shadow:0 8px 30px var(--gold-glow); }
+
+.footer {
+  padding:24px 0;
+  border-top:1px solid var(--border);
+  text-align:center;
+  font-size:11px; color:var(--gray);
+  margin-bottom:20px;
+}
+
+/* ===== SENTIMENT PILLS ===== */
+.sentiment-row { display:flex; gap:8px; flex-wrap:wrap; margin:10px 0; }
+.sent-pill {
+  font-size:11px; padding:5px 10px; border-radius:6px;
+  border:1px solid var(--border);
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width:900px) {
+  .dim-grid { grid-template-columns:repeat(2,1fr); }
+  .detail-grid { grid-template-columns:1fr; }
+  .opp-grid { grid-template-columns:1fr; }
+  .client-banner { flex-direction:column; gap:20px; text-align:center; }
+}
+
+/* Animations */
+.fade-up {
+  opacity:0; transform:translateY(20px);
+  animation: fadeUp 0.6s ease forwards;
+}
+@keyframes fadeUp { to { opacity:1; transform:translateY(0); } }
+.delay-1 { animation-delay:0.1s; }
+.delay-2 { animation-delay:0.2s; }
+.delay-3 { animation-delay:0.3s; }
+.delay-4 { animation-delay:0.4s; }
+.delay-5 { animation-delay:0.5s; }
+.delay-6 { animation-delay:0.6s; }
+.delay-7 { animation-delay:0.7s; }
+.delay-8 { animation-delay:0.8s; }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+<!-- ===== HEADER ===== -->
+<header class="header fade-up">
+  <div class="header-top">
+    <div class="logo">
+      <div class="logo-mark">LAB</div>
+      <div>
+        <div class="logo-text">LAB Experience</div>
+        <div class="logo-sub">CC Intelligence Practice</div>
+      </div>
+    </div>
+    <div class="report-meta">
+      Report ID: <span>{{report_meta.id}}</span><br>
+      Generated: <span>{{report_meta.date}}</span><br>
+      Classification: <span>{{report_meta.classification}}</span>
+    </div>
+  </div>
+
+  <div class="client-banner">
+    <div class="client-info">
+      <h1>{{client.name}}</h1>
+      <p>Contact Center Intelligence Scorecard</p>
+      <p style="margin-top:6px;">
+        <span>{{client.location}}</span> &nbsp;|&nbsp;
+        <span>{{client.industry}}</span>{{#if client.agent_count_estimate}} &nbsp;|&nbsp;
+        <span>Est. {{client.agent_count_estimate}}</span>{{/if}}
+      </p>
+    </div>
+    <div class="overall-score-ring">
+      <div class="score-ring-bg" style="--score:{{overall_score}}">
+        <div class="score-ring-inner">
+          <div class="num">{{overall_score}}</div>
+          <div class="lbl">Overall</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ===== SCORE BAND ===== -->
+<div class="score-band fade-up delay-1">
+  <div class="score-band-label">CC Intelligence Maturity Band</div>
+  <div class="band-bar">
+    <div class="seg" style="width:20%;background:var(--red);"></div>
+    <div class="seg" style="width:20%;background:var(--amber);"></div>
+    <div class="seg" style="width:20%;background:#eab308;"></div>
+    <div class="seg" style="width:20%;background:var(--blue);"></div>
+    <div class="seg" style="width:20%;background:var(--green);"></div>
+  </div>
+  <div class="band-marker" style="margin-left:calc({{overall_score}}% - 6px);"></div>
+  <div class="band-labels">
+    <span>0-20 Critical</span>
+    <span>21-40 Reactive</span>
+    <span>41-60 Developing</span>
+    <span>61-80 Optimized</span>
+    <span>81-100 Intelligent</span>
+  </div>
+</div>
+
+<!-- ===== 8 DIMENSION CARDS ===== -->
+<div class="section-title fade-up delay-2">Dimension Scores</div>
+<div class="section-sub fade-up delay-2">Automated analysis across 8 CC intelligence dimensions. Scored 0-100 based on publicly observable signals.</div>
+
+<div class="dim-grid" id="dimensionGrid">
+  <!-- Rendered by JavaScript from data -->
+</div>
+
+<!-- ===== RADAR CHART + CHANNEL AUDIT ===== -->
+<div class="detail-grid">
+  <div class="detail-card fade-up delay-3">
+    <h3>Dimension Radar</h3>
+    <div class="chart-container">
+      <canvas id="radarChart"></canvas>
+    </div>
+  </div>
+
+  <div class="detail-card fade-up delay-4">
+    <h3>Channel Accessibility Audit <span class="badge" id="channelBadge"></span></h3>
+    <ul class="check-list" id="channelAuditList">
+      <!-- Rendered by JavaScript from data -->
+    </ul>
+  </div>
+</div>
+
+<!-- ===== REPUTATION + COMPETITIVE BENCHMARK ===== -->
+<div class="detail-grid">
+  <div class="detail-card fade-up delay-4">
+    <h3>Reputation Signal Analysis <span class="badge" id="reputationBadge"></span></h3>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px;" id="reputationStats">
+      <!-- Rendered by JavaScript from data -->
+    </div>
+    <div style="font-size:12px;color:var(--gray);margin-bottom:10px;">Top Complaint Themes (NLP Analysis)</div>
+    <div class="sentiment-row" id="complaintThemes">
+      <!-- Rendered by JavaScript from data -->
+    </div>
+    <div class="chart-container-sm">
+      <canvas id="sentimentChart"></canvas>
+    </div>
+  </div>
+
+  <div class="detail-card fade-up delay-5">
+    <h3>Competitive Benchmark</h3>
+    <table class="comp-table">
+      <thead>
+        <tr><th>Organization</th><th>Overall</th><th>Channels</th><th>AI Ready</th><th>Arabic</th><th>Score</th></tr>
+      </thead>
+      <tbody id="competitorTable">
+        <!-- Rendered by JavaScript from data -->
+      </tbody>
+    </table>
+    <p style="font-size:11px;color:var(--gray);margin-top:10px;">Benchmark based on publicly observable signals only. Actual internal capabilities may differ.</p>
+  </div>
+</div>
+
+<!-- ===== KEY FINDINGS ===== -->
+<div class="section-title fade-up delay-5">Key Findings</div>
+<div class="section-sub fade-up delay-5">Prioritized by estimated revenue impact and implementation urgency.</div>
+
+<div class="detail-card fade-up delay-6" style="margin-bottom:20px;" id="findingsContainer">
+  <!-- Rendered by JavaScript from data -->
+</div>
+
+<!-- ===== OPPORTUNITY MAP ===== -->
+<div class="section-title fade-up delay-6">Opportunity-to-Impact Map</div>
+<div class="section-sub fade-up delay-6">Ranked by estimated ROI and implementation feasibility.</div>
+
+<div class="opp-grid fade-up delay-7" id="opportunityGrid">
+  <!-- Rendered by JavaScript from data -->
+</div>
+
+<!-- ===== CTA ===== -->
+<div class="cta-section fade-up delay-8">
+  <h2>Your Contact Center Has Untapped Potential</h2>
+  <p>This scorecard is based on publicly observable signals only. A full L1 Diagnostic uncovers what the outside can't see: agent capability, process efficiency, QA maturity, and technology utilization. The gaps are almost always larger than what surfaces here.</p>
+  <a href="#" class="cta-btn">Schedule a Diagnostic Briefing</a>
+  <p style="margin-top:16px;font-size:12px;">15-minute call. No commitment. We walk you through these findings live.</p>
+</div>
+
+<footer class="footer">
+  <p>LAB Experience &nbsp;|&nbsp; CC Intelligence Practice &nbsp;|&nbsp; Confidential</p>
+  <p style="margin-top:4px;">Ladislau Szilagyi &nbsp;|&nbsp; Gabor Kocsis &nbsp;|&nbsp; Mamoun Alamouri</p>
+  <p style="margin-top:4px;">Generated using LAB Intelligence Engine v2.1 &nbsp;|&nbsp; Data sources: Public web, GMB, App Store, Social APIs</p>
+</footer>
+
+</div>
+
+<script>
+// ===== SCORECARD DATA (injected by pipeline) =====
+const SCORECARD_DATA = {{{json_data}}};
+
+// ===== COLOR MAPS =====
+const COLOR_MAP = {
+  red: 'var(--red)',
+  amber: 'var(--amber)',
+  blue: 'var(--blue)',
+  green: 'var(--green)',
+  purple: 'var(--purple)'
+};
+const COLOR_DIM_MAP = {
+  red: 'var(--red-dim)',
+  amber: 'var(--amber-dim)',
+  blue: 'var(--blue-dim)',
+  green: 'var(--green-dim)',
+  purple: 'var(--purple-dim)'
+};
+const VERDICT_CLASS_MAP = {
+  red: 'verdict-critical',
+  amber: 'verdict-weak',
+  blue: 'verdict-adequate',
+  green: 'verdict-strong'
+};
+const SEVERITY_COLOR_MAP = {
+  high: 'red',
+  medium: 'amber',
+  low: 'blue'
+};
+const TIER_COLOR_MAP = {
+  quick_win: 'green',
+  strategic: 'blue',
+  transformational: 'purple'
+};
+const THEME_SEVERITY_COLOR = {
+  high: 'var(--red)',
+  medium: 'var(--amber)',
+  low: 'var(--gray)'
+};
+
+// ===== RENDER DIMENSION CARDS =====
+const dimGrid = document.getElementById('dimensionGrid');
+const delays = [2,3,4,5,3,4,5,6];
+SCORECARD_DATA.dimensions.forEach((dim, i) => {
+  const card = document.createElement('div');
+  card.className = `dim-card fade-up delay-${delays[i]}`;
+  card.innerHTML = `
+    <div class="accent-bar" style="background:${COLOR_MAP[dim.color]};"></div>
+    <div class="dim-icon">${dim.icon}</div>
+    <div class="dim-name">${dim.name}</div>
+    <div class="dim-score-row">
+      <div class="dim-score" style="color:${COLOR_MAP[dim.color]};">${dim.score}</div>
+      <div class="dim-max">/ 100</div>
+    </div>
+    <div class="dim-bar"><div class="dim-bar-fill" style="width:${dim.score}%;background:${COLOR_MAP[dim.color]};"></div></div>
+    <div class="dim-verdict ${VERDICT_CLASS_MAP[dim.color]}">${dim.verdict}</div>
+  `;
+  dimGrid.appendChild(card);
+});
+
+// ===== CHANNEL AUDIT CHECKLIST =====
+const channelDim = SCORECARD_DATA.dimensions.find(d => d.name === 'Channel Accessibility');
+if (channelDim) {
+  const badge = document.getElementById('channelBadge');
+  badge.textContent = `${channelDim.score}/100`;
+  badge.style.background = COLOR_DIM_MAP[channelDim.color];
+  badge.style.color = COLOR_MAP[channelDim.color];
+}
+
+const auditList = document.getElementById('channelAuditList');
+const STATUS_ICON = { pass: '&#10003;', fail: '&#10007;', warn: '!' };
+const STATUS_CLASS = { pass: 'check-pass', fail: 'check-fail', warn: 'check-warn' };
+SCORECARD_DATA.channel_audit.forEach(item => {
+  const li = document.createElement('li');
+  li.innerHTML = `
+    <span class="check-icon ${STATUS_CLASS[item.status]}">${STATUS_ICON[item.status]}</span>
+    <span><strong style="color:var(--white);">${item.channel}</strong> - ${item.description}</span>
+  `;
+  auditList.appendChild(li);
+});
+
+// ===== REPUTATION STATS =====
+const rep = SCORECARD_DATA.reputation;
+const repDim = SCORECARD_DATA.dimensions.find(d => d.name === 'Reputation & Sentiment');
+if (repDim) {
+  const badge = document.getElementById('reputationBadge');
+  badge.textContent = `${repDim.score}/100`;
+  badge.style.background = COLOR_DIM_MAP[repDim.color];
+  badge.style.color = COLOR_MAP[repDim.color];
+}
+
+const repStats = document.getElementById('reputationStats');
+const statCards = [
+  { value: rep.google_rating, label: 'Google Rating', sub: `${rep.google_count.toLocaleString()} reviews` },
+  rep.facebook_rating !== null
+    ? { value: rep.facebook_rating, label: 'Facebook', sub: `${rep.facebook_count} reviews` }
+    : { value: 'N/A', label: 'Facebook', sub: 'Not available' },
+  { value: rep.reply_rate, label: 'Reply Rate', sub: rep.reply_time_avg, color: 'var(--amber)' }
+];
+statCards.forEach(s => {
+  const div = document.createElement('div');
+  div.style.cssText = 'background:var(--surface);padding:12px;border-radius:8px;text-align:center;';
+  div.innerHTML = `
+    <div style="font-size:24px;font-weight:700;color:${s.color || 'var(--white)'};">${s.value}</div>
+    <div style="font-size:10px;color:var(--gray);text-transform:uppercase;">${s.label}</div>
+    <div style="font-size:11px;color:var(--gray);">${s.sub}</div>
+  `;
+  repStats.appendChild(div);
+});
+
+// ===== COMPLAINT THEMES =====
+const themesContainer = document.getElementById('complaintThemes');
+rep.complaint_themes.forEach(t => {
+  const span = document.createElement('span');
+  span.className = 'sent-pill';
+  span.style.borderColor = THEME_SEVERITY_COLOR[t.severity];
+  span.style.color = THEME_SEVERITY_COLOR[t.severity];
+  span.textContent = `${t.theme} (${t.percentage})`;
+  themesContainer.appendChild(span);
+});
+
+// ===== COMPETITIVE BENCHMARK TABLE =====
+const compTable = document.getElementById('competitorTable');
+
+// Combine competitors with target company, sort by score desc
+const allOrgs = [
+  ...SCORECARD_DATA.competitors.map(c => ({ ...c, isTarget: false })),
+  {
+    name: SCORECARD_DATA.client.name,
+    overall: SCORECARD_DATA.overall_score,
+    channels: SCORECARD_DATA.dimensions.find(d => d.name === 'Channel Accessibility')?.score
+      ? Math.round(SCORECARD_DATA.dimensions.find(d => d.name === 'Channel Accessibility').score / 100 * 6) + '/6'
+      : '?/6',
+    ai_ready: (() => {
+      const s = SCORECARD_DATA.dimensions.find(d => d.name === 'AI Readiness')?.score || 0;
+      return s >= 60 ? 'High' : s >= 40 ? 'Med' : 'Low';
+    })(),
+    arabic: (() => {
+      const s = SCORECARD_DATA.dimensions.find(d => d.name === 'Arabic CX Capability')?.score || 0;
+      return s >= 60 ? 'Strong' : s >= 40 ? 'Good' : 'Weak';
+    })(),
+    score: SCORECARD_DATA.overall_score,
+    color: SCORECARD_DATA.dimensions[0]?.color || 'amber',
+    isTarget: true
+  }
+].sort((a, b) => b.score - a.score);
+
+allOrgs.forEach(org => {
+  const tr = document.createElement('tr');
+  if (org.isTarget) tr.className = 'highlight';
+  const orgColor = org.isTarget ? 'var(--gold)' : COLOR_MAP[org.color || 'amber'];
+  const aiColor = org.ai_ready === 'High' ? 'var(--green)' : org.ai_ready === 'Med' ? 'var(--blue)' : 'var(--red)';
+  const arColor = org.arabic === 'Strong' ? 'var(--green)' : org.arabic === 'Good' ? 'var(--blue)' : org.arabic === 'Weak' ? 'var(--amber)' : 'var(--red)';
+  const chColor = parseInt(org.channels) >= 5 ? 'var(--green)' : parseInt(org.channels) >= 3 ? 'var(--blue)' : 'var(--red)';
+  tr.innerHTML = `
+    <td>${org.name}</td>
+    <td><div class="mini-bar"><div class="mini-bar-fill" style="width:${org.score}%;background:${orgColor};"></div></div></td>
+    <td style="color:${chColor};">${org.channels}</td>
+    <td style="color:${aiColor};">${org.ai_ready}</td>
+    <td style="color:${arColor};">${org.arabic}</td>
+    <td style="color:${orgColor};font-weight:600;">${org.score}</td>
+  `;
+  compTable.appendChild(tr);
+});
+
+// ===== KEY FINDINGS =====
+const findingsContainer = document.getElementById('findingsContainer');
+SCORECARD_DATA.findings.forEach(f => {
+  const sevColor = SEVERITY_COLOR_MAP[f.severity] || 'blue';
+  const row = document.createElement('div');
+  row.className = 'finding-row';
+  row.innerHTML = `
+    <div class="finding-sev" style="background:${COLOR_MAP[sevColor]};"></div>
+    <div class="finding-content">
+      <strong>${f.title} <span class="finding-tag" style="background:${COLOR_DIM_MAP[sevColor]};color:${COLOR_MAP[sevColor]};">${f.impact_tag}</span></strong>
+      <p>${f.narrative}</p>
+    </div>
+  `;
+  findingsContainer.appendChild(row);
+});
+
+// ===== OPPORTUNITY MAP =====
+const oppGrid = document.getElementById('opportunityGrid');
+SCORECARD_DATA.opportunities.forEach(opp => {
+  const tierColor = TIER_COLOR_MAP[opp.tier] || 'blue';
+  const card = document.createElement('div');
+  card.className = 'opp-card';
+  card.style.borderLeftColor = COLOR_MAP[tierColor];
+  const tierLabel = opp.tier === 'quick_win' ? 'Quick Win' : opp.tier === 'strategic' ? 'Strategic' : 'Transformational';
+  card.innerHTML = `
+    <div class="opp-label" style="color:${COLOR_MAP[tierColor]};">${tierLabel} (${opp.timeline})</div>
+    <h4>${opp.title}</h4>
+    <p>${opp.description}</p>
+    <div class="opp-impact" style="color:${COLOR_MAP[tierColor]};">Est. Impact: ${opp.impact_estimate}</div>
+  `;
+  oppGrid.appendChild(card);
+});
+
+// ===== RADAR CHART =====
+const radarCtx = document.getElementById('radarChart').getContext('2d');
+new Chart(radarCtx, {
+  type: 'radar',
+  data: {
+    labels: SCORECARD_DATA.dimensions.map(d => d.name.length > 16 ? d.name.substring(0, 14) + '...' : d.name),
+    datasets: [
+      {
+        label: SCORECARD_DATA.client.name,
+        data: SCORECARD_DATA.dimensions.map(d => d.score),
+        borderColor: '#c8a24e',
+        backgroundColor: 'rgba(200,162,78,0.12)',
+        borderWidth: 2,
+        pointBackgroundColor: '#c8a24e',
+        pointRadius: 4,
+      },
+      {
+        label: 'Peer Average',
+        data: SCORECARD_DATA.radar_peer_average,
+        borderColor: 'rgba(59,130,246,0.5)',
+        backgroundColor: 'rgba(59,130,246,0.05)',
+        borderWidth: 1.5,
+        borderDash: [5,5],
+        pointBackgroundColor: 'rgba(59,130,246,0.5)',
+        pointRadius: 3,
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    scales: {
+      r: {
+        beginAtZero: true, max: 100,
+        grid: { color: 'rgba(255,255,255,0.06)' },
+        angleLines: { color: 'rgba(255,255,255,0.06)' },
+        pointLabels: { color: '#8a8a96', font: { size: 10, family: 'DM Sans' } },
+        ticks: { display: false }
+      }
+    },
+    plugins: {
+      legend: {
+        labels: { color: '#8a8a96', font: { size: 11, family: 'DM Sans' }, boxWidth: 12, padding: 16 }
+      }
+    }
+  }
+});
+
+// ===== SENTIMENT CHART (MVP: snapshot donut) =====
+const sentCtx = document.getElementById('sentimentChart').getContext('2d');
+if (SCORECARD_DATA.reputation.sentiment_snapshot) {
+  const snap = SCORECARD_DATA.reputation.sentiment_snapshot;
+  new Chart(sentCtx, {
+    type: 'doughnut',
+    data: {
+      labels: ['Positive', 'Negative', 'Neutral'],
+      datasets: [{
+        data: [snap.positive, snap.negative, snap.neutral],
+        backgroundColor: ['rgba(16,185,129,0.7)', 'rgba(239,68,68,0.7)', 'rgba(138,138,150,0.4)'],
+        borderColor: ['#10b981', '#ef4444', '#8a8a96'],
+        borderWidth: 1.5,
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          labels: { color: '#8a8a96', font: { size: 10, family: 'DM Sans' }, boxWidth: 10, padding: 12 }
+        },
+        title: {
+          display: true,
+          text: 'Review Sentiment Distribution',
+          color: '#8a8a96',
+          font: { size: 11, family: 'DM Sans', weight: '400' },
+          padding: { bottom: 8 }
+        }
+      }
+    }
+  });
+} else {
+  sentCtx.canvas.parentElement.innerHTML = '<p style="color:var(--gray);font-size:12px;text-align:center;padding:40px 0;">Sentiment data not available</p>';
+}
+</script>
+
+</body>
+</html>
