@@ -12,7 +12,7 @@
 ## Architecture Summary (What Was Actually Built)
 
 ```
-MAMOUN (Founder/Board) ── Telegram @SMOQueueBot + Paperclip (dual BRD entry)
+MAMOUN (Founder/Board) ── Telegram @SMO-AI-CEO + Paperclip (dual BRD entry)
         │
         ▼  /brd "Build X"
 n8n TELEGRAM HANDLER ── 16 nodes, better-sqlite3, smo-brain
@@ -41,7 +41,7 @@ GitHub ── agent/TASK-XXX-* branches, PRs, CI
 |---|---|---|
 | Orchestration | n8n + SQLite queue + shell scripts | Persistent, auditable, survives reboots. OpenClaw alone resets after ~2h idle. |
 | CEO/Advisor | OpenClaw (strategic layer) | Memory, Telegram, planning. Not in execution critical path. |
-| Task Interface | @SMOQueueBot (Telegram) + Paperclip | Dual BRD entry. Telegram for mobile. Paperclip for visual command center + agent status. |
+| Task Interface | @SMO-AI-CEO (Telegram) + Paperclip | Dual BRD entry. Telegram for mobile. Paperclip for visual command center + agent status. |
 | Task Persistence | SQLite WAL mode | Tasks survive n8n restarts, server reboots, network blips. |
 | BRD Decomposition | Claude Code via decompose-brd.sh | Deterministic. Maps to roles, tiers, dependencies. |
 | Task Routing | classify-task.sh (3 tiers + forbidden) | fast_track (Codex), staged_hybrid (Claude+Codex), agent_team (Claude full) |
@@ -270,7 +270,7 @@ Trigger: Webhook (receives status updates from OpenClaw)
 
 ## Phase 4-6: Integration Testing — ✅ COMPLETE
 
-**Phase 4 (Telegram Interface):** @SMOQueueBot with 11 commands operational. Webhook fix deployed (node renamed to avoid %20 encoding). New credential `SMO Queue Bot v2`.
+**Phase 4 (Telegram Interface):** @SMO-AI-CEO with 11 commands operational. Webhook fix deployed (node renamed to avoid %20 encoding). New credential `SMO Queue Bot v2`.
 
 **Phase 5 (Paperclip):** Core visual command center running on localhost:3100. 7 agents tested. Queue sync pending.
 
@@ -334,7 +334,7 @@ smo-brain (100.89.148.62) — SSH: root@ — ORCHESTRATION NODE
 │   ├── 10 shell scripts (/root/.smo/queue/*.sh)
 │   └── routing-sop.yaml
 ├── n8n-mamoun (Docker) — https://ai.mamounalamouri.smorchestra.com
-│   ├── Telegram Command Handler (@SMOQueueBot, 16 nodes)
+│   ├── Telegram Command Handler (@SMO-AI-CEO, 16 nodes)
 │   ├── Queue Processor (cron 2min)
 │   └── better-sqlite3, mounted /queue/queue.db
 ├── OpenClaw v2026.3.14 (CEO/Advisor) — systemd
@@ -398,7 +398,7 @@ OAuth Accounts:
 | 2 | SQLite queue as execution backbone | 2026-03-30 | Persistent, auditable, survives reboots. Shell scripts are debuggable and testable. |
 | 3 | n8n as Telegram + cron layer | 2026-03-30 | Telegram Handler for commands, Queue Processor for dispatch. better-sqlite3 for direct DB access. |
 | 4 | Shell scripts over API calls | 2026-03-30 | dispatch.sh, score-task.sh, etc. are testable, version-controlled, zero dependencies. |
-| 5 | @SMOQueueBot + Paperclip as dual interface | 2026-03-30 | Telegram for mobile + voice. Paperclip for visual command center, BRD entry, agent status. |
+| 5 | @SMO-AI-CEO + Paperclip as dual interface | 2026-03-30 | Telegram for mobile + voice. Paperclip for visual command center, BRD entry, agent status. |
 | 6 | OAuth accounts as budget boundaries | 2026-03-30 | $200 hard cap per account. Scale = add accounts. No API keys. |
 | 7 | classify-task.sh for tier routing | 2026-03-30 | fast_track (Codex), staged_hybrid (Claude+Codex), agent_team (Claude full), forbidden (HALT). |
 | 8 | Branch-per-task git workflow | 2026-03-30 | agent/TASK-XXX-* branches. PRs with risk labels. CI gates. |
@@ -442,5 +442,5 @@ OAuth Accounts:
 **Document Version:** v2.1
 **Last Updated:** 2026-03-30
 **Changelog:**
-- v2.1 (2026-03-30): Aligned with actual build. Queue engine (SQLite + shell scripts + n8n) replaces OpenClaw-centric dispatch. Phases 2-6 marked complete. Phase 7 (hardening) added. Telegram bot fixed (@SMOQueueBot). OAuth account architecture documented.
+- v2.1 (2026-03-30): Aligned with actual build. Queue engine (SQLite + shell scripts + n8n) replaces OpenClaw-centric dispatch. Phases 2-6 marked complete. Phase 7 (hardening) added. Telegram bot fixed (@SMO-AI-CEO). OAuth account architecture documented.
 - v2 (2026-03-29): Dropped Hermes from MVP (OpenClaw = CEO+COO). Removed Phase 3 shadow mode. Corrected SSH usernames, n8n URLs, skill counts. Added actual Phase 0+1 completion data.

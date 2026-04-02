@@ -36,7 +36,7 @@ The ceiling is human hours. Every hour Mamoun spends debugging is an hour not sp
 │                   MAMOUN (Founder/Board — Strategy Only)                      │
 │                                                                              │
 │   Approvals · Sales · GTM Strategy · Architecture Decisions · Clients       │
-│   Interface: Telegram (@SMOQueueBot) + Paperclip Dashboard (optional)       │
+│   Interface: Telegram (@SMO-AI-CEO) + Paperclip Dashboard (optional)       │
 └──────────────────────────────┬───────────────────────────────────────────────┘
                                │
                     /brd "Build X for Y"
@@ -116,7 +116,7 @@ The ceiling is human hours. Every hour Mamoun spends debugging is an hour not sp
 ┌─────────────────────────────────────────────────────────────────────────┐
 │                    MAMOUN (Founder/Board)                                │
 │        Strategy · Sales · Approvals · Architecture                      │
-│        Interface: Telegram @SMOQueueBot + Paperclip (optional)          │
+│        Interface: Telegram @SMO-AI-CEO + Paperclip (optional)          │
 └──────────────────────────┬──────────────────────────────────────────────┘
                            │
               ┌────────────▼─────────────────┐
@@ -225,7 +225,7 @@ Queue Processor (n8n cron 2min)
 
 | Workflow | Type | Purpose |
 |----------|------|---------|
-| SMO Queue — Telegram Command Handler | Webhook (Telegram) | 11 commands via @SMOQueueBot |
+| SMO Queue — Telegram Command Handler | Webhook (Telegram) | 11 commands via @SMO-AI-CEO |
 | SMO Queue — Queue Processor | Cron (2min) | Dispatch queued tasks |
 
 ---
@@ -239,7 +239,7 @@ smo-brain (100.89.148.62) — SSH: root@ — ORCHESTRATION NODE
 │   ├── 10 shell scripts (dispatch, score, decompose, etc.)
 │   └── routing-sop.yaml
 ├── n8n-mamoun (Docker) — https://ai.mamounalamouri.smorchestra.com
-│   ├── SMO Queue — Telegram Command Handler (16 nodes, @SMOQueueBot)
+│   ├── SMO Queue — Telegram Command Handler (16 nodes, @SMO-AI-CEO)
 │   ├── SMO Queue — Queue Processor (cron 2min)
 │   └── better-sqlite3 mounted at /queue/queue.db
 ├── OpenClaw v2026.3.14 (CEO/Advisor) — systemd
@@ -304,7 +304,7 @@ Same org chart, same skill routing, same quality gates — applied to any projec
 ## CEO Engagement Model
 
 ### What Mamoun Does
-- Send BRDs via Telegram `/brd` to @SMOQueueBot
+- Send BRDs via Telegram `/brd` to @SMO-AI-CEO
 - Approve task batches via `/approve_all`
 - Review quality gate failures via `/status`
 - Kill/extend sessions via `/kill` `/extend`
@@ -358,7 +358,7 @@ Target: < 3 CEO touch-points per project per day.
    └── task-complete.sh cascading dependencies
 
 ✅ PHASE 4: Telegram Interface (COMPLETE)
-   ├── @SMOQueueBot with 11 commands
+   ├── @SMO-AI-CEO with 11 commands
    ├── n8n Telegram Handler (16 nodes, better-sqlite3)
    ├── Webhook fix: renamed node to avoid %20 encoding
    └── New credential: SMO Queue Bot v2
