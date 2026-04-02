@@ -8,12 +8,15 @@
 ## The Short Answer
 
 ```
-Mamoun writes BRD → Sends to Telegram (@al_Jazari_ChiefEng_bot)
-→ al-Jazari (OpenClaw) decomposes BRD into tasks
-→ Paperclip assigns tasks to agents (CEO/VP Eng/QA/DevOps)
-→ Agents execute via Claude Code on smo-dev or desktop
-→ PRs created → QA scored → Merged to dev branch
+Mamoun writes BRD → Sends to @SMOQueueBot (Telegram, CEO inbox)
+→ Paperclip (Company OS) analyzes BRD, decomposes into tasks, assigns to agents
+→ al-Jazari (VP Eng, OpenClaw :18790) receives CODE tasks
+→ al-Jazari executes via Claude Code on smo-dev
+→ If al-Jazari needs approval → sends back to @SMOQueueBot (CEO)
+→ QA Lead scores → PR merged to dev branch
 ```
+
+**Key distinction:** @SMOQueueBot is the CEO inbox — that's where BRDs enter. Paperclip (Layer 1) owns decomposition and assignment. al-Jazari (Layer 2) is VP Engineering — it receives and executes code tasks, it does NOT receive BRDs directly.
 
 ---
 
@@ -34,18 +37,18 @@ Mamoun writes BRD → Sends to Telegram (@al_Jazari_ChiefEng_bot)
 - Template: See `EmailVerification/BRD-email-verification-l1-l2.md` for example
 - Must include: business problem, technical scope, success criteria, target branch
 
-### Step 2: Send to al-Jazari via Telegram
-- Bot: `@al_Jazari_ChiefEng_bot`
+### Step 2: Send BRD to @SMOQueueBot via Telegram
+- Bot: `@SMOQueueBot` (CEO inbox — decisions, BRD intake)
 - Send the BRD as a message or file
-- al-Jazari (VP Engineering, MiniMax M2.7 on OpenClaw :18790) receives it
+- This is the ONLY entry point for BRDs. Never send BRDs directly to al-Jazari.
 
-### Step 3: al-Jazari Decomposes
-- Reads BRD, identifies tasks
-- Routes tasks to appropriate roles via Paperclip adapter
-- Creates work items with dependencies
+### Step 3: Paperclip (CEO Layer) Analyzes & Decomposes
+- Paperclip receives BRD through @SMOQueueBot
+- Analyzes scope, identifies tasks, sets dependencies
+- Creates work items in Paperclip's issue tracker
+- Assigns each task to the correct agent role
 
-### Step 4: Paperclip Assigns
-- Tasks land in Paperclip's issue tracker
+### Step 4: Agents Receive Assigned Tasks
 - Each task assigned to an agent based on role:
   - **VP Engineering** → openclaw_gateway → al-Jazari (:18790) → Claude Code on smo-dev
   - **CEO** → claude_local → Direct OAuth on smo-brain
@@ -97,9 +100,11 @@ For the soak test period or when agent pipeline isn't fully operational:
 The SSE V3 project is the **soak test** for this infrastructure. The flow should be:
 
 1. SSE V3 BRD written from requirements at `smorch-context/SalesMfastGTM/Project6-SSEngineTech/`
-2. BRD sent to al-Jazari via Telegram
-3. If agent execution fails → diagnose and fix the pipeline (NOT bypass into manual coding)
-4. If agent execution succeeds → validate output, score, merge
+2. BRD sent to **@SMOQueueBot** via Telegram (CEO inbox, NOT al-Jazari)
+3. Paperclip decomposes → al-Jazari (VP Eng) gets code tasks
+4. If al-Jazari needs approval → routes back to @SMOQueueBot
+5. If agent execution fails → diagnose and fix the pipeline (NOT bypass into manual coding)
+6. If agent execution succeeds → validate output, score, merge
 
 **Supabase for SSE:**
 - Project: ozylyahdhuueozqhxiwz

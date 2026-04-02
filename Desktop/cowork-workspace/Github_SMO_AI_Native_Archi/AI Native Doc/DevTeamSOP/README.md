@@ -20,6 +20,7 @@ All documentation lives under `AI Native Doc/DevTeamSOP/`. If it's not here, it 
 | Look up an architecture decision | [architecture/adr/ADR-index.md](architecture/adr/ADR-index.md) |
 | Set up infrastructure (OpenClaw, n8n) | [infrastructure/](infrastructure/) |
 | Onboard a team member | [onboarding/](onboarding/) |
+| Check server health / fix memory issues | [sops/SOP-Server-Health-Maintenance.md](sops/SOP-Server-Health-Maintenance.md) |
 
 ---
 
@@ -77,7 +78,8 @@ See [INDEX.md](INDEX.md) → Project Status Dashboard for full details.
 - **PRs to `dev`** for Signal-Sales-Engine and EO repos. Never to `main`.
 - **Agent compute uses ALL nodes** — smo-brain, smo-dev, desktop. Never consolidate.
 - **No API keys — except Google.** OAuth/subscription auth only.
-- **BRD flow:** BRD → Telegram → al-Jazari → Paperclip → Claude Code → PR. Never bypass for production work.
+- **BRD flow:** BRD → @SMOQueueBot (CEO inbox) → Paperclip decomposes → al-Jazari (VP Eng) executes → PR. Never bypass for production work.
+- **Server health cron runs 3x daily** (06:00, 14:00, 22:00) on both servers. Kills orphaned Claude/Codex sessions >6h, reaps zombies, auto-restarts dead services on smo-brain. See [SOP-Server-Health-Maintenance.md](sops/SOP-Server-Health-Maintenance.md).
 
 ---
 

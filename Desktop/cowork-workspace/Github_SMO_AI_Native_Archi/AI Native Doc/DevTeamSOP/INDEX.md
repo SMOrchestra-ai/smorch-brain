@@ -29,6 +29,7 @@
 | Pre-upload scoring | [sops/SOP-Pre-Upload-Scoring.md](sops/SOP-Pre-Upload-Scoring.md) | Code quality scoring before merge to dev/main |
 | Team distribution | [sops/SOP-Team-Distribution.md](sops/SOP-Team-Distribution.md) | Team structure, responsibilities, communication |
 | Agentic coding orchestration | [sops/SOP-Agentic-Coding-Orchestration.md](sops/SOP-Agentic-Coding-Orchestration.md) | How AI agents coordinate coding tasks |
+| Server health maintenance | [sops/SOP-Server-Health-Maintenance.md](sops/SOP-Server-Health-Maintenance.md) | Automated cleanup of orphaned Claude/Codex sessions, zombie reaping, memory monitoring |
 
 ## Architecture
 
@@ -36,7 +37,7 @@
 |-------|------|-------------|
 | Full 3-layer architecture (LOCKED) | [architecture/architecture-final-2026-03-30.md](architecture/architecture-final-2026-03-30.md) | Paperclip + OpenClaw + Queue Engine — the definitive reference |
 | System diagram | [architecture/system-diagram.md](architecture/system-diagram.md) | Visual system topology |
-| BRD execution pipeline | [architecture/guide-brd-execution-pipeline.md](architecture/guide-brd-execution-pipeline.md) | How BRDs flow: Telegram → al-Jazari → Paperclip → Claude Code → PR |
+| BRD execution pipeline | [architecture/guide-brd-execution-pipeline.md](architecture/guide-brd-execution-pipeline.md) | How BRDs flow: @SMOQueueBot (CEO) → Paperclip decomposes → al-Jazari executes → PR |
 | Skill routing matrix | [architecture/skill-router-matrix.md](architecture/skill-router-matrix.md) | 123 skills mapped to agent roles |
 | API reference | [architecture/api-reference.md](architecture/api-reference.md) | Internal APIs between layers |
 | Data governance | [architecture/data-governance.md](architecture/data-governance.md) | Data handling, privacy, retention |
