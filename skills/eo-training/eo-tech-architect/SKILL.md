@@ -8,8 +8,8 @@ version: "1.0"
 
 **Version:** 1.0
 **Date:** 2026-03-11
-**Role:** EO Tech Architect (Skill 4 of EO MicroSaaS OS)
-**Purpose:** Analyze the student's business requirements from their 12 project brain files and recommend a complete tech architecture. Produce the decision documentation, architecture diagrams, and BRD that drive all Step 5 development skills.
+**Role:** EO Tech Architect (Skill 4 of EO MicroSaaS OS, runs in Cowork)
+**Purpose:** Analyze the student's business requirements from their 12 project brain files and recommend a complete tech architecture. Produce the decision documentation, architecture diagrams, BRD, and CLAUDE.md that drive all Step 5 development skills. This skill runs in Cowork (Phase 1) so the student leaves with everything pre-configured before switching to Claude Code.
 **Status:** Production Ready
 
 ---
@@ -50,11 +50,12 @@ You are NOT a generic "pick React or Vue" advisor. Every architecture decision i
 
 ### What Success Looks Like
 
-A student who runs /eo-tech-architect gets:
+A student who runs eo-tech-architect gets:
 1. A clear tech stack decision with explicit rationale for every choice (not "it depends")
 2. A visual architecture diagram they can show to a technical co-founder or contractor
 3. A BRD detailed enough that Claude Code can start building the MVP in Step 5
 4. An MCP integration plan that maps their product to the tools and services it needs
+5. A CLAUDE.md file that tells Claude Code exactly what it is building, which stack to use, which skills to invoke, and how to reference the brain files - zero cold-start when they open Claude Code
 
 ### What Failure Looks Like
 
@@ -258,7 +259,7 @@ For each integration, classify as:
 
 ## OUTPUT FILES
 
-The skill produces exactly 4 documents in `project-root/architecture/`:
+The skill produces 4 documents in `project-root/architecture/` plus 1 root-level CLAUDE.md:
 
 ### File 1: tech-stack-decision.md
 
@@ -395,28 +396,6 @@ As a [persona], I want to [action], so that [outcome].
 - Revenue: [Target MRR by Month 3]
 - Users: [Target active users]
 - Engagement: [Key product metrics]
-
-## 8. Time Estimates
-| Module / Deliverable | Estimated Effort | Dependencies | Notes |
-|---------------------|-----------------|-------------|-------|
-[Every major feature/module from Sections 3-6 with realistic time estimate]
-
-**Total estimated build time:** [X weeks at Y hours/week]
-**Critical path:** [Which modules block others — the longest dependency chain]
-
-## 9. Implementation Steps
-[Phased step-by-step build plan derived from the requirements above]
-
-### Phase 1: Foundation (Week 1)
-- Step 1.1: [Task] — [time] — [what it produces]
-- Step 1.2: [Task] — [time] — [what it produces]
-
-### Phase 2: Core Features (Week 2-3)
-- Step 2.1: [Task] — [time] — [what it produces]
-[Continue for all phases through launch]
-
-### Phase N: Deploy + Launch
-- [Final deployment steps with time estimates]
 ```
 
 ### File 4: mcp-integration-plan.md
@@ -448,6 +427,68 @@ Which MCPs and third-party services the product should support.
 
 ## Implementation Notes
 [Per integration: auth method, rate limits, MENA-specific gotchas, webhook requirements]
+```
+
+### File 5: CLAUDE.md (Root Level)
+
+This file goes at the PROJECT ROOT (not in architecture/). Claude Code reads it automatically on startup. It is the single source of truth that eliminates cold-start friction.
+
+```markdown
+# CLAUDE.md - [Venture Name] MicroSaaS
+
+## What This Project Is
+[1-2 sentences from companyprofile.md: what the product does and who it serves]
+
+## Tech Stack
+[Compact summary from tech-stack-decision.md]
+- Frontend: [choice]
+- Backend: [choice]
+- Database: [choice]
+- Auth: [choice]
+- Hosting: [choice]
+- Payments: [choice]
+- AI: [if applicable]
+
+## Project Structure
+```
+project-brain/        # Business context (12 files) - READ these for product context
+architecture/         # BRD, stack decisions, diagrams - READ brd.md for requirements
+src/                  # Application code (created during Step 5b)
+```
+
+## Key Context Files
+- `project-brain/icp.md` - Who the users are, their pains, their language
+- `project-brain/positioning.md` - How this product is positioned, the wedge
+- `architecture/brd.md` - Full requirements, user stories, MVP scope
+- `architecture/tech-stack-decision.md` - Why each technology was chosen
+
+## Build Instructions
+This project uses the EO MicroSaaS OS plugin. The build follows this sequence:
+1. eo-db-architect - Database schema, migrations, RLS policies
+2. eo-microsaas-dev - Application code (5-phase build pipeline)
+3. eo-api-connector - Third-party integrations
+4. eo-qa-testing - Code quality + functional + UX testing
+5. eo-security-hardener - 7-domain security audit
+6. eo-deploy-infra - Docker, CI/CD, production deployment
+
+Say "/eo" to check progress and get routed to the right step.
+
+## MENA-Specific Rules
+[From brandvoice.md and market-analysis.md]
+- Language: [Arabic-first / English-first / bilingual]
+- RTL: [YES/NO - if yes, note Tailwind RTL plugin required]
+- Payments: [Regional gateway requirements]
+- WhatsApp: [Integration requirements]
+
+## MCP Dependencies
+[From mcp-integration-plan.md - list which MCPs should be installed]
+- [MCP name] - [purpose]
+
+## Quality Gates
+No step can be skipped. Gates are enforced by the plugin:
+- Gate 3: 5+ source files before QA
+- Gate 4: qa-report.md PASS before security
+- Gate 5: security-audit.md zero CRITICAL before deploy
 ```
 
 ---
@@ -490,12 +531,19 @@ Ask 5-8 targeted questions. Do NOT ask generic "what tech do you like" questions
 7. Lock the stack decision with student confirmation
 
 ### Phase 4: Document Generation (Automated)
-Once stack is agreed, generate all 4 output files:
+Once stack is agreed, generate all 5 output files:
 
 1. **tech-stack-decision.md** first (decisions must be locked before other docs reference them)
 2. **architecture-diagram.md** second (visualizes the agreed stack)
 3. **brd.md** third (the largest document, requires the most generation time)
-4. **mcp-integration-plan.md** last (depends on decisions in all previous files)
+4. **mcp-integration-plan.md** fourth (depends on decisions in all previous files)
+5. **CLAUDE.md** last (at project root, synthesizes all 4 docs into Claude Code workspace instructions)
+
+After generating CLAUDE.md, tell the student:
+"Your CLAUDE.md is ready. When you open Claude Code in your project directory, it reads this file automatically. It knows your stack, your requirements, your build sequence, and your MENA-specific rules. No need to re-explain anything."
+
+Also tell the student which MCPs to install based on mcp-integration-plan.md:
+"Before switching to Claude Code, install these MCPs: [list from mcp-integration-plan.md]. This ensures Claude Code can interact with your services directly."
 
 ### Phase 5: Validation
 1. Cross-check BRD user stories against ICP pains (icp.md): every pain must map to at least one user story
@@ -526,8 +574,6 @@ Once stack is agreed, generate all 4 output files:
 - Every MVP user story has acceptance criteria
 - Non-functional requirements cover security, i18n, and performance
 - MVP scope boundary is explicit (what's IN and what's OUT)
-- Time Estimates table exists with per-module effort, dependencies, and total build time
-- Implementation Steps section exists with phased breakdown and time per step
 
 ### Gate 4: Architecture Coherence
 - Architecture diagram matches tech stack decisions (no contradictions)

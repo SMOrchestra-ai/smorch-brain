@@ -1,6 +1,6 @@
 ---
 name: validation-sprint
-description: "Validation Sprint — rapid validation methodology combining Steve Blank's Customer Development, Eric Ries's Build-Measure-Learn, Marc Lou's 48-72 hour launch, John Rush's pre-sell framework, and Tibo's audience-first validation. Triggers: 'validate', 'validation', 'pre-sell', 'customer interviews', 'MVP', 'build-measure-learn', 'kill decision', '48 hours', 'landing page test', 'pre-launch', 'market test'. Use when: testing new ideas, validating product assumptions, deciding pivot vs. persevere, launching MVP, pre-selling before building. Do NOT trigger for: finished products (positioning-engine), scaling established GTM."
+description: "Validation Sprint — rapid validation methodology combining Steve Blank's Customer Development, Eric Ries's Build-Measure-Learn, Marc Lou's 48-72 hour launch, John Rush's pre-sell framework, and Tibo's audience-first validation. Triggers: 'validate', 'validation', 'pre-sell', 'customer interviews', 'MVP', 'build-measure-learn', 'kill decision', '48 hours', 'landing page test', 'pre-launch', 'market test'. Use when: testing new ideas, validating product assumptions, deciding pivot vs. persevere, launching MVP, pre-selling before building. Do NOT trigger for: finished products (smorch-gtm-engine:positioning-engine), scaling established GTM."
 ---
 
 # Validation Sprint
