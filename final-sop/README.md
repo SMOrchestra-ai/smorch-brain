@@ -30,6 +30,8 @@ This is the single source of truth for how SMOrchestra's AI-native dev organizat
 | Set up Lana's machine | [lana/SETUP-GUIDE-WINDOWS.md](lana/SETUP-GUIDE-WINDOWS.md) |
 | Check Lana's authority | [lana/DECISION-AUTHORITY-MATRIX.md](lana/DECISION-AUTHORITY-MATRIX.md) |
 | Run pre-flight check | [onboarding/PROJECT-ONBOARD-CHECKLIST.md](onboarding/PROJECT-ONBOARD-CHECKLIST.md) |
+| Mamoun's operational guide | [MAMOUN-GUIDE.md](MAMOUN-GUIDE.md) |
+| Lana's operational guide | [LANA-GUIDE.md](LANA-GUIDE.md) |
 
 ---
 
@@ -39,6 +41,8 @@ This is the single source of truth for how SMOrchestra's AI-native dev organizat
 final-sop/
 ├── README.md                  ← You are here
 ├── MASTERPLAN.md              ← Full injection plan (vision + execution)
+├── MAMOUN-GUIDE.md            ← CEO operational reference
+├── LANA-GUIDE.md              ← QA Lead operational reference
 │
 ├── sops/                      ← Standard Operating Procedures (13)
 │   ├── SOP-01 to SOP-08      ← Original SOPs (cleaned)
@@ -96,11 +100,16 @@ When starting a new session on any project:
 5. If MENA project: load context/MENA-DEEP-OVERLAY.md
 6. If new project: run onboarding/PROJECT-ONBOARD-CHECKLIST.md
 
+## For Mamoun: Quick Start
+
+Read [MAMOUN-GUIDE.md](MAMOUN-GUIDE.md) — covers what's automated, what needs your approval, BRD→PRD pipeline, servers, env vars, and quick commands.
+
 ## For Lana: Getting Started
 
-1. Follow [lana/SETUP-GUIDE-WINDOWS.md](lana/SETUP-GUIDE-WINDOWS.md) to set up your machine
-2. Read [lana/DECISION-AUTHORITY-MATRIX.md](lana/DECISION-AUTHORITY-MATRIX.md) — this is your authority reference
-3. For each project you work on, check if `.claude/LANA-PROJECT-CONTEXT.md` exists in the repo
+1. Read [LANA-GUIDE.md](LANA-GUIDE.md) — your complete operational reference
+2. Follow [lana/SETUP-GUIDE-WINDOWS.md](lana/SETUP-GUIDE-WINDOWS.md) to set up your machine
+3. Read [lana/DECISION-AUTHORITY-MATRIX.md](lana/DECISION-AUTHORITY-MATRIX.md) — your authority reference
+4. For each project you work on, check if `.claude/LANA-PROJECT-CONTEXT.md` exists in the repo
 
 ## 5 Hard Rules
 
