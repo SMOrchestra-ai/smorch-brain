@@ -1,0 +1,33 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash -c 'INPUT=\"$CLAUDE_TOOL_INPUT\"; for PATTERN in \"rm -rf\" \"git push --force\" \"git push -f\" \"git reset --hard\" \"drop table\" \"DROP TABLE\" \"truncate\" \"TRUNCATE\" \"git checkout main\" \"git checkout dev\" \"--force-with-lease\"; do if echo \"$INPUT\" | grep -qi \"$PATTERN\"; then echo \"BLOCKED: Destructive command detected: $PATTERN\" >&2; exit 1; fi; done; exit 0'"
+          }
+        ]
+      },
+      {
+        "matcher": "Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash -c 'INPUT=\"$CLAUDE_TOOL_INPUT\"; for PATTERN in \"AKIA\" \"sk-\" \"sk_live\" \"sk_test\" \"ghp_\" \"gho_\" \"password=\" \"PASSWORD=\" \"api_key=\" \"API_KEY=\" \"secret=\" \"SECRET=\" \"token=\" \"TOKEN=\" \"private_key\"; do if echo \"$INPUT\" | grep -q \"$PATTERN\"; then echo \"BLOCKED: Potential secret detected: $PATTERN\" >&2; exit 1; fi; done; exit 0'"
+          }
+        ]
+      },
+      {
+        "matcher": "Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash -c 'INPUT=\"$CLAUDE_TOOL_INPUT\"; for PATTERN in \"AKIA\" \"sk-\" \"sk_live\" \"sk_test\" \"ghp_\" \"gho_\" \"password=\" \"PASSWORD=\" \"api_key=\" \"API_KEY=\" \"secret=\" \"SECRET=\" \"token=\" \"TOKEN=\" \"private_key\"; do if echo \"$INPUT\" | grep -q \"$PATTERN\"; then echo \"BLOCKED: Potential secret detected: $PATTERN\" >&2; exit 1; fi; done; exit 0'"
+          }
+        ]
+      }
+    ]
+  }
+}
