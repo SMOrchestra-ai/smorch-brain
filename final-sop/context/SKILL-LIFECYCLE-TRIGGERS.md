@@ -33,9 +33,10 @@
 | Weekly Stakeholder Update | `8X7AZ4MeT2QgCeu9` | Sunday 9am Dubai (5am UTC) | Fetches Linear issues, formats summary, sends to Mamoun via Telegram |
 | Tech Debt Quarterly Review | `dQ1wbJaQu6FE79wq` | First Monday of Jan/Apr/Jul/Oct | Scans GitHub for tech-debt issues, creates Linear review ticket |
 | Linear Issue Done → Summary | `Nt3HAjdA95oA3hS4` | Linear webhook (issue → completed) | Formats completion notice, sends to Mamoun via Telegram |
-| BRD → Auto-PRD Pipeline | `YOKimeuDuOG8woFW` | Webhook POST to `/brd-to-prd` | Validates BRD, generates PRD via Claude, files in Linear |
+| BRD → Auto-PRD Pipeline | `YOKimeuDuOG8woFW` | Webhook POST to `/brd-to-prd` | Validates BRD, generates PRD via Gemini Flash, files in Linear |
 
-**Activation:** All workflows created inactive. Set env vars (`LINEAR_API_KEY`, `TELEGRAM_WEBHOOK_URL`, `ANTHROPIC_API_KEY`) then activate.
+**Status:** All 4 workflows ACTIVE on smo-dev n8n. Env vars configured: `LINEAR_API_KEY`, `GITHUB_TOKEN`, `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`, `GOOGLE_AI_KEY`.
+**Linear webhook:** `0c18592a` → production URL `flows.smorchestra.ai/webhook/b41a5a60-...` (Issue events, all teams).
 
 ---
 
