@@ -251,6 +251,28 @@ Next action: Run /eo-graduate to get your handoff package, then move to Claude C
 States: COMPLETE, READY (prerequisites met), AVAILABLE (optional), LOCKED (prerequisites missing)
 Gate states: PASSED, FAILED (with reason), LOCKED (upstream gate not passed), SKIPPED (not applicable)
 
+## SESSION STATE PERSISTENCE
+
+Save progress to `project-brain/eo-progress.json` after every skill completion. See `references/state-persistence.md` for full JSON schema, lifecycle examples, and resume messaging templates.
+
+### Core Protocol
+
+**Resume (student says "where am I" / "/eo-status" / "/eo"):**
+1. Look for `project-brain/eo-progress.json`. If not found → "Have you completed any EO scorecards?"
+2. Read file → display status summary (completed skills, scores, current phase, quality gates, coaching flags)
+3. Recommend next action from `next_action` field
+4. Surface coaching flags if any exist
+
+**Update (after every skill completion):**
+1. Add to `completed_skills` array (append-only, never delete)
+2. Remove from `pending_skills`
+3. Update `current_phase` if crossing phase boundary
+4. Update `quality_gates` (PASS/FAIL/LOCKED)
+5. Add `coaching_flags` for any risks or weak areas
+6. Set `next_action` to the next skill in sequence
+
+**State fields:** student_name, venture_name, started_at, last_updated, current_phase, completed_skills[], pending_skills[], quality_gates{}, scorecard_results{}, coaching_flags[], next_action, estimated_completion_hours
+
 ## Additional Resources
 
 - **`references/brain-templates/`** - 8 bilingual templates for manual brain file creation (Path D)

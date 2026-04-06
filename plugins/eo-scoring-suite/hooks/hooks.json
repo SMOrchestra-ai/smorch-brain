@@ -1,0 +1,8 @@
+{
+  "hooks": [
+    {
+      "type": "start",
+      "message": "EO Scoring Suite active. Run /eo-score to start assessment. Scorecards: 1-Project Definition, 2-ICP Clarity, 3-Market Attractiveness, 4-Strategy Selector, 5-GTM Fitness."
+    }
+  ]
+}

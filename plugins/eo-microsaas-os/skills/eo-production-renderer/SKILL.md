@@ -304,3 +304,13 @@ Deployment targets:
 | Version | Date | Changes |
 |---------|------|---------|
 | 1.0 | 2026-03-20 | Initial: HTML slot injection + PPTX regeneration from JSON Design Brief |
+
+---
+
+## HANDOFF PROTOCOL
+
+After assets are rendered:
+
+1. **Announce**: "Production render complete. [N] files generated from design brief."
+2. **Verify**: Confirm all slot injections succeeded, no empty placeholders remain
+3. **Next step**: "Assets are ready for deployment. Use them in your GTM tools (Instantly, HeyReach, GHL) or hand to student."

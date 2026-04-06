@@ -1,14 +1,14 @@
-# EO QA Testing - Testing Domain Details
+# Testing Domains - eo-qa-testing
 
-Reference file for detailed test patterns, code examples, and UX review checklists across all 3 testing domains.
+Complete breakdown of all 7 testing domains with code examples and automated check scripts.
 
----
+## TESTING DOMAINS
 
-## Domain 1: Code Quality
+### Domain 1: Code Quality
 
 5 automated checks that catch problems before they reach users.
 
-### 1.1 Linting and Formatting Validation
+#### 1.1 Linting and Formatting Validation
 ```bash
 # Check ESLint compliance
 npx eslint . --ext .ts,.tsx --format json --output-file lint-report.json
@@ -22,7 +22,7 @@ What to flag:
 - Inconsistent formatting that slipped past pre-commit hooks
 - Missing ESLint rules for React hooks, accessibility, imports
 
-### 1.2 TypeScript Type Safety Audit
+#### 1.2 TypeScript Type Safety Audit
 
 Scan for:
 - `any` type usage (each instance is a finding)
@@ -39,7 +39,7 @@ const data = response.json() as any;
 const data = ResponseSchema.parse(await response.json());
 ```
 
-### 1.3 Dead Code Detection
+#### 1.3 Dead Code Detection
 
 Identify:
 - Unused imports
@@ -48,7 +48,7 @@ Identify:
 - Commented-out code blocks (should be deleted, not commented)
 - Unused dependencies in package.json
 
-### 1.4 Dependency Vulnerability Scanning
+#### 1.4 Dependency Vulnerability Scanning
 ```bash
 # npm audit for known vulnerabilities
 npm audit --json > audit-report.json
@@ -63,7 +63,7 @@ Classify findings:
 - MEDIUM: Vulnerability in dev dependency
 - LOW: Outdated package, no known vulnerability
 
-### 1.5 Code Complexity Analysis
+#### 1.5 Code Complexity Analysis
 
 Flag functions that need refactoring:
 - Cyclomatic complexity > 10
@@ -76,11 +76,11 @@ Provide refactoring suggestions, not just flags.
 
 ---
 
-## Domain 2: Functional Testing
+### Domain 2: Functional Testing
 
 5 test categories that validate the product actually works.
 
-### 2.1 Unit Test Generation for Business Logic
+#### 2.1 Unit Test Generation for Business Logic
 
 For each business logic function:
 - Happy path test
@@ -109,7 +109,7 @@ describe('calculateSubscriptionPrice', () => {
 });
 ```
 
-### 2.2 API Endpoint Testing
+#### 2.2 API Endpoint Testing
 
 For each API route:
 - **Happy path**: Valid request returns expected response
@@ -128,7 +128,7 @@ describe('POST /api/projects', () => {
 });
 ```
 
-### 2.3 Auth Flow Testing
+#### 2.3 Auth Flow Testing
 
 Test every auth path:
 - Email/password signup -> email verification -> login
@@ -138,7 +138,7 @@ Test every auth path:
 - Session expiry and refresh token rotation
 - Role-based access: test each role can only access what it should
 
-### 2.4 Database Operation Testing
+#### 2.4 Database Operation Testing
 
 For each table's CRUD operations:
 - Create with valid data succeeds
@@ -165,7 +165,7 @@ describe('RLS: projects table', () => {
 });
 ```
 
-### 2.5 Integration Test Scaffolding
+#### 2.5 Integration Test Scaffolding
 
 For each external service integration:
 - Mock the external service response
@@ -177,11 +177,11 @@ For each external service integration:
 
 ---
 
-## Domain 3: UX Review
+### Domain 3: UX Review
 
 6 validation areas that catch user-facing problems.
 
-### 3.1 Responsive Design Validation
+#### 3.1 Responsive Design Validation
 
 Test at 3 breakpoints:
 - **Mobile**: 375px width (iPhone SE baseline)
@@ -196,7 +196,7 @@ For each breakpoint, verify:
 - Images and media scale correctly
 - Font sizes are readable (minimum 14px on mobile)
 
-### 3.2 Loading State Audit
+#### 3.2 Loading State Audit
 
 **Every async operation must have a loading indicator.** Check:
 - Page initial load: skeleton or spinner
@@ -214,7 +214,7 @@ REQUIRED: [what the loading state should look like]
 SEVERITY: [high if user might think app is broken]
 ```
 
-### 3.3 Error State Audit
+#### 3.3 Error State Audit
 
 **Every failure must show a user-friendly message.** Check:
 - Network errors: "Connection lost. Retrying..." not "TypeError: fetch failed"
@@ -224,7 +224,7 @@ SEVERITY: [high if user might think app is broken]
 - Server errors: "Something went wrong. Try again." with retry button
 - No raw error codes or stack traces visible to users
 
-### 3.4 Empty State Audit
+#### 3.4 Empty State Audit
 
 **Every list, table, and dashboard needs an empty state.** Check:
 - First-time user sees helpful empty state, not a blank page
@@ -233,7 +233,7 @@ SEVERITY: [high if user might think app is broken]
 - Empty filter results offer to clear filters
 - Dashboard widgets with no data show placeholder, not broken charts
 
-### 3.5 Accessibility Basics
+#### 3.5 Accessibility Basics
 
 Minimum checks (not full WCAG audit, that's for later):
 - Color contrast ratio >= 4.5:1 for text (use browser dev tools or axe)
@@ -244,7 +244,7 @@ Minimum checks (not full WCAG audit, that's for later):
 - Error messages announced to screen readers (aria-live)
 - No information conveyed by color alone
 
-### 3.6 Arabic RTL Layout Validation
+#### 3.6 Arabic RTL Layout Validation
 
 **For any product targeting MENA users, RTL is not optional.** Check:
 - `dir="rtl"` set correctly on Arabic content sections
@@ -266,29 +266,3 @@ FIX: [specific code change]
 
 ---
 
-## MENA UX Considerations
-
-### Arabic Text in Testing
-- Seed test data must include Arabic strings (names, descriptions, addresses)
-- Test with actual Arabic content, not Latin placeholder text
-- Verify text truncation doesn't break mid-word in Arabic
-- Check that sorting works correctly for Arabic strings
-
-### Device and Network Context
-- MENA users frequently on mobile (test mobile-first)
-- Network conditions vary: test on simulated 3G/4G
-- WhatsApp share buttons should work on mobile
-- Phone number input should default to country code (+971, +966, etc.)
-
-### Payment Flow Testing
-- If using regional payment gateways (Tap, HyperPay, MADA):
-  - Test sandbox mode for each gateway
-  - Verify currency display (AED, SAR with Arabic formatting)
-  - Test webhook handling for delayed confirmations
-  - Verify refund flow
-
-### Cultural UX Patterns
-- Calendar inputs: test with both Gregorian and Hijri dates if applicable
-- Name fields: test with Arabic names (no first/last split assumption)
-- Address fields: test with Arabic addresses and MENA postal code formats
-- Weekend consideration: Friday-Saturday in GCC, not Saturday-Sunday

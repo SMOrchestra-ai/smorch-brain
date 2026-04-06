@@ -1,40 +1,40 @@
-# EO Security Hardener - Security Checklists
+# Security Checklist: 7 Domains - eo-security-hardener
 
-Reference file for the detailed 7-domain security checklist with code examples.
+Complete security domain breakdown with specific checks, code examples, and MENA-specific considerations.
 
----
+## SECURITY CHECKLIST: 7 DOMAINS
 
-## Domain 1: Authentication
+### Domain 1: Authentication
 
 **Goal:** Ensure only legitimate users can access the system.
 
-### 1.1 Session Management
+#### 1.1 Session Management
 - [ ] Session tokens are HttpOnly cookies (not accessible from JavaScript)
 - [ ] Session expiry is configured (recommended: 7 days, refresh on activity)
 - [ ] Sessions invalidated on password change
 - [ ] Sessions invalidated on logout (server-side, not just client-side)
 - [ ] No session data stored in localStorage (use HttpOnly cookies)
 
-### 1.2 Token Security
+#### 1.2 Token Security
 - [ ] Access tokens expire in <= 1 hour
 - [ ] Refresh tokens rotate on use (old token invalidated)
 - [ ] Refresh tokens stored securely (HttpOnly cookie or server-side)
 - [ ] Token validation checks expiry, issuer, and audience
 - [ ] No JWT secrets hardcoded (use environment variable)
 
-### 1.3 Password Security
+#### 1.3 Password Security
 - [ ] Minimum password length: 8 characters
 - [ ] Passwords hashed with bcrypt/scrypt/argon2 (never SHA/MD5)
 - [ ] Password reset tokens expire in <= 1 hour
 - [ ] Password reset tokens are single-use
 - [ ] No password displayed in logs or error messages
 
-### 1.4 Multi-Factor Auth Readiness
+#### 1.4 Multi-Factor Auth Readiness
 - [ ] Architecture supports MFA addition (not required for MVP)
 - [ ] Phone OTP flow secure (rate limited, expiry, single-use)
 - [ ] Social OAuth properly validates state parameter
 
-### 1.5 Common Auth Vulnerabilities
+#### 1.5 Common Auth Vulnerabilities
 - [ ] Login doesn't reveal whether email exists ("Invalid credentials" not "User not found")
 - [ ] Account lockout after 5 failed attempts (temporary, 15 minutes)
 - [ ] Registration prevents email enumeration
@@ -50,11 +50,11 @@ throw new AuthError('No account found with this email');
 
 ---
 
-## Domain 2: Authorization
+### Domain 2: Authorization
 
 **Goal:** Ensure users can only access what they should.
 
-### 2.1 Supabase RLS Audit
+#### 2.1 Supabase RLS Audit
 - [ ] RLS enabled on EVERY table (no exceptions)
 - [ ] Every table has at least SELECT and INSERT policies
 - [ ] No policy uses `true` as the USING clause (that's public access)
@@ -76,14 +76,14 @@ CREATE POLICY "view org data" ON projects
   );
 ```
 
-### 2.2 API Route Protection
+#### 2.2 API Route Protection
 - [ ] Every API route checks authentication (middleware)
 - [ ] Role-based routes check role before processing
 - [ ] No route relies solely on client-side role checks
 - [ ] File download routes verify ownership before serving
 - [ ] Admin API routes have separate auth middleware
 
-### 2.3 Data Access Patterns
+#### 2.3 Data Access Patterns
 - [ ] Users cannot access other users' data through ID manipulation
 - [ ] Sequential IDs not used (use UUIDs to prevent enumeration)
 - [ ] API responses only include data the user is authorized to see
@@ -92,11 +92,11 @@ CREATE POLICY "view org data" ON projects
 
 ---
 
-## Domain 3: Input Validation
+### Domain 3: Input Validation
 
 **Goal:** Never trust data from the client.
 
-### 3.1 Zod Schema Validation
+#### 3.1 Zod Schema Validation
 - [ ] Every API route validates request body with Zod
 - [ ] Every URL parameter validated (not just type-cast)
 - [ ] Query parameters validated and sanitized
@@ -122,19 +122,19 @@ export async function POST(request: Request) {
 }
 ```
 
-### 3.2 SQL Injection Prevention
+#### 3.2 SQL Injection Prevention
 - [ ] No raw SQL with string concatenation
 - [ ] All database queries use parameterized queries or ORM
 - [ ] Supabase client methods used correctly (not `.rpc()` with raw SQL)
 - [ ] Search/filter inputs sanitized before database queries
 
-### 3.3 XSS Protection
+#### 3.3 XSS Protection
 - [ ] React/Next.js JSX auto-escapes by default (verify no `dangerouslySetInnerHTML`)
 - [ ] User-generated content sanitized before rendering (use DOMPurify if HTML allowed)
 - [ ] Content-Security-Policy header configured
 - [ ] No inline scripts in HTML templates
 
-### 3.4 File Upload Validation
+#### 3.4 File Upload Validation
 - [ ] File type validated by magic bytes (not just extension)
 - [ ] Maximum file size enforced server-side
 - [ ] Uploaded files stored with random names (not user-provided names)
@@ -143,11 +143,11 @@ export async function POST(request: Request) {
 
 ---
 
-## Domain 4: Rate Limiting
+### Domain 4: Rate Limiting
 
 **Goal:** Prevent abuse and resource exhaustion.
 
-### 4.1 API Rate Limits
+#### 4.1 API Rate Limits
 - [ ] Global rate limit on all API routes (e.g., 100 requests/minute per IP)
 - [ ] Stricter limits on auth endpoints (e.g., 10 login attempts/minute)
 - [ ] Stricter limits on resource-intensive endpoints (AI, export, search)
@@ -171,13 +171,13 @@ const authRatelimit = new Ratelimit({
 });
 ```
 
-### 4.2 Brute Force Protection
+#### 4.2 Brute Force Protection
 - [ ] Login: lockout after 5 failed attempts (15-minute cooldown)
 - [ ] Password reset: 3 requests per email per hour
 - [ ] OTP verification: 5 attempts per phone number per hour
 - [ ] API key generation: limited to prevent key farming
 
-### 4.3 Resource Abuse Prevention
+#### 4.3 Resource Abuse Prevention
 - [ ] File upload: limit per user per hour
 - [ ] AI generation: token/request budget per user per day
 - [ ] Export/download: rate limited to prevent data scraping
@@ -185,11 +185,11 @@ const authRatelimit = new Ratelimit({
 
 ---
 
-## Domain 5: Environment Variables
+### Domain 5: Environment Variables
 
 **Goal:** No secrets in code, ever.
 
-### 5.1 Secret Management
+#### 5.1 Secret Management
 - [ ] All API keys in environment variables
 - [ ] No secrets in source code (search for patterns: `sk_`, `api_key`, `secret`)
 - [ ] `.env` file in `.gitignore`
@@ -204,13 +204,13 @@ grep -r "secret" src/ --include="*.ts" --include="*.tsx"
 grep -r "password" src/ --include="*.ts" --include="*.tsx"
 ```
 
-### 5.2 Environment Separation
+#### 5.2 Environment Separation
 - [ ] Development and production use different credentials
 - [ ] Development uses sandbox/test API keys (not production)
 - [ ] Production environment variables set in deployment platform (Coolify)
 - [ ] No production credentials on developer machines
 
-### 5.3 Git History Audit
+#### 5.3 Git History Audit
 - [ ] Search git history for accidentally committed secrets
 - [ ] If found: rotate the secret immediately, then clean history
 - [ ] Pre-commit hook installed to prevent future leaks
@@ -222,17 +222,17 @@ git log --all -p | grep -i "sk_live\|api_key\|secret_key\|password="
 
 ---
 
-## Domain 6: HTTPS and Transport Security
+### Domain 6: HTTPS and Transport Security
 
 **Goal:** All data encrypted in transit.
 
-### 6.1 HTTPS Enforcement
+#### 6.1 HTTPS Enforcement
 - [ ] HTTPS forced on all routes (HTTP redirects to HTTPS)
 - [ ] HSTS header configured: `Strict-Transport-Security: max-age=31536000; includeSubDomains`
 - [ ] No mixed content (all resources loaded over HTTPS)
 - [ ] SSL certificate valid and auto-renewing
 
-### 6.2 Security Headers
+#### 6.2 Security Headers
 ```
 Strict-Transport-Security: max-age=31536000; includeSubDomains
 Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'
@@ -243,7 +243,7 @@ Referrer-Policy: strict-origin-when-cross-origin
 Permissions-Policy: camera=(), microphone=(), geolocation=()
 ```
 
-### 6.3 Cookie Security
+#### 6.3 Cookie Security
 - [ ] All cookies have `Secure` flag (HTTPS only)
 - [ ] Session cookies have `HttpOnly` flag
 - [ ] `SameSite=Lax` or `SameSite=Strict` on all cookies
@@ -251,11 +251,11 @@ Permissions-Policy: camera=(), microphone=(), geolocation=()
 
 ---
 
-## Domain 7: Dependencies
+### Domain 7: Dependencies
 
 **Goal:** Don't inherit someone else's vulnerability.
 
-### 7.1 Vulnerability Scanning
+#### 7.1 Vulnerability Scanning
 ```bash
 # npm audit for known vulnerabilities
 npm audit
@@ -268,14 +268,17 @@ npx better-npm-audit audit
 - [ ] Zero high vulnerabilities in production dependencies (or documented exceptions)
 - [ ] Medium/low vulnerabilities reviewed and accepted or fixed
 
-### 7.2 Dependency Hygiene
+#### 7.2 Dependency Hygiene
 - [ ] `package-lock.json` committed (deterministic builds)
 - [ ] No wildcard versions in package.json (use exact or caret)
 - [ ] Unused dependencies removed
 - [ ] Dependencies from reputable sources (check npm download counts, maintenance)
 
-### 7.3 Update Strategy
+#### 7.3 Update Strategy
 - [ ] Weekly automated dependency check (Dependabot or Renovate)
 - [ ] Critical security updates applied within 24 hours
 - [ ] Major version updates tested before applying
 - [ ] CI pipeline fails on critical vulnerabilities
+
+---
+

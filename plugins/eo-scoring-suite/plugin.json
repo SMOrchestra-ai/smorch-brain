@@ -1,0 +1,15 @@
+{
+  "name": "eo-scoring-suite",
+  "version": "1.0.0",
+  "description": "5 assessment scorecards for the EO MicroSaaS OS. Evaluates Project Definition, ICP Clarity, Market Attractiveness, Strategy Path, and GTM Fitness. Use standalone or as Phase 0 of the full EO journey. Run /eo-score to start.",
+  "skills": [
+    "skills/project-definition-scoring-engine",
+    "skills/icp-clarity-scoring-engine",
+    "skills/market-attractiveness-scoring-engine",
+    "skills/strategy-selector-engine",
+    "skills/gtm-fitness-scoring-engine"
+  ],
+  "commands": [
+    "commands/eo-score.md"
+  ]
+}

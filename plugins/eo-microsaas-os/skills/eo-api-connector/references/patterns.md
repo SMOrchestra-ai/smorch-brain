@@ -1,10 +1,8 @@
-# EO API Connector - Code Patterns
+# Client Wrapper Patterns - eo-api-connector
 
-Reference file for client wrapper architecture, error handling, retry logic, and webhook processing patterns.
+Architecture patterns, type safety rules, error handling, and circuit breaker implementation.
 
----
-
-## Client Wrapper Architecture
+## CLIENT WRAPPER ARCHITECTURE
 
 Every integration follows this structure:
 
@@ -79,7 +77,8 @@ export function createApiClient(config: ClientConfig) {
 
 ---
 
-## Error Handling Patterns
+
+## ERROR HANDLING PATTERNS
 
 ### IntegrationError Class
 
@@ -154,7 +153,7 @@ export async function callExternalService() {
 
 ---
 
-## Webhook Processing
+## WEBHOOK PROCESSING
 
 ### Webhook Handler Pattern
 
@@ -199,3 +198,46 @@ export async function POST(request: Request) {
 4. Return 200 quickly, process asynchronously if needed
 5. Log all webhook payloads for debugging
 6. Never trust webhook data without server-side verification
+
+---
+
+## OUTPUT FILES
+
+### Per Integration
+```
+src/lib/integrations/[service-name]/
+  client.ts         # HTTP client with base URL, auth, timeout
+  types.ts          # Zod schemas for all request/response shapes
+  [service].ts      # Public methods (createCheckout, sendMessage, etc.)
+  webhooks.ts       # Webhook verification and event handlers
+  __tests__/
+    [service].test.ts  # Tests with mocked responses
+```
+
+### Integration Summary
+```markdown
+# API Integration Summary
+
+## Active Integrations
+| Service | Category | Priority | Status | Docs |
+|---------|----------|----------|--------|------|
+| Stripe | Payments | MVP-CRITICAL | Connected | [link] |
+| SendGrid | Messaging | LAUNCH-DAY | Connected | [link] |
+| ...
+
+## Environment Variables Required
+| Variable | Service | Description |
+|----------|---------|-------------|
+| STRIPE_SECRET_KEY | Stripe | API secret key |
+| STRIPE_WEBHOOK_SECRET | Stripe | Webhook signature secret |
+| ...
+
+## Webhook Endpoints
+| Endpoint | Service | Events Handled |
+|----------|---------|----------------|
+| /api/webhooks/stripe | Stripe | checkout.session.completed, invoice.paid, ... |
+| ...
+```
+
+---
+

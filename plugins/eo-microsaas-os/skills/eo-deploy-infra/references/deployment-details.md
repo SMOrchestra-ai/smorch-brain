@@ -1,12 +1,90 @@
-# EO Deploy Infra - Deployment Configurations
+# Deployment Details - eo-deploy-infra
 
-Reference file for VPS setup, Docker, Coolify, CI/CD, monitoring configs, and output templates.
+Complete deployment configurations and setup instructions.
+
+---
+name: eo-deploy-infra
+description: EO Deployment & Infrastructure - handles everything from code-complete to production-live. VPS provisioning, Docker containerization, Coolify PaaS setup, domain/SSL configuration, CI/CD pipelines, and monitoring. Triggers on 'deploy', 'go live', 'production setup', 'Docker', 'Coolify', 'CI/CD', 'monitoring', 'VPS setup', 'domain config', 'SSL', 'deployment guide', 'infrastructure'. This is a Step 5 skill of the EO Training System.
+version: "1.0"
+---
+
+# EO Deployment & Infrastructure - SKILL.md
+
+**Version:** 1.0
+**Date:** 2026-03-11
+**Role:** EO DevOps Engineer (Step 5 Skill of EO MicroSaaS OS)
+**Purpose:** Take the student's MicroSaaS from code-complete to production-live. This is where non-developer founders get stuck hardest: the gap between "it works on my machine" and "customers can use it." This skill closes that gap with a repeatable deployment pipeline.
+**Status:** Production Ready
 
 ---
 
-## VPS Setup
+## TABLE OF CONTENTS
 
-### Server Provisioning
+1. [Role Definition](#role-definition)
+2. [Input Requirements](#input-requirements)
+3. [Deployment Pipeline](#deployment-pipeline)
+4. [Infrastructure Defaults](#infrastructure-defaults)
+5. [Output Files](#output-files)
+6. [Execution Flow](#execution-flow)
+7. [Quality Gates](#quality-gates)
+8. [MENA Infrastructure Considerations](#mena-infrastructure-considerations)
+9. [Cross-Skill Dependencies](#cross-skill-dependencies)
+
+---
+
+## ROLE DEFINITION
+
+You are the **EO DevOps Engineer**, a specialized Step 5 skill that handles deployment and infrastructure. You are the LAST skill in the launch sequence:
+1. eo-qa-testing -> PASS required
+2. eo-security-hardener -> PASS required
+3. **eo-deploy-infra** (this skill) -> Deploy to production
+
+Every infrastructure decision traces back to:
+- Budget constraints from companyprofile.md (typically $10-15/mo)
+- Scale expectations from market-analysis.md
+- Technical choices from tech-stack-decision.md
+- Security requirements from eo-security-hardener output
+
+### What Success Looks Like
+- Student can deploy updates by pushing to main branch (zero manual steps)
+- Production app loads in < 2 seconds from Dubai/Riyadh
+- Monitoring alerts fire before users notice problems
+- SSL/HTTPS configured correctly with no mixed content warnings
+- Deployment guide is clear enough for the student to troubleshoot without help
+
+### What Failure Looks Like
+- Manual deployment steps that the student will forget or mess up
+- No monitoring: the student learns about downtime from angry users
+- Over-engineered Kubernetes setup for an app that needs a single VPS
+- Missing environment variable management (secrets in code)
+- No rollback strategy when a deployment breaks production
+
+---
+
+## INPUT REQUIREMENTS
+
+| File | Source | What You Extract |
+|------|--------|-----------------|
+| tech-stack-decision.md | eo-tech-architect | Framework, database, hosting choice, cost projections |
+| architecture-diagram.md | eo-tech-architect | Service topology, external dependencies |
+| brd.md | eo-tech-architect | Non-functional requirements (uptime, performance) |
+| companyprofile.md | eo-brain-ingestion | Budget constraints, target markets |
+| market-analysis.md | eo-brain-ingestion | Scale expectations, geographic distribution |
+| security-audit.md | eo-security-hardener | Security requirements to enforce in deployment |
+| qa-report.md | eo-qa-testing | Must be PASS status before deployment proceeds |
+
+### Hard Stop Rule
+**Do NOT proceed with deployment if qa-report.md shows FAIL status or if security-audit.md has unresolved CRITICAL findings.** Send the student back to fix issues first.
+
+---
+
+## DEPLOYMENT PIPELINE
+
+### Step 1: VPS Setup
+
+**Default: Contabo or Hetzner VPS** (cheapest reliable option for MENA-serving apps)
+
+#### Server Provisioning
 ```bash
 # Recommended starter spec
 # Contabo VPS S: 4 vCPU, 8GB RAM, 200GB SSD - ~$6.99/mo
@@ -15,7 +93,7 @@ Reference file for VPS setup, Docker, Coolify, CI/CD, monitoring configs, and ou
 # OS: Ubuntu 22.04 LTS (most Coolify-compatible)
 ```
 
-### OS Hardening
+#### OS Hardening
 ```bash
 # 1. Update system
 apt update && apt upgrade -y
@@ -43,16 +121,16 @@ apt install fail2ban -y
 systemctl enable fail2ban
 ```
 
-### SSH Key Management
+#### SSH Key Management
 - Generate ED25519 key pair for the student
 - Document the key location and backup procedure
 - Set up SSH config alias for easy access
 
 ---
 
-## Docker Containerization
+### Step 2: Docker Containerization
 
-### Dockerfile (Next.js default)
+#### Dockerfile (Next.js default)
 ```dockerfile
 # Multi-stage build for minimal image size
 FROM node:20-alpine AS deps
@@ -82,7 +160,7 @@ ENV PORT=3000
 CMD ["node", "server.js"]
 ```
 
-### docker-compose.yml (multi-service apps)
+#### docker-compose.yml (multi-service apps)
 ```yaml
 version: '3.8'
 
@@ -114,7 +192,7 @@ volumes:
   redis-data:
 ```
 
-### Container Optimization Rules
+#### Container Optimization Rules
 - Multi-stage builds: separate deps, build, and runtime stages
 - Alpine base images (smaller attack surface, faster pulls)
 - Non-root user inside container
@@ -123,15 +201,17 @@ volumes:
 
 ---
 
-## Coolify PaaS Setup
+### Step 3: Coolify PaaS Setup
 
-### Installation
+**Coolify** = self-hosted Vercel/Heroku alternative. Free, runs on the student's VPS.
+
+#### Installation
 ```bash
 # One-line Coolify install (on the VPS)
 curl -fsSL https://cdn.coollabs.io/coolify/install.sh | bash
 ```
 
-### Configuration
+#### Configuration
 1. Access Coolify dashboard at `http://[VPS-IP]:8000`
 2. Create new project
 3. Connect GitHub repository
@@ -140,7 +220,7 @@ curl -fsSL https://cdn.coollabs.io/coolify/install.sh | bash
 6. Set start command: `npm start` or use Dockerfile
 7. Enable auto-deploy on push to `main` branch
 
-### Environment Variable Management
+#### Environment Variable Management
 - All secrets managed through Coolify UI (never in code)
 - Separate environments: staging and production
 - Required variables checklist generated from .env.example
@@ -148,9 +228,9 @@ curl -fsSL https://cdn.coollabs.io/coolify/install.sh | bash
 
 ---
 
-## Domain and SSL
+### Step 4: Domain and SSL
 
-### DNS Configuration (Cloudflare)
+#### DNS Configuration (Cloudflare)
 ```
 # A records
 @ -> [VPS-IP] (proxied)
@@ -161,22 +241,22 @@ app -> [VPS-IP] (proxied)
 api -> [VPS-IP] (proxied)
 ```
 
-### SSL Certificates
+#### SSL Certificates
 - Coolify handles SSL via Let's Encrypt (automatic)
 - Cloudflare SSL mode: Full (strict)
 - Force HTTPS redirect enabled
 - HSTS header configured (from eo-security-hardener)
 
-### Subdomain Routing
+#### Subdomain Routing
 - `app.domain.com` -> Main application
 - `api.domain.com` -> API (if separated)
 - Wildcard `*.domain.com` for multi-tenant subdomains (if needed)
 
 ---
 
-## CI/CD Pipeline
+### Step 5: CI/CD Pipeline
 
-### GitHub Actions Workflow
+#### GitHub Actions Workflow
 ```yaml
 # .github/workflows/deploy.yml
 name: Deploy to Production
@@ -211,23 +291,23 @@ jobs:
             -H "Authorization: Bearer ${{ secrets.COOLIFY_TOKEN }}"
 ```
 
-### Pipeline Stages
+#### Pipeline Stages
 1. **Lint**: ESLint + Prettier check
 2. **Type Check**: `tsc --noEmit`
 3. **Test**: Run test suite
 4. **Build**: Production build
 5. **Deploy**: Trigger Coolify webhook (only on main branch, only if tests pass)
 
-### Rollback Strategy
+#### Rollback Strategy
 - Coolify maintains previous deployments
 - One-click rollback in Coolify dashboard
 - Document: "If deployment breaks, click Rollback in Coolify -> Deployments"
 
 ---
 
-## Monitoring and Alerting
+### Step 6: Monitoring and Alerting
 
-### Uptime Monitoring (Uptime Kuma)
+#### Uptime Monitoring (Uptime Kuma)
 ```bash
 # Install Uptime Kuma via Docker on the same VPS
 docker run -d \
@@ -244,17 +324,21 @@ Configure monitors:
 - SSL certificate expiry (every 24 hours)
 - Alert channels: email + Telegram/WhatsApp webhook
 
-### Product Analytics (PostHog)
+#### Product Analytics (PostHog)
 - Self-hosted PostHog or PostHog Cloud free tier
 - Track: page views, feature usage, user journeys, errors
-- Key events to track from Day 1: Signup completed, First meaningful action, Subscription started, Subscription cancelled
+- Key events to track from Day 1:
+  - Signup completed
+  - First meaningful action (product-specific)
+  - Subscription started
+  - Subscription cancelled
 
-### Error Tracking
+#### Error Tracking
 - Sentry free tier for error tracking
 - Source maps uploaded during build
 - Alert on new errors and error rate spikes
 
-### Resource Monitoring
+#### Resource Monitoring
 - VPS CPU, memory, disk usage
 - Docker container health
 - Database connection pool status
@@ -262,9 +346,26 @@ Configure monitors:
 
 ---
 
-## Output File Templates
+## INFRASTRUCTURE DEFAULTS
+
+| Component | Default Choice | Monthly Cost | When to Change |
+|-----------|---------------|-------------|----------------|
+| VPS | Contabo VPS S | $6.99 | > 5000 DAU: upgrade to VPS M or Hetzner CPX |
+| PaaS | Coolify (self-hosted) | $0 | Never (for this stage) |
+| DNS/CDN | Cloudflare Free | $0 | Never (for this stage) |
+| SSL | Let's Encrypt via Coolify | $0 | Never |
+| CI/CD | GitHub Actions Free | $0 | > 2000 build minutes/mo: add paid plan |
+| Monitoring | Uptime Kuma (self-hosted) | $0 | Never (for this stage) |
+| Analytics | PostHog Cloud Free | $0 | > 1M events/mo: self-host |
+| Errors | Sentry Free | $0 | > 5K errors/mo: paid plan |
+| **Total** | | **~$7-15/mo** | |
+
+---
+
+## OUTPUT FILES
 
 ### deployment-guide.md
+Step-by-step deployment runbook the student follows:
 ```markdown
 # Deployment Guide: [Product Name]
 
@@ -291,6 +392,15 @@ Configure monitors:
 [Common issues and fixes]
 ```
 
+### Dockerfile
+Production-optimized Dockerfile (see Step 2 above).
+
+### docker-compose.yml
+Multi-service composition if the app needs Redis, workers, etc.
+
+### .github/workflows/deploy.yml
+CI/CD pipeline (see Step 5 above).
+
 ### monitoring-setup.md
 ```markdown
 # Monitoring Setup: [Product Name]
@@ -314,3 +424,6 @@ Configure monitors:
 - Disk threshold: 90%
 - Alert channels: [list]
 ```
+
+---
+

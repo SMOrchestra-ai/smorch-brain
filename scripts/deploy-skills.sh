@@ -29,13 +29,11 @@ for SERVER in "$BRAIN_IP" "$DEV_IP"; do
     git stash 2>/dev/null; \
     git pull origin dev --rebase 2>&1 | tail -3 && \
     mkdir -p $PLUGIN_DIR && \
-    for PLUGIN in engineering product-management smorch-dev smorch-gtm-engine smorch-gtm-tools; do \
-      if [ -d $REPO_PATH/plugins/\$PLUGIN ]; then \
-        ln -sf $REPO_PATH/plugins/\$PLUGIN $PLUGIN_DIR/\$PLUGIN; \
-        echo \"  ✓ \$PLUGIN\"; \
-      else \
-        echo \"  ⊘ \$PLUGIN (not found, skipped)\"; \
-      fi; \
+    for PLUGIN_PATH in $REPO_PATH/plugins/*/; do \
+      PLUGIN=\$(basename \$PLUGIN_PATH); \
+      case \$PLUGIN in *-backup-*) echo \"  ⊘ \$PLUGIN (backup, skipped)\"; continue;; esac; \
+      ln -sf $REPO_PATH/plugins/\$PLUGIN $PLUGIN_DIR/\$PLUGIN; \
+      echo \"  ✓ \$PLUGIN\"; \
     done && \
     echo 'Plugins:' && ls $PLUGIN_DIR/ && \
     echo 'Final SOP:' && ls $REPO_PATH/final-sop/ && \
