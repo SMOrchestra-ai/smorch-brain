@@ -20,11 +20,13 @@ This is the single source of truth for how SMOrchestra's AI-native dev organizat
 | Know when to involve Lana | [sops/SOP-06-Team-Distribution.md](sops/SOP-06-Team-Distribution.md) |
 | Route work to Claude Code vs Codex | [sops/SOP-11-Codex-Doctrine.md](sops/SOP-11-Codex-Doctrine.md) |
 | Handle an incident | [sops/SOP-10-Incident-Response.md](sops/SOP-10-Incident-Response.md) |
+| Check system health | Run `/monitor` (smorch-dev plugin) |
 | Start a new project | [sops/SOP-12-Project-Onboarding-Auto.md](sops/SOP-12-Project-Onboarding-Auto.md) |
 | Hand work to Lana | [sops/SOP-13-Lana-Handover-Protocol.md](sops/SOP-13-Lana-Handover-Protocol.md) |
 | Write an ADR / PRD / Sprint Plan | [templates/](templates/) |
 | Activate MENA context | [context/MENA-DEEP-OVERLAY.md](context/MENA-DEEP-OVERLAY.md) |
 | Know when skills auto-fire | [context/SKILL-LIFECYCLE-TRIGGERS.md](context/SKILL-LIFECYCLE-TRIGGERS.md) |
+| Track sprint velocity | [context/SPRINT-VELOCITY-DATA.md](context/SPRINT-VELOCITY-DATA.md) |
 | Set up Lana's machine | [lana/SETUP-GUIDE-WINDOWS.md](lana/SETUP-GUIDE-WINDOWS.md) |
 | Check Lana's authority | [lana/DECISION-AUTHORITY-MATRIX.md](lana/DECISION-AUTHORITY-MATRIX.md) |
 | Run pre-flight check | [onboarding/PROJECT-ONBOARD-CHECKLIST.md](onboarding/PROJECT-ONBOARD-CHECKLIST.md) |
@@ -64,10 +66,11 @@ final-sop/
 │   ├── WORKFORCE-PLAN.md
 │   └── LANA-HANDOVER-BRIEF.md
 │
-├── context/                   ← Shared context layers (3)
-│   ├── MENA-DEEP-OVERLAY.md   ← Injectable, not enforced
-│   ├── SKILL-LIFECYCLE-TRIGGERS.md
-│   └── SESSION-STRATEGY-MATRIX.md
+├── context/                   ← Shared context layers (4)
+│   ├── MENA-DEEP-OVERLAY.md   ← Injectable, not enforced (Deep version)
+│   ├── SKILL-LIFECYCLE-TRIGGERS.md ← Includes n8n workflow IDs
+│   ├── SESSION-STRATEGY-MATRIX.md
+│   └── SPRINT-VELOCITY-DATA.md ← Living velocity tracker
 │
 ├── lana/                      ← Lana's complete setup (6)
 │   ├── SETUP-GUIDE-WINDOWS.md

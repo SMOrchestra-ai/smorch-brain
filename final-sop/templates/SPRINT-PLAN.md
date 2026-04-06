@@ -69,11 +69,56 @@
 
 ## Sprint Velocity Tracking
 
-| Sprint | Planned | Completed | Velocity |
-|--------|---------|-----------|----------|
-| [N-2]  |         |           |          |
-| [N-1]  |         |           |          |
-| [N]    | [X]     | -         | -        |
+### Previous Sprint Performance
+
+| Sprint | Planned | Completed | Velocity | Carry-Over |
+|--------|---------|-----------|----------|------------|
+| [N-2]  |         |           |          |            |
+| [N-1]  |         |           |          |            |
+| [N]    | [X]     | -         | -        | -          |
+
+**Previous Sprint Velocity:** [Y] pts
+**Rolling 3-Sprint Average:** [Z] pts
+**Velocity Trend:** [improving / stable / declining] — [one-line reason]
+
+### Capacity Adjustment Factors
+
+| Factor | Active? | Impact | Adjusted Capacity |
+|--------|---------|--------|-------------------|
+| Ramadan | Yes/No | -35% velocity | [X] pts |
+| Eid week | Yes/No | 0 velocity (skip sprint) | 0 pts |
+| Summer (Jul-Aug) | Yes/No | -20% velocity | [X] pts |
+| New project onboarding | Yes/No | -25% first sprint | [X] pts |
+| Team member change | Yes/No | -15% per change | [X] pts |
+| Holiday (specify) | Yes/No | [specify] | [X] pts |
+
+**Adjusted Sprint Capacity:** [X] pts (after all active factors applied)
+
+### Agent Utilization
+
+| Agent | Tasks Assigned | Points | Hours / Tokens Consumed | Completion Rate |
+|-------|---------------|--------|-------------------------|-----------------|
+|       |               |        |                         |                 |
+|       |               |        |                         |                 |
+| **Total** | **[X]** | **[Y]** | **[Z]** | **[%]** |
+
+### Codex vs Claude Code Split
+
+| Tool | Tasks | Points | Time (hrs) | % of Sprint Work |
+|------|-------|--------|------------|------------------|
+| Claude Code | | | | |
+| Codex | | | | |
+| Manual / Other | | | | |
+| **Total** | **[X]** | **[Y]** | **[Z]** | **100%** |
+
+### Sprint Completion Prediction
+
+- **Planned points this sprint:** [X]
+- **Velocity-based estimate:** [Y] pts (using rolling 3-sprint avg)
+- **Adjusted estimate:** [Z] pts (after capacity factors)
+- **Confidence level:** [high / medium / low]
+- **Predicted completion date:** [YYYY-MM-DD]
+- **Risk to plan:** [none / minor / significant] — [reason if any]
 
 ---
 

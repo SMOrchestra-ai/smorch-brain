@@ -12,7 +12,7 @@
 | BRD received | New BRD document committed or linked in Linear | `/write-spec` | VP Engineering | PRD with acceptance criteria |
 | Sprint start | Sprint cycle begins in Linear | `/sprint-planning` | VP Engineering | Sprint plan with RICE scores + assignments |
 | Ticket assigned (new system) | New feature ticket moves to In Progress | `/system-design` + `/architecture` | VP Engineering | ADR + system design doc |
-| Ticket assigned (bug) | Bug ticket moves to In Progress | `/debug` + `/systematic-debugging` | VP Engineering | Root cause analysis + fix PR |
+| Ticket assigned (bug) | Bug ticket moves to In Progress | `/debug` (includes systematic debugging iron law) | VP Engineering | Root cause analysis + fix PR |
 | During coding (pre-commit) | Code staged for commit | `/review-code` (self-review) | Authoring Agent | Pre-commit quality check |
 | PR created | Pull request opened on dev branch | `/code-review` + Lana handover brief | QA Lead (Lana) | Review comments + handover brief |
 | QA assigned | PR moves to QA column | `/test-webapp` + `/eo-qa-testing` | QA Lead (Lana) | Test results + score |
@@ -23,6 +23,19 @@
 | Quarterly cadence | First week of quarter | `/roadmap-update` + `/tech-debt` | VP Engineering + CEO | Roadmap refresh + tech debt audit |
 | Project kickoff | New project created in Linear | `/system-design` + `/architecture` | VP Engineering | Architecture doc + ADR + initial sprint plan |
 | Handover to Lana | PR ready for QA review | Lana handover brief template | Authoring Agent | Completed LANA-HANDOVER-BRIEF.md |
+
+---
+
+## n8n Automation Workflows (smo-dev)
+
+| Workflow | ID | Trigger | What It Does |
+|----------|----|---------|-------------|
+| Weekly Stakeholder Update | `8X7AZ4MeT2QgCeu9` | Sunday 9am Dubai (5am UTC) | Fetches Linear issues, formats summary, sends to Mamoun via Telegram |
+| Tech Debt Quarterly Review | `dQ1wbJaQu6FE79wq` | First Monday of Jan/Apr/Jul/Oct | Scans GitHub for tech-debt issues, creates Linear review ticket |
+| Linear Issue Done → Summary | `Nt3HAjdA95oA3hS4` | Linear webhook (issue → completed) | Formats completion notice, sends to Mamoun via Telegram |
+| BRD → Auto-PRD Pipeline | `YOKimeuDuOG8woFW` | Webhook POST to `/brd-to-prd` | Validates BRD, generates PRD via Claude, files in Linear |
+
+**Activation:** All workflows created inactive. Set env vars (`LINEAR_API_KEY`, `TELEGRAM_WEBHOOK_URL`, `ANTHROPIC_API_KEY`) then activate.
 
 ---
 
