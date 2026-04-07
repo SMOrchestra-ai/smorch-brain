@@ -29,13 +29,42 @@ git config --global core.autocrlf true
 git config --system core.longpaths true
 ```
 
-### 1.4 Install Claude Code
+### 1.4 GitHub Authentication
+
+You need a Personal Access Token (PAT) to clone repos and push branches.
+
+**Create Your Token:**
+1. Go to https://github.com/settings/tokens
+2. Click **Generate new token (classic)**
+3. Name: `smorchestra-dev`
+4. Expiration: 90 days (you'll need to regenerate when it expires)
+5. Select these scopes:
+   - `repo` (full repo access -- required)
+   - `read:org` (read org membership -- required)
+   - `workflow` (GitHub Actions visibility -- optional)
+6. Click **Generate token**
+7. **Copy the token immediately** -- it only shows once
+
+**Configure Git to Remember Your Token:**
+```bash
+git config --global credential.helper store
+```
+
+The first time you `git clone` or `git push`, Git will prompt:
+- **Username:** your GitHub username
+- **Password:** paste the PAT (not your GitHub password)
+
+Git stores this after the first entry. You won't be asked again until the token expires.
+
+> **Security:** Never share your PAT with anyone. Never paste it in code, docs, or chat. If compromised, revoke it immediately at https://github.com/settings/tokens and generate a new one.
+
+### 1.5 Install Claude Code
 ```bash
 npm install -g @anthropic-ai/claude-code
 ```
 Verify: `claude --version`
 
-### 1.5 Terminal Setup
+### 1.6 Terminal Setup
 - **Recommended**: Use **Git Bash** as your default terminal for all git and claude operations.
 - **Do NOT** use cmd.exe or PowerShell for git operations -- they handle paths and line endings differently.
 - **Alternative**: Install Windows Terminal from the Microsoft Store, then add a Git Bash profile:
