@@ -1,0 +1,139 @@
+name: Deploy
+
+on:
+  workflow_run:
+    workflows: ["Quality Gate"]
+    types: [completed]
+    branches: [dev, main]
+
+jobs:
+  deploy-staging:
+    runs-on: ubuntu-latest
+    if: >
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.head_branch == 'dev'
+    environment: staging
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install dependencies
+        run: npm ci
+        working-directory: scrapmfast_frontend
+
+      - name: Build frontend
+        run: npm run build
+        working-directory: scrapmfast_frontend
+        env:
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+          VITE_SENTRY_DSN: ${{ secrets.VITE_SENTRY_DSN }}
+          VITE_POSTHOG_KEY: ${{ secrets.VITE_POSTHOG_KEY }}
+
+      - name: Configure SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SMO_DEV_SSH_KEY }}" > ~/.ssh/id_deploy
+          chmod 600 ~/.ssh/id_deploy
+          ssh-keyscan -H ${{ secrets.SMO_DEV_HOST }} >> ~/.ssh/known_hosts 2>/dev/null
+
+      - name: Deploy to staging (smo-dev)
+        run: |
+          TIMESTAMP=$(date +%Y%m%d_%H%M%S)
+          DEPLOY_DIR="/root/signal_project_v3/scrapmfast_frontend"
+          BACKUP_DIR="/root/signal_project_v3/backups/frontend-${TIMESTAMP}"
+
+          # Backup current build
+          ssh -i ~/.ssh/id_deploy root@${{ secrets.SMO_DEV_HOST }} \
+            "mkdir -p /root/signal_project_v3/backups && cp -r ${DEPLOY_DIR}/dist ${BACKUP_DIR} 2>/dev/null || true"
+
+          # Rsync new build
+          rsync -avz --delete \
+            -e "ssh -i ~/.ssh/id_deploy" \
+            scrapmfast_frontend/dist/ \
+            root@${{ secrets.SMO_DEV_HOST }}:${DEPLOY_DIR}/dist/
+
+          # Restart frontend service
+          ssh -i ~/.ssh/id_deploy root@${{ secrets.SMO_DEV_HOST }} \
+            "systemctl restart scrapmfast-frontend.service && systemctl is-active scrapmfast-frontend.service"
+
+      - name: Verify deployment
+        run: |
+          sleep 5
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" https://sse.smorchestra.ai/login)
+          if [ "$STATUS" != "200" ]; then
+            echo "Deployment verification failed: HTTP $STATUS"
+            exit 1
+          fi
+          echo "Deployment verified: HTTP $STATUS"
+
+      - name: Notify on failure
+        if: failure()
+        run: echo "::error::Staging deployment failed. Check logs and consider rollback."
+
+  deploy-production:
+    runs-on: ubuntu-latest
+    if: >
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.head_branch == 'main'
+    environment:
+      name: production
+      # Requires manual approval from al-Jazari or Mamoun
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install dependencies
+        run: npm ci
+        working-directory: scrapmfast_frontend
+
+      - name: Build frontend (production)
+        run: npm run build
+        working-directory: scrapmfast_frontend
+        env:
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+          VITE_SENTRY_DSN: ${{ secrets.VITE_SENTRY_DSN }}
+          VITE_POSTHOG_KEY: ${{ secrets.VITE_POSTHOG_KEY }}
+
+      - name: Configure SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SMO_DEV_SSH_KEY }}" > ~/.ssh/id_deploy
+          chmod 600 ~/.ssh/id_deploy
+          ssh-keyscan -H ${{ secrets.SMO_DEV_HOST }} >> ~/.ssh/known_hosts 2>/dev/null
+
+      - name: Deploy to production
+        run: |
+          TIMESTAMP=$(date +%Y%m%d_%H%M%S)
+          DEPLOY_DIR="/root/signal_project_v3/scrapmfast_frontend"
+          BACKUP_DIR="/root/signal_project_v3/backups/frontend-prod-${TIMESTAMP}"
+
+          # Backup current build
+          ssh -i ~/.ssh/id_deploy root@${{ secrets.SMO_DEV_HOST }} \
+            "mkdir -p /root/signal_project_v3/backups && cp -r ${DEPLOY_DIR}/dist ${BACKUP_DIR} 2>/dev/null || true"
+
+          # Rsync new build
+          rsync -avz --delete \
+            -e "ssh -i ~/.ssh/id_deploy" \
+            scrapmfast_frontend/dist/ \
+            root@${{ secrets.SMO_DEV_HOST }}:${DEPLOY_DIR}/dist/
+
+          # Restart with zero-downtime
+          ssh -i ~/.ssh/id_deploy root@${{ secrets.SMO_DEV_HOST }} \
+            "systemctl restart scrapmfast-frontend.service && systemctl is-active scrapmfast-frontend.service"
+
+      - name: Verify production deployment
+        run: |
+          sleep 5
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" https://sse.smorchestra.ai/login)
+          if [ "$STATUS" != "200" ]; then
+            echo "Production deployment verification failed: HTTP $STATUS"
+            echo "::error::ROLLBACK NEEDED — run: ssh root@smo-dev 'cp -r /root/signal_project_v3/backups/latest/* /root/signal_project_v3/scrapmfast_frontend/dist/ && systemctl restart scrapmfast-frontend.service'"
+            exit 1
+          fi
+          echo "Production deployment verified: HTTP $STATUS"

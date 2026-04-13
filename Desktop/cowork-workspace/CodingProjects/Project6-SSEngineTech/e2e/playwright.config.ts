@@ -29,10 +29,26 @@ export default defineConfig({
 
   timeout: 30_000,
 
+  /* Snapshot path for visual regression baselines */
+  snapshotPathTemplate:
+    "{testDir}/__screenshots__/{projectName}/{testFilePath}/{arg}{ext}",
+
   projects: [
     {
       name: "chromium",
       use: { ...devices["Desktop Chrome"] },
+    },
+    {
+      name: "firefox",
+      use: { ...devices["Desktop Firefox"] },
+    },
+    {
+      name: "webkit",
+      use: { ...devices["Desktop Safari"] },
+    },
+    {
+      name: "msedge",
+      use: { ...devices["Desktop Edge"], channel: "msedge" },
     },
   ],
 });
