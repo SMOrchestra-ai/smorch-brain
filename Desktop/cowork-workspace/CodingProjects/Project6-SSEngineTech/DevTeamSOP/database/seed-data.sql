@@ -307,6 +307,31 @@ INSERT INTO enrichment_results (id, tenant_id, lead_id, layer1_gemini, layer2_re
 ON CONFLICT (id) DO NOTHING;
 
 -- ============================================================
+-- ============================================================
+-- 12. SIGNAL SOURCES (3 rows — Firecrawl monitors for competitor tracking)
+-- ============================================================
+INSERT INTO signal_sources (tenant_id, source_type, source_tool, config, metadata, monitored_url, is_active)
+VALUES
+  ('a1000000-0000-0000-0000-000000000001', 'competitor_monitor', 'firecrawl', '{"mode": "monitor", "frequency": "daily"}', '{}', 'https://www.freshworks.com/crm/', true),
+  ('a1000000-0000-0000-0000-000000000001', 'competitor_monitor', 'firecrawl', '{"mode": "monitor", "frequency": "daily"}', '{}', 'https://www.zoho.com/crm/', true),
+  ('a1000000-0000-0000-0000-000000000002', 'prospect_intel', 'firecrawl', '{"mode": "prospect", "frequency": "weekly"}', '{}', 'https://www.careem.com/en-ae/', true)
+ON CONFLICT DO NOTHING;
+
+-- ============================================================
+-- 13. SIGNALS (8 rows — sample signals across all types)
+-- ============================================================
+INSERT INTO signals (tenant_id, account_id, lead_id, signal_type, source, signal_value, confidence_score, dedup_key)
+VALUES
+  ('a1000000-0000-0000-0000-000000000001', 'e1000000-0000-0000-0000-000000000001', 'd1000000-0000-0000-0000-000000000001', 'hiring_signal', 'apify', '{"role": "Head of Sales", "location": "Dubai", "posted": "2026-04-01"}', 85, 'hiring_d1-0001_2026-04-01'),
+  ('a1000000-0000-0000-0000-000000000001', 'e1000000-0000-0000-0000-000000000002', 'd1000000-0000-0000-0000-000000000002', 'funding_event', 'news', '{"amount": "$15M Series B", "date": "2026-03-20", "source": "arabianbusiness.com"}', 90, 'funding_d1-0002_2026-03-20'),
+  ('a1000000-0000-0000-0000-000000000001', 'e1000000-0000-0000-0000-000000000003', 'd1000000-0000-0000-0000-000000000003', 'tech_adoption', 'clay', '{"tool": "HubSpot", "action": "new_install", "detected": "2026-04-05"}', 75, 'tech_d1-0003_2026-04-05'),
+  ('a1000000-0000-0000-0000-000000000002', 'e1000000-0000-0000-0000-000000000006', 'd1000000-0000-0000-0000-000000000006', 'email_open', 'instantly', '{"campaign": "MENA CRM Migration", "opens": 3, "last_open": "2026-04-07"}', 60, 'email_d1-0006_2026-04-07'),
+  ('a1000000-0000-0000-0000-000000000002', 'e1000000-0000-0000-0000-000000000007', 'd1000000-0000-0000-0000-000000000007', 'linkedin_engagement', 'heyreach', '{"action": "profile_view", "viewed_by": "CTO"}', 70, 'linkedin_d1-0007_2026-04-06'),
+  ('a1000000-0000-0000-0000-000000000003', 'e1000000-0000-0000-0000-000000000011', 'd1000000-0000-0000-0000-000000000011', 'company_growth', 'clay', '{"metric": "headcount", "change": "+25%", "period": "Q1 2026"}', 80, 'growth_d1-0011_2026-04-01'),
+  ('a1000000-0000-0000-0000-000000000001', 'e1000000-0000-0000-0000-000000000004', 'd1000000-0000-0000-0000-000000000004', 'news_mention', 'news', '{"headline": "Careem expands B2B services in Saudi Arabia", "source": "gulfnews.com"}', 65, 'news_d1-0004_2026-04-03'),
+  ('a1000000-0000-0000-0000-000000000003', 'e1000000-0000-0000-0000-000000000013', 'd1000000-0000-0000-0000-000000000013', 'web_visit', 'firecrawl', '{"page": "/pricing", "visits": 5, "duration_avg": "3m 20s"}', 55, 'web_d1-0013_2026-04-07')
+ON CONFLICT (dedup_key) DO NOTHING;
+
 -- VERIFICATION QUERIES (run after seeding)
 -- ============================================================
 -- SELECT 'tenants' as tbl, count(*) FROM tenants
@@ -319,4 +344,6 @@ ON CONFLICT (id) DO NOTHING;
 -- UNION ALL SELECT 'campaign_leads', count(*) FROM campaign_leads
 -- UNION ALL SELECT 'lead_scores_history', count(*) FROM lead_scores_history
 -- UNION ALL SELECT 'tenant_credits', count(*) FROM tenant_credits
--- UNION ALL SELECT 'enrichment_results', count(*) FROM enrichment_results;
+-- UNION ALL SELECT 'enrichment_results', count(*) FROM enrichment_results
+-- UNION ALL SELECT 'signals', count(*) FROM signals
+-- UNION ALL SELECT 'signal_sources', count(*) FROM signal_sources;

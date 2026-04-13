@@ -136,8 +136,8 @@ This is the single source of truth for all Signal Sales Engine V3 work. Auto-loa
 | Layer | Technology | Purpose | Deployment | Auth |
 |-------|-----------|---------|------------|------|
 | **Orchestration** | n8n (self-hosted) | 14+ workflows: ingestion, scoring, routing, sending, feedback | 100.89.148.62:5170 (smo-brain) | Internal key |
-| **Frontend** | Next.js (React) + TypeScript | Dashboard, campaign builder, lead views, analytics | 100.117.35.19:3000 (smo-dev) | Supabase Auth |
-| **Backend API** | Next.js API routes + Supabase Edge Functions | REST + real-time subscriptions | 100.117.35.19:3000 (smo-dev) | Supabase Service key |
+| **Frontend (LIVE)** | Vite + React 18 + TypeScript | Dashboard, campaigns, leads, signals, analytics, reports, settings, credits, scrapers, triggers | smo-dev :6002 → sse.smorchestra.ai | Supabase Auth |
+| **Backend API** | Express/Node | REST API | smo-dev :6001 → sse.smorchestra.ai/api | Supabase Service key |
 | **Database** | Supabase (PostgreSQL) | Core data store, RLS enforced | Cloud (supabase.co) | Service key + RLS |
 | **Auth** | Supabase Auth | User identity, JWT, MFA support | Cloud (supabase.co) | Supabase Auth provider |
 | **Realtime** | Supabase Realtime | Dashboard live updates (signal scores, outreach status) | Cloud (supabase.co) | Supabase token |
@@ -170,12 +170,22 @@ This is the single source of truth for all Signal Sales Engine V3 work. Auto-loa
 | contacts | `individual_entities` | People at companies |
 | account_intent_scores | `lead_scores_history` | Scoring output |
 | activation_outreach | `campaign_messages` | Outreach records |
-| signals | **DOES NOT EXIST** | Data in leads columns + campaign_engagements |
-| signal_weights | **DOES NOT EXIST** | Needs creation |
+| signals | `signals` | Created 2026-04-08. tenant_id, account_id, lead_id, signal_type, source, signal_value (jsonb), dedup_key |
+| signal_sources | `signal_sources` | Created 2026-04-08. tenant_id, source_type, source_tool, config (jsonb), monitored_url |
+| signal_weights | `signal_weights` | Created 2026-04-09. tenant_id, signal_type, weight, last_optimized_at. 52 rows seeded (4 tenants × 13 types). RLS enforced. |
+| circuit_breaker_state | `circuit_breaker_state` | Created 2026-04-09. api_name, failure_count, state (closed/open/half_open), cooldown. 7 API entries seeded. |
 | outreach_templates | **DOES NOT EXIST** | Inline in campaigns.message_templates jsonb |
 | feedback_events | **DOES NOT EXIST** | Partial in campaign_engagements |
 
-All tables in `public` schema. RLS enforced on all 36 tables (deployed 2026-04-08).
+**BRD Compatibility Views (Created 2026-04-09, Migration 009):**
+- `accounts` view → `company_entities` (denormalized)
+- `account_intent_scores` view → `lead_scores_history` + `company_entities` (computed intent_tier, denormalized account data)
+- `contacts` view → `individual_entities` (computed full_name)
+- `activation_outreach` view → `campaign_messages` + joins (denormalized contact/account data)
+- `customers` view → `tenants` (filtered deleted_at IS NULL)
+All views use `security_invoker = true` for RLS enforcement. Dashboard queries use `select("*")` on views — no `!inner` joins needed.
+
+All tables in `public` schema. RLS enforced on all 40 tables + 5 views (deployed 2026-04-08, views 2026-04-09).
 
 ### 1. `customers`
 - id (UUID, primary key)
@@ -328,12 +338,15 @@ All tables in `public` schema. RLS enforced on all 36 tables (deployed 2026-04-0
 - 14+ workflows active, running cron jobs and webhook triggers
 - Contact: al-Jazari (architecture, deployment, SSH access)
 
-**Frontend / Backend (smo-dev):**
+**SSE V3 Frontend + Backend (smo-dev):**
 - Host: 100.117.35.19 (Contabo VPS)
-- Frontend: :3000 (Next.js)
-- Backend API: :3000/api/* (Next.js API routes)
+- Frontend (LIVE): :6002 (Vite + React 18), source: `/root/signal_project_v3/scrapmfast_frontend`, systemd: `scrapmfast-frontend.service`
+- Backend API: :6001, systemd: `scrapmfast-backend.service`
+- Nginx: sse.smorchestra.ai → :6002 (frontend) + :6001 (/api)
+- SaaSFast (separate product): :3000 (`/opt/SaaSFast`) — NOT SSE V3
 - Supabase Edge Functions: on demand
 - Contact: al-Jazari (deployment), Mamoun (product decisions)
+- **NOTE:** `/workspaces/smo/Signal-Sales-Engine/dashboard/` is an incomplete Next.js rebuild — NOT live, NOT production
 
 **Supabase (Cloud):**
 - Project: SMOrchestra (smorchestra.co domain)
@@ -557,18 +570,31 @@ All tables in `public` schema. RLS enforced on all 36 tables (deployed 2026-04-0
 ├── Output/
 │   ├── BRD-*.md (Business Requirements Documents, 7 total)
 │   └── Scoring-Reports/ (monthly feedback loop reports)
-├── frontend/
-│   ├── src/
-│   │   ├── components/
-│   │   ├── pages/ (dashboard, campaign builder, lead views)
-│   │   ├── lib/ (Supabase client, API calls)
-│   │   └── styles/
-│   ├── .env.example (copy to .env.local)
-│   └── package.json
-├── backend/ (if separate, or under frontend/pages/api)
-│   ├── workflows/ (n8n-related setup, not actual workflows)
-│   └── middleware/ (auth, RLS context)
 └── README.md (quick start, links to docs)
+```
+
+### LIVE Frontend (on smo-dev, NOT in this repo)
+
+```
+/root/signal_project_v3/scrapmfast_frontend/   ← LIVE at sse.smorchestra.ai
+├── src/
+│   ├── components/ (auth, campaigns, leads, signals, navigation, ui, etc.)
+│   ├── pages/ (12 pages: dashboard, leads, signals, campaigns, analytics, reports, settings, credits, scrapers, triggers, auth, 404)
+│   ├── lib/ (Supabase client, sentry.ts, posthog.ts)
+│   ├── hooks/
+│   ├── store/
+│   ├── types/
+│   ├── utils/
+│   ├── main.tsx (app entry, initializes Sentry + PostHog)
+│   └── App.tsx (routing, pageview capture)
+├── .env (VITE_SENTRY_DSN, VITE_POSTHOG_KEY, VITE_SUPABASE_URL, etc.)
+└── package.json (Vite + React 18 + TypeScript)
+
+Port: 6002 (systemd: scrapmfast-frontend.service)
+Nginx: sse.smorchestra.ai → :6002 (frontend) + :6001 (API)
+```
+
+**NOTE:** `/workspaces/smo/Signal-Sales-Engine/dashboard/` contains an incomplete Next.js rebuild (3 pages). It is NOT live and NOT the production frontend. All frontend work targets the Vite app above.
 ```
 
 ---
@@ -794,32 +820,42 @@ By end of 2026, SSE V3 should achieve:
 - #sse-v3-product (roadmap, feature requests, business metrics)
 
 **Key URLs:**
-- n8n UI: https://testflow.smorchestra.ai:5170
-- Frontend: https://100.117.35.19:3000
+- SSE V3 Dashboard (LIVE): https://sse.smorchestra.ai
+- n8n UI (smo-brain): https://testflow.smorchestra.ai:5170
+- n8n (smo-dev): SSE workflows, 29 total
 - Supabase Dashboard: https://app.supabase.co
 - GitHub: https://github.com/SMOrchestra-ai/Signal-Sales-Engine
 - Linear (issues): https://linear.app/smorchestra
-- Sentry (errors): https://sentry.io/organizations/smorchestra
+- Sentry (errors): https://sentry.io/organizations/smorchestra (project: javascript-nextjs)
+- PostHog (analytics): https://posthog.com
 
-**Common Commands:**
+**Common Commands (LIVE Vite frontend on smo-dev):**
 ```bash
-# Local dev (frontend)
-cd frontend && npm install && npm run dev
+# SSH to smo-dev
+ssh 100.117.35.19
 
-# Copy env
-cp .env.example .env.local
+# Frontend source
+cd /root/signal_project_v3/scrapmfast_frontend
+
+# Dev server
+npm run dev -- --host 0.0.0.0 --port 6002
 
 # Run tests
-npm run test              # Jest unit tests
-npm run test:e2e         # Playwright E2E
+npm run test              # Vitest
+npm run test:coverage    # Coverage report
 
 # Code quality
 npm run lint             # ESLint
-npm run type-check       # TypeScript strict
+npx tsc --noEmit         # TypeScript strict check
 
 # Build for prod
 npm run build
-npm start
+npm run preview -- --host 0.0.0.0 --port 6002
+
+# Systemd services
+systemctl status scrapmfast-frontend.service
+systemctl status scrapmfast-backend.service
+systemctl restart scrapmfast-frontend.service
 ```
 
 ---

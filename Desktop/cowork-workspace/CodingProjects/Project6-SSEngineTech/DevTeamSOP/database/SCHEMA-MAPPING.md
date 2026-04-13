@@ -2,7 +2,7 @@
 
 **Last Updated:** 2026-04-08
 **Supabase Project:** odjuqweiyzicqmcqozsu (ap-southeast-1)
-**Total Tables:** 36 in `public` schema
+**Total Tables:** 38 in `public` schema
 
 ---
 
@@ -29,9 +29,9 @@
 
 | BRD Name | Status | Closest Equivalent | Action Required |
 |----------|--------|-------------------|-----------------|
-| signals | **MISSING** | No direct equivalent. Signal data lives in `leads` columns (hiring_signals, growth_signals, role_fit_signal, industry_fit_signal, geo_fit_signal) and `campaign_engagements` (event_type, event_data) | CREATE TABLE or use existing columns |
+| signals | **CREATED** (2026-04-08) | `signals` — tenant_id, account_id, lead_id, signal_type, source, signal_value (jsonb), confidence_score, dedup_key (unique). RLS enabled. | Done |
 | signal_weights | **MISSING** | None | CREATE TABLE (customer_id, signal_type, weight, last_optimized_at) |
-| signal_sources | **MISSING** | Split across `ghl_integrations`, `heyreach_integrations`, `instantly_integrations` | May not need — integration tables cover per-tool config |
+| signal_sources | **CREATED** (2026-04-08) | `signal_sources` — tenant_id, source_type, source_tool, config (jsonb), metadata (jsonb), monitored_url, is_active, last_sync_at. RLS enabled. | Done |
 | outreach_templates | **MISSING** | Inline in `campaigns.message_templates` (jsonb) | CREATE TABLE or keep in campaigns jsonb |
 | feedback_events | **MISSING** | Partial in `campaign_engagements` (event_type: reply, click, etc.) | CREATE TABLE for deal-level feedback (deal_won, meeting_booked) |
 
@@ -41,9 +41,9 @@
 
 ---
 
-## Full Table Inventory (36 tables)
+## Full Table Inventory (38 tables)
 
-### SSE Core Tables (tenant-scoped, 25 tables)
+### SSE Core Tables (tenant-scoped, 27 tables)
 
 | # | Table | Key Columns | FK Dependencies |
 |---|-------|-------------|-----------------|
@@ -72,38 +72,40 @@
 | 23 | `instantly_integrations` | tenant_id, instantly_api_key, is_active, daily_limit | tenants.id |
 | 24 | `integrations_audit` | tenant_id, action, integration_type, status | tenants.id, users.id |
 | 25 | `influencer_entities` | tenant_id, lead_id, platform, handle, youtube_followers, engagement_rate | tenants.id, leads.id |
+| 26 | `signals` | tenant_id, account_id, lead_id, signal_type, source, signal_value (jsonb), confidence_score, dedup_key (unique) | tenants.id, company_entities.id, leads.id |
+| 27 | `signal_sources` | tenant_id, source_type, source_tool, config (jsonb), metadata (jsonb), monitored_url, is_active, last_sync_at | tenants.id |
 
 ### Auth & Access Tables (3 tables)
 
 | # | Table | Key Columns | Scope |
 |---|-------|-------------|-------|
-| 26 | `user_roles` | user_id, role, granted_by | User-scoped (join to users.tenant_id) |
-| 27 | `invitations` | tenant_id, email, role, token, status | Tenant-scoped |
-| 28 | `audit_logs` | tenant_id, action, resource_type, user_id | Tenant-scoped |
+| 28 | `user_roles` | user_id, role, granted_by | User-scoped (join to users.tenant_id) |
+| 29 | `invitations` | tenant_id, email, role, token, status | Tenant-scoped |
+| 30 | `audit_logs` | tenant_id, action, resource_type, user_id | Tenant-scoped |
 
 ### Reference Tables (3 tables, no tenant scope)
 
 | # | Table | Key Columns | Access |
 |---|-------|-------------|--------|
-| 29 | `industries` | label, hierarchy, description | Public read (any authenticated user) |
-| 30 | `scraper_types` | name, category, platforms, entity_table | Public read |
-| 31 | `credit_actions` | name, cost_per_action, active | Public read |
+| 31 | `industries` | label, hierarchy, description | Public read (any authenticated user) |
+| 32 | `scraper_types` | name, category, platforms, entity_table | Public read |
+| 33 | `credit_actions` | name, cost_per_action, active | Public read |
 
 ### EO Platform Tables (5 tables, student-scoped)
 
 | # | Table | Key Columns | Scope |
 |---|-------|-------------|-------|
-| 32 | `eo_assessments` | assessment_type, contact_email, total_score, band | Email-matched |
-| 33 | `students` | full_name, eo_cohort, max_servers | auth.uid() |
-| 34 | `provisions` | student_id, package, region, server_ip | student_id |
-| 35 | `servers` | student_id, server_ip, health_status | student_id |
-| 36 | `audit_log` | student_id, action, resource_type | student_id |
+| 34 | `eo_assessments` | assessment_type, contact_email, total_score, band | Email-matched |
+| 35 | `students` | full_name, eo_cohort, max_servers | auth.uid() |
+| 36 | `provisions` | student_id, package, region, server_ip | student_id |
+| 37 | `servers` | student_id, server_ip, health_status | student_id |
+| 38 | `audit_log` | student_id, action, resource_type | student_id |
 
 ---
 
 ## RLS Status (Post-Fix)
 
-All 36 tables have RLS enabled. 6 migrations applied on 2026-04-08:
+All 38 tables have RLS enabled. 6 migrations applied on 2026-04-08 + 2 new tables created same day:
 1. Enable RLS on all 31 previously-exposed tables
 2. Tenant isolation policies on 25 SSE tables (via `get_user_tenant_id()` helper)
 3. Auth-scoped policies on users, user_roles, tenants
