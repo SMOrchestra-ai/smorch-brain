@@ -68,7 +68,7 @@ jobs:
       - name: Verify deployment
         run: |
           sleep 5
-          STATUS=$(curl -s -o /dev/null -w "%{http_code}" https://sse.smorchestra.ai/login)
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" https://sse.smorchestra.ai/auth/login)
           if [ "$STATUS" != "200" ]; then
             echo "Deployment verification failed: HTTP $STATUS"
             exit 1
@@ -138,7 +138,7 @@ jobs:
       - name: Verify production deployment
         run: |
           sleep 5
-          STATUS=$(curl -s -o /dev/null -w "%{http_code}" https://sse.smorchestra.ai/login)
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" https://sse.smorchestra.ai/auth/login)
           if [ "$STATUS" != "200" ]; then
             echo "Production deployment verification failed: HTTP $STATUS"
             echo "::error::ROLLBACK NEEDED — run: ssh root@smo-dev 'cp -r /root/signal_project_v3/backups/prod-latest/* /root/signal_project_v3/scrapmfast_frontend/dist/ && systemctl restart scrapmfast-frontend.service'"

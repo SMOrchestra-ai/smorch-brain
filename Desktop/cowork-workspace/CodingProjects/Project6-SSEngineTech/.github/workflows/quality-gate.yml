@@ -64,9 +64,8 @@ jobs:
       - name: Run Lighthouse CI
         run: |
           lhci autorun \
-            --collect.url=https://sse.smorchestra.ai/login \
-            --collect.url=https://sse.smorchestra.ai/dashboard \
-            --collect.url=https://sse.smorchestra.ai/leads \
+            --collect.url=https://sse.smorchestra.ai/auth/login \
+            --collect.url=https://sse.smorchestra.ai/auth/signup \
             --collect.numberOfRuns=3 \
             --collect.settings.chromeFlags="--no-sandbox --disable-gpu --headless" \
             --assert.preset=lighthouse:recommended \
