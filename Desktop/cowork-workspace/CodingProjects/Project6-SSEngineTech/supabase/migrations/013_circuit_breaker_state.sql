@@ -25,6 +25,20 @@ CREATE POLICY "Service role can manage circuit breaker state"
   TO service_role
   USING (true);
 
+-- Auto-update updated_at on row change
+CREATE OR REPLACE FUNCTION public.set_circuit_breaker_updated_at()
+RETURNS TRIGGER AS $$
+BEGIN
+  NEW.updated_at = now();
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER circuit_breaker_updated_at
+  BEFORE UPDATE ON public.circuit_breaker_state
+  FOR EACH ROW
+  EXECUTE FUNCTION public.set_circuit_breaker_updated_at();
+
 -- Seed 7 monitored API integrations
 INSERT INTO public.circuit_breaker_state (api_name, state, failure_count) VALUES
   ('clay', 'closed', 0),
@@ -35,3 +49,10 @@ INSERT INTO public.circuit_breaker_state (api_name, state, failure_count) VALUES
   ('gemini', 'closed', 0),
   ('apify', 'closed', 0)
 ON CONFLICT (api_name) DO NOTHING;
+
+-- ============================================================
+-- DOWN MIGRATION (rollback):
+-- DROP TRIGGER IF EXISTS circuit_breaker_updated_at ON public.circuit_breaker_state;
+-- DROP FUNCTION IF EXISTS public.set_circuit_breaker_updated_at();
+-- DROP TABLE IF EXISTS public.circuit_breaker_state;
+-- ============================================================

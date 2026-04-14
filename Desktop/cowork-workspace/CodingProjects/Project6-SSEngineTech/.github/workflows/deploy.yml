@@ -43,11 +43,13 @@ jobs:
         run: |
           TIMESTAMP=$(date +%Y%m%d_%H%M%S)
           DEPLOY_DIR="/root/signal_project_v3/scrapmfast_frontend"
-          BACKUP_DIR="/root/signal_project_v3/backups/frontend-${TIMESTAMP}"
+          BACKUP_DIR="/root/signal_project_v3/backups/frontend-staging-${TIMESTAMP}"
 
-          # Backup current build
+          # Backup current build and maintain latest symlink for rollback
           ssh -i ~/.ssh/id_deploy root@${{ secrets.SMO_DEV_HOST }} \
-            "mkdir -p /root/signal_project_v3/backups && cp -r ${DEPLOY_DIR}/dist ${BACKUP_DIR} 2>/dev/null || true"
+            "mkdir -p /root/signal_project_v3/backups && \
+             cp -r ${DEPLOY_DIR}/dist ${BACKUP_DIR} 2>/dev/null || true && \
+             ln -sfn ${BACKUP_DIR} /root/signal_project_v3/backups/staging-latest"
 
           # Rsync new build
           rsync -avz --delete \
@@ -58,6 +60,10 @@ jobs:
           # Restart frontend service
           ssh -i ~/.ssh/id_deploy root@${{ secrets.SMO_DEV_HOST }} \
             "systemctl restart scrapmfast-frontend.service && systemctl is-active scrapmfast-frontend.service"
+
+      - name: Cleanup SSH key
+        if: always()
+        run: rm -f ~/.ssh/id_deploy
 
       - name: Verify deployment
         run: |
@@ -113,9 +119,11 @@ jobs:
           DEPLOY_DIR="/root/signal_project_v3/scrapmfast_frontend"
           BACKUP_DIR="/root/signal_project_v3/backups/frontend-prod-${TIMESTAMP}"
 
-          # Backup current build
+          # Backup current build and maintain latest symlink for rollback
           ssh -i ~/.ssh/id_deploy root@${{ secrets.SMO_DEV_HOST }} \
-            "mkdir -p /root/signal_project_v3/backups && cp -r ${DEPLOY_DIR}/dist ${BACKUP_DIR} 2>/dev/null || true"
+            "mkdir -p /root/signal_project_v3/backups && \
+             cp -r ${DEPLOY_DIR}/dist ${BACKUP_DIR} 2>/dev/null || true && \
+             ln -sfn ${BACKUP_DIR} /root/signal_project_v3/backups/prod-latest"
 
           # Rsync new build
           rsync -avz --delete \
@@ -123,7 +131,7 @@ jobs:
             scrapmfast_frontend/dist/ \
             root@${{ secrets.SMO_DEV_HOST }}:${DEPLOY_DIR}/dist/
 
-          # Restart with zero-downtime
+          # Restart frontend service (note: systemctl restart is not zero-downtime)
           ssh -i ~/.ssh/id_deploy root@${{ secrets.SMO_DEV_HOST }} \
             "systemctl restart scrapmfast-frontend.service && systemctl is-active scrapmfast-frontend.service"
 
@@ -133,7 +141,11 @@ jobs:
           STATUS=$(curl -s -o /dev/null -w "%{http_code}" https://sse.smorchestra.ai/login)
           if [ "$STATUS" != "200" ]; then
             echo "Production deployment verification failed: HTTP $STATUS"
-            echo "::error::ROLLBACK NEEDED — run: ssh root@smo-dev 'cp -r /root/signal_project_v3/backups/latest/* /root/signal_project_v3/scrapmfast_frontend/dist/ && systemctl restart scrapmfast-frontend.service'"
+            echo "::error::ROLLBACK NEEDED — run: ssh root@smo-dev 'cp -r /root/signal_project_v3/backups/prod-latest/* /root/signal_project_v3/scrapmfast_frontend/dist/ && systemctl restart scrapmfast-frontend.service'"
             exit 1
           fi
           echo "Production deployment verified: HTTP $STATUS"
+
+      - name: Cleanup SSH key
+        if: always()
+        run: rm -f ~/.ssh/id_deploy

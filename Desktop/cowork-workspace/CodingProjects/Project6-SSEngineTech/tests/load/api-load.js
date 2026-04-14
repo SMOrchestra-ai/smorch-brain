@@ -10,7 +10,12 @@ const signalsLatency = new Trend("signals_latency", true);
 
 // Environment config
 const BASE_URL = __ENV.BASE_URL || "https://sse.smorchestra.ai/api";
-const AUTH_TOKEN = __ENV.AUTH_TOKEN || "";
+const AUTH_TOKEN = __ENV.AUTH_TOKEN;
+if (!AUTH_TOKEN) {
+  throw new Error(
+    "AUTH_TOKEN environment variable is required. Run: k6 run -e AUTH_TOKEN=<token> tests/load/api-load.js",
+  );
+}
 
 const headers = {
   "Content-Type": "application/json",
@@ -103,8 +108,7 @@ export function loadTest() {
     const res = http.get(`${BASE_URL}/analytics/dashboard`, { headers });
     dashboardLatency.add(res.timings.duration);
     check(res, {
-      "dashboard status 200 or 401": (r) =>
-        r.status === 200 || r.status === 401,
+      "dashboard status 200": (r) => r.status === 200,
       "dashboard response time < 500ms": (r) => r.timings.duration < 500,
     }) || errorRate.add(1);
   });
@@ -116,7 +120,7 @@ export function loadTest() {
     const res = http.get(`${BASE_URL}/leads?limit=50&offset=0`, { headers });
     leadsLatency.add(res.timings.duration);
     check(res, {
-      "leads status 200 or 401": (r) => r.status === 200 || r.status === 401,
+      "leads status 200": (r) => r.status === 200,
       "leads response time < 500ms": (r) => r.timings.duration < 500,
     }) || errorRate.add(1);
   });
@@ -128,7 +132,7 @@ export function loadTest() {
     const res = http.get(`${BASE_URL}/signals?limit=50&offset=0`, { headers });
     signalsLatency.add(res.timings.duration);
     check(res, {
-      "signals status 200 or 401": (r) => r.status === 200 || r.status === 401,
+      "signals status 200": (r) => r.status === 200,
       "signals response time < 500ms": (r) => r.timings.duration < 500,
     }) || errorRate.add(1);
   });
@@ -139,7 +143,7 @@ export function loadTest() {
   group("Credits Balance", () => {
     const res = http.get(`${BASE_URL}/credits/balance`, { headers });
     check(res, {
-      "credits status 200 or 401": (r) => r.status === 200 || r.status === 401,
+      "credits status 200": (r) => r.status === 200,
     }) || errorRate.add(1);
   });
 
@@ -151,8 +155,7 @@ export function loadTest() {
       headers,
     });
     check(res, {
-      "campaigns status 200 or 401": (r) =>
-        r.status === 200 || r.status === 401,
+      "campaigns status 200": (r) => r.status === 200,
     }) || errorRate.add(1);
   });
 
