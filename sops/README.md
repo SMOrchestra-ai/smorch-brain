@@ -36,6 +36,7 @@
 | [SOP-09](SOP-09-Skill-Injection-Registry.md) | Skill Injection | Agent skill management |
 | **[SOP-10](SOP-10-Session-Start-Finish.md)** | **Session Start & Finish** | **Enforced checklist for every session** |
 | **[SOP-11](SOP-11-GitHub-Org-Cleanup.md)** | **GitHub Org Cleanup** | **Repo governance + cleanup plan** |
+| **[SOP-12](SOP-12-Claude-Code-Skill-Injection.md)** | **Claude Code Skill Injection** | **Standard pattern for AI-powered features** |
 
 ## Supporting Files
 
@@ -43,5 +44,14 @@
 |------|---------|
 | [MASTERPLAN.md](MASTERPLAN.md) | Autopilot AI org architecture |
 | [MAMOUN-GUIDE.md](MAMOUN-GUIDE.md) | CEO operating guide |
+| [PRODUCT-ARCHITECTURE.md](PRODUCT-ARCHITECTURE.md) | Product lines, repo map, deployment map |
 | [skills/](skills/) | Role-specific skill definitions |
 | [onboarding/](onboarding/) | Project onboarding checklist |
+
+## QA Resources
+
+| File | Purpose |
+|------|---------|
+| [docs/qa/QA-ONBOARDING.md](../docs/qa/QA-ONBOARDING.md) | QA team start-here guide |
+| [docs/qa/QA-HANDOVER-TEMPLATE.md](../docs/qa/QA-HANDOVER-TEMPLATE.md) | Dev→QA handoff template |
+| [docs/audits/](../docs/audits/) | Infrastructure audit reports |
