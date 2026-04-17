@@ -1,0 +1,25 @@
+# Auto-deploy on merge — add this job to any repo's ci.yml
+# Requires: SSH_PRIVATE_KEY secret configured in GitHub repo settings
+# Requires: scripts/deploy.sh in repo root
+#
+# Usage: Copy the 'deploy' job below into your ci.yml after the lint-and-build job
+#
+# To set up SSH key:
+# 1. Generate key pair: ssh-keygen -t ed25519 -f deploy_key -N ""
+# 2. Add public key to server: ssh-copy-id -i deploy_key.pub root@{server}
+# 3. Add private key to GitHub: Settings > Secrets > SSH_PRIVATE_KEY
+
+  deploy:
+    needs: lint-and-build
+    if: github.event_name == 'push'  # Only on merge, not on PR
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to server
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: root
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd ${{ secrets.DEPLOY_PATH }}
+            bash scripts/deploy.sh
