@@ -1,3 +1,8 @@
+---
+status: active
+last_reviewed: 2026-04-19
+---
+
 # SOP-07: Agentic Coding Orchestration
 
 **Version:** 1.0

@@ -1,3 +1,8 @@
+---
+status: active
+last_reviewed: 2026-04-19
+---
+
 # SOP-03: GitHub Standards & Repo Management
 
 **Version:** 2.0

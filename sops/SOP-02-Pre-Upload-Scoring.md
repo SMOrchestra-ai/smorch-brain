@@ -1,3 +1,9 @@
+---
+status: active
+last_reviewed: 2026-04-19
+superseded_note: "Scoring thresholds authoritative. Enforcement now via independent QA agent on smo-eo-qa (see SOP-QA-Agent-Independent.md)."
+---
+
 # SOP-02: Pre-Upload Scoring & Gap Bridge to 10/10
 
 **Version:** 1.0
@@ -5,7 +11,9 @@
 **Owner:** Mamoun Alamouri
 **Scope:** Every code push, PR, and release in the SMOrchestra GitHub org
 **Skills Used:** `/score-project`, `/score-hat`, `/bridge-gaps`
+**Dev Tool Suites:** gstack (`/review` BEFORE scoring), superpowers (`verification-before-completion`), smorch-dev-scoring (`/score-project`, `/bridge-gaps`)
 **Principle:** Nothing ships below 85. Nothing releases below 90.
+**Pre-requisite:** Run gstack `/review` BEFORE `/score-project`. Code review catches issues that inflate gap bridge work.
 
 ---
 

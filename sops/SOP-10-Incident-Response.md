@@ -1,3 +1,9 @@
+---
+status: active
+last_reviewed: 2026-04-19
+superseded_note: "Most recent SEV1 application: perfctl malware incident 2026-04-18."
+---
+
 # SOP-10: Incident Response
 
 **Version:** 1.0 | **Date:** April 2026

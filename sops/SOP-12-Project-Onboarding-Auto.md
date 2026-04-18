@@ -1,3 +1,8 @@
+---
+status: active
+last_reviewed: 2026-04-19
+---
+
 # SOP-12: Project Onboarding -- Automated Pre-Flight Check
 
 **Version:** 1.0 | **Date:** April 2026

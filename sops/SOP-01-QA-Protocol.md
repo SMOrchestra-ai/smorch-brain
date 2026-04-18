@@ -1,3 +1,9 @@
+---
+status: active
+last_reviewed: 2026-04-19
+superseded_note: "Phases 2-3 (manual /webapp-testing + /systematic-debugging) being superseded by CI gates + independent QA agent. Expected full deprecation: 2026-05-15."
+---
+
 # SOP-01: QA Protocol
 
 **Version:** 2.0
@@ -6,6 +12,7 @@
 **Scope:** Every project in the SMOrchestra GitHub org
 **Time Bound:** 60 minutes maximum unless a CRITICAL issue is found
 **Skills Used:** `/score-project`, `/score-hat`, `/bridge-gaps`, `/webapp-testing`, `/systematic-debugging`
+**Dev Tool Suites:** gstack (`/review`, `/qa`, `/investigate`), superpowers (`systematic-debugging`, `verification-before-completion`), smorch-dev-scoring (`/score-project`, `/bridge-gaps`)
 **Paperclip QA Lead:** Agent ID `8b397285-24b0-4d64-8832-d88f0e5891b4` | Adapter: `claude_local` | Reports to: CEO (`ceeb7fb5`)
 
 ---

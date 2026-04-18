@@ -1,3 +1,8 @@
+---
+status: active
+last_reviewed: 2026-04-19
+---
+
 # SOP-11: Codex Doctrine -- Codex vs Claude Code Allocation
 
 **Version:** 1.0 | **Date:** April 2026

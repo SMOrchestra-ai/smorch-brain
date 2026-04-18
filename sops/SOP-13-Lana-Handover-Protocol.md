@@ -1,3 +1,8 @@
+---
+status: active
+last_reviewed: 2026-04-19
+---
+
 # SOP-13: Lana Handover Protocol
 
 **Version:** 1.0 | **Date:** April 2026
