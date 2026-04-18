@@ -1,5 +1,5 @@
 # Server: smo-dev — Dev/Staging
-# IP: 62.171.165.57 | Tailscale: 100.117.35.19
+# IP: 62.171.165.57 | Tailscale: 100.83.242.99
 
 ## RULES (NON-NEGOTIABLE)
 1. Never edit application code on this server. All changes: local -> GitHub -> git pull.
@@ -21,9 +21,9 @@ NOTE: Signal-Sales-Engine and content-automation are NOT deployed here yet. SSE 
 | Server | IP | Tailscale | Role |
 |--------|----|-----------|------|
 | eo-prod | 89.117.62.131 | 100.89.148.62 | EO production |
-| smo-dev | 62.171.165.57 | 100.117.35.19 | Dev/staging (THIS SERVER) |
+| smo-dev | 62.171.165.57 | 100.83.242.99 | Dev/staging (THIS SERVER) |
 | smo-prod | 62.171.164.178 | 100.84.76.35 | SMO production |
-| smo-test | 84.247.172.113 | 100.105.86.13 | Test/QA |
+| smo-eo-qa | 84.247.172.113 | 100.99.145.22 | Test/QA |
 
 ## Dev Tools (installed at ~/.claude/skills/)
 

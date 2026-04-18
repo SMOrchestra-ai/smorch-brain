@@ -1,4 +1,4 @@
-# Server: smo-test — Independent QA Runner
+# Server: smo-eo-qa — EO QA + Independent QA Runner
 # IP: 84.247.172.113 | Tailscale: 100.105.86.13
 
 ## ROLE
@@ -33,4 +33,4 @@ scoring, not coding. Never write code here.
 | eo-prod | 89.117.62.131 | 100.89.148.62 | EO production |
 | smo-dev | 62.171.165.57 | 100.117.35.19 | Dev/staging |
 | smo-prod | 62.171.164.178 | 100.84.76.35 | SMO production |
-| smo-test (THIS) | 84.247.172.113 | 100.105.86.13 | Independent QA |
+| smo-eo-qa (THIS) | 84.247.172.113 | 100.105.86.13 | Independent QA |
