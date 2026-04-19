@@ -201,7 +201,7 @@ When to use:
 - `requesting-code-review` / `receiving-code-review` — Code review patterns.
 
 3. SMORCH-DEV-SCORING (5-Hat quality system)
-Location: ~/.claude/skills/smorch-dev-scoring
+Location: ~/.claude/plugins/smorch-dev/skills/smo-scorer
 When to use:
 - `/score-project` — Run 5-hat composite score. MANDATORY before every PR. Score saved to docs/qa-scores/.
 - `/score-hat [hat]` — Score individual dimension (product, architecture, engineering, qa, ux-frontend).

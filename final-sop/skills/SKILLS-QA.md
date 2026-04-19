@@ -12,10 +12,10 @@
 |---|---|---|---|
 | `/testing-strategy` | engineering:testing-strategy | PR assigned for QA review | Test plan (unit/integration/e2e breakdown, priority matrix) |
 | `/code-review` | engineering:code-review | PR review -- **security + correctness dimensions only** | Focused review (security vulnerabilities, logic correctness) |
-| `/test-webapp` | smorch-dev:test-webapp | Web application PR needs functional validation | Playwright test suite + execution report |
-| `/score-project` | smorch-dev-scoring:score-project | After test execution, before PR approval | 5-hat composite score with pass/fail gate |
-| `/composite-scorer` | smorch-dev-scoring:composite-scorer | Full quality assessment needed | Multi-dimensional score (engineering, QA, architecture, UX, product) |
-| `/bridge-gaps` | smorch-dev-scoring:gap-bridger | Score below threshold on any dimension | Gap remediation plan + auto-fix where possible |
+| `/test-webapp` | smorch-builders:webapp-testing | Web application PR needs functional validation | Playwright test suite + execution report |
+| `/score-project` | smorch-dev:smo-scorer | After test execution, before PR approval | 5-hat composite score with pass/fail gate |
+| `/composite-scorer` | smorch-dev:smo-scorer | Full quality assessment needed | Multi-dimensional score (engineering, QA, architecture, UX, product) |
+| `/bridge-gaps` | smorch-dev:/smo-bridge-gaps | Score below threshold on any dimension | Gap remediation plan + auto-fix where possible |
 | `/handover-to-lana` | Custom (QA) | QA complete, ready for deployment | Handover brief (test results, known issues, deploy readiness) |
 
 ---

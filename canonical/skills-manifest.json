@@ -27,10 +27,6 @@
       "hash": "16bf07c4a6e5dacd",
       "path": "plugins/product-management"
     },
-    "smorch-dev": {
-      "hash": "090ccfc20e5e447f",
-      "path": "plugins/smorch-dev"
-    },
     "smorch-gtm-engine": {
       "hash": "b6bd4ded8d634e2d",
       "path": "plugins/smorch-gtm-engine"
@@ -42,6 +38,10 @@
     "smorch-gtm-tools": {
       "hash": "fa7c1b89035c8c9e",
       "path": "plugins/smorch-gtm-tools"
+    },
+    "smorch-builders": {
+      "hash": "090ccfc20e5e447f",
+      "path": "plugins/smorch-builders"
     }
   },
   "skills": {
@@ -213,33 +213,33 @@
       "hash": "c9b26a42e6697e13",
       "plugin": "product-management"
     },
-    "smorch-dev/get-api-docs": {
+    "smorch-builders/get-api-docs": {
       "hash": "f8b7987f10bb726f",
-      "plugin": "smorch-dev"
+      "plugin": "smorch-builders"
     },
-    "smorch-dev/mcp-builder": {
+    "smorch-builders/mcp-builder": {
       "hash": "fd5f1e86fd23ee76",
-      "plugin": "smorch-dev"
+      "plugin": "smorch-builders"
     },
-    "smorch-dev/n8n-architect": {
+    "smorch-builders/n8n-architect": {
       "hash": "0b53c2ec2bde418b",
-      "plugin": "smorch-dev"
+      "plugin": "smorch-builders"
     },
-    "smorch-dev/receiving-code-review": {
+    "smorch-builders/receiving-code-review": {
       "hash": "2760c85d4f4117b0",
-      "plugin": "smorch-dev"
+      "plugin": "smorch-builders"
     },
-    "smorch-dev/requesting-code-review": {
+    "smorch-builders/requesting-code-review": {
       "hash": "c37d2cc841425bb5",
-      "plugin": "smorch-dev"
+      "plugin": "smorch-builders"
     },
-    "smorch-dev/validation-sprint": {
+    "smorch-builders/validation-sprint": {
       "hash": "6075792e11cf505b",
-      "plugin": "smorch-dev"
+      "plugin": "smorch-builders"
     },
-    "smorch-dev/webapp-testing": {
+    "smorch-builders/webapp-testing": {
       "hash": "c2973b5a42aa0949",
-      "plugin": "smorch-dev"
+      "plugin": "smorch-builders"
     },
     "smorch-gtm-engine/asset-factory": {
       "hash": "1e588bc16ccfa96a",

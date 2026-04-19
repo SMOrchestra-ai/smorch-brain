@@ -20,7 +20,7 @@ This is the single source of truth for how SMOrchestra's AI-native dev organizat
 | Know when to involve Lana | [sops/SOP-06-Team-Distribution.md](sops/SOP-06-Team-Distribution.md) |
 | Route work to Claude Code vs Codex | [sops/SOP-11-Codex-Doctrine.md](sops/SOP-11-Codex-Doctrine.md) |
 | Handle an incident | [sops/SOP-10-Incident-Response.md](sops/SOP-10-Incident-Response.md) |
-| Check system health | Run `/monitor` (smorch-dev plugin) |
+| Check system health | Run `/monitor` (smorch-builders plugin) |
 | Start a new project | [sops/SOP-12-Project-Onboarding-Auto.md](sops/SOP-12-Project-Onboarding-Auto.md) |
 | Hand work to Lana | [sops/SOP-13-Lana-Handover-Protocol.md](sops/SOP-13-Lana-Handover-Protocol.md) |
 | Write an ADR / PRD / Sprint Plan | [templates/](templates/) |
