@@ -8,6 +8,7 @@
     "build:clean": "rm -rf ./deployable/* && npm run build"
   },
   "dependencies": {
+    "basic-ftp": "5.3.0",
     "docx": "^9.1.0",
     "exceljs": "^4.4.0",
     "gray-matter": "^4.0.3",
