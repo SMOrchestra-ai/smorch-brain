@@ -1,0 +1,9 @@
+{
+  "name": "smorch-builders",
+  "version": "2.0.0",
+  "description": "SMOrchestra builder toolkit — n8n workflow architecture, MCP server building, API documentation, webapp testing, code review patterns. Renamed from 'smorch-dev' v1.0.0 (2026-04-06) — that name moved to the new repo github.com/SMOrchestra-ai/smorch-dev which hosts the dev workflow plugin. This plugin keeps the building-block skills.",
+  "author": {
+    "name": "Mamoun Alamouri",
+    "homepage": "https://smorchestra.ai"
+  }
+}

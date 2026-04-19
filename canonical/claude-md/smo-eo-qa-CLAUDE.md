@@ -24,7 +24,7 @@ When triggered by n8n on PR open:
 7. Clean up: git checkout main, git branch -D pr-{PR}
 
 ## Dev Tools (installed at ~/.claude/skills/)
-gstack, superpowers, smorch-dev-scoring installed. But this server USES them for
+gstack, superpowers, smorch-dev (plugin) installed. But this server USES them for
 scoring, not coding. Never write code here.
 
 ## Server map

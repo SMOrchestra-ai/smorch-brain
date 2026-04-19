@@ -12,12 +12,12 @@
 |---|---|---|---|
 | `/metrics-review` | product-management:metrics-review | Dashboard request, metrics definition, reporting setup | Metrics framework (North Star + L1/L2 hierarchy) |
 | `/synthesize-research` | product-management:synthesize-research | Research data needs thematic analysis | Thematic analysis report (themes, patterns, recommendations) |
-| `/score-project` | smorch-dev-scoring:score-project | Data quality scoring needed | Data quality score with dimension breakdown |
-| `/composite-scorer` | smorch-dev-scoring:composite-scorer | Multi-dimensional data assessment | Composite score across data dimensions |
+| `/score-project` | smorch-dev:smo-scorer | Data quality scoring needed | Data quality score with dimension breakdown |
+| `/composite-scorer` | smorch-dev:smo-scorer | Multi-dimensional data assessment | Composite score across data dimensions |
 | `/clay-operator` | smorch-gtm-tools:clay-operator | Data enrichment pipeline setup | Enrichment workflow configuration |
 | `/scraper-layer` | smorch-gtm-engine:scraper-layer | Data collection from external sources | Structured data output (CSV/JSON) |
 | `/documentation` | engineering:documentation | Pipeline or schema documentation | Technical data doc (schema diagrams, pipeline flows) |
-| `/n8n-architect` | smorch-dev:n8n-architect | Data pipeline automation design | n8n workflow architecture (nodes, triggers, error handling) |
+| `/n8n-architect` | smorch-builders:n8n-architect | Data pipeline automation design | n8n workflow architecture (nodes, triggers, error handling) |
 
 ---
 

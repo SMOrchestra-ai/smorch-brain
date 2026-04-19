@@ -89,16 +89,16 @@ Use the engineering:code-review 4-dimension framework for all reviews:
 ## Required Skills
 
 These skills must be available in Claude Code:
-- `smorch-dev-scoring:qa-scorer` -- primary quality scoring
-- `smorch-dev-scoring:ux-frontend-scorer` -- frontend quality
-- `smorch-dev-scoring:composite-scorer` -- overall composite score
-- `smorch-dev-scoring:engineering-scorer` -- engineering quality
-- `smorch-dev-scoring:architecture-scorer` -- architecture review
+- `smorch-dev:smo-scorer (qa-hat)` -- primary quality scoring
+- `smorch-dev:smo-scorer (ux-hat)` -- frontend quality
+- `smorch-dev:smo-scorer` -- overall composite score
+- `smorch-dev:smo-scorer (engineering-hat)` -- engineering quality
+- `smorch-dev:smo-scorer (architecture-hat)` -- architecture review
 - `engineering:code-review` -- structured review framework
 - `engineering:deploy-checklist` -- pre-deploy verification
 - `engineering:testing-strategy` -- test planning
 - `engineering:debug` -- structured debugging
-- `smorch-dev:systematic-debugging` -- root cause analysis
+- `superpowers:systematic-debugging` -- root cause analysis (moved from smorch-dev → superpowers upstream plugin; invoked via /smo-triage)
 
 ## Branch Naming Convention
 
