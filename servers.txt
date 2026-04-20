@@ -1,6 +1,17 @@
-# Server list for smorch-sync-all
+# SMOrchestra machine registry — read by smorch-sync-all + check-*-drift
 # Format: user@host:profile
-# Example: root@server1.example.com:smo-brain
-# Add your servers below:
-root@100.89.148.62:smo-brain
-root@100.117.35.19:smo-dev
+# Profile determines which plugins get installed (see MACHINE-INSTALL-MATRIX in smorch-dev repo)
+
+# Production servers (prod-server profile)
+root@100.89.148.62:prod-server      # eo-prod (EO apps)
+root@100.108.44.127:prod-server     # smo-prod (SalesMfast, SaaS)
+
+# Dev + staging servers (dev-server profile)
+root@100.83.242.99:dev-server       # smo-dev
+root@100.99.145.22:dev-server       # smo-eo-qa
+
+# Engineering desktops (eng-desktop profile)
+mamounalamouri@100.100.239.103:eng-desktop  # smo-desktop (Mamoun Mac)
+
+# QA machine (qa-machine profile) — Lana half QA, half Dev (Windows)
+User@100.107.217.31:qa-machine              # lana-desktop
