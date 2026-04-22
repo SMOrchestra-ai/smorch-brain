@@ -69,3 +69,17 @@
 
 ### Archives — no changes needed
 - SSE-latest, SaaSfast-ar, eo-dashboard, ssh-mcp-server, Signal-Sales-Engine-v1, Signal-Based-
+
+---
+
+## SaaSFast triplet — CORRECTED MAPPING (2026-04-23)
+
+CEO correction: earlier plan had SaaSFast-Page-Online targeting smo-prod. Actual canonical home is eo-prod. `SaaSfast-ar` was mistakenly archived — it's an active distributable bundle for customers.
+
+| Repo | Role | Deploy target | DB | Domain |
+|---|---|---|---|---|
+| `smorchestraai-code/SaaSfast-Page-Online` | customer-facing buy page (one-time purchase) | **eo-prod** `/opt/apps/saasfast-page-online` port 3400 pm2 | MongoDB (docker `mongo-saasfast`) | saasfast.entrepreneursoasis.me |
+| `smorchestraai-code/SaaSfast-ar` | downloadable code bundle customers receive after purchase | NOT server-deployed (distribution artifact) | — | — |
+| `SMOrchestra-ai/SaaSFast` (v2) | internal advanced gating layer for both SMO + EO microsaas | TBD (still internal-dev) | — | — |
+
+Evidence: `smorch-brain/docs/infra/saasfast-page-online-deploy-2026-04-23.md`
