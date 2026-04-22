@@ -20,7 +20,7 @@
 
 | project_ref | Name | Region | Reason | Owner action |
 |---|---|---|---|---|
-| `odjuqweiyzicqmcqozsu` | SSE-Temp | ap-southeast-1 | Briefly used as catch-all; 49 tables overlap with canonical SSE. Not referenced by any live app. | CEO decision: "REMOVE no grace". Export schema+data to `~/Desktop/smo-recovery-2026-04-21/supabase-sse-temp/` first, then pause via Supabase panel, delete after 24h verification window. |
+| `odjuqweiyzicqmcqozsu` | SSE-Temp | ap-southeast-1 | Briefly used as catch-all; 49 tables overlap with canonical SSE. Not referenced by any live app. | ✅ **PAUSED 2026-04-23** (CEO GO). Data dump + schema at `~/Desktop/smo-recovery-2026-04-21/supabase-sse-temp/`. Permanently delete via Supabase dashboard after 7-day verification window (hard-delete by ~2026-04-30). |
 
 ---
 

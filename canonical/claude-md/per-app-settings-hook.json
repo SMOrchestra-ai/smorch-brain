@@ -1,0 +1,15 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": {},
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cat .claude/lessons.md 2>/dev/null | head -200 && echo '---' && cat .smorch/project.json 2>/dev/null | python3 -c 'import json,sys; d=json.load(sys.stdin); print(f\"Project: {d[\\\"project\\\"]} | Prod: {d[\\\"deploy\\\"][\\\"production\\\"][\\\"host\\\"]}\")'"
+          }
+        ]
+      }
+    ]
+  }
+}

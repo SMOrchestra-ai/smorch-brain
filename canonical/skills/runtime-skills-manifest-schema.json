@@ -1,0 +1,31 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Runtime Skills Manifest (per-repo APP-layer)",
+  "description": "Declares which skills the DEPLOYED app injects into its Claude API calls at runtime. EX-2: populated LAST, after app fundamentals are green. EX-3: every skill must have passing external eval before listing here.",
+  "type": "object",
+  "required": ["schema_version", "skills"],
+  "properties": {
+    "schema_version": {"type": "string", "const": "1.0.0"},
+    "runtime_skills": {
+      "oneOf": [
+        {"const": "none", "description": "App has no runtime skill injection (e.g., static site, pure CRUD)"},
+        {"type": "array", "items": {"$ref": "#/$defs/skill_entry"}}
+      ]
+    }
+  },
+  "$defs": {
+    "skill_entry": {
+      "type": "object",
+      "required": ["skill_id", "version", "eval_score", "eval_date", "injection_path"],
+      "properties": {
+        "skill_id": {"type": "string", "description": "Canonical skill ID from smorch-brain/skills/"},
+        "version": {"type": "string"},
+        "eval_score": {"type": "number", "minimum": 92, "description": "Composite eval score per SOP-25; must be ≥92 to inject"},
+        "eval_date": {"type": "string", "format": "date"},
+        "eval_evidence_path": {"type": "string", "description": "Path to eval report in smorch-brain/skills/{skill-id}/evals/"},
+        "injection_path": {"type": "string", "description": "Where in app code the skill is injected (e.g., src/lib/claude/skills/)"},
+        "triggers": {"type": "array", "items": {"type": "string"}, "description": "User journeys or event types that invoke this skill"}
+      }
+    }
+  }
+}
