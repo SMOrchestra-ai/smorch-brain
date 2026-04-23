@@ -168,3 +168,47 @@ git checkout -b feat/v2-{slug}
 - SOP-23 Weighted Scoring — 92+ ship gate
 - SOP-32 Patching + Versioning — semver + hotfix flow
 - SOP-30 Drift Enforcement — cron-based drift detection across all 4 servers
+
+---
+
+## 2026-04-23 UPDATE — Subdomain-per-app is the canonical pattern
+
+**Rule: every app gets its own subdomain. No basepaths.**
+
+### Why (learned the hard way 2026-04-23)
+Content-automation was initially configured with `basePath: '/contentengine'` in `next.config.mjs` and deployed at `app.smorchestra.ai/contentengine`. This caused:
+- Next.js mixed asset paths (`/_next/*` + `/contentengine/_next/*` served inconsistently)
+- 404 on `/contentengine/generate` etc despite pages existing in the build
+- Harder nginx routing (per-path location blocks that can conflict)
+- Harder dev→prod promotion (staging vs prod path collisions on same box)
+
+### Canonical subdomain pattern
+| Existing apps | Subdomain |
+|---|---|
+| SSE V3 | sse.smorchestra.ai |
+| content-automation | contentengine.smorchestra.ai |
+| digital-revenue-score | score.smorchestra.ai |
+| gtm-fitness-scorecard | gtm.smorchestra.ai |
+| saasfast-page-online | saasfast.entrepreneursoasis.me |
+| n8n (prod SMO) | flows.smorchestra.ai |
+| n8n (dev) | testflow.smorchestra.ai |
+| n8n (EO) | ai.mamounalamouri.smorchestra.com |
+
+### New-app checklist — subdomain per app
+1. Pick subdomain: `{app-name}.smorchestra.ai` (SMO) or `{app-name}.entrepreneursoasis.me` (EO)
+2. Add A-record at domain.com → server IP (62.171.164.178 smo-prod, 89.117.62.131 eo-prod)
+3. Next.js config: NO `basePath`, NO `assetPrefix` (serve at root)
+4. nginx vhost binds to specific IP + listens 80 + 443
+5. certbot `--nginx` or `--webroot -w /var/www/certbot`
+6. Update `.smorch/project.json` `deploy.production.health_url` to match
+
+### Forbidden anti-pattern
+Deploying multiple apps on the same domain via path-based routing (`app.smorchestra.ai/one`, `app.smorchestra.ai/two`). Rejected by `/smo-drift --desktop` as SEV3 drift.
+
+### Staging subdomain pattern (dev→prod promotion)
+- Prod: `{app}.smorchestra.ai` → smo-prod
+- Staging: `staging-{app}.smorchestra.ai` → smo-dev
+- Each gets its own cert, its own vhost on the matching server, same env structure but with staging-tier values
+
+### Existing `app.smorchestra.ai`
+Retired 2026-04-23 (nginx symlink removed on smo-prod). DNS still points to smo-prod. Future use: repurpose as a hub/launcher landing page linking to all subdomains.

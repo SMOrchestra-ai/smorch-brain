@@ -87,3 +87,24 @@ UFW + fail2ban + SSH key-only + unattended-upgrades + swap + perfctl-sentinel. E
 ---
 
 ## Dev→Prod promotion path: see SOP-35
+
+---
+
+## Canonical subdomain-per-app pattern (2026-04-23)
+
+Every app gets its own subdomain. Basepath routing is an anti-pattern (rejected by SOP-35).
+
+| App | Prod subdomain | Host |
+|---|---|---|
+| signal-sales-engine | sse.smorchestra.ai | smo-prod |
+| content-automation | **contentengine.smorchestra.ai** | smo-prod |
+| digital-revenue-score | score.smorchestra.ai | smo-prod |
+| gtm-fitness-scorecard | gtm.smorchestra.ai | smo-prod |
+| saasfast-page-online | saasfast.entrepreneursoasis.me | eo-prod |
+| n8n flow | flows.smorchestra.ai + flow.smorchestra.ai | smo-prod |
+| n8n testflow | testflow.smorchestra.ai | smo-dev |
+| n8n smo-brain | ai.mamounalamouri.smorchestra.com | eo-prod |
+
+Staging: prefix with `staging-` (e.g., `staging-sse.smorchestra.ai`) on smo-dev. See SOP-35.
+
+**Retired:** `app.smorchestra.ai/contentengine` basepath pattern — replaced by subdomain 2026-04-23.
