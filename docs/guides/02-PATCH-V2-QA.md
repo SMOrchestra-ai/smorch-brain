@@ -148,6 +148,14 @@ Automated cron runs at 03:00 UTC:
 
 ---
 
+## Stuck at any step?
+
+Run `/smo-dev-guide` (in-session cheat sheet, part of `smorch-dev` plugin). Pass a topic for targeted help:
+- `/smo-dev-guide next` — context-aware "next command to run" based on your branch + last score + last handover
+- `/smo-dev-guide stuck` — troubleshooting decision tree
+- `/smo-dev-guide rollback` — rollback drill policy
+- `/smo-dev-guide sops` — SOP index
+
 ## Enforcement
 
 See `SOP-32 App-Patching-And-Versioning` (created in this phase) for mechanical gates.

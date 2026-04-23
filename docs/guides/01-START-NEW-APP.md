@@ -210,6 +210,30 @@ Start with: /smo-plan AC-1.1
 | 9 | `/smo-deploy --env staging` | Dev | SSH to smo-dev, pull tag, build, pm2 reload, /api/health 200 |
 | 10 | `/smo-deploy --env production` | Dev | Same on smo-prod AFTER Lana re-runs /smo-qa-run --env staging |
 
+### Helper command — `/smo-dev-guide` (context-aware cheat-sheet)
+
+`/smo-dev-guide` is the in-session router that answers "what command do I run now?" and "where is SOP-X?" without leaving Claude Code. Context-aware via `.smorch/project.json` + latest `docs/qa-scores/` + `docs/handovers/`.
+
+**Topics**: invoke with no argument for overview, or pass a topic:
+
+| Arg | Returns |
+|---|---|
+| (empty) | overview + topic table |
+| `next` | context-aware "next command to run" (reads current branch, last score, last handover) |
+| `chain` | daily chain visualization with wall-clock targets |
+| `score` | scoring gates (92/8.5) + what to do at each level |
+| `handover` | SOP-13 5-dim rubric + how Lana scores |
+| `qa` | `/smo-qa-run` steps + MENA / rollback-drill gates |
+| `ship` | ship vs deploy verb boundary (SOP-14) |
+| `rollback` | rollback drill policy |
+| `sops` | SOP index (SOP-01…SOP-35) |
+| `lessons` | global + project lessons.md pointer |
+| `stuck` | troubleshooting decision tree |
+
+**Use it when**: onboarding a new hire, forgot a gate threshold, unsure which command is next, need to look up an SOP reference inline.
+
+Part of `smorch-dev` plugin. Command file: `smorch-dev/plugins/smorch-dev/commands/smo-dev-guide.md`. Backing skill: `dev-guide-router`.
+
 ## 9. Hard gates (can't bypass)
 
 | Gate | Blocker |
