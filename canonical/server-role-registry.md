@@ -46,3 +46,44 @@
 ## Hardening baseline (Phase 0 — all 4 servers)
 
 UFW + fail2ban + SSH key-only + unattended-upgrades + swap + perfctl-sentinel. Evidence: `docs/infra/hardening-2026-04-22.md`.
+
+---
+
+## Canonical app → server mapping (2026-04-23 CEO-corrected)
+
+**SMO apps → smo-prod (production) + smo-dev (dev/staging + shared/new)**
+**EO apps → eo-prod (production) + smo-dev (staging when needed)**
+
+### smo-prod production apps
+| App | Path | Ports | Domain |
+|---|---|---|---|
+| digital-revenue-score | /opt/apps/digital-revenue-score | pm2 3100 | score.smorchestra.ai |
+| gtm-fitness-scorecard | /opt/apps/gtm-fitness-scorecard | pm2 3200 | gtm.smorchestra.ai |
+| signal-sales-engine (V3) | /opt/apps/signal-sales-engine | 6001 backend + 6002 frontend | sse.smorchestra.ai |
+| content-automation (V1) | /opt/apps/content-automation | docker 3300 gui + 3301 runtime + 5433 pg | app.smorchestra.ai |
+| n8n `flow` | docker | 5678 | flows.smorchestra.ai + flow.smorchestra.ai (318 workflows) |
+
+### smo-dev staging + shared/new apps
+- `/root/{repo}` for staging clones (L-003)
+- n8n `testflow` at testflow.smorchestra.ai (235 workflows, dev + shared)
+- Used for: SSE V4 / content-automation V2 / any new product under development
+
+### eo-prod production apps
+| App | Path | Domain |
+|---|---|---|
+| eo-mena | /opt/apps/eo-mena (docker coolify) | entrepreneursoasis.me |
+| eo-scoring | /opt/apps/eo-scoring (pm2) | score.entrepreneursoasis.me |
+| eo-scorecard | /opt/apps/eo-scorecard (pm2) | (internal) |
+| saasfast-page-online | /opt/apps/saasfast-page-online (pm2 3400 + mongo-saasfast docker) | saasfast.entrepreneursoasis.me |
+| openclaw-chat | systemd port 18789 | sulaiman.smorchestra.com |
+| openclaw-coding | systemd port 18790 | openclaw-coding.smorchestra.ai (vhost pending) |
+| moltbot | /root/moltbot pm2 | — |
+| n8n `smo-brain` | docker 5678 | ai.mamounalamouri.smorchestra.com (89 workflows — EO orchestration only) |
+
+### smo-eo-qa
+- External QA env — caddy + n8n `qa` on qa.smorchestra.ai (unprovisioned)
+- Lana's playground for independent QA per SOP-13
+
+---
+
+## Dev→Prod promotion path: see SOP-35
