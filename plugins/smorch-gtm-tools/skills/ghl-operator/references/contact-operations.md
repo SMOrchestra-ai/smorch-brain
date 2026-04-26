@@ -1,5 +1,7 @@
 # Contact Operations Reference
 
+> **v2 migration banner — 2026-04-26.** Bare tool names in this doc (e.g., `search_contacts`, `create_contact`) are now **operation names** under the new `mcp__salesmfast-ops__ghl-contacts-reader` and `ghl-contacts-updater` routers. Call shape: `{ selectSchema: { operation, params } }`. See `SKILL.md → MCP Tools Reference` or `salesmfast-ops-mcp/docs/MIGRATION.md` for the full mapping.
+
 ## Table of Contents
 1. [Deduplication Protocol](#deduplication-protocol)
 2. [Contact Creation](#contact-creation)

@@ -1,5 +1,7 @@
 # Pipeline Management Reference
 
+> **v2 migration banner — 2026-04-26.** Bare tool names in this doc (e.g., `get_pipelines`, `create_opportunity`, `update_opportunity_status`) are now **operation names** under the new `mcp__salesmfast-ops__ghl-opportunities-{reader,updater}` routers. Call shape: `{ selectSchema: { operation, params } }`. See `SKILL.md → MCP Tools Reference` or `salesmfast-ops-mcp/docs/MIGRATION.md` for the full mapping.
+
 ## Table of Contents
 1. [Pipeline Architecture](#pipeline-architecture)
 2. [Stage Definitions](#stage-definitions)
