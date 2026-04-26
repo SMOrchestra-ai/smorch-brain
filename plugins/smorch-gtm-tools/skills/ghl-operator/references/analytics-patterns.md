@@ -1,5 +1,7 @@
 # Analytics Patterns Reference
 
+> **v2 migration banner — 2026-04-26.** Bare tool names in this doc (e.g., `get_pipelines`, `search_opportunities`, `search_contacts`) are now **operation names** under the new `mcp__salesmfast-ops__ghl-{contacts,opportunities,...}-{reader,updater}` routers. Call shape: `{ selectSchema: { operation, params } }`. See `SKILL.md → MCP Tools Reference` or `salesmfast-ops-mcp/docs/MIGRATION.md` for the full mapping.
+
 ## Table of Contents
 1. [Reporting Framework](#reporting-framework)
 2. [Pipeline Analytics](#pipeline-analytics)
