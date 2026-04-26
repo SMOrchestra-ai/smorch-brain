@@ -59,22 +59,54 @@ GHL OWNS: Contact records, pipeline progression, nurture sequences,
 
 The 13 facade tools you'll be calling:
 
-| Tool | Direction | Operations |
-|------|-----------|-----------:|
-| `ghl-toolkit-help` | discovery | 3 |
-| `ghl-contacts-reader` | read | 9 |
-| `ghl-contacts-updater` | write | 18 |
-| `ghl-conversations-reader` | read | 6 |
-| `ghl-conversations-updater` | write | 9 |
-| `ghl-calendars-reader` | read | 6 |
-| `ghl-calendars-updater` | write | 6 |
-| `ghl-opportunities-reader` | read | 3 |
-| `ghl-opportunities-updater` | write | 5 |
-| `ghl-location-reader` | read | 11 |
-| `ghl-location-updater` | write | 3 |
-| `ghl-workflow-reader` | read | 1 |
+**As of `salesmfast-ops-mcp` v1.0.0-handover-ready (2026-04-26): 35 facade tools wrap 100% of upstream's 19 tool classes (259 ops behind the facade).** Cap thesis: 256 upstream tools → 35 facade. All 18 categories have probe-verified live-data round-trips.
+
+| Tool | Direction | Ops | Notes |
+|------|-----------|----:|-------|
+| `ghl-toolkit-help` | discovery | 3 | First call when uncertain. |
+| **— CRM core —** |
+| `ghl-contacts-reader` | read | 9 | search, get, duplicates, tasks, notes, appointments per contact |
+| `ghl-contacts-updater` | write | 22 | create, update, upsert, delete, tags, tasks, notes, campaign + workflow membership, **followers**, **bulk-update tags / business** |
+| `ghl-conversations-reader` | read | 8 | search, message threads, recordings, **transcriptions** |
+| `ghl-conversations-updater` | write | 12 | send sms / email, conversation CRUD, attachments, status, cancel scheduled, **inbound message log**, **outbound call log**, **live-chat typing** |
+| `ghl-calendars-reader` | read | 14 | groups, calendars, events, slots, appointments, **blocked slots**, **resources rooms + equipment**, **notifications** |
+| `ghl-calendars-updater` | write | 25 | calendar + appointment CRUD, **block slots CRUD**, **group CRUD + disable + slug-validate**, **appointment notes CRUD**, **resource rooms CRUD**, **resource equipment CRUD**, **notification rules CRUD** |
+| `ghl-opportunities-reader` | read | 3 | search, get, list-pipelines |
+| `ghl-opportunities-updater` | write | 7 | CRUD + update-status (open/won/lost/abandoned) + upsert + **followers** |
+| `ghl-location-reader` | read | 11 | tags, custom fields, custom values, templates, timezones, search, search-tasks. **Pass `locationId` in params** (upstream extracts explicitly, see param-quirk note below). |
+| `ghl-location-updater` | write | 13 | tag CRUD, **location CRUD**, **custom-field CRUD**, **custom-value CRUD**, **template delete** |
+| `ghl-workflow-reader` | read | 1 | list workflows |
+| **— GTM (Phase 2) —** |
+| `ghl-email-reader` | read | 2 | get-templates, get-campaigns |
+| `ghl-email-updater` | write | 4 | template CRUD + **verify-email** (via EmailISVTools — single multi-class router pair) |
+| `ghl-social-reader` | read | 14 | accounts, posts, tags, categories, per-platform OAuth helpers (FB / IG / LinkedIn / TikTok / Twitter / Google) |
+| `ghl-social-updater` | write | 6 | post create/update/delete, bulk-delete, account disconnect, oauth start |
+| `ghl-survey-reader` | read | 2 | list surveys + submissions (GHL "forms" surface here) |
+| `ghl-invoice-reader` | read | 7 | list invoices/estimates/templates/schedules + get single |
+| `ghl-invoice-updater` | write | 11 | create + send invoices and estimates, convert estimate→invoice, template + schedule CRUD, generate next number |
+| **— Revenue (Phase 2) —** |
+| `ghl-products-reader` | read | 5 | list products / prices / collections / inventory + get product |
+| `ghl-products-updater` | write | 5 | product CRUD + create-price + create-collection |
+| `ghl-payments-reader` | read | 11 | orders, subscriptions, transactions, coupons, fulfillments, custom-provider config, whitelabel providers. **Pass `altId` + `altType: "location"` in params.** |
+| `ghl-payments-updater` | write | 9 | coupon CRUD, custom-provider config + integration mgmt, fulfillment, whitelabel |
+| `ghl-store-reader` | read | 8 | shipping zones / rates / carriers + store settings |
+| `ghl-store-updater` | write | 10 | shipping zone / rate / carrier CRUD + store-setting create |
+| **— Content (Phase 2) —** |
+| `ghl-blog-reader` | read | 5 | sites, posts, authors, categories, slug-check |
+| `ghl-blog-updater` | write | 2 | create + update post |
+| `ghl-media-reader` | read | 1 | get-files |
+| `ghl-media-updater` | write | 2 | upload + delete file |
+| **— Custom Data (Phase 2) —** |
+| `ghl-custom-field-v2-reader` | read | 2 | get by id + by object key (use a custom object key like `custom_objects.company`; **rejects `contact` / `opportunity`** by design) |
+| `ghl-custom-field-v2-updater` | write | 6 | field + folder CRUD |
+| `ghl-object-reader` | read | 4 | list schemas + get schema / record + search records |
+| `ghl-object-updater` | write | 5 | schema + record CRUD |
+| `ghl-association-reader` | read | 5 | list, get-by-id/key/object-key + relations-by-record |
+| `ghl-association-updater` | write | 5 | association CRUD + relation create/delete |
 
 Auto-approve every `*-reader` (idempotent, side-effect-free). Gate every `*-updater` behind explicit confirmation (mutates state).
+
+> **Param-passing quirk (location + payments):** the upstream tool wrappers extract `params.locationId` (location ops) and `params.altId` + `params.altType` (payments ops) explicitly — they do NOT auto-inject from the configured location. Operators MUST pass these in the call payload. See `salesmfast-ops-mcp/docs/MIGRATION.md` "Param-passing quirk" section for details.
 
 ### Contact Operations
 
