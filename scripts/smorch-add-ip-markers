@@ -1,0 +1,102 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# smorch-add-ip-markers — Helper to add IP markers to skill files
+# Scans for common proprietary patterns and suggests where to add markers
+# Usage: smorch-add-ip-markers [plugin-name]
+
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+CYAN='\033[0;36m'
+NC='\033[0m'
+
+if [[ -d "$HOME/Desktop/cowork-workspace/smorch-brain" ]]; then
+    REPO_DIR="$HOME/Desktop/cowork-workspace/smorch-brain"
+elif [[ -d "$HOME/smorch-brain" ]]; then
+    REPO_DIR="$HOME/smorch-brain"
+else
+    REPO_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+fi
+
+PLUGIN_FILTER="${1:-}"
+
+echo -e "${CYAN}smorch-add-ip-markers — Scanning for proprietary content${NC}"
+echo "──────────────────────────────────"
+
+# Patterns that indicate proprietary methodology
+PATTERNS=(
+    '|[[:space:]]*10/10[[:space:]]*|'       # Scoring descriptor tables
+    '|[[:space:]]*10[[:space:]]*|.*|[[:space:]]*[A-Z]'  # Score-description tables
+    'descriptor.level'                       # Descriptor level references
+    'interpolat'                             # Interpolation guides
+    'calibrat'                               # Calibration sections
+    'worked.example'                         # Worked examples
+    'benchmark.source'                       # Benchmark attributions
+    'Would a VP'                             # VP Stop test
+    'silence.type'                           # 7 Silence Types
+    'wedge.template'                         # Wedge templates
+    'culture.map'                            # MENA culture map
+    'hard.stop.rule'                         # Hard stop rules
+    'composite.formula'                      # Composite scoring
+    'signal.hierarchy'                       # Signal hierarchy
+    're-scor'                                # Re-scoring protocol
+)
+
+total_files=0
+total_matches=0
+
+scan_dir() {
+    local dir="$1"
+    local label="$2"
+
+    while IFS= read -r md_file; do
+        [[ -f "$md_file" ]] || continue
+        local rel_path="${md_file#$REPO_DIR/}"
+        local file_matches=0
+
+        for pattern in "${PATTERNS[@]}"; do
+            local count=$(grep -ciE "$pattern" "$md_file" 2>/dev/null | head -1 || echo 0)
+            count="${count//[^0-9]/}"
+            [[ -z "$count" ]] && count=0
+            if [[ "$count" -gt 0 ]]; then
+                if [[ $file_matches -eq 0 ]]; then
+                    echo -e "\n${CYAN}$rel_path${NC}"
+                    total_files=$((total_files + 1))
+                fi
+                echo -e "  ${YELLOW}$count match(es): $pattern${NC}"
+                file_matches=$((file_matches + count))
+            fi
+        done
+
+        total_matches=$((total_matches + file_matches))
+
+        # Check if file already has IP markers
+        if [[ $file_matches -gt 0 ]]; then
+            local existing_markers=$(grep -c "IP:START\|IP:END" "$md_file" 2>/dev/null || echo 0)
+            if [[ $existing_markers -gt 0 ]]; then
+                echo -e "  ${GREEN}Already has $((existing_markers / 2)) IP marker pair(s)${NC}"
+            else
+                echo -e "  ${RED}NO IP MARKERS — needs marking${NC}"
+            fi
+        fi
+    done < <(find "$dir" -name "*.md" -type f 2>/dev/null)
+}
+
+if [[ -n "$PLUGIN_FILTER" ]]; then
+    scan_dir "$REPO_DIR/plugins/$PLUGIN_FILTER" "$PLUGIN_FILTER"
+else
+    for plugin_dir in "$REPO_DIR/plugins"/*/; do
+        [[ -d "$plugin_dir" ]] || continue
+        scan_dir "$plugin_dir" "$(basename "$plugin_dir")"
+    done
+fi
+
+echo -e "\n──────────────────────────────────"
+echo -e "Files with proprietary content: ${YELLOW}$total_files${NC}"
+echo -e "Total pattern matches: ${YELLOW}$total_matches${NC}"
+echo -e "\nTo mark a section as proprietary, wrap it with:"
+echo -e "  ${CYAN}<!-- IP:START - description -->${NC}"
+echo -e "  [proprietary content here]"
+echo -e "  ${CYAN}<!-- IP:END -->${NC}"
+echo -e "\nThen run: ${GREEN}smorch compile --test <plugin-name>${NC} to verify"

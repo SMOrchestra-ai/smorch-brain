@@ -1,3 +1,4 @@
+<!-- Copyright SMOrchestra.ai. All rights reserved. Proprietary and confidential. -->
 ---
 name: eo-qa-testing
 description: EO Quality Assurance - comprehensive testing skill covering code quality, functional testing, and UX review including Arabic RTL validation. Called by eo-microsaas-dev during Phase 4 or independently for pre-launch quality checks. Triggers on 'run QA', 'test my code', 'quality check', 'qa report', 'test coverage', 'UX review', 'RTL validation', 'accessibility audit', 'pre-launch check', 'code quality'. This is a Step 5 skill of the EO Training System.

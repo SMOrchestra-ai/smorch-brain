@@ -1,7 +1,9 @@
-# Role Definition and Execution - eo-gtm-asset-factory
-
-Complete role definition, input requirements, asset categories, and execution workflow.
-
+<!-- Copyright SMOrchestra.ai. All rights reserved. Proprietary and confidential. -->
+---
+name: eo-gtm-asset-factory
+description: EO GTM Asset Factory - reads the 12 project brain files (especially gtm.md, positioning.md, icp.md, brandvoice.md) and produces a complete GTM asset bundle dynamically matched to the student's top-scoring GTM motions. Triggers on 'build my GTM assets', 'generate assets', 'create outreach sequences', 'GTM factory', 'produce my assets', 'launch assets', 'build campaign materials'. This is Skill 2 of the EO Training System.
+version: "1.0"
+---
 
 # EO GTM Asset Factory - SKILL.md
 
@@ -501,4 +503,3 @@ When the student's target market includes any MENA country, apply these adaptati
 - LinkedIn: English (most MENA B2B professionals use English on LinkedIn)
 - Blog: Arabic SEO for MENA-specific terms, English for global terms
 - Case studies: include company name and country (regional credibility signal)
-

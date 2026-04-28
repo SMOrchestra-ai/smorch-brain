@@ -6,6 +6,18 @@ set -euo pipefail
 # Dev/EO roles: Cowork + 7 Claude Code dev tools
 # Works on: macOS, Linux
 
+# --- Prerequisite checks ---
+check_prereqs() {
+    local missing=()
+    command -v claude &>/dev/null || missing+=("claude")
+    if [ ${#missing[@]} -gt 0 ]; then
+        echo -e "\033[0;31mERROR: Missing required tools: ${missing[*]}\033[0m"
+        echo "Install them before running this script."
+        exit 1
+    fi
+}
+check_prereqs
+
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
@@ -56,25 +68,26 @@ show_list() {
     echo -e "${CYAN}=== What Each Role Gets ===${NC}"
     echo ""
     echo -e "${GREEN}GTM-EO Team:${NC}"
-    echo "  Cowork (6): smorch-context-brain, smorch-gtm-tools, smorch-gtm-engine,"
-    echo "              smorch-design, mamoun-personal-branding, eo-microsaas-os"
+    echo "  Cowork (7): smorch-context-brain, smorch-gtm-tools, smorch-gtm-engine,"
+    echo "              smorch-design, mamoun-personal-branding, smorch-gtm-scoring,"
+    echo "              eo-microsaas-os"
     echo "  Code:       None"
     echo "  Context:    EntrepreneurOasis"
     echo ""
     echo -e "${GREEN}GTM-SMO Team:${NC}"
-    echo "  Cowork (5): smorch-context-brain, smorch-gtm-tools, smorch-gtm-engine,"
-    echo "              smorch-design, mamoun-personal-branding"
+    echo "  Cowork (6): smorch-context-brain, smorch-gtm-tools, smorch-gtm-engine,"
+    echo "              smorch-design, mamoun-personal-branding, smorch-gtm-scoring"
     echo "  Code:       None"
     echo "  Context:    SalesMfastGTM + CC_CX"
     echo ""
     echo -e "${GREEN}Dev Team:${NC}"
-    echo "  Cowork (1): smorch-dev"
+    echo "  Cowork (2): smorch-dev, smorch-dev-scoring"
     echo "  Code (7):   typescript-lsp, pyright-lsp, rust-analyzer-lsp, gopls-lsp,"
     echo "              code-review, frontend-design, github"
     echo "  Context:    EntrepreneurOasis + SalesMfastGTM"
     echo ""
     echo -e "${GREEN}EO Student:${NC}"
-    echo "  Cowork (2): eo-microsaas-os, smorch-dev"
+    echo "  Cowork (3): eo-microsaas-os, smorch-dev, smorch-dev-scoring"
     echo "  Code (7):   typescript-lsp, pyright-lsp, rust-analyzer-lsp, gopls-lsp,"
     echo "              code-review, frontend-design, github"
     echo "  Context:    None"
@@ -93,50 +106,74 @@ case "$MODE" in
                 echo ""
                 echo -e "${YELLOW}No Claude Code plugins needed for GTM roles.${NC}"
                 echo ""
-                echo -e "${CYAN}Install these 6 plugins in Cowork Desktop:${NC}"
-                echo -e "${CYAN}Customize > Plugins > Search marketplace:${NC}"
+                echo -e "${CYAN}Load plugins into Cowork Desktop:${NC}"
+                echo "  1. Open Claude Desktop (Cowork)"
+                echo "  2. Go to Customize > Workspace"
+                echo "  3. Point workspace to your smorch-brain directory"
+                echo "  4. Cowork scans and discovers all plugins automatically"
+                echo "  5. Click Save -- plugins are now active"
                 echo ""
-                echo "  1. smorch-context-brain"
-                echo "  2. smorch-gtm-tools"
-                echo "  3. smorch-gtm-engine"
-                echo "  4. smorch-design"
-                echo "  5. mamoun-personal-branding"
-                echo "  6. eo-microsaas-os"
+                echo -e "${CYAN}Your role gets these 7 plugins:${NC}"
+                echo "  - smorch-context-brain"
+                echo "  - smorch-gtm-tools"
+                echo "  - smorch-gtm-engine"
+                echo "  - smorch-design"
+                echo "  - mamoun-personal-branding"
+                echo "  - smorch-gtm-scoring"
+                echo "  - eo-microsaas-os"
                 ;;
-            gtm-smo|gtm)
+            gtm-smo)
                 echo -e "${GREEN}=== GTM-SMO Team Setup ===${NC}"
                 echo ""
                 echo -e "${YELLOW}No Claude Code plugins needed for GTM roles.${NC}"
                 echo ""
-                echo -e "${CYAN}Install these 5 plugins in Cowork Desktop:${NC}"
-                echo -e "${CYAN}Customize > Plugins > Search marketplace:${NC}"
+                echo -e "${CYAN}Load plugins into Cowork Desktop:${NC}"
+                echo "  1. Open Claude Desktop (Cowork)"
+                echo "  2. Go to Customize > Workspace"
+                echo "  3. Point workspace to your smorch-brain directory"
+                echo "  4. Cowork scans and discovers all plugins automatically"
+                echo "  5. Click Save -- plugins are now active"
                 echo ""
-                echo "  1. smorch-context-brain"
-                echo "  2. smorch-gtm-tools"
-                echo "  3. smorch-gtm-engine"
-                echo "  4. smorch-design"
-                echo "  5. mamoun-personal-branding"
+                echo -e "${CYAN}Your role gets these 6 plugins:${NC}"
+                echo "  - smorch-context-brain"
+                echo "  - smorch-gtm-tools"
+                echo "  - smorch-gtm-engine"
+                echo "  - smorch-design"
+                echo "  - mamoun-personal-branding"
+                echo "  - smorch-gtm-scoring"
                 ;;
             dev)
                 echo -e "${GREEN}=== Dev Team Setup ===${NC}"
                 echo ""
                 install_code_plugins
                 echo ""
-                echo -e "${CYAN}Install this plugin in Cowork Desktop:${NC}"
-                echo -e "${CYAN}Customize > Plugins > Search marketplace:${NC}"
+                echo -e "${CYAN}Load plugins into Cowork Desktop:${NC}"
+                echo "  1. Open Claude Desktop (Cowork)"
+                echo "  2. Go to Customize > Workspace"
+                echo "  3. Point workspace to your smorch-brain directory"
+                echo "  4. Cowork scans and discovers all plugins automatically"
+                echo "  5. Click Save -- plugins are now active"
                 echo ""
-                echo "  1. smorch-dev"
+                echo -e "${CYAN}Your role gets these 2 plugins:${NC}"
+                echo "  - smorch-dev"
+                echo "  - smorch-dev-scoring"
                 ;;
             eo-student)
                 echo -e "${GREEN}=== EO Student Setup ===${NC}"
                 echo ""
                 install_code_plugins
                 echo ""
-                echo -e "${CYAN}Install these 2 plugins in Cowork Desktop:${NC}"
-                echo -e "${CYAN}Customize > Plugins > Search marketplace:${NC}"
+                echo -e "${CYAN}Load plugins into Cowork Desktop:${NC}"
+                echo "  1. Open Claude Desktop (Cowork)"
+                echo "  2. Go to Customize > Workspace"
+                echo "  3. Point workspace to your smorch-brain directory"
+                echo "  4. Cowork scans and discovers all plugins automatically"
+                echo "  5. Click Save -- plugins are now active"
                 echo ""
-                echo "  1. eo-microsaas-os"
-                echo "  2. smorch-dev"
+                echo -e "${CYAN}Your role gets these 3 plugins:${NC}"
+                echo "  - eo-microsaas-os"
+                echo "  - smorch-dev"
+                echo "  - smorch-dev-scoring"
                 ;;
             mamoun)
                 echo -e "${GREEN}=== Mamoun (All Access) ===${NC}"

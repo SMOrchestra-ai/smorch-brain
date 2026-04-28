@@ -1,3 +1,4 @@
+<!-- IP:START - 7 Silence Types proprietary framework -->
 # The 7 Types of Digital Silence
 
 **Core Philosophy**: "Your funnel is not broken. It is silent."
@@ -457,3 +458,5 @@ Ensure weekly wedges address the primary silence type.
 | **Friction** | Want to jump through hoops | Barrier reduction | DSI Scorecard | Form fields ≤5 (D) |
 
 **Key Insight**: Silence is systematic, not random. Identify the type, deploy the solution, measure the DSI improvement.
+
+<!-- IP:END -->

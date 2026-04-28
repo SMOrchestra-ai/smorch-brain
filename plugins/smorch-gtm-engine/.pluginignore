@@ -1,0 +1,36 @@
+# .pluginignore — Exclude heavy assets from plugin builds
+# Patterns follow glob syntax (same as .gitignore)
+
+# Large HTML files (landing pages, viewers)
+*.html
+
+# Eval viewer directories (debugging tools, not needed in plugin)
+eval-viewer/
+
+# License files
+LICENSE
+LICENSE.*
+
+# Python scripts (not needed at runtime)
+*.py
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Eval agents (not needed in plugin)
+agents/
+
+# HTML assets in smo-offer-assets (large landing page templates)
+skills/smo-offer-assets/assets/
+
+# Build scripts (not needed in plugin)
+scripts/
+
+# OS artifacts
+.DS_Store
+Thumbs.db
+
+# Node artifacts
+node_modules/
+package-lock.json

@@ -1,3 +1,4 @@
+<!-- Copyright SMOrchestra.ai. All rights reserved. Proprietary and confidential. -->
 ---
 name: strategy-selector-engine
 description: Scorecard 4 of 5 — Maps founders to strategy paths and archetypes based on founder DNA, market conditions, and resources.

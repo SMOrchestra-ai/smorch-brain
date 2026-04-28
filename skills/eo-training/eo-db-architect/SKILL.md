@@ -1,3 +1,4 @@
+<!-- Copyright SMOrchestra.ai. All rights reserved. Proprietary and confidential. -->
 ---
 name: eo-db-architect
 description: EO Database Architect - specialized skill for database design, Supabase schema creation, RLS policies, migrations, seed data, and multi-tenant patterns. Called by eo-microsaas-dev during the build or independently when the student needs to rethink their data model. Triggers on 'design my database', 'create schema', 'database architecture', 'add migration', 'RLS policies', 'seed data', 'data model', 'db architect', 'schema design', 'supabase schema'. This is a Step 5 skill of the EO Training System.

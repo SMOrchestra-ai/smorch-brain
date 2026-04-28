@@ -21,13 +21,50 @@ param(
     [Parameter(Position = 0)]
     [string]$Command,
 
+    [Parameter()]
+    [string]$Profile,
+
     [Parameter(Position = 1, ValueFromRemainingArguments)]
     [string[]]$Arguments
 )
 
+# --- Prerequisite checks ---
+function Test-Prerequisites {
+    $missing = @()
+    if (-not (Get-Command git -ErrorAction SilentlyContinue)) { $missing += "git" }
+    if (-not (Get-Command zip -ErrorAction SilentlyContinue)) {
+        # zip is needed for build-plugin; on Windows, Compress-Archive is used instead
+        # Only warn if not on Windows
+        if ($IsLinux -or $IsMacOS) { $missing += "zip" }
+    }
+    if ($missing.Count -gt 0) {
+        Write-Host "ERROR: Missing required tools: $($missing -join ', ')" -ForegroundColor Red
+        exit 1
+    }
+}
+Test-Prerequisites
+
+# --- Git retry helper ---
+function Invoke-GitWithRetry {
+    param([string[]]$GitArgs)
+    $attempts = 0
+    $max = 3
+    while ($attempts -lt $max) {
+        $result = & git @GitArgs 2>&1
+        if ($LASTEXITCODE -eq 0) { return $result }
+        $attempts++
+        if ($attempts -lt $max) {
+            Write-Host "  Network issue, retrying ($attempts/$max)..." -ForegroundColor Yellow
+            Start-Sleep -Seconds 5
+        }
+    }
+    Write-Host "  Failed after $max attempts. Check your network." -ForegroundColor Red
+    return $null
+}
+
 $VERSION = "2.0.0"
 # Auto-detect repo location (works on Windows, Mac via PowerShell Core, Linux)
-$cwPath = Join-Path $env:USERPROFILE "Desktop" "cowork-workspace" "smorch-brain"
+$cwPath = Join-Path (Join-Path (Join-Path $env:USERPROFILE "Desktop") "cowork-workspace") "smorch-brain"
 $homePath = Join-Path $env:USERPROFILE "smorch-brain"
 if (Test-Path $cwPath) {
     $REPO_DIR = $cwPath
@@ -339,7 +376,7 @@ function Invoke-Push {
     }
 
     # Git operations
-    Push-Location $REPO_DIR
+    Push-Location "$REPO_DIR"
     try {
         git add skills/
         $hasChanges = git diff --cached --quiet 2>&1; $exitCode = $LASTEXITCODE
@@ -358,7 +395,7 @@ function Invoke-Push {
             else {
                 git checkout -b dev origin/dev 2>$null
                 if ($LASTEXITCODE -ne 0) { git checkout dev 2>$null }
-                git merge main --no-edit 2>$null
+                git merge dev --no-edit 2>$null
                 git push origin dev 2>&1 | Out-Null
                 Write-Color "Pushed to dev." Green
             }
@@ -371,16 +408,28 @@ function Invoke-Push {
 }
 
 function Invoke-Pull {
-    param([string[]]$Args)
+    param(
+        [string[]]$Args,
+        [string]$ProfileParam
+    )
 
     Load-State
     $profile = $script:CURRENT_PROFILE
+    $forceFlag = $false
 
-    # Parse --profile flag
+    # Use -Profile parameter if provided
+    if (-not [string]::IsNullOrEmpty($ProfileParam)) {
+        $profile = $ProfileParam
+    }
+
+    # Also check remaining args for -Profile or --profile and --force (backward compat)
     for ($i = 0; $i -lt $Args.Count; $i++) {
-        if ($Args[$i] -eq "--profile" -and ($i + 1) -lt $Args.Count) {
+        if ($Args[$i] -in @("-Profile", "--profile") -and ($i + 1) -lt $Args.Count) {
             $profile = $Args[$i + 1]
             $i++
+        }
+        if ($Args[$i] -in @("-Force", "--force")) {
+            $forceFlag = $true
         }
     }
 
@@ -396,14 +445,34 @@ function Invoke-Pull {
 
     Write-Color "smorch pull -- Syncing profile: $profile" Cyan
 
-    # Git pull
-    Push-Location $REPO_DIR
+    # Git pull with dirty tree handling
+    Push-Location "$REPO_DIR"
     try {
+        $dirtyWorktree = & git diff --quiet 2>&1; $wt = $LASTEXITCODE
+        $dirtyIndex = & git diff --cached --quiet 2>&1; $ix = $LASTEXITCODE
+        if ($wt -ne 0 -or $ix -ne 0) {
+            if ($forceFlag) {
+                Write-Host "Stashing local changes..." -ForegroundColor Yellow
+                git stash
+            } else {
+                Write-Color "Uncommitted changes detected. Use --force to stash and pull, or commit first." Red
+                return
+            }
+        }
         Write-Host "Pulling latest from GitHub..."
-        $result = git pull --rebase origin main 2>&1
+        $result = Invoke-GitWithRetry @("pull", "--rebase", "origin", "dev")
         if ($LASTEXITCODE -ne 0) {
             Write-Color "Git pull failed. Resolve conflicts manually." Red
             return
+        }
+        if ($forceFlag) {
+            $stashList = git stash list 2>&1
+            if ($stashList -match "stash@\{0\}") {
+                git stash pop 2>$null
+                if ($LASTEXITCODE -ne 0) {
+                    Write-Host "Warning: Could not pop stash. Run 'git stash pop' manually." -ForegroundColor Yellow
+                }
+            }
         }
     }
     finally {
@@ -489,8 +558,8 @@ function Invoke-Install {
         return
     }
 
-    Push-Location $REPO_DIR
-    try { git pull --rebase origin main 2>&1 | Out-Null } finally { Pop-Location }
+    Push-Location "$REPO_DIR"
+    try { Invoke-GitWithRetry @("pull", "--rebase", "origin", "dev") | Out-Null } finally { Pop-Location }
 
     $sourcePath = Join-Path $REPO_DIR "skills\$Target"
     if (Test-Path $sourcePath) {
@@ -623,10 +692,10 @@ function Invoke-List {
 }
 
 function Invoke-Diff {
-    Push-Location $REPO_DIR
+    Push-Location "$REPO_DIR"
     try {
-        git fetch origin main 2>$null
-        $diffOutput = git diff HEAD..origin/main --stat -- skills/ 2>$null
+        git fetch origin dev 2>$null
+        $diffOutput = git diff HEAD..origin/dev --stat -- skills/ 2>$null
         if ([string]::IsNullOrEmpty($diffOutput)) {
             Write-Color "No changes since last pull." Green
         }
@@ -678,10 +747,10 @@ function Invoke-Status {
     Write-Host "Registry:   $registryCount skills"
 
     # Git status
-    Push-Location $REPO_DIR -ErrorAction SilentlyContinue
+    Push-Location "$REPO_DIR" -ErrorAction SilentlyContinue
     try {
         $branch = git branch --show-current 2>$null
-        $behind = git rev-list HEAD..origin/main --count 2>$null
+        $behind = git rev-list HEAD..origin/dev --count 2>$null
         if ([string]::IsNullOrEmpty($behind)) { $behind = "?" }
         Write-Host "Git branch: $branch ($behind commits behind)"
     }
@@ -695,11 +764,21 @@ function Invoke-Status {
 }
 
 function Invoke-Init {
-    param([string[]]$Args)
+    param(
+        [string[]]$Args,
+        [string]$ProfileParam
+    )
 
     $profile = ""
+
+    # Use -Profile parameter if provided
+    if (-not [string]::IsNullOrEmpty($ProfileParam)) {
+        $profile = $ProfileParam
+    }
+
+    # Also check remaining args for -Profile or --profile (backward compat)
     for ($i = 0; $i -lt $Args.Count; $i++) {
-        if ($Args[$i] -eq "--profile" -and ($i + 1) -lt $Args.Count) {
+        if ($Args[$i] -in @("-Profile", "--profile") -and ($i + 1) -lt $Args.Count) {
             $profile = $Args[$i + 1]
             $i++
         }
@@ -720,11 +799,11 @@ function Invoke-Init {
     # Ensure repo is cloned
     if (-not (Test-Path $REPO_DIR)) {
         Write-Host "Cloning smorch-brain..."
-        git clone git@github.com:SMOrchestra-ai/smorch-brain.git $REPO_DIR
+        git clone git@github.com:SMOrchestra-ai/smorch-brain.git "$REPO_DIR"
     }
 
     # Pull and install
-    Invoke-Pull -Args @("--profile", $profile)
+    Invoke-Pull -Args @() -ProfileParam $profile
 
     Write-Color "Setup complete! Run 'smorch.ps1 status' to verify." Green
 }
@@ -879,20 +958,20 @@ function Invoke-BuildPlugin {
 
     $size = "{0:N1} KB" -f ((Get-Item $output).Length / 1024)
     Write-Color "Built: $output ($size)" Green
-    Write-Host "To install: Upload via Cowork > Customize > Plugins"
+    Write-Host "To install: Cowork > Customize > Workspace > point to smorch-brain > Save"
 }
 
 # --- Main dispatch ---
 
 switch ($Command) {
     "push"          { Invoke-Push }
-    "pull"          { Invoke-Pull -Args $Arguments }
+    "pull"          { Invoke-Pull -Args $Arguments -ProfileParam $Profile }
     "install"       { Invoke-Install -Target ($Arguments | Select-Object -First 1) }
     "remove"        { Invoke-Remove -Target ($Arguments | Select-Object -First 1) }
     "list"          { Invoke-List -Args $Arguments }
     "diff"          { Invoke-Diff }
     "status"        { Invoke-Status }
-    "init"          { Invoke-Init -Args $Arguments }
+    "init"          { Invoke-Init -Args $Arguments -ProfileParam $Profile }
     "audit"         { Invoke-Audit }
     "build-plugin"  { Invoke-BuildPlugin -PluginName ($Arguments | Select-Object -First 1) }
     "--version"     { Write-Host "smorch v$VERSION" }

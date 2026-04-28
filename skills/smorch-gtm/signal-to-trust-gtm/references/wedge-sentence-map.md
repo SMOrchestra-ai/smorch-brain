@@ -1,3 +1,4 @@
+<!-- IP:START - Wedge sentence templates and ICP mapping -->
 # Wedge Sentence Map
 
 ICP-specific templates for creating one-sentence wedges from signals.
@@ -428,3 +429,5 @@ Does this wedge use ICP-specific language and context?
 10. **Geographic adaptation** (if multi-market campaign)
 
 **Result**: Signal-specific, ICP-resonant, one-sentence wedge ready for asset-factory.
+
+<!-- IP:END -->

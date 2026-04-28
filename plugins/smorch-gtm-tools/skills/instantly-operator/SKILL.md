@@ -1,3 +1,4 @@
+<!-- Copyright SMOrchestra.ai. All rights reserved. Proprietary and confidential. -->
 ---
 name: instantly-operator
 description: "Instantly.ai Cold Email Command Center for cold email campaigns, sending accounts, lead lists, sequences, deliverability, and analytics. Triggers on: Instantly, cold email, email outreach, email campaigns, email sequences, sending accounts, warmup scores, deliverability, bounce rates, cold outreach, open rates, reply rates, A/B testing emails, lead lists for email, email sending infrastructure. Also: creating/pausing/resuming campaigns, checking warmup scores, adding leads, setting up sequences, scaling sending volume."

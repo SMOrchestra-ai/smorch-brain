@@ -1,3 +1,4 @@
+<!-- Copyright SMOrchestra.ai. All rights reserved. Proprietary and confidential. -->
 ---
 name: supabase-admin
 description: Supabase Database Admin — schema design, RLS policies, migrations, monitoring, and production safety for all SMOrchestra products

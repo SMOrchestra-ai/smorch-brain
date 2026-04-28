@@ -1,3 +1,4 @@
+<!-- Copyright SMOrchestra.ai. All rights reserved. Proprietary and confidential. -->
 ---
 name: clay-operator
 description: "Clay.com Enrichment and Signal Command Center for waterfall enrichment, signal detection, credit optimization, and outbound orchestration. Triggers on: Clay, waterfall enrichment, enrichment credits, provider stacking, Clay tables, Claygent, Clay signals, FETC/FETE framework, ColdIQ methodology, lead scoring, prospect enrichment, email/phone providers, Clay API, Clay webhooks, AI formulas, enrichment economics, MENA enrichment gaps, Arabic name standardization. Also: design my waterfall, how many credits, which providers for MENA, set up Clay table, enrich this list."

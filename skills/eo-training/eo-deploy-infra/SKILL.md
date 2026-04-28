@@ -1,3 +1,4 @@
+<!-- Copyright SMOrchestra.ai. All rights reserved. Proprietary and confidential. -->
 ---
 name: eo-deploy-infra
 description: EO Deployment & Infrastructure - handles everything from code-complete to production-live. VPS provisioning, Docker containerization, Coolify PaaS setup, domain/SSL configuration, CI/CD pipelines, and monitoring. Triggers on 'deploy', 'go live', 'production setup', 'Docker', 'Coolify', 'CI/CD', 'monitoring', 'VPS setup', 'domain config', 'SSL', 'deployment guide', 'infrastructure'. This is a Step 5 skill of the EO Training System.

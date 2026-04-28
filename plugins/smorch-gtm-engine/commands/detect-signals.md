@@ -1,6 +1,7 @@
+<!-- IP:START - Command routing with methodology references -->
 ---
 description: Detect and validate buying signals for an ICP
-argument-hint: [icp-name or prospect-list-file]
+argument-hint: "[icp-name or prospect-list-file]"
 allowed-tools: Read, Write, Bash, Grep, Glob, Task, WebSearch, WebFetch, AskUserQuestion
 ---
 
@@ -42,3 +43,4 @@ Run signal detection and ICP validation using the signal-detector skill.
    - Validated prospect list with: name, company, fit status, signals detected, classification, score
    - Save to workspace: `signals/[icp-name]-[date]-validated.json`
    - Recommended: top 20 prospects ranked by signal strength for immediate outreach
+<!-- IP:END -->

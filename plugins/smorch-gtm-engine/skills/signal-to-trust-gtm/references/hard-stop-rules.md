@@ -1,3 +1,4 @@
+<!-- IP:START - Hard Stop Rules enforcement logic -->
 # Hard Stop Rules
 
 Non-negotiable enforcement rules for the Signal-to-Trust GTM framework.
@@ -538,3 +539,5 @@ These rules exist to protect:
 4. **Framework integrity** (signal-based precision, not guesswork)
 
 **Hard Stop = Non-Negotiable**. These are the guardrails that make the Signal-to-Trust framework work.
+
+<!-- IP:END -->

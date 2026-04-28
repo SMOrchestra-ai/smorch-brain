@@ -1,29 +1,38 @@
-# Deck Structure: 20-Slide Perfect Webinar Deck
+# Deck Structure: 23-Slide Perfect Webinar (V2)
 
-This is the exact 20-slide breakdown for a Perfect Webinar deck. Every slide has speaker notes with timing, stage directions, and delivery cues.
+Battle-tested on RAKEZ V6 (scored 8.6/10). This is the exact 23-slide breakdown with design system, speaker notes patterns, and PptxGenJS implementation.
 
 ---
 
-## Design System (SMO Brand)
+## Design System (SMO Brand - V6 Battle-Tested)
 
 **Colors:**
-- Background: #0F1923 (dark navy)
-- Accent: #FF6B35 (orange)
-- Secondary: #2A3E5E (lighter navy for cards)
-- Text Primary: #FFFFFF (white)
-- Text Secondary: #F0F0F0 (off-white for subtitles)
+- BG_DARK: #0D0D1A (near-black navy, primary background)
+- BG_CARD: #161625 (slightly lighter, card backgrounds)
+- BG_CARD2: #1A1A2E (alternate card)
+- BLUE_CARD: #1E1E38 (feature cards)
+- ORANGE: #E8651A (accent, highlights, CTAs)
+- WHITE: #FFFFFF (headlines, primary text)
+- GRAY_LIGHT: #CCCCCC (body text, descriptions)
+- GRAY: #888899 (footers, secondary info)
+- RED_SOFT: #CC3333 (myth text, "before" states)
+- GREEN_SOFT: #33AA55 (checkmarks, "after" states)
 
 **Typography:**
-- Headlines: Inter Bold, 44-56pt, #FFFFFF
-- Body: Inter Regular, 24-28pt, #F0F0F0
-- Speaker Notes: Inter Regular, 12pt, #000000 on white
+- Headlines: Arial Bold, 28-36pt, WHITE
+- Subheaders: Arial Bold, 16-20pt, ORANGE
+- Body: Arial Regular, 13-16pt, GRAY_LIGHT
+- Category labels: Arial Bold, 10-12pt, ORANGE, charSpacing: 3-4, all caps
+- Speaker Notes: Any readable font, 12pt minimum
 
-**Layout patterns:**
-- Full-bleed background color
-- Content centered, 80% width (60% for images)
-- 16:9 aspect ratio
-- Minimal text (max 3 lines per slide)
-- Visual hierarchy via size and spacing
+**Layout:**
+- 16:9 aspect ratio (LAYOUT_16x9)
+- Content area: x:0.8, w:8.4 (0.8" margins each side)
+- Top bar: orange rect, x:0, y:0, w:10, h:0.06
+- Footer: "smorchestra.ai | @mamounalamouri" at x:5.5, y:5.25, w:3.5, fontSize:9, right-aligned
+- Slide number: x:9.3, y:5.15, w:0.5, fontSize:11, right-aligned
+- Max 3-4 content elements per slide
+- Cards with shadow: mkShadow() factory (blur:6, offset:2, angle:135, opacity:0.2)
 
 ---
 
@@ -32,889 +41,502 @@ This is the exact 20-slide breakdown for a Perfect Webinar deck. Every slide has
 ### SLIDE 1: Title + Authority Hook
 
 **Layout:**
-- Top half: Event name (large, bold)
-- Middle: Speaker name, title, company
-- Bottom: 3-4 credibility markers (no bullets, visual cards)
+- Top bar (orange)
+- Category label: "{{EVENT_HOST}} FOUNDERS SESSION" (all caps, charSpacing)
+- Main title: "WHY BEST DEALS" + "DIE IN SILENCE" (or your hook title)
+- Subtitle: "The science of [your topic] in the first 90 seconds"
+- Speaker name with letter-spacing
+- Event host + speaker company logos (if available)
 
-**Content example:**
+**Speaker Notes Pattern:**
 ```
-SIGNAL-BASED SELLING
-Replacing Coffee Meetings with Proof of Competence
-
-Mamoun Alamouri
-CEO, SMOrchestra.ai
-
-• 20 years B2B SaaS enterprise tech (Cisco, Avaya, Uniphore)
-• 40+ MENA companies built signal-based engines
-• 11 deals/year from cold outreach (vs. 2 from relationships)
-```
-
-**Speaker Notes:**
-```
-TIMING: 30 seconds
-
-[PAUSE - look at audience]
-
-"Good [morning/afternoon]. I'm Mamoun Alamouri, CEO of SMOrchestra.ai. For 20 years
-I built enterprise sales organizations the traditional way: coffee meetings, relationship
-building, personal networks. Then everything changed."
-
-[STEP CENTER - make eye contact across the room]
-
-"What I'm about to share today is what I learned when my old way stopped working."
+TIMING: 30 seconds. Walk on stage. Let the room settle.
+Do NOT start talking immediately. Stand center stage, scan the room left to right. Make eye contact with 3 people.
+Then say: "Thank you for having me. My name is [NAME]. I've spent [X] years [CREDENTIAL]. And I'm going to share something today that took me [Y] of those years to figure out."
+Click to next slide.
 ```
 
 ---
 
-### SLIDE 2: Hook Question + Authority Sources
+### SLIDE 2: Hook Question (Pattern Interrupt)
 
 **Layout:**
-- Large hook question (40pt)
-- Below: Authority sources (books, researchers, frameworks)
-- Visual: Small logos or author names if available
+- Large hook question (28pt, WHITE, bold)
+- Subtext elements with different styling for emphasis
+- [X-second silence] instruction visible as pale text
+- Slide number
 
-**Content example:**
+**Content Pattern:**
 ```
-What if enterprise sales didn't require
-coffee meetings or personal charisma?
-
-Authority Sources:
-• Gong Research: 47% of buyers prefer systematic communication
-• David Snowden (Cynefin Framework): "In complex markets, pattern recognition beats relationships"
-• Academic: Harvard Business Review on Intent Signals
-• Practitioner: Russell Brunson (Perfect Webinar)
+Have you ever KNOWN
+your product was better...
+and still
+lost the deal?
+[4-second silence]
 ```
 
-**Speaker Notes:**
+**Speaker Notes Pattern:**
 ```
-TIMING: 45 seconds
-
-"Before I tell you what changed, I want to ask you something:"
-
-[READ SLIDE - pause 5 seconds, let it sink in]
-
-"That question is informed by research from Gong, from frameworks in the Cynefin model,
-and from 40+ real companies I've worked with in the GCC region who asked the same question."
-
-[PAUSE - 3 seconds]
-
-"Let me show you why they were right to ask it."
+TIMING: 30 seconds total including the silence.
+Read the slide slowly: "[HOOK QUESTION]"
+Then STOP. Do not move. Do not click. Count to [X] in your head. Let the room sit in silence.
+Look at one person in the front row. Hold eye contact during the silence.
+Drop your voice to 60% volume for the next slide. This is the Late-Night FM DJ Voice technique.
+The silence IS the point. The audience will feel uncomfortable. Good. That's what their prospects feel.
+Click.
 ```
 
 ---
 
-### SLIDE 3: The Silent Kill (Problem)
+### SLIDE 3: Silence Payoff + Big Domino
 
 **Layout:**
-- Title: "The Current Reality"
-- Vivid pain description (no solution, just pain)
-- Optional: Visual showing the problem (graph, illustration)
+- Quote icon (top left, ORANGE, rendered via react-icons)
+- Opening reframe in italic (connected to the silence they just felt)
+- Orange divider line
+- Big Domino statement below the line (the core insight, with key phrase in ORANGE bold)
 
-**Content example:**
+**Content Pattern:**
 ```
-The Current Reality
-
-Enterprise Sales the Traditional Way:
-47 coffee meetings per year → 2 deals closed
-6-9 months per sales cycle
-"Let's stay in touch" = 60% ghosting rate
-Relationship-dependent (if you leave, deals go with you)
-Network becomes your bottleneck
-```
-
-**Speaker Notes:**
-```
-TIMING: 60 seconds
-
-[STEP LEFT - slower paced]
-
-"Here's what traditional enterprise sales looks like in the Gulf. You're doing 47 coffee
-meetings a year. You're closing 2 deals. Your sales cycle is 6-9 months because you're
-betting on relationship-building."
-
-[PAUSE - let it sink]
-
-"And the ghosting rate? 60%. People say 'let's stay in touch.' And they ghost."
-
-[LOOK AT AUDIENCE - emotional connection]
-
-"If this is you, you feel it. You're stuck. You're grinding. And the market is moving
-faster than you can build relationships."
-
-[PAUSE - 5 seconds of silence]
+[Quote icon]
+"That silence you just felt?"
+"That's what your prospects experience when [PROBLEM DESCRIPTION]."
+"They just go quiet. You call it [COMMON WORD]. It's actually [YOUR REFRAME]."
+---
+"[BIG DOMINO]. And [BIG DOMINO IS ACTIONABLE]."
 ```
 
 ---
 
-### SLIDE 4: The Big Domino
+### SLIDE 4: THE BIG PROMISE (Most Important Slide)
 
 **Layout:**
-- Title: "The One Belief That Changes Everything"
-- Single statement (20-28pt), bold, centered
-- Optional: Visual metaphor (domino, etc.)
+- Category label: "THE PROMISE" (all caps, ORANGE, charSpacing)
+- Main promise text (22pt, WHITE)
+- 3 "without" cards, each with:
+  - X icon (RED_SOFT) on left
+  - Without text in WHITE/GRAY_LIGHT
+- Transition line: "Three myths are keeping you stuck. Let me break them." (ORANGE, bold)
 
-**Content example:**
+**Content Pattern:**
 ```
-The One Belief That Changes Everything
+THE PROMISE
 
-Signal-based trust engineering replaces
-relationship-based selling.
+By the end of this session, I'll show you how to [OUTCOME].
 
-You don't need 47 coffee meetings.
-You need systematic proof of competence,
-delivered at the exact moment intent surfaces.
+[X] Without [WITHOUT #1 - maps to Myth #1]
+[X] Without [WITHOUT #2 - maps to Myth #2]
+[X] Without [WITHOUT #3 - maps to Myth #3]
+
+Three myths are keeping you stuck. Let me break them.
 ```
 
-**Speaker Notes:**
+**Speaker Notes Pattern:**
 ```
-TIMING: 45 seconds
-
-[STEP CENTER - strong, eye contact]
-
-"Everything I'm about to share comes down to one core belief. If this lands for you,
-everything else will make sense."
-
-[READ SLIDE SLOWLY - one sentence at a time]
-
-[PAUSE - 7 seconds of silence. Don't fill it.]
-
-"My entire career shift came from understanding that one thing. And I'm going to show
-you three secrets that prove why it's true."
-
-[PAUSE - 3 seconds, then move to next slide]
+TIMING: 90 seconds. THIS IS THE MOST IMPORTANT SLIDE IN THE DECK.
+Stand still. Center stage. Hands at sides or one hand forward, palm up.
+Say: "Here's what I'm going to show you in the next [DURATION] minutes."
+Pause.
+"[OUTCOME STATEMENT]."
+Pause. Let it land.
+"And I'm going to show you how to do it..."
+Point to screen or gesture to each line:
+"...without [WITHOUT #1]. [ELABORATION]."
+"...without [WITHOUT #2]. [ELABORATION]."
+"...without [WITHOUT #3]. [ELABORATION]."
+Pause 3 seconds. Scan the room.
+"Three myths are keeping you stuck. I believed all three of them. They cost me years. Let me break them for you in [DURATION] minutes."
+Click.
 ```
 
 ---
 
-### SLIDE 5: Origin Story (Epiphany Bridge)
+### SLIDE 5: Accusation Audit
 
 **Layout:**
-- Minimal text (max 5 lines)
-- Visual: Optional image if you have it (headshot, event photo, etc.)
-- Focus on story delivery, not on slides
+- Italic text showing what the audience is thinking (skepticism)
+- "Am I wrong?" in ORANGE at the bottom
 
-**Content example:**
+**Content Pattern:**
 ```
-My Origin Story
+Right now, some of you are thinking:
 
-From relationship-dependent to signal-based
+"Here we go. Another [CATEGORY] trainer.
+He's going to tell me to [GENERIC ADVICE]
+and [ANOTHER CLICHE]."
 
-I was successful at Cisco doing coffee meetings.
-Then I got promoted to a new region. Zero network. Zero relationships.
-6 months to build a $5M pipeline from scratch.
-
-Month 3: 4 conversations, 1 prospect. I was going to miss my number.
-Then I discovered it: timing > relationships.
-
-Signal-based selling changed everything.
+Am I wrong?
 ```
 
-**Speaker Notes:**
+**Purpose:** Chris Voss technique. Name the objection before they think it. Builds massive trust.
+
+---
+
+### SLIDE 6: Origin Story (Epiphany Bridge)
+
+**Layout:**
+- Category label: "MY STORY" + story title
+- Visual timeline or 3-4 phase boxes showing the journey
+- Minimal text on slide (story is delivered verbally)
+
+**Speaker Notes:** 2-3 minutes. Full Epiphany Bridge (Setup - Fall - Dark Night - Epiphany - New Belief). Include exact dialogue, pauses, voice direction.
+
+---
+
+### SLIDE 7: 4 Silent Killers
+
+**Layout:**
+- Category label: "THE 4 SILENT KILLERS"
+- Title: "Why buyers go quiet (and what they're actually thinking)"
+- 4 cards, each with:
+  - Number badge (orange circle)
+  - The buyer's QUESTION (relatable format, not framework jargon)
+  - Brief description
+
+**Content Pattern (use QUESTIONS, not labels):**
 ```
-TIMING: 2m 30s total
+01: "Is this confusing? Am I going to drown in options?"
+    Choice Overload - Too many providers, too many promises
 
-[STEP RIGHT - slower pace, more intimate]
+02: "Have you actually done this before? With people like me?"
+    Expectations Gap - Every vendor claims results
 
-"Let me tell you a story about when I realized everything I knew was wrong."
+03: "Sounds great... but will this work HERE? In THIS market?"
+    Information Overload - MENA buyers ask: have you done this with people like me?
 
-[DELIVER ORIGIN STORY - Epiphany Bridge structure]
-- Setup: Credibility at Cisco
-- Fall: New region, no network, panic
-- Dark Night: Sitting in car, realized coffee meetings won't work
-- Epiphany: Discovered signal-based approach
-- New Belief: Timing > relationships, signal-based works
-
-[PAUSE - 7 seconds after the epiphany lands]
-
-[STEP CENTER]
-
-"That's when I knew: this is a different game. And there are three secrets to winning it.
-Let me show you."
+04: "Is this worth my time? My money? My reputation?"
+    Valuation Problem - They can't calculate ROI because they can't measure what they're losing
 ```
 
 ---
 
-### SLIDE 6: Secret 1 Title Slide
+### SLIDE 8: The Big Shift (Research Backing)
 
 **Layout:**
-- Large title (52pt)
-- Subtitle (28pt, secondary color)
-- Clean, minimal
+- Category label: "THE BIG SHIFT"
+- Title: "What [X] million [data source] conversations reveal"
+- 2-3 research stat callouts in large text
+- Source citation at bottom
 
-**Content example:**
+**Content Pattern:**
 ```
-Secret 1
+THE BIG SHIFT
+What 2.5 million sales conversations reveal
 
-The Method Belief Everyone Gets Wrong
-```
+[Large stat] 60% of deals are NOT lost to the competition.
+They're lost to NO DECISION. The buyer freezes.
 
-**Speaker Notes:**
-```
-TIMING: 20 seconds
+[Large stat] 56% of those frozen deals? It's not FOMO killing them.
+It's FOMU: Fear Of Messing Up.
 
-[STEP LEFT]
+[Large stat] Urgency tactics? They backfire 84% of the time.
 
-"The first secret has to do with the method. About what actually works in enterprise sales."
-
-[READ SLIDE]
-
-[PAUSE - 3 seconds]
-
-"Because most people get this wrong."
+Source: JOLT Effect, Dixon & McKenna (2022)
 ```
 
 ---
 
-### SLIDE 7: Secret 1 - Myth vs. Truth
+### SLIDE 9: MYTH #1 -> SECRET #1
 
 **Layout:**
-- Two columns: "The Myth" and "The Truth"
-- Myth side (red/darker): What they currently believe
-- Truth side (orange/accent): The new belief
+- Red myth text at top: "MYTH #1: [The false belief]" (RED_SOFT, italic, 14pt)
+- Secret title: "SECRET #1: [The truth]" (WHITE, bold, 28pt)
+- Orange accent line
+- Story snippet or framework tease below
+- Optional: Quote icon + key story moment
 
-**Content example:**
+**Content Pattern:**
 ```
-The Myth vs. The Truth
+MYTH #1: "[The method they think works]"
 
-THE MYTH:
-→ Enterprise deals close through relationship-building
-→ Coffee meetings are how you build trust
-→ Personal charisma and network are key
-→ Sales cycles are 6-9 months because that's how long
-   relationship-building takes
+SECRET #1
+[Contrarian truth title]
 
-THE TRUTH:
-→ Enterprise deals close when you show proof first
-→ Proof of competence delivered BEFORE the meeting
-→ System and methodology > personal charisma
-→ Sales cycles compress to 2-3 months when you lead
-   with signal, not soup
+[Epiphany Bridge story compressed to key moments]
+[Framework name teased]
 ```
 
-**Speaker Notes:**
+**Speaker Notes:** 3 minutes. Myth statement, story (90 seconds), framework tease, transition.
+
+---
+
+### SLIDE 10: MYTH #2 -> SECRET #2
+
+Same layout as Slide 9 but for the Internal belief.
+
+**Key difference:** This secret often involves research/science (e.g., Princeton Trust Equation, Susan Fiske's Warmth x Competence research). Include the research visual on the NEXT slide.
+
+---
+
+### SLIDE 11: Trust/Research Visual
+
+**Layout:**
+- Visual representation of the research backing Secret #2
+- Example: 2x2 grid (Warmth x Competence), danger zone highlighted
+- Category labels on axes
+- Key insight callout in ORANGE
+
+**Purpose:** This slide makes Secret #2 feel research-backed, not opinion-based.
+
+---
+
+### SLIDE 12: MYTH #3 -> SECRET #3
+
+Same layout as Slide 9 but for the External belief.
+
+**Key for MENA:** This is where the "coffee meeting" myth lives. The story should be viscerally MENA-specific.
+
+---
+
+### SLIDE 13: Cultural/Market Visual
+
+**Layout:**
+- Visual representation of market-specific context
+- Example: Erin Meyer's Cultural Trust Map (3 trust systems in one elevator)
+- Shows how different markets build trust differently
+- Key insight: "Your elevator has ALL three systems"
+
+**Purpose:** Makes Secret #3 feel researched and market-aware.
+
+---
+
+### SLIDE 14: The System Tease (WSO or Your Named System)
+
+**Layout:**
+- Category label: "THE SYSTEM"
+- System name: "[Your named framework]" (large, bold)
+- 3 component cards, each with:
+  - Orange accent bar on left
+  - Icon (rendered in ORANGE via react-icons)
+  - Component name (ORANGE, bold)
+  - One-line description (GRAY_LIGHT)
+- Transition line in italic at bottom
+
+**Content Pattern:**
 ```
-TIMING: 90 seconds
+THE SYSTEM
+Wedge. Signal. Outcome.
 
-[STEP CENTER - point to each side as you speak]
+[Bolt icon] WEDGE - The one sentence that opens the conversation without triggering resistance.
+[Crosshair icon] SIGNAL - The proof of competence delivered at the exact moment intent surfaces.
+[Chart icon] OUTCOME - The decision path that makes buying feel like a mutual conclusion, not a close.
 
-"Here's the myth that everyone believes:"
+"This is the framework. What it looks like in practice? Let me show you."
+```
 
-[READ LEFT COLUMN - slowly, with frustration in your voice]
+**CRITICAL:** This is a TEASE, not a teach. Name the components, hint at what they do, do NOT explain the methodology.
 
-"You need relationship-building. Coffee meetings. Charisma. And 6-9 months."
+---
 
-[PAUSE - 3 seconds]
+### SLIDE 15: 3 Belief Shifts Summary
 
-[POINT TO RIGHT COLUMN]
+**Layout:**
+- 3 horizontal cards, one per belief shift
+- Each card: "From: [Old belief]" (GRAY) -> "To: [New belief]" (ORANGE)
+- Icon per card (X for "from", check for "to")
 
-"But here's the truth:"
+---
 
-[READ RIGHT COLUMN - slowly, with conviction]
+### SLIDE 16: Cost of Inaction
 
-"Enterprise buyers want proof. Specific, relevant proof delivered before you ask for time.
-They don't care about your charisma. They care about whether you can solve their problem."
+**Layout:**
+- Category label: "THE COST OF DOING NOTHING"
+- 4 stat callouts in a grid (2x2)
+- Each stat: large number + context line
+- Footer: "Every month you wait, this compounds."
 
-[PAUSE - 5 seconds]
+**Content Pattern:**
+```
+THE COST OF DOING NOTHING
 
-"And when you lead with proof? Your sales cycle compresses to 2-3 months. You're not
-grinding coffee meetings. You're responding to buying intent."
+[Stat 1] X deals lost to silence per quarter
+[Stat 2] $XK average deal value sitting in "follow up later"
+[Stat 3] X% of your pipeline is actually frozen, not active
+[Stat 4] Your competitors are already doing this
+
+Every month you wait, this compounds.
 ```
 
 ---
 
-### SLIDE 8: Secret 1 - Framework Tease
+### SLIDE 17: "Does It Work?" Transition
 
 **Layout:**
-- Framework name (large, bold, accent color)
-- One-line description (what it does, not how)
-- Visual: Optional icon or visual hint
+- Single centered text on dark background
+- Bold, large, minimal
 
-**Content example:**
+**Content:**
 ```
-The Pre-Meeting Kill Sheet
+"Okay. Does this actually work?"
 
-Demonstrates specific authority
-before the first conversation
+"Let me show you."
 ```
 
-**Speaker Notes:**
-```
-TIMING: 45 seconds
-
-[PAUSE - build suspense]
-
-"This shift comes from a specific framework. I call it the Pre-Meeting Kill Sheet."
-
-[READ SLIDE - emphasize the name and the result]
-
-"What this framework does is show your prospect specific proof BEFORE you ever sit down
-with them. Not generic proof. Specific proof."
-
-[PAUSE - 3 seconds]
-
-"I'm not going to teach you the full Pre-Meeting Kill Sheet right now. But I'm going
-to show you why it matters by telling you a story."
-
-[TRANSITION to next slide]
-```
+**Speaker Notes:** 10 seconds. Let the question hang. Then click.
 
 ---
 
-### SLIDE 9: Secret 1 - Framework Reveal + Story
+### SLIDES 18-20: Case Studies (3 slides)
 
-**Layout:**
-- Framework name at top
-- Story snippet (3-5 key moments)
-- Visual: Optional (can be blank, focus is on delivery)
+**Layout (per case study):**
+- Category label: "CASE STUDY [#]: [COMPANY NAME]"
+- Subtitle: "Silent Killers eliminated: #X + #Y"
+- Two-column layout:
+  - Left: BEFORE card (dark red-brown background, #1A1010 or similar)
+    - "BEFORE" label in RED_SOFT
+    - 3-4 bullet points of the broken state
+  - Right: AFTER card (dark green background, #152815 or similar)
+    - "AFTER" label in GREEN_SOFT
+    - 3-4 bullet points of the transformed state with specific results
+- Footer: Transition to next case study or combined proof
 
-**Content example:**
-```
-The Pre-Meeting Kill Sheet in Action
+**TEACH MODE:** Frame as "Here's what this looks like in practice with a real company..."
+**SELL MODE:** Frame as "Here's what happened when we implemented this..."
 
-Story:
-A prospect was considering 3 vendors.
-The first two: generic demos, "let's talk about your business"
-Me: Sent a 30-second video showing specific proof of solving
-     their exact problem
-Result: 3-day sales cycle, 1 follow-up conversation, deal closed
-
-Why it worked: Proof before relationship = faster cycle
-```
-
-**Speaker Notes:**
-```
-TIMING: 2 minutes
-
-[STEP CENTER]
-
-"Let me show you this in action. A real story."
-
-[TELL THE STORY - Epiphany Bridge compressed version, ~90 seconds]
-- Setup: Prospect, multiple vendors
-- Conflict: Typical demos failing
-- Epiphany: Sent specific proof instead
-- Result: Deal closed in 3 days
-
-[PAUSE - 5 seconds after the result]
-
-[STEP RIGHT]
-
-"That's the Pre-Meeting Kill Sheet. It's not a complicated system. It's just:
-stop asking for time, start showing proof."
-
-[PAUSE - 3 seconds]
-
-"And once you understand this first secret, the other two become obvious."
-```
+**Color notes (from V6 QA):**
+- BEFORE background: dark reddish (#1A1010)
+- AFTER background: dark green (#152815) - tested for contrast, don't go darker
+- Text in both: GRAY_LIGHT for readability
 
 ---
 
-### SLIDE 10: Secret 2 Title Slide
+### SLIDE 21: Combined Proof (Capstone)
 
 **Layout:**
-- Large title (52pt)
-- Subtitle (28pt)
+- Black background (#000000) - the ONLY slide with pure black
+- Separated text elements (NOT one large text array - prevents bottom clipping):
+  - Top: "Three companies. Over" (20pt, GRAY_LIGHT)
+  - Center: "$[X] million" (54pt, WHITE, bold)
+  - Below center: "in combined new revenue." (20pt, GRAY_LIGHT)
+  - Bottom: "Same pattern every time. The positioning changed. Not the product." (16pt, ORANGE)
 
-**Content example:**
-```
-Secret 2
+**Speaker Notes:** 30 seconds. Let the number do the work. 3-second pause after the number. Then the pattern statement.
 
-Why You Think You Can't Do This
-(And Why That's Wrong)
-```
-
-**Speaker Notes:**
-```
-TIMING: 20 seconds
-
-[STEP LEFT]
-
-"The second secret is about you. About why you think you can't do this."
-
-[PAUSE - 3 seconds]
-
-"And why you absolutely can."
-```
+**IMPORTANT PptxGenJS NOTE:** Use SEPARATE addText() calls for each text element. Do NOT put them in one text array - the large 54pt text will push bottom content off the slide.
 
 ---
 
-### SLIDE 11: Secret 2 - Teaching + Story
+### SLIDE 22: The Offer
 
-**Layout:**
-- Research/insight statement (28pt)
-- Story snippet (3-5 lines)
-- Visual: Optional research graphic or illustration
+**Layout (two columns):**
+- Category label: "THE [OFFER NAME]"
+- Title: "[Offer headline]" (28pt, bold)
+- **Left column (60% width):** Stack items
+  - Each item is a card with:
+    - Icon (ORANGE, react-icons)
+    - Item name (WHITE, bold, 14pt)
+    - Myth linkage in italic (GRAY, 11pt): "Fixes Myth X: replaces [old way] with [new way]"
+- **Right column (40% width):** Logistics panel (BG_CARD2 background)
+  - Cohort size (ORANGE headline + description)
+  - Duration
+  - Format (mastermind, course, etc.)
+  - Guarantee (green checkmark)
+  - Email/contact
+- **Bottom:** Qualifying criteria in small text ("IF you're in B2B. Crossed PMF. Ready to scale.")
 
-**Content example:**
-```
-What the Research Shows:
-
-"Sales success is 20% methodology, 80% belief in the methodology"
-— Gong Sales Psychology Study
-
-The Story:
-Sarah, 2 years at Uniphore, introverted, zero cold outreach experience.
-Trained her on signal-based system.
-Month 1: 15 conversations. Month 2: 3 deals.
-She said: "I never would have done this with coffee meetings.
-But this feels like methodology, not personality."
-```
-
-**Speaker Notes:**
-```
-TIMING: 90 seconds
-
-[STEP CENTER]
-
-"Here's what research shows:"
-
-[READ THE RESEARCH STAT - pause after it]
-
-"Eighty percent belief. Not eighty percent skill. Belief."
-
-[PAUSE - 3 seconds]
-
-[TELL THE STORY - compress it to 60 seconds]
-- Setup: Sarah, introverted, scared
-- Conflict: Doesn't believe she can do this
-- Epiphany: System works, it's not about personality
-- Result: 3 deals in month 2
-
-[PAUSE - 5 seconds]
-
-[STEP RIGHT]
-
-"Sarah didn't develop charisma in two months. She didn't suddenly become extroverted.
-What changed? She believed in the system. And the system worked."
-
-[PAUSE - 3 seconds]
-
-"You have the same capacity as Sarah. The question is: do you believe in the system?"
-```
+**MODE VARIATIONS:**
+- **TEACH MODE:** "For those who want to implement this systematically..." Soft. No urgency. Session 1 Guarantee.
+- **SELL MODE:** Stack reveal with running total. "But wait, there's more." Scarcity counter. Deadline.
+- **HYBRID:** Features from both, medium urgency.
 
 ---
 
-### SLIDE 12: Secret 2 - Framework Reveal
+### SLIDE 23: Close
 
 **Layout:**
-- Framework name (large, accent color)
-- One-line description
-- Visual: Optional icon or visual hint
+- Speaker name/title
+- Contrarian thesis (the memorable one-liner they'll repeat to others)
+- Strikethrough on a word for visual pattern interrupt
+- Contact info
+- Event host logo
 
-**Content example:**
+**Content Pattern:**
 ```
-The 30-Second Trust Flip
+[Speaker name] | [Company]
 
-Converts skeptics in their first 30 seconds
-on your page, email, or video
-```
-
-**Speaker Notes:**
-```
-TIMING: 45 seconds
-
-[STEP LEFT]
-
-"This comes down to a framework I call the 30-Second Trust Flip."
-
-[READ SLIDE]
-
-"What this does is flip someone's belief in 30 seconds. Not 30 minutes, not 30 days.
-30 seconds."
-
-[PAUSE - 3 seconds]
-
-"When you have that skill, charisma stops mattering. Proof starts mattering."
-
-[PAUSE - 3 seconds - transition to Secret 3]
-```
-
----
-
-### SLIDE 13: Secret 3 Title Slide
-
-**Layout:**
-- Large title (52pt)
-- Subtitle (28pt)
-
-**Content example:**
-```
-Secret 3
-
-How the Market Has Actually Changed
-```
-
-**Speaker Notes:**
-```
-TIMING: 20 seconds
-
-[STEP RIGHT]
-
-"The third secret is about the world. About how the market has fundamentally shifted."
-
-[PAUSE - 3 seconds]
-
-[READ SLIDE]
-```
-
----
-
-### SLIDE 14: Secret 3 - Reframe + Story
-
-**Layout:**
-- Reframing statement (28pt)
-- Story snippet (3-5 lines)
-- Visual: Optional market data or illustration
-
-**Content example:**
-```
-The Market Has Shifted
-
-Buyers are tired of relationship theater.
-They want: Proof. Specificity. Efficiency.
-
-The Story:
-Fortune 500 company in GCC region.
-Traditional relationship approach: 18 months, zero deals.
-Signal-based system: 90 days, 12 qualified deals.
-Buyer feedback: "We appreciate the specificity and proof upfront."
-```
-
-**Speaker Notes:**
-```
-TIMING: 90 seconds
-
-[STEP CENTER]
-
-"The third secret is about the market. And here's the reality:"
-
-[READ REFRAME STATEMENT - with conviction]
-
-"Buyers are not buying relationships anymore. They're buying solutions. And they want
-proof before they give you time."
-
-[PAUSE - 5 seconds]
-
-[TELL THE STORY - 60 seconds]
-- Setup: Fortune 500, tried traditional approach
-- Conflict: 18 months, zero results
-- Epiphany: Switched to signal-based
-- Result: 12 qualified deals in 90 days, buyer approval
-
-[PAUSE - 7 seconds after result]
-
-[STEP RIGHT]
-
-"That's not an anomaly. That's the new normal. The market has changed. Buyers expect
-proof upfront."
-```
-
----
-
-### SLIDE 15: Secret 3 - Framework Reveal
-
-**Layout:**
-- Framework name (large, accent color)
-- One-line description
-- Visual: Optional icon
-
-**Content example:**
-```
-The WSO Cultural Accelerator
-
-Maps buying signals to specific cultural behaviors
-in Gulf markets
-```
-
-**Speaker Notes:**
-```
-TIMING: 45 seconds
-
-[STEP LEFT]
-
-"This framework is the WSO Cultural Accelerator."
-
-[READ SLIDE]
-
-"It exists because selling in the Gulf is different. MENA markets move on relationships,
-yes. But MENA buyers also reward specificity and cultural understanding faster than
-Western markets."
-
-[PAUSE - 3 seconds]
-
-"When you understand the cultural signal underneath the behavior, everything accelerates."
-```
-
----
-
-### SLIDE 16: The 3 Belief Shifts Summary
-
-**Layout:**
-- Three boxes or cards, one per belief shift
-- Old belief → New belief format
-
-**Content example:**
-```
-The Three Belief Shifts
-
-BELIEF 1:
-Coffee meetings close deals
-→ Proof of competence closes deals
-
-BELIEF 2:
-You need charisma to succeed
-→ You need methodology and belief in methodology
-
-BELIEF 3:
-Buyers prefer relationship-building
-→ Buyers want proof and specificity upfront
-```
-
-**Speaker Notes:**
-```
-TIMING: 90 seconds
-
-[STEP CENTER]
-
-"So here's what just happened. You believed three things when we started."
-
-[POINT TO FIRST BOX]
-
-"You believed coffee meetings were how enterprise deals closed. Now you see:
-it's proof of competence."
-
-[PAUSE - 3 seconds, point to second box]
-
-"You believed you needed charisma. Now you see: you need methodology."
-
-[PAUSE - 3 seconds, point to third box]
-
-"You believed buyers wanted relationship-building. Now you see: they want proof and
-specificity."
-
-[PAUSE - 5 seconds]
-
-[STEP RIGHT]
-
-"These three belief shifts change everything. Because once you believe these, the
-question becomes: how do I actually implement this?"
-
-[PAUSE - 3 seconds]
-
-"And that's what I want to show you right now."
-```
-
----
-
-### SLIDE 17: Transition to Offer
-
-**Layout:**
-- Transition statement (32pt)
-- Optional: Soft visual transition
-
-**Content example:**
-```
-Now That You See This Is Possible...
-
-Here's How to Actually Implement It
-```
-
-**Speaker Notes:**
-```
-TIMING: 30 seconds
-
-[STEP LEFT - soften the energy slightly]
-
-"So here's the thing. Knowing these three secrets is one thing. Actually implementing them
-is another."
-
-[READ SLIDE]
-
-[PAUSE - 3 seconds]
-
-"That's why I've put together a complete implementation package for you."
-
-[STEP CENTER]
-```
-
----
-
-### SLIDE 18: Offer Stack
-
-**Layout:**
-- Stack components listed top to bottom
-- Visual: Icons or number indicators (1, 2, 3, etc.)
-- Emphasize value, not price
-
-**Content example:**
-```
-Here's What You Get:
-
-1. Free Signal Audit
-   → Discover your company's buying intent blind spots
-   → Identify where you're losing deals to faster competitors
-
-2. 90-Day Implementation Playbook
-   → Pre-Meeting Kill Sheet templates
-   → 30-Second Trust Flip scripts
-   → WSO Cultural Accelerator for MENA markets
-
-3. SalesMfast Signal Engine Beta Access
-   → Live buying intent data
-   → Automated signal tracking
-   → 90-day implementation support
-
-4. Group Q&A Call
-   → Direct access to ask implementation questions
-   → Case studies from other companies
-```
-
-**Speaker Notes:**
-```
-TIMING: 2 minutes
-
-[STEP CENTER - command the stage]
-
-"I'm not asking you to buy something generic. I'm offering you four specific things."
-
-[POINT TO #1 - slow, deliberate]
-
-"First: a free Signal Audit. You'll get specific visibility into where you're losing deals
-to competitors who are faster."
-
-[PAUSE - 3 seconds, point to #2]
-
-"Second: the 90-Day Playbook. Every template, every script, every framework you need to
-implement these three secrets."
-
-[PAUSE - 3 seconds, point to #3]
-
-"Third: early access to the SalesMfast Signal Engine. This is the technology platform
-that does the heavy lifting."
-
-[PAUSE - 3 seconds, point to #4]
-
-"And fourth: direct access to me. Group Q&A to make sure you're implementing correctly."
-
-[PAUSE - 5 seconds - let it sink]
-
-[STEP RIGHT]
-
-"That's everything you need to go from coffee meetings to signal-based selling."
-```
-
----
-
-### SLIDE 19: CTA + Urgency
-
-**Layout:**
-- Clear CTA (button-style text, large)
-- Scarcity/urgency mechanic
-- Optional: Deadline or spot availability
-
-**Content example:**
-```
-Register Now
-
-Free Signal Audit + 90-Day Playbook
-Limited to 50 founders this year
-
-Spots filling fast
-
-[Registration link or QR code]
-
-Registration closes Friday
-```
-
-**Speaker Notes:**
-```
-TIMING: 60 seconds
-
-[STEP CENTER - confident, direct]
-
-"Here's what I need you to do."
-
-[READ SLIDE - point to CTA]
-
-"Register right now. You'll get the free audit, the playbook, everything."
-
-[PAUSE - 3 seconds]
-
-"We're limiting this to 50 founders who are serious about implementing this year.
-We're already at 35 registrations."
-
-[PAUSE - let that land]
-
-"And this closes Friday. So if you're serious about replacing coffee meetings with
-signal-based selling, register now."
-
-[PAUSE - 5 seconds - let the urgency sit]
-
-[STEP LEFT - soften]
-
-"I've been doing this for 20 years. I wouldn't offer this if I didn't believe it would
-change your business. So register. Do the audit. See what you're missing."
-```
-
----
-
-### SLIDE 20: Closing Frame
-
-**Layout:**
-- Simple, powerful closing statement
-- Visual: Optional brand logo or empty space
-
-**Content example:**
-```
-Remember:
-
-Relationship-based selling is a tax on growth.
-
+"[Contrarian thesis statement]"
+~Relationship-based~ selling is a tax on growth.
 Signal-based trust engineering is the replacement.
 
-Thank you.
-```
-
-**Speaker Notes:**
-```
-TIMING: 45 seconds
-
-[STEP CENTER - pause for 3 seconds in silence]
-
-[READ SLIDE - slowly, with gravitas]
-
-[PAUSE - 7 seconds of complete silence]
-
-[SMALL SMILE]
-
-"Thank you. Registration link is in the chat. Questions?"
+[Email] | [Social handle]
+[Event host logo]
 ```
 
 ---
 
-## Implementation Notes for PptxGenJS
+## PptxGenJS Implementation Notes
 
-**Deck generation checklist:**
-- [ ] 20 slides, 16:9 aspect ratio
-- [ ] Background color: #0F1923 (all slides)
-- [ ] Accent color: #FF6B35 (titles, highlights)
-- [ ] Text: Inter font family (use Arial fallback if not available)
-- [ ] Every slide has speaker notes
-- [ ] Speaker notes readable (12pt minimum, high contrast)
-- [ ] Headings: 44-56pt bold
-- [ ] Body text: 24-28pt regular
-- [ ] Max 3 lines text per slide
-- [ ] Minimal decoration (focus on content + delivery)
-- [ ] Generate both .pptx and PDF for QA
-- [ ] Images positioned 80% width max (for mobile-friendly slides)
+### Setup Pattern
+```javascript
+const pptxgen = require("pptxgenjs");
+const React = require("react");
+const ReactDOMServer = require("react-dom/server");
+const sharp = require("sharp");
+// Import specific icons from react-icons/fa
 
-**Speaker notes format:**
+function renderIconSvg(Comp, color, size = 256) {
+  return ReactDOMServer.renderToStaticMarkup(
+    React.createElement(Comp, { color, size: String(size) })
+  );
+}
+
+async function iconPng(Comp, color, size = 256) {
+  // CRITICAL: react-icons needs # prefix on colors
+  const c = color.startsWith("#") ? color : "#" + color;
+  const svg = renderIconSvg(Comp, c, size);
+  const buf = await sharp(Buffer.from(svg)).png().toBuffer();
+  return "image/png;base64," + buf.toString("base64");
+}
+
+// Shadow factory - MUST use factory to avoid PptxGenJS mutation bug
+const mkShadow = () => ({
+  type: "outer", blur: 6, offset: 2, angle: 135,
+  color: "000000", opacity: 0.2
+});
 ```
-TIMING: X minutes/seconds
 
-[STAGE DIRECTION - move left, pause, etc.]
+### Slide Helpers
+```javascript
+function addTopBar(s) {
+  s.addShape("rect", { x: 0, y: 0, w: 10, h: 0.06,
+    fill: { color: ORANGE } });
+}
 
-"SPEAKING TEXT"
+function addFooter(s) {
+  s.addText("smorchestra.ai  |  @mamounalamouri",
+    { x: 5.5, y: 5.25, w: 3.5, h: 0.3, fontSize: 9,
+      color: GRAY, fontFace: "Arial", align: "right" });
+}
 
-[PAUSE - X seconds - description of what to do]
+function addSlideNum(s, n) {
+  s.addText(String(n),
+    { x: 9.3, y: 5.15, w: 0.5, h: 0.4, fontSize: 11,
+      color: GRAY, fontFace: "Arial", align: "right" });
+}
 ```
+
+### Known Pitfalls (from V6 QA)
+
+1. **Icon color bug:** react-icons ignores colors without # prefix. Always use "#E8651A" not "E8651A".
+2. **Shadow mutation:** PptxGenJS mutates shadow objects. Use `mkShadow()` factory, never reuse a shadow object.
+3. **Footer/slide number overlap:** Footer at x:6.5 collides with slide number at x:9.3. Use x:5.5, w:3.5 for footer.
+4. **Large text clipping on black slides:** One text array with 54pt text pushes bottom content off-slide. Use separate addText() calls.
+5. **BEFORE/AFTER box contrast:** Don't use fills darker than #1A1010 (red) or #152815 (green). Text becomes unreadable.
+6. **LibreOffice malloc warning:** `malloc_consolidate(): unaligned fastbin chunk detected` appears during PDF conversion. Ignore it - PDF is created successfully despite exit code 134.
+
+---
+
+## Visual QA Checklist
+
+After generating the deck, convert to PDF/images and check:
+
+- [ ] All text fully visible (no clipping at edges or bottom of boxes)
+- [ ] Icons render in ORANGE, not black
+- [ ] Footer text fully visible, not overlapping slide numbers
+- [ ] BEFORE/AFTER boxes have readable text contrast
+- [ ] No overlapping elements (text through shapes, lines through words)
+- [ ] Consistent margins (minimum 0.5" from slide edges)
+- [ ] Columns and cards aligned consistently
+- [ ] Slide numbers present and readable
+- [ ] Quote icons visible against dark background
+- [ ] Category labels (all caps, charSpacing) render correctly

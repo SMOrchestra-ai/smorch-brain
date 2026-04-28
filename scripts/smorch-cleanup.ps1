@@ -27,6 +27,17 @@ param(
     [switch]$Help
 )
 
+# --- Prerequisite checks ---
+function Test-ScriptPrerequisites {
+    $missing = @()
+    if (-not (Get-Command git -ErrorAction SilentlyContinue)) { $missing += "git" }
+    if ($missing.Count -gt 0) {
+        Write-Host "ERROR: Missing required tools: $($missing -join ', ')" -ForegroundColor Red
+        exit 1
+    }
+}
+Test-ScriptPrerequisites
+
 $VERSION = "1.0.0"
 $SKILLS_DIR = Join-Path $env:USERPROFILE ".claude\skills"
 $PLUGINS_DIR = Join-Path $env:USERPROFILE ".claude\plugins"

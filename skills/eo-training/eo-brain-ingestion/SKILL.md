@@ -1,3 +1,4 @@
+<!-- Copyright SMOrchestra.ai. All rights reserved. Proprietary and confidential. -->
 ---
 name: eo-brain-ingestion
 description: EO Brain Ingestion Engine - reads all 5 EO scorecard results, validates quality gates, coaches weak dimensions, and produces 13 structured files (10 business context + 3 AI instruction layers) that become the student's MicroSaaS Operating System brain. Triggers on 'ingest scorecards', 'build my brain', 'load my project', 'brain ingestion', 'create project files', 'process my scorecards'. This is Skill 1 of the EO Training System.
@@ -251,29 +252,475 @@ After coaching, tell the student: "Your [dimension] is now stronger. You can opt
 
 - Maximum 3 coaching questions per scorecard
 - Maximum 2 rounds of iteration per dimension
-- If after 2 rounds a dimension still scores below threshold (check: does the answer now include named entities, specific numbers, or evidence?), proceed anyway and flag it in the output files as "COACHING NOTE: [dimension] scored [X] after coaching, threshold is [Y]. Specific gap: [what's still missing]."
+- If after 2 rounds a dimension still feels weak, proceed anyway and flag it in the output files as "COACHING NOTE: [dimension] may need further refinement"
 - Never coach on dimensions that already pass threshold
 - Keep coaching questions sharp and specific, not open-ended
 
 ---
 
+## DATA EXTRACTION MAP
+
+This is the core mapping: which scorecard answers feed which output files.
+
+### companyprofile.md
+
+| Field | Source |
+|-------|--------|
+| Venture Name | SC1 header: `**Venture:**` |
+| One-Line Description | SC1 Q1 first paragraph (extract core problem statement) |
+| Problem Statement | SC1 Q1 full answer (the specific problem being solved) |
+| Product Category | SC1 Q4 "Category Definition" or SC1 positioning section |
+| Target Market | SC1 Q3 "3-Level Niche" Market level |
+| Sub-Market | SC1 Q3 Sub-Market level |
+| Niche | SC1 Q3 Niche level |
+| Niche Size | SC1 Q3 estimated niche size |
+| MVP Features | SC1 Q5 core features list |
+| Technical Approach | SC1 Q5 technical stack |
+| Pricing Tiers | SC1 Q5 pricing section |
+| Launch Geography | SC1 Q7 countries |
+| Overall Readiness | Founder Brief overall score, or average of SC1-SC5 |
+| Assessment Scores | All 5 scorecard scores in table format |
+
+### founderprofile.md
+
+| Field | Source |
+|-------|--------|
+| Founder Name | SC1 header or student input |
+| Background | SC1 Q2 founder-problem fit (professional history) |
+| Domain Expertise | SC1 Q2 specific experience relevant to the problem |
+| Unfair Advantage | SC1 Q2 "Triple Assessment" or unique qualification |
+| Archetype | SC4 "Founder Archetype" field |
+| Strongest Skill | SC4 Q1 answer |
+| Risk Profile | SC4 Q4 answer |
+| Time Commitment | SC4 Q3 answer |
+| Investment Capacity | SC4 Q2 answer |
+| Network Strength | SC5 Q7 answer |
+| Content Comfort | SC5 Q3 answer |
+| MENA Experience | SC1 Q7 + SC4 Q10 MENA execution advantage |
+
+### brandvoice.md
+
+| Field | Source |
+|-------|--------|
+| Attractive Character Archetype | SC1 Q6 (Reluctant Hero, Leader, Adventurer, etc.) |
+| Origin Story | SC1 Q6 founder story arcs |
+| Brand Personality Traits | EXTRACT from SC1 Q6 tone + SC1 Q1 writing style |
+| Language Defaults | SC1 Q7 language strategy |
+| Tone Guidelines | **GAP-FILL** Round 1 Q2 |
+| Content Voice Examples | **GAP-FILL** Round 1 Q2 (writing sample) |
+| Words to Use | DERIVE from scorecard writing style + Gap-Fill Round 1 Q2 |
+| Words to Avoid | **GAP-FILL** Round 1 Q3 |
+
+### niche.md
+
+| Field | Source |
+|-------|--------|
+| Market Level | SC1 Q3 Level 1 |
+| Sub-Market Level | SC1 Q3 Level 2 |
+| Niche Level | SC1 Q3 Level 3 |
+| Niche Demographics | SC1 Q3 (age, geography, role, stage) |
+| Niche Size Estimate | SC1 Q3 number |
+| Validation Evidence | SC1 Q1 validation data (interviews, waitlist, etc.) |
+| Niche Selection Rationale | SC1 Q3 reasoning for narrowing |
+| Adjacent Niches | EXTRACT from SC1 Q3 if mentioned, otherwise note as expansion path |
+
+### icp.md
+
+| Field | Source |
+|-------|--------|
+| Persona Name | SC2 Q1 named persona |
+| Demographics | SC2 Q1 (age, location, role, company size) |
+| Psychographics | SC2 Q1 (motivations, fears, daily routine) |
+| Current Workflow | SC2 Q1 "How he solves it today" section |
+| Pain #1 | SC2 Q2 Pain 1 (urgency, frequency, cost) |
+| Pain #2 | SC2 Q2 Pain 2 (urgency, frequency, cost) |
+| Pain #3 | SC2 Q2 Pain 3 (urgency, frequency, cost) |
+| Additional Pains | SC2 Q2 Pains 4-5 if present |
+| Dream Outcome - Business | SC2 Q3 business metrics transformation |
+| Dream Outcome - Emotional | SC2 Q3 emotional/identity shift |
+| Buyer Journey - Current State | SC2 Q4 "Current State" section |
+| Buyer Journey - Obstacles | SC2 Q4 obstacles list |
+| Buyer Journey - Solution Bridge | SC2 Q4 "Solution Bridge" section |
+| Access Channels - Online | SC2 Q5 online congregation points |
+| Access Channels - Offline | SC2 Q5 offline gathering spots |
+| Validation Plan | SC2 Q6 30-day reach plan |
+| Validation Evidence | SC2 Q1 validation marker (interviews, survey, pilot) |
+
+### positioning.md
+
+| Field | Source |
+|-------|--------|
+| Category Definition | SC1 Q4 category statement |
+| Competitive Alternatives | SC1 Q4 list of alternatives |
+| Unique Mechanism | SC1 Q4 unique mechanism name + description |
+| One-Line Wedge | SC1 Q4 wedge statement |
+| Positioning Statement | SYNTHESIZE from SC1 Q4 (Category + For + Unlike + Because) |
+| Value Proposition | SYNTHESIZE from SC1 Q4 + SC2 Q3 (problem + solution + dream outcome) |
+| Key Differentiators | SC1 Q4 + SC4 Q10 (execution advantages) |
+| Positioning Against Free | SC2 Q2 Pain 3 if about "free alternatives" |
+
+### competitor-analysis.md
+
+| Field | Source |
+|-------|--------|
+| Direct Competitors | SC1 Q4 competitive alternatives (extract names) |
+| Competitor Weaknesses | SC1 Q4 "why each fails" reasoning |
+| Regional Competitors | **GAP-FILL** Round 2 Q5 |
+| Feature Comparison | **GAP-FILL** Round 2 Q6 (competitor weakness) |
+| Pricing Comparison | SC3 B2 competitor pricing data if present |
+| Positioning Gap | SYNTHESIZE from SC1 Q4 unique mechanism vs competitors |
+
+### market-analysis.md
+
+| Field | Source |
+|-------|--------|
+| Pain Reality Evidence | SC3 B1 full answer (proof stack) |
+| Purchasing Power Evidence | SC3 B2 full answer (pricing benchmarks) |
+| Evidence Grade | SC3 B3 selected option |
+| TAM | SC3 C1 TAM section |
+| SAM | SC3 C1 SAM section |
+| SOM | SC3 C1 SOM section |
+| Year 1 Revenue Projection | SC3 C1 SOM revenue range |
+| Growth Signals | SC3 C2 full answer (all cited signals) |
+| Competitive Moat | SC3 C3 selected option |
+| MENA Market Dynamics | SC1 Q7 + SC3 C2 MENA-specific signals |
+
+### strategy.md
+
+| Field | Source |
+|-------|--------|
+| Recommended Path | SC4 "Recommended Path" field |
+| Path Rationale | SC4 Q5 full answer (why this path) |
+| Backup Path | SC4 "Backup Path" field |
+| Backup Trigger | SC4 "Activate if" condition |
+| Founder Archetype | SC4 "Founder Archetype" field |
+| 90-Day Roadmap | SC4 "90-Day Roadmap" section |
+| All Paths Comparison | SC4 "All 4 Paths Compared" section |
+| Execution Advantage | SC4 Q10 MENA execution advantage |
+| Biggest Challenge | SC4 Q10 biggest challenge + mitigation |
+
+### gtm.md
+
+| Field | Source |
+|-------|--------|
+| GTM Motions Ranked | SC5 full 13-motion table with scores and tiers |
+| Top 5 Motions Detail | SC5 top 5 descriptions (Fit, Readiness, MENA, Best For, MENA Note) |
+| PRIMARY Motions | SC5 all motions with tier = PRIMARY |
+| SECONDARY Motions | SC5 all motions with tier = SECONDARY |
+| CONDITIONAL Motions | SC5 all motions with tier = CONDITIONAL |
+| SKIP Motions | SC5 all motions with tier = SKIP |
+| 72-Hour Launch Commitment | SC5 "72-Hour Launch Commitment" section |
+| How to Start Top 3 | SC5 "How to Start Your Top 3 Motions" section |
+| Access Channels | SC2 Q5 (cross-reference for channel alignment) |
+| Monthly Budget | SC5 Q6 answer |
+| Outreach Stack | SC5 Q5 answer |
+| Content Cadence | SC5 Q2 answer |
+
+### personal-preferences.md [NEW]
+
+| Field | Primary Source | Secondary Source |
+|-------|---------------|------------------|
+| Identity | founderprofile.md (name, background, expertise) | companyprofile.md (venture name, description) |
+| Core Thesis | positioning.md (unique mechanism, wedge) + brandvoice.md (origin story) | **GAP-FILL** Round 1 Q1 |
+| Decision Framework | strategy.md (archetype + path) + founderprofile.md (risk profile) | gtm.md (top motions as priority signals) |
+| Operating Modes | founderprofile.md (archetype) + brandvoice.md (tone) | **GAP-FILL** Round 1 Q4 |
+| Communication | brandvoice.md (tone guidelines, personality traits) | brandvoice.md (words to use) |
+| Hard Constraints | brandvoice.md (words to avoid) | **GAP-FILL** Round 1 Q3 |
+
+### cowork-instruction.md [REVISED: now founder-scoped]
+
+| Field | Primary Source | Gap-Fill Source |
+|-------|---------------|-----------------|
+| Who I Am | founderprofile.md + companyprofile.md | None |
+| What I Build | companyprofile.md (all product lines) | **GAP-FILL** Round 2 Q6 |
+| My Tool Stack | companyprofile.md (technical approach) | **GAP-FILL** Round 2 Q7 |
+| How I Work | strategy.md (archetype) + brandvoice.md (tone) | None |
+| Quality Standards | brandvoice.md (tone by context) | **GAP-FILL** Round 2 Q8 |
+| Language Defaults | brandvoice.md (language defaults) | None |
+| File Naming | Derive from venture name | **GAP-FILL** Round 2 Q8 |
+| What Not To Do | brandvoice.md (words to avoid) + positioning.md | None |
+
+### project-instruction.md [REVISED: now includes technical execution]
+
+| Section | Source |
+|---------|--------|
+| **BUSINESS CONTEXT** | |
+| What This Project Is | companyprofile.md (one-liner + problem) |
+| Who We Serve | icp.md (persona summary, top 3 pains) |
+| Positioning | positioning.md (full statement + unique mechanism) |
+| GTM Priority | gtm.md (top 3 motions with scores) |
+| Strategy Path | strategy.md (recommended path + 90-day summary) |
+| MENA Rules | niche.md (geography) + SC1 Q7 (cultural dynamics) |
+| **TECHNICAL CONTEXT** | |
+| Tech Stack | companyprofile.md (technical approach). Placeholder until eo-tech-architect. |
+| Project Structure | Template derived from tech stack. Placeholder until scaffold. |
+| Key Context Files | Point to project-brain/ directory |
+| Build Instructions | Standard EO 6-step sequence |
+| Design System | brandvoice.md (personality) + gap-fill for colors/fonts |
+| Quality Gates | Standard EO gates |
+| Current Status | Set to initial. Updated by downstream skills. |
+| Voice for UI Copy | brandvoice.md filtered for UI rules |
 
 ---
 
-## DATA EXTRACTION MAP
+## OUTPUT FILE SPECIFICATIONS
 
-> See `references/data-extraction-map.md` for the complete field-by-field mapping.
+### Specification: personal-preferences.md
+
+**Purpose:** Ready-to-paste text for Claude.ai Settings > Profile > Personal Preferences.
+
+**Format:** Plain text with section labels. NO markdown headers (Claude.ai settings does not render markdown). NO XML tags. Just clean, readable instruction text with ALL-CAPS section labels.
+
+**Target length:** 40-80 lines.
+
+**Instruction Design Principles Applied:**
+1. Positive constraints: "Use specific language: numbers over claims" instead of "Don't use buzzwords"
+2. Behavioral rules: "When analyzing a market, apply [framework]" instead of "Be a good strategist"
+3. Critical rules at edges: most important rules in first and last sections
+4. Verifiable: every rule can be checked in 5 seconds ("Did Claude include an ROI calculation? Yes/No")
+5. Meta-patterns: named reasoning frameworks that scale across tasks
+
+**Archetype-to-Mode Mapping Table:**
+
+| Archetype | Mode 1 Name | Mode 1 Behavior | Mode 2 Name | Mode 2 Behavior |
+|-----------|-------------|------------------|-------------|------------------|
+| The Closer | Ruthless Mentor | Challenge assumptions, pressure-test revenue logic, no cheerleading | Super Coworker | Execute like senior hire, flag risks inside execution |
+| The Builder | Technical Advisor | Challenge architecture, question scope, push for simplicity | Build Partner | Build fast, ship early, iterate from live data |
+| The Networker | Strategic Advisor | Challenge positioning, question differentiation, push for specificity | Growth Partner | Sequence introductions, build social proof, leverage relationships |
+| The Operator | Systems Thinker | Challenge efficiency, question process, push for automation | Execution Engine | Optimize workflows, remove manual steps, measure everything |
+
+**Output Template:**
+
+```
+[Founder name]. [Role], [Company]. [1-sentence background from founderprofile.md]. Based in [location]. Building [venture name]: [one-line description].
+
+CORE THESIS
+[Synthesized from positioning.md unique mechanism + brandvoice.md origin story + Gap-Fill Q1. Frame as the founder's contrarian belief about their market. Structure: "Most people think X. I believe Y because Z." Maximum 3-4 sentences. Must be specific enough that someone reading it knows exactly what this founder stands for.]
+
+DECISION FRAMEWORK
+When evaluating anything, apply this stack:
+1. [Derived from archetype. The Closer: "Revenue signal first. If nobody will pay, do not build."]
+2. [Derived from niche.md + market-analysis.md regional context]
+3. [Derived from gtm.md top motion priorities]
+4. [Derived from strategy.md path rationale]
+5. [Derived from founderprofile.md risk profile]
+
+MODE 1: [Name from archetype table] (default)
+Active when: [Derived from Gap-Fill Q4 + archetype behavior]
+- [3-4 behavioral rules from archetype Mode 1 column + brandvoice tone]
+
+MODE 2: [Name from archetype table] (triggered when direction is agreed)
+Active when: [Derived from Gap-Fill Q4 + archetype behavior]
+- [3-4 execution rules from archetype Mode 2 column + strategy path]
+
+COMMUNICATION
+[3-4 rules from brandvoice.md tone guidelines, rephrased as positive behavioral instructions. Example: "Lead with commercial impact and specific numbers" not "Don't be vague"]
+
+HARD CONSTRAINTS
+[From brandvoice.md words to avoid + Gap-Fill Q3, rephrased as positive replacements where possible. Example: "Replace these words with specific language: leverage, synergy, ecosystem" not just "Never say leverage"]
+```
+
+---
+
+### Specification: cowork-instruction.md [REVISED]
+
+**Purpose:** Ready-to-paste global CLAUDE.md that works across ALL the founder's projects.
+
+**Key Design Change:** This is FOUNDER-scoped, not project-scoped. It encodes how the founder works, what tools they use, and what quality standards they apply. It must work whether the founder is building their MicroSaaS, writing a proposal, or creating content.
+
+**Format:** Standard CLAUDE.md markdown format.
+
+**Target length:** 80-150 lines.
+
+**Output Template:**
+
+```markdown
+# [Founder Name] - Global Cowork Instructions
+
+## WHO I AM
+[Name] - [Role]. [1-2 sentence background from founderprofile.md]
+Building [venture name(s)]: [one-line each]
+Based in [location].
+
+## WHAT I BUILD
+[List each business line/product with one-line description. If the student runs multiple ventures, list all from Gap-Fill Round 2 Q6. If only one venture, list it with product lines if applicable.]
+
+## MY TOOL STACK
+[Grouped by function from Gap-Fill Round 2 Q7. Categories as applicable:]
+[CRM: tool name]
+[Cold Email: tool name]
+[LinkedIn: tool name]
+[Automation: tool name]
+[AI: tool name]
+[Design: tool name]
+[Other: tool name]
+
+## HOW I WORK
+1. ASK QUESTIONS WHEN: [Specific triggers derived from archetype. The Closer: "target audience is ambiguous, deliverable format is not specified, pricing tier is unclear, which business line this is for." The Builder: "architecture decision has multiple valid paths, scope is not bounded, dependencies are unclear."]
+2. PROCEED WITHOUT ASKING WHEN: [Derived from archetype. The Closer: "task is straightforward, context is clear from the folder, continuation of existing work." The Builder: "implementation path is obvious, tests will catch errors, can be iterated."]
+3. SELF-LEARNING: When we build something complex together (3+ steps, likely to repeat), offer to create a reusable skill capturing the structure, preferences, and decision logic.
+
+## QUALITY STANDARDS BY DELIVERABLE
+[Separate rules for each type the founder produces, from Gap-Fill Round 2 Q8 + brandvoice.md tone:]
+- Proposals/Decks: [Rules derived from archetype + brandvoice. Example for The Closer: "Lead with business problem and commercial impact. ROI framing mandatory. Numbers and timelines always included."]
+- Campaign materials: [Example: "Pattern interrupt in first line. Short sentences. Low-friction CTA."]
+- Content (YouTube, LinkedIn): [Example: "Contrarian angle mandatory. Teach frameworks, not features."]
+- Technical docs: [Example: "Include the 'why' alongside the 'how'. Diagram when possible."]
+
+## LANGUAGE DEFAULTS
+[From brandvoice.md language defaults section. Example:]
+- Client-facing B2B: English unless specified
+- SME materials: Arabic-first with English tech terms
+- YouTube: Check which channel/language before starting
+- LinkedIn: English
+
+## FILE NAMING CONVENTIONS
+[From Gap-Fill Round 2 Q8 or derived from venture name. Example:]
+- [venture-slug]-[type]-[date].ext
+
+## WHAT NOT TO DO
+[From brandvoice.md words to avoid + positioning.md competitive alternatives. Rephrased as positive replacements:]
+- Use specific language instead of: [words to avoid list]
+- Recommend [venture-native approaches] instead of: [competitive alternatives that fail for this founder's market]
+- [MENA-specific rules if applicable: "Default to MENA market context, not Western/US assumptions"]
+```
+
+---
+
+### Specification: project-instruction.md [REVISED]
+
+**Purpose:** Ready-to-paste project CLAUDE.md. The "Day 1 onboarding doc" for any AI tool working on this specific project.
+
+**Key Design Change:** Now includes BOTH business strategy AND technical execution context. Two clearly separated sections. Technical section starts as placeholder and gets expanded by eo-tech-architect and eo-microsaas-dev.
+
+**Format:** Standard CLAUDE.md markdown format.
+
+**Target length:** 100-250 lines.
+
+**Output Template:**
+
+```markdown
+# [Venture Name] - CLAUDE.md
+
+## What This Project Is
+[1-2 sentences from companyprofile.md. Problem + solution + target market.]
+
+## Who We Serve
+[ICP persona from icp.md: name, age, location, role, situation. Top 3 pains with urgency scores. 3-4 sentences max.]
+
+## Positioning
+[Full positioning statement from positioning.md. One-sentence wedge on its own line.]
+
+## GTM Priority
+[Top 3 motions from gtm.md with composite scores and one-line descriptions.]
+1. [Motion name] (score X.X): [one-line]
+2. [Motion name] (score X.X): [one-line]
+3. [Motion name] (score X.X): [one-line]
+
+## Strategy Path
+[Recommended path from strategy.md + 90-day roadmap summary as 3 bullets, one per month.]
+
+## MENA-Specific Rules
+[From SC1 Q7 + niche.md. Include:]
+- Language: [RTL requirements, Arabic-first rules]
+- Payments: [Regional payment methods]
+- Communication: [WhatsApp vs email preferences]
+- Trust signals: [What matters in this market]
+- Cultural: [Ramadan-aware, relationship dynamics, regional fragmentation notes]
+
+## Tech Stack
+[From companyprofile.md technical approach. List specific technologies.]
+[NOTE: This section is expanded by eo-tech-architect with full architecture details, versions, and rationale.]
+
+## Project Structure
+```
+project-brain/          # Business context (13 files) - READ these for product context
+architecture/           # BRD, stack decisions, diagrams (generated by eo-tech-architect)
+database/               # Schema, migrations, RLS (generated by eo-db-architect)
+src/                    # Application code (generated by eo-microsaas-dev)
+```
+
+## Key Context Files
+- project-brain/icp.md - Who the users are
+- project-brain/positioning.md - Market positioning and wedge angle
+- project-brain/brandvoice.md - Tone, language, words to use/avoid
+- project-brain/gtm.md - GTM motion rankings and channel strategy
+- project-brain/strategy.md - Strategy path and 90-day roadmap
+
+## Build Instructions
+This project uses the EO MicroSaaS OS. Build sequence:
+1. eo-db-architect - Database schema and RLS
+2. eo-microsaas-dev - Application code
+3. eo-api-connector - Third-party integrations
+4. eo-qa-testing - Code quality + functional + RTL
+5. eo-security-hardener - Auth, validation, rate limiting
+6. eo-deploy-infra - Docker, deployment, CI/CD
+
+## Design System
+[From brandvoice.md + gap-fill for colors/fonts. Defaults if not specified:]
+- Colors: [Primary, Secondary, Accent, Background]
+- Typography: Cairo (Arabic headers), Tajawal (Arabic body), Inter (English)
+- Layout: RTL-first with LTR English content support
+
+## Quality Gates
+- Gate 3: 5+ source files before QA
+- Gate 4: qa-report.md PASS before security
+- Gate 5: security-audit.md zero CRITICAL before deploy
+
+## Current Status
+Phase: Pre-build. Scorecards complete. Brain files generated. Ready for architecture.
+[This section is updated by downstream skills as build progresses.]
+
+## Voice for UI Copy
+[3-4 rules from brandvoice.md, filtered for UI context:]
+- [Venture-specific voice rule 1]
+- [Venture-specific voice rule 2]
+- Words to avoid in UI: [from brandvoice.md words to avoid list]
+```
+
+---
+
+## THREE-LAYER AI INSTRUCTION DESIGN
+
+### Why Three Layers Matter
+
+Research on AI instruction compliance shows:
+- Positive framing ("always start with commercial impact") gets ~89% compliance. Negative framing ("don't start with methodology") gets ~35%.
+- Behavioral instructions ("when analyzing a market, apply [framework]") outperform trait instructions ("be a senior strategist").
+- Instructions at the top and bottom of a prompt get highest compliance (position effect).
+- Under 300 lines total across all layers produces better results than longer instructions.
+- Named reasoning frameworks ("Apply the SIGNAL-BASED GTM FRAMEWORK") scale better than detailed per-task rules.
+- Verifiable rules ("always include ROI calculation") get followed more than aspirational rules ("make it high quality").
+
+### Design Rules for All Three Instruction Files
+
+1. **Positive over negative.** For every "avoid X" rule, provide the replacement behavior. "Use specific numbers and evidence" beats "Don't be vague."
+2. **Behavioral over trait.** Write "When X condition, do Y action" not "Be X type of assistant."
+3. **Critical rules at edges.** Put the 3-4 most important rules at the top and bottom of each file. Less critical rules in the middle.
+4. **Verifiable in 5 seconds.** Every rule should answer: "Can I check whether Claude followed this by looking at the output for 5 seconds?"
+5. **No duplication across layers.** If a rule lives in Layer 1, do not repeat it in Layer 2 or 3. Layer 3 can OVERRIDE Layer 1/2 but should not duplicate.
+6. **Meta-patterns scale.** Define named frameworks in Layer 1, reference them by name in Layer 2/3. Example: Layer 1 defines "REVENUE-FIRST FILTER." Layer 3 says "Apply REVENUE-FIRST FILTER to all feature requests."
+
+### What Goes Where (Separation Rules)
+
+| Content Type | Layer 1 (Personal) | Layer 2 (Global) | Layer 3 (Project) |
+|-------------|--------------------|--------------------|---------------------|
+| Founder identity, thesis | YES | Reference only | NO |
+| Communication style | YES | NO | NO |
+| Operating modes | YES | NO | NO |
+| Tool stack | NO | YES | NO |
+| Quality standards by type | NO | YES | Override only |
+| Business context | NO | NO | YES |
+| Technical context | NO | NO | YES |
+| ICP, positioning, GTM | NO | NO | YES |
+| MENA rules | YES (general) | NO | YES (project-specific) |
+| Words to avoid | YES | NO | Override only |
 
 ---
 
 ## GAP-FILL PROTOCOL
 
-> See `references/gap-fill-protocol.md` for the complete 2-round questioning protocol with example answers.
-
----
-
-## EXECUTION FLOW
-
+### Consolidated Approach
 
 The scorecards cover business strategy thoroughly but miss operational context (tools, workflow preferences, formatting rules, mode triggers). The gap-fill protocol collects this in 2 focused rounds of 4 questions each.
 
@@ -393,12 +840,30 @@ Present all 4 questions as a single block after Round 1 answers are integrated.
 
 ---
 
-
----
-
 ## FILE NAMING CONVENTIONS
 
-> See `references/file-naming-and-appendices.md` for naming conventions, score extraction patterns, and error handling guide.
+All output files go into a `project-brain/` directory:
+
+```
+project-brain/
+  companyprofile.md
+  founderprofile.md
+  brandvoice.md
+  niche.md
+  icp.md
+  positioning.md
+  competitor-analysis.md
+  market-analysis.md
+  strategy.md
+  gtm.md
+  personal-preferences.md     [NEW]
+  cowork-instruction.md        [REVISED]
+  project-instruction.md       [REVISED]
+```
+
+File names are fixed. Do not rename them. Downstream skills depend on these exact names.
+
+---
 
 ## CROSS-SKILL DEPENDENCIES
 
@@ -434,26 +899,90 @@ The 3 instruction files are designed for progressive enhancement by downstream s
 
 ---
 
+## SELF-SCORE PROTOCOL
+
+After generating all 13 files, score the output across 8 dimensions before delivering to the student.
+
+### Scoring Dimensions
+
+| # | Dimension | What to Check | Scoring |
+|---|-----------|---------------|---------|
+| 1 | Extraction accuracy | Every field traces to a scorecard answer, coached answer, or gap-fill response. Zero fabricated data. | 10 = all traceable, 8 = 1-2 inferred, 6 = 3+ inferred, <6 = fabricated data present |
+| 2 | Completeness | All 13 files generated. No empty sections. No "[TODO]" markers except in technical placeholders. | 10 = all complete, 8 = 1-2 thin sections, 6 = 3+ gaps, <6 = missing files |
+| 3 | Instruction quality | All 3 instruction files follow the 6 design principles (positive framing, behavioral rules, critical at edges, verifiable, no duplication, meta-patterns). | 10 = all 6 applied, 8 = 4-5 applied, 6 = 2-3 applied, <6 = generic instructions |
+| 4 | Layer separation | No content duplicated across the 3 instruction layers. Each layer contains only what belongs at its scope. | 10 = zero duplication, 8 = minor overlap, 6 = significant overlap, <6 = layers confused |
+| 5 | Thesis capture | personal-preferences.md CORE THESIS accurately reflects the founder's contrarian belief, not a generic statement. | 10 = specific + contrarian + evidence-backed, 8 = specific but missing one element, 6 = generic, <6 = wrong |
+| 6 | Archetype alignment | Operating modes, decision framework, and quality standards align with the founder's archetype. | 10 = all aligned, 8 = mostly aligned, 6 = partially, <6 = mismatched |
+| 7 | MENA context | Regional specifics present in all relevant files. Trust mechanics, WhatsApp, Arabic, payment methods. | 10 = thorough, 8 = present but thin, 6 = mentioned once, <6 = missing |
+| 8 | Actionability | Student can paste personal-preferences.md immediately. cowork-instruction.md works as-is for CLAUDE.md. project-instruction.md is a functional onboarding doc. | 10 = paste-ready, 8 = needs minor edits, 6 = needs restructuring, <6 = not usable |
+
+### Scoring Output
+
+Present this table after generation:
+
+```
+SELF-SCORE: Brain Ingestion Output Quality
+===========================================
+1. Extraction accuracy     [X]/10
+2. Completeness            [X]/10
+3. Instruction quality     [X]/10
+4. Layer separation        [X]/10
+5. Thesis capture          [X]/10
+6. Archetype alignment     [X]/10
+7. MENA context            [X]/10
+8. Actionability           [X]/10
+-----------------------------------------
+OVERALL                    [AVG]/10
+
+[If any dimension < 8: "FLAG: [dimension] scored [X]/10. Reason: [specific gap]. Suggested fix: [action]."]
+[If overall < 8.5: "ITERATE: Overall score below threshold. Improving [weakest dimensions] before delivery."]
+```
+
+### Threshold
+
+- Minimum overall score to deliver: 8.5/10
+- If below 8.5: iterate on the weakest dimensions automatically before presenting to student
+- If a single dimension is below 7: fix it before delivering regardless of overall score
 
 ---
 
-## OUTPUT FILE SPECIFICATIONS
+## APPENDIX: SCORE EXTRACTION PATTERNS
 
-> See `references/output-specs.md` for detailed specification templates.
+### SC1 Score Pattern
+Look for: `**Score:** XX/100` in first 10 lines
+Dimension scores: Look for Section headers with `(XX points)` and scored answers
+
+### SC2 Score Pattern
+Look for: `**Clarity Score:** XX/100` in first 10 lines
+Dimension scores: Look for table with columns `| Dimension | Score | Status |`
+
+### SC3 Score Pattern
+Look for: `**Overall Score:** XX/100` in first 10 lines
+Dimension scores: Look for table with columns `| Dimension | Score | Max | Percentage |`
+
+### SC4 Score Pattern
+Look for: `**Score:** XX/100` in first 10 lines
+No dimension-level scores (path selection is holistic)
+
+### SC5 Score Pattern
+Look for: `**Score:** XX/100` in first 10 lines
+Motion scores: Look for table with columns `| # | Motion | Fit | Readiness | MENA | Score | Tier |`
+Count motions with Tier = PRIMARY. Need >= 3.
 
 ---
 
-## HANDOFF PROTOCOL
+## APPENDIX: ERROR HANDLING
 
-After all 13 files are generated and verified:
-
-1. **Announce completion**: "Your project brain is ready. 13 files in project-brain/."
-2. **Give paste instructions**:
-   - "Copy personal-preferences.md content into Claude.ai > Settings > Profile"
-   - "Save cowork-instruction.md as ~/.claude/CLAUDE.md"
-   - "Save project-instruction.md as CLAUDE.md in your project root"
-3. **Route to next skill**: "Your next step is GTM Asset Factory. Run /eo or tell me: 'build my GTM assets'. It will read your project-brain/ files automatically."
-4. **If student asks about tech/building**: "You'll get to building after GTM assets. The sequence is: Brain → GTM Assets → Skill Extraction → Tech Architecture → Build. Don't skip ahead."
+| Error | Response |
+|-------|----------|
+| Missing scorecard file | "I cannot find [SC name]. Have you completed this scorecard? If yes, tell me the exact filename." |
+| Score not parseable | "I cannot read the score from [filename]. Can you tell me your score for [SC name]?" |
+| File is empty or corrupt | "The file [filename] appears empty. Please check it and re-upload." |
+| Student wants to skip coaching | "I can proceed, but I will flag the weak areas in your output files. Downstream skills may ask you to strengthen these later." |
+| Student wants to re-run a scorecard | "Go ahead. Run the scorecard skill, then come back here and I will re-ingest. I will not lose your other data." |
+| Dimension data is missing from file | "Your [SC name] file is missing [field]. This sometimes happens with older scorecard versions. Can you answer this quickly: [targeted question]?" |
+| Gap-fill answer too short | "I can work with that, but the [section] in your output will be thinner. Want to expand, or should I proceed and flag it?" |
+| Self-score below threshold | Iterate on weak dimensions automatically. Tell student: "I scored my own output at [X]/10. Improving [dimensions] before delivering to you." |
 
 ---
 

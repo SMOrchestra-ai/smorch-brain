@@ -1,7 +1,7 @@
 {
   "name": "smorch-gtm-tools",
-  "version": "1.1.0",
-  "description": "SMOrch GTM tool operator skills. Hands-on command centers for GoHighLevel CRM, Instantly cold email, HeyReach LinkedIn outbound, Clay enrichment, Sales Navigator. Includes Tool Super Admin Creator for building new operator skills from any SaaS tool.",
+  "version": "1.2.0",
+  "description": "SMOrch GTM tool operator skills. Hands-on command centers for GoHighLevel CRM, Instantly cold email, HeyReach LinkedIn outbound, Clay enrichment, Sales Navigator, and Linear project management. Includes Tool Super Admin Creator for building new operator skills from any SaaS tool.",
   "author": {
     "name": "Mamoun Alamouri",
     "homepage": "https://smorchestra.ai"

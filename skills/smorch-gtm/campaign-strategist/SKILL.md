@@ -1,6 +1,7 @@
+<!-- Copyright SMOrchestra.ai. All rights reserved. Proprietary and confidential. -->
 ---
 name: campaign-strategist
-description: Aligns Quarterly → Monthly → Weekly → Daily campaign hierarchy for Signal-to-Trust GTM. Use when creating campaign strategy, aligning Q→M→W→D domino effect, narrowing from quarterly theme to weekly wedges, or generating campaign briefs. Ensures each level derives from the one above for compounding impact.
+description: "Aligns Quarterly to Monthly to Weekly to Daily campaign hierarchy for Signal-to-Trust GTM. Use when creating campaign strategy, aligning Q to M to W to D domino effect, narrowing from quarterly theme to weekly wedges, or generating campaign briefs. Ensures each level derives from the one above for compounding impact. Now includes trust engineering thesis alignment, psychological trigger mapping, and vulnerability-arc story architecture."
 ---
 
 # Campaign Strategist
@@ -9,7 +10,7 @@ description: Aligns Quarterly → Monthly → Weekly → Daily campaign hierarch
 
 This sub-skill handles the **strategic alignment** of the complete campaign hierarchy: **Quarterly → Monthly → Weekly → Daily**. It ensures the "domino effect" where each level derives from and amplifies the level above it.
 
-**Core Philosophy**: Compounding impact through hierarchical alignment.
+**Core Philosophy**: Compounding impact through hierarchical alignment. Every level narrows from the one above. Every asset activates psychological triggers mapped at the strategy level. Trust engineering thesis runs through everything.
 
 ---
 
@@ -23,38 +24,48 @@ Directly invoke when user asks:
 - "Create campaign strategy for [ICP]"
 - "Align my quarterly theme to monthly wedges"
 - "Generate campaign brief for [target]"
+- "Plan the campaign hierarchy for [offer]"
 
 ---
 
 ## Inputs
 
 ### Required
-1. **ICP** (from Q2 of questionnaire)
+
+1. **ICP** (from Q2 of questionnaire or positioning-engine output)
    - MENA SaaS Founders
    - US Real Estate Brokers
    - MENA Beauty Clinics
    - US eCommerce (DTC)
+   - MENA B2B Founders (general: past PMF, broken GTM)
    - Other (custom)
 
-2. **Quarterly Feature** (from Q3 of questionnaire)
-   - One-sentence outcome-focused positioning
-   - Example: "Capture 8x more revenue per contact than social followers"
+2. **Positioning Document** (from positioning-engine)
+   - Core thesis, offer architecture, psychological triggers, mechanism visualization
+   - If no positioning-engine output exists, gather: one-liner, ICP, offer, competitive alternatives
 
-3. **Monthly Narrowing Strategy** (from Q4 of questionnaire)
+3. **Quarterly Feature** (from Q3 of questionnaire)
+   - One-sentence outcome-focused positioning
+   - Example: "Replace relationship selling with trust engineering in 6 weeks"
+
+4. **Monthly Narrowing Strategy** (from Q4 of questionnaire)
    - A) By ICP segment (vertical focus)
    - B) By feature breakdown (3 sub-wedges)
    - C) By silence type (one silence all month)
-   - D) Let skill decide based on signal density
+   - D) By story arc (vulnerability arc: origin → science → proof)
+   - E) Let skill decide based on signal density
 
-4. **Weekly Wedge Strategy** (from Q6 of questionnaire)
+5. **Weekly Wedge Strategy** (from Q6 of questionnaire)
    - A) Different angles on same monthly wedge (default)
    - B) Sequential story (Week 1→2→3 builds narrative)
    - C) A/B/C test variants (same core, different psychology)
+   - D) Vulnerability arc (mirrors email sequence: failure → confession → proof)
 
 ### Optional
 - **Existing campaign context** (if continuing from previous month)
-- **Signal data** (to inform monthly narrowing if strategy = D)
+- **Signal data** (to inform monthly narrowing if strategy = E)
 - **Performance metrics** (if Mode C pivot evaluation)
+- **Brand template/colors** (if not using SMOrch defaults)
 
 ---
 
@@ -68,90 +79,140 @@ Directly invoke when user asks:
 ## Campaign ID
 [Generated unique ID: YYYYMMDD-ICP-THEME]
 
+## Trust Engineering Thesis Alignment
+**Core thesis**: [How the trust engineering thesis applies to this ICP]
+**Old way (status quo)**: [What they're doing now that's costing them]
+**New way (engineered)**: [The systematic replacement]
+**Identity threat frame**: [How status quo = losing, specifically for this ICP]
+
+## Psychological Trigger Map
+| Trigger | Activation Strategy | Deploy In |
+|---------|-------------------|-----------|
+| ★ Identity Threat | [Specific framing for this ICP] | All assets |
+| ★ Costly Signal | [What proves competence for this audience] | Mid-sequence |
+| ★ Temporal Window | [Real urgency mechanism] | CTAs |
+| Asymmetric Info | [Insider knowledge angle] | Long-form |
+| In-Group/Out-Group | [Who this IS and ISN'T for] | Qualifying |
+| Transformation | [Before/after identity shift] | Offer sections |
+| Cognitive Fluency | [System visualization] | Visual assets |
+
 ## Quarterly Alignment
-**Feature**: [Quarterly hammering outcome - one sentence]
+**Feature**: [Quarterly hammering outcome: one sentence]
 **Duration**: [Q1/Q2/Q3/Q4 YYYY]
 **Rationale**: [Why this feature for this quarter]
 
 ## Monthly Focus
 **Theme**: [How we narrowed from quarterly]
-**Narrowing Strategy**: [ICP segment / Feature breakdown / Silence type / Signal-driven]
+**Narrowing Strategy**: [ICP segment / Feature breakdown / Silence type / Story arc / Signal-driven]
 **Duration**: [Month YYYY]
 **Rationale**: [Why this monthly angle]
 
 ## Weekly Wedge Strategy
-**Approach**: [Different angles / Sequential story / A/B/C variants]
+**Approach**: [Different angles / Sequential story / A/B/C variants / Vulnerability arc]
 
 ### Week 1
 **Theme**: [One-line wedge theme]
+**Story Beat**: [If vulnerability arc: origin/confession/proof]
 **Angle**: [Specific angle or story element]
+**Primary Trigger**: [Which of 7 triggers dominates]
 **Signal Type Priority**: [Trust / Intent]
 
 ### Week 2
 **Theme**: [One-line wedge theme]
+**Story Beat**: [If vulnerability arc: origin/confession/proof]
 **Angle**: [Specific angle or story element]
+**Primary Trigger**: [Which trigger dominates]
 **Signal Type Priority**: [Trust / Intent]
 
 ### Week 3
 **Theme**: [One-line wedge theme]
+**Story Beat**: [If vulnerability arc: origin/confession/proof]
 **Angle**: [Specific angle or story element]
+**Primary Trigger**: [Which trigger dominates]
 **Signal Type Priority**: [Trust / Intent]
 
 ## Daily Messaging Focus
-**Sequence Type**: [Email / LinkedIn / WhatsApp]
-**Cadence**: [Day 1, 3, 6 / Custom]
+**Email sequence**: 3-email vulnerability arc (Day 1, 3, 6)
+**LinkedIn DM**: Connect clean + single signal message (A/B test)
+**LinkedIn posts**: 3 authority posts mirroring email arc
+**Social**: 3 ICP-targeted posts
+**VSL**: 5-min full + 1-min short (if campaign pack)
 **Tone**: [Based on ICP + geographic market]
 
+## Asset Production Checklist
+- [ ] Cold email sequence (3 emails, vulnerability arc)
+- [ ] LinkedIn DM messages (A/B variants)
+- [ ] LinkedIn authority posts (3, mirroring email arc)
+- [ ] Social posts (3, ICP-targeted)
+- [ ] VSL scripts (5-min + 1-min)
+- [ ] Branded DOCX (outreach sequences)
+- [ ] 1-pager PDF
+- [ ] Slide deck PPTX
+- [ ] Landing page HTML
+
 ## Success Metrics
-**Primary**: [Reply rate target]
-**Secondary**: [Meeting rate target]
-**Benchmarks**: [ICP-specific benchmarks]
+**Primary**: Reply rate target
+**Secondary**: Meeting rate target
+**Benchmarks**: ICP-specific benchmarks
 
 ## Next Steps
 - [ ] Call signal-detector to validate prospects
 - [ ] Call wedge-generator to create specific wedges
-- [ ] Call asset-factory to produce sequences
+- [ ] Call asset-factory to produce campaign assets
+- [ ] Call scoring-orchestrator to quality-gate all assets
 ```
 
 ---
 
+<!-- IP:START - Q-M-W-D alignment logic, vulnerability arc, and domino validation -->
 ## Alignment Logic
 
 ### Quarterly → Monthly (The Narrowing)
 
 **Strategy A: By ICP Segment**
 ```
-Quarterly: "Capture 8x more revenue per contact than social followers"
+Quarterly: "Replace relationship selling with trust engineering"
   ↓
-Monthly: "Instagram Follower Leakage for Beauty Clinics"
-  (Narrowed to: specific ICP vertical)
+Monthly: "Trust Engineering for MENA SaaS Founders past PMF"
+  (Narrowed to: specific ICP vertical + stage)
 ```
 
 **Strategy B: By Feature Breakdown**
 ```
-Quarterly: "Capture 8x ROI"
+Quarterly: "Install Revenue OS in 6 weeks"
   ↓
 Monthly Options:
-  - "8x Capture" (capture mechanism focus)
-  - "20x Golden Window" (response speed focus)
-  - "50x Backend Nurture" (nurture automation focus)
-  (Narrowed to: one sub-feature)
+  - "GTM Diagnosis" (weeks 1-2 focus)
+  - "Trust-Engine Motion Selection" (weeks 3-4 focus)
+  - "AI-Operated Implementation" (weeks 5-6 focus)
+  (Narrowed to: one phase of the offer)
 ```
 
 **Strategy C: By Silence Type**
 ```
-Quarterly: "Consolidate scattered sales data"
+Quarterly: "Compress deal cycles from months to weeks"
   ↓
-Monthly: "Proof Silence - Data Fragmentation Crisis"
+Monthly: "Proof Silence: They don't believe trust can be engineered"
   (Narrowed to: one of 7 silence types)
 ```
 
-**Strategy D: Signal-Driven**
+**Strategy D: By Story Arc (Vulnerability Arc)**
 ```
-Quarterly: "Respond within 5 minutes for 21x conversion"
+Quarterly: "Trust is engineerable. Your coffee meetings are not"
+  ↓
+Monthly: 3-week vulnerability arc
+  - Week 1: Origin story (failure, study, discovery)
+  - Week 2: Trust-as-science confession (weakness became edge)
+  - Week 3: System proof (AI runs it, here's the evidence)
+  (Narrowed to: sequential narrative that mirrors email sequence)
+```
+
+**Strategy E: Signal-Driven**
+```
+Quarterly: "13 trust-engine motions scored to your business"
   ↓
 [Analyze signal data]
-Monthly: "Golden Window for Mobile Buyers"
+Monthly: "Signal Sniper Outbound for founders burning cash on SDR teams"
   (Narrowed based on: highest signal density detected)
 ```
 
@@ -161,63 +222,99 @@ Monthly: "Golden Window for Mobile Buyers"
 
 **Strategy A: Different Angles (Default)**
 ```
-Monthly: "Instagram Follower Leakage"
+Monthly: "Trust Engineering for MENA SaaS Founders"
   ↓
-Week 1: "Rented Land Risk" (platform dependency angle)
-Week 2: "8x Revenue Gap" (quantified opportunity cost)
-Week 3: "Capture Infrastructure" (solution mechanism)
+Week 1: "Your coffee meetings cost 6-12 months per deal" (Identity Threat)
+Week 2: "Trust is a science, not a personality trait" (Costly Signal)
+Week 3: "AI runs 80% of my GTM. Better." (System Proof)
 
 Each week = different lens on same monthly theme
 ```
 
 **Strategy B: Sequential Story**
 ```
-Monthly: "Data Fragmentation Crisis"
+Monthly: "Revenue Engineering OS"
   ↓
-Week 1: "The Scattered State" (identify problem)
-Week 2: "The Hidden Cost" (amplify pain)
-Week 3: "The Unified Solution" (present resolution)
+Week 1: "The failure" (identify problem, build empathy)
+Week 2: "The discovery" (amplify insight, build credibility)
+Week 3: "The system" (present resolution, build urgency)
 
 Each week = next chapter in narrative arc
 ```
 
 **Strategy C: A/B/C Variants**
 ```
-Monthly: "Golden Window Response Speed"
+Monthly: "Signal-Based Trust Engineering"
   ↓
-Week 1: Variant A, B, C (same core message, different psychology)
-Week 2: Winning variant refined with A/B
+Week 1: Variant A, B, C (same core, different psychology)
+Week 2: Winning variant refined
 Week 3: Optimized variant deployed
 
 Each week = iteration on best-performing message
+```
+
+**Strategy D: Vulnerability Arc (Recommended for MENA B2B)**
+```
+Monthly: "Trust is Engineerable"
+  ↓
+Week 1: Vulnerable Origin (failure → study → cracked it)
+  Primary trigger: Identity Threat
+Week 2: Confession + Science (weakness became methodology)
+  Primary trigger: Identity Threat + Costly Signal
+Week 3: System Proof (AI-operated, installed, running)
+  Primary trigger: Costly Signal + Temporal Window
+
+Each week = mirrors one email in the 3-email vulnerability arc
+All channel assets (email, LinkedIn post, social, DM) align to the week's story beat
 ```
 
 ---
 
 ### Weekly → Daily (The Messaging)
 
-**Daily level = specific message sequences**
+Each weekly wedge translates to a coordinated multi-channel push:
 
-Each weekly wedge translates to:
-- **3 emails** (Day 1, 3, 6 or custom cadence)
-- **2 LinkedIn messages** (connection request + follow-up)
-- **1 WhatsApp sequence** (3 variants: A/B/C psychology)
-- **1 social post** (LinkedIn/Twitter for visibility)
+| Channel | Structure | Key Rule |
+|---------|-----------|----------|
+| Cold email | 3-email vulnerability arc (Day 1, 3, 6) | One story arc, not 3 pitches |
+| LinkedIn DM | Connect clean + single message (A/B test) | No connection note, ever |
+| LinkedIn post | Authority post mirroring week's story beat | 55 chars/line, 150-300 words |
+| Social post | ICP-targeted, trigger-activated | 150-210 words, copy-paste ready |
+| WhatsApp | 3 psychology variants (MENA only) | Warm channel, not cold outreach |
 
 **Tone adaptation** by ICP + geography:
-- MENA: High-context, relationship-first, collective language
-- US: Low-context, task-first, individual language
-- Germany: Very low-context, principles-first, formal language
+| Market | Context | Language | Trust Mechanism |
+|--------|---------|----------|----------------|
+| MENA | High (implied, trust-first) | "We", vulnerability, peer references | Confession + costly signal |
+| US | Low (explicit, data-first) | "You", metrics, directness | Data + social proof |
 
 ---
 
 ## ICP-Specific Considerations
 
-### MENA SaaS Founders
+### MENA B2B Founders (Past PMF, Broken GTM)
+
+**Quarterly themes that resonate**:
+- Trust engineering vs relationship selling (the replacement thesis)
+- AI-operated Revenue OS (founder independence)
+- 13 trust-engine motions (methodology as differentiator)
+
+**Monthly narrowing preference**: Story arc (vulnerability arc) or by feature breakdown
+
+**Weekly approach**: Vulnerability arc (origin → confession → proof)
+
+**Daily tone**: Vulnerability-first, peer-to-peer operator energy, "we" language, MENA geographic specificity (Dubai, Riyadh, Gulf budget cycles)
+
+**Key triggers**: Identity Threat (coffee meetings = expensive), Costly Signal (91 companies studied, 20 years, 200+ deals), Temporal Window (Q2 budget cycle)
+
+---
+
+### MENA SaaS Founders (Scaling 10-50 Employees)
+
 **Quarterly themes that resonate**:
 - Data consolidation (scattered tools pain)
 - Regional distribution (Dubai, Riyadh, Cairo teams)
-- Trust-building (proof before product)
+- Trust-building before product demo
 
 **Monthly narrowing preference**: By ICP segment (vertical-specific)
 
@@ -228,6 +325,7 @@ Each weekly wedge translates to:
 ---
 
 ### US Real Estate Brokers
+
 **Quarterly themes that resonate**:
 - Speed (Golden Window, 5-minute response)
 - Lead leakage (backend nurture, follow-up automation)
@@ -242,6 +340,7 @@ Each weekly wedge translates to:
 ---
 
 ### MENA Beauty Clinics
+
 **Quarterly themes that resonate**:
 - Social follower leakage (Instagram → owned contacts)
 - Backend nurture (98% say "I'll think about it")
@@ -255,199 +354,31 @@ Each weekly wedge translates to:
 
 ---
 
-### US eCommerce (DTC)
-**Quarterly themes that resonate**:
-- Checkout friction (cart abandonment)
-- Email list ROI (owned vs paid traffic)
-- Mobile optimization (conversion gaps)
-
-**Monthly narrowing preference**: By silence type (friction-focused)
-
-**Weekly approach**: A/B/C variants (fast optimization)
-
-**Daily tone**: Data-first, conversion-focused, mobile-optimized
-
----
-
 ## Domino Validation
 
 Before outputting campaign brief, validate domino alignment:
 
 ### Test 1: Derivation Check
-```
-Can Monthly theme be traced back to Quarterly feature?
-  ✓ YES → Aligned
-  ✗ NO → Monthly is off-track, revise
-
-Can each Weekly wedge be traced back to Monthly theme?
-  ✓ YES → Aligned
-  ✗ NO → Weekly wedges are disconnected, revise
-```
+Can Monthly theme be traced back to Quarterly feature? Can each Weekly wedge be traced back to Monthly theme? Both must pass.
 
 ### Test 2: Specificity Increase
-```
-Is Monthly more specific than Quarterly?
-  ✓ YES → Proper narrowing
-  ✗ NO → Monthly too broad, narrow further
-
-Is Weekly more specific than Monthly?
-  ✓ YES → Proper narrowing
-  ✗ NO → Weekly too generic, narrow further
-```
+Is Monthly more specific than Quarterly? Is Weekly more specific than Monthly? Each level must narrow.
 
 ### Test 3: Consistency Check
-```
-Do all 3 weekly wedges relate to the same monthly theme?
-  ✓ YES → Consistent strategy
-  ✗ NO → Weekly wedges are fragmented, realign
-```
+Do all 3 weekly wedges relate to the same monthly theme (different angles) or form a coherent arc (sequential story / vulnerability arc)?
 
 ### Test 4: ICP Resonance
-```
-Do themes use ICP-specific language and pain points?
-  ✓ YES → Will resonate
-  ✗ NO → Too generic, add ICP context
-```
+Do themes use ICP-specific language and pain points? Would a founder in this geography feel this speaks to their specific reality?
+
+### Test 5: Trigger Alignment
+Does each weekly wedge have a clear primary psychological trigger? Do the 3 weeks together cover all 3 primary triggers (Identity Threat, Costly Signal, Temporal Window)?
+
+### Test 6: Trust Engineering Lens
+Does the campaign explicitly frame the status quo as expensive/manual/unscalable and the alternative as engineered/systematic/installable? If the campaign reads like generic outbound, it fails this test.
 
 ---
 
-## Examples
-
-### Example 1: MENA SaaS - Proof Silence
-
-**Input**:
-- ICP: MENA SaaS Founders
-- Quarterly Feature: "Consolidate scattered sales data into unified dashboard"
-- Monthly Narrowing: By silence type (Proof Silence)
-- Weekly Strategy: Different angles
-
-**Output**:
-```markdown
-# MENA SaaS Founders - Proof Silence (Data Fragmentation) Campaign
-
-## Campaign ID
-20260211-MENA-SAAS-PROOF-SILENCE
-
-## Quarterly Alignment
-**Feature**: Consolidate scattered sales data into unified dashboard
-**Duration**: Q1 2026
-**Rationale**: MENA SaaS founders scaling from 5-50 employees consistently face data fragmentation across HubSpot, Pipedrive, Notion, spreadsheets. Unified visibility = predictable revenue.
-
-## Monthly Focus
-**Theme**: Proof Silence - Data Fragmentation Crisis
-**Narrowing Strategy**: By silence type (Proof)
-**Duration**: February 2026
-**Rationale**: They understand the problem (scattered data) but don't believe consolidation is achievable. Need proof from MENA peers to build trust.
-
-## Weekly Wedge Strategy
-**Approach**: Different angles on same monthly theme
-
-### Week 1
-**Theme**: "Your sales data lives in 7 different tools. Decision paralysis is costing you deals."
-**Angle**: Identify the problem (scattered state)
-**Signal Type Priority**: Intent (active pain)
-
-### Week 2
-**Theme**: "Scattered data = invisible pipeline. Unified dashboard = predictable revenue."
-**Angle**: Amplify the cost (visibility loss)
-**Signal Type Priority**: Intent (outcome focus)
-
-### Week 3
-**Theme**: "5 MENA SaaS founders unified their stack. They closed 40% more deals."
-**Angle**: Provide proof (peer validation)
-**Signal Type Priority**: Trust (community proof)
-
-## Daily Messaging Focus
-**Sequence Type**: Email + LinkedIn + WhatsApp (MENA multi-channel)
-**Cadence**: Day 1, 3, 6 (relationship-building pace)
-**Tone**: High-context, relationship-first, "we" language, geographic mentions (Dubai, Riyadh)
-
-## Success Metrics
-**Primary**: Reply rate >6.2% (MENA SaaS benchmark)
-**Secondary**: Meeting rate >0.8%
-**Benchmarks**: MENA SaaS average = 6.2% reply, 0.8% meeting
-
-## Next Steps
-- [ ] Call signal-detector to validate MENA SaaS Fit criteria
-- [ ] Call wedge-generator to create 3 specific one-sentence wedges
-- [ ] Call asset-factory to produce 42 assets (18 emails, 12 LinkedIn, 9 WhatsApp, 3 social)
-```
-
-**Domino Validation**:
-- ✓ Monthly traces to Quarterly (consolidation → proof of consolidation)
-- ✓ Weekly traces to Monthly (all 3 wedges about data fragmentation)
-- ✓ Specificity increases (Q: consolidation → M: proof silence → W: specific angles)
-- ✓ ICP resonance (MENA language, trust-building, peer proof)
-
----
-
-### Example 2: US Real Estate - Response Silence
-
-**Input**:
-- ICP: US Real Estate Brokers
-- Quarterly Feature: "Respond within 5 minutes for 21x higher conversion"
-- Monthly Narrowing: By silence type (Response Silence)
-- Weekly Strategy: Sequential story
-
-**Output**:
-```markdown
-# US Real Estate Brokers - Response Silence (Golden Window) Campaign
-
-## Campaign ID
-20260211-US-REALESTATE-RESPONSE-SILENCE
-
-## Quarterly Alignment
-**Feature**: Respond within 5 minutes for 21x higher conversion
-**Duration**: Q1 2026
-**Rationale**: US brokers with 10-100 agents lose deals to competitors who respond faster. Speed = competitive advantage in tight markets.
-
-## Monthly Focus
-**Theme**: Response Silence - Golden Window Lost
-**Narrowing Strategy**: By silence type (Response)
-**Duration**: February 2026
-**Rationale**: They know they should respond fast but don't realize 21x conversion difference between <5 min vs >30 min. Need urgency.
-
-## Weekly Wedge Strategy
-**Approach**: Sequential story (Week 1→2→3 builds urgency)
-
-### Week 1
-**Theme**: "Your lead fills a form at 2pm. You reply at 5pm. They booked with someone else at 2:07pm."
-**Angle**: The invisible loss (story opening)
-**Signal Type Priority**: Intent (immediate pain)
-
-### Week 2
-**Theme**: "Responding after 30 minutes costs you 21x in conversion. The first 5 minutes is everything."
-**Angle**: The quantified gap (data reveal)
-**Signal Type Priority**: Intent (outcome focus)
-
-### Week 3
-**Theme**: "Instant auto-reply + mobile notifications = never miss the Golden Window."
-**Angle**: The solution (resolution)
-**Signal Type Priority**: Intent (solution-seeking)
-
-## Daily Messaging Focus
-**Sequence Type**: Email + LinkedIn (US direct channels)
-**Cadence**: Day 1, 3, 6 (fast-paced, urgency-driven)
-**Tone**: Low-context, task-first, "you" language, data-driven
-
-## Success Metrics
-**Primary**: Reply rate >4.5% (US Real Estate benchmark)
-**Secondary**: Meeting rate >1.2%
-**Benchmarks**: US Real Estate average = 4.5% reply, 1.2% meeting
-
-## Next Steps
-- [ ] Call signal-detector to validate US Real Estate Fit criteria
-- [ ] Call wedge-generator to create 3 specific one-sentence wedges
-- [ ] Call asset-factory to produce 36 assets (18 emails, 12 LinkedIn, 3 social - no WhatsApp for US)
-```
-
-**Domino Validation**:
-- ✓ Monthly traces to Quarterly (5-min response → response silence)
-- ✓ Weekly traces to Monthly (all 3 about response speed)
-- ✓ Specificity increases (Q: speed → M: response silence → W: sequential story)
-- ✓ ICP resonance (US language, urgency, data-driven)
-
----
+<!-- IP:END -->
 
 ## Integration with Other Sub-Skills
 
@@ -455,65 +386,60 @@ Do themes use ICP-specific language and pain points?
 
 After campaign-strategist outputs campaign brief:
 
-1. **signal-detector** uses:
-   - ICP from campaign brief
-   - Signal Type Priority from weekly wedges
-   - To validate prospects and classify signals
-
-2. **wedge-generator** uses:
-   - 3 weekly wedge themes
-   - Monthly theme
-   - ICP context
-   - To create one-sentence wedges
-
-3. **asset-factory** uses:
-   - 3 weekly wedges (once generated by wedge-generator)
-   - Channel mix (from questionnaire)
-   - ICP + tone guidance
-   - To produce 42 assets
+1. **signal-detector** uses: ICP, signal type priority, to validate prospects and classify signals
+2. **wedge-generator** uses: 3 weekly wedge themes, monthly theme, ICP context, to create one-sentence wedges
+3. **asset-factory** uses: wedges, channel mix, ICP + tone, psychological trigger map, brand design system, to produce campaign assets
+4. **scoring-orchestrator** uses: all produced assets, to quality-gate before deployment
 
 ### Upstream Dependencies
 
-**Inputs from meta skill questionnaire**:
-- Q2: ICP Selection
-- Q3: Quarterly Feature
-- Q4: Monthly Narrowing Strategy
-- Q6: Weekly Wedge Strategy
+**From positioning-engine**: Core thesis, offer architecture, psychological trigger definitions, mechanism visualization
+**From meta skill questionnaire**: Q2 (ICP), Q3 (Quarterly Feature), Q4 (Monthly Narrowing), Q6 (Weekly Strategy)
 
 ---
 
 ## Error Handling
 
-### Error 1: Quarterly Feature Too Vague
+### Error 1: No Positioning Document
+**Symptom**: Campaign requested without positioning-engine output
+**Fix**: Run positioning-engine first, or at minimum gather: one-liner thesis, ICP definition, competitive alternatives, offer structure
+
+### Error 2: Quarterly Feature Too Vague
 **Symptom**: Feature is generic ("improve sales results")
-**Fix**: Prompt user for specific outcome with metric
-**Example**: "Improve sales results" → "Respond within 5 minutes for 21x higher conversion"
+**Fix**: Prompt user for specific outcome with metric. "Improve sales results" → "Replace relationship selling with trust engineering. Compress deal cycles from 6-12 months to weeks"
 
-### Error 2: Monthly Too Similar to Quarterly
+### Error 3: Monthly Too Similar to Quarterly
 **Symptom**: Monthly = Quarterly (no narrowing occurred)
-**Fix**: Force narrowing by applying strategy (ICP segment, feature breakdown, silence type)
-**Example**: Q="Capture 8x ROI", M="Capture 8x ROI" → M="Instagram Follower Leakage for Beauty Clinics"
+**Fix**: Force narrowing by applying strategy (ICP segment, feature breakdown, silence type, or story arc)
 
-### Error 3: Weekly Wedges Not Related
+### Error 4: Weekly Wedges Not Related
 **Symptom**: 3 weekly wedges address different problems
-**Fix**: Realign all 3 to monthly theme, just different angles
-**Example**: Week 1="Data scattered", Week 2="Slow response", Week 3="No proof" → All should focus on ONE monthly theme
+**Fix**: Realign all 3 to monthly theme (different angles) or restructure as vulnerability arc (origin → confession → proof)
 
-### Error 4: ICP Mismatch
-**Symptom**: Themes don't resonate with selected ICP
-**Fix**: Replace with ICP-specific pain points and language
-**Example**: MENA SaaS with US-style direct messaging → Add relationship-building, trust-first tone
+### Error 5: Missing Trigger Mapping
+**Symptom**: Campaign brief has no psychological trigger assignments
+**Fix**: Map each weekly wedge to a primary trigger. Ensure all 3 primary triggers appear across the 3 weeks
+
+### Error 6: Generic Tone
+**Symptom**: Campaign messaging could come from any consultant
+**Fix**: Apply trust engineering lens. Add vulnerability hooks, contrarian claims, specific numbers, named tools. If it sounds like every other outbound agency, rewrite
 
 ---
 
-## Conclusion
+## Campaign-Strategist → Asset-Factory Handoff
 
-The campaign-strategist sub-skill ensures:
-1. **Hierarchical alignment** (Q→M→W→D domino effect)
-2. **Strategic narrowing** (each level more specific than above)
-3. **ICP resonance** (themes match target audience pain points)
-4. **Consistency** (all weekly wedges relate to monthly theme)
+The campaign brief must include enough detail for asset-factory to produce without re-asking:
+
+| Brief Element | Asset-Factory Uses It For |
+|---------------|--------------------------|
+| Trust Engineering thesis alignment | Email vulnerability arc framing |
+| Psychological trigger map | Trigger deployment per email/post |
+| Weekly wedge themes + story beats | Email subjects, LinkedIn hooks, social angles |
+| ICP context + tone | Geographic adaptation, language choices |
+| Mechanism visualization | VSL script, landing page, deck system diagram |
+| Brand template (or "use default") | DOCX, PDF, PPTX, HTML color/font system |
+| Success metrics | Scoring targets, performance benchmarks |
 
 **Output**: Production-ready campaign brief that orchestrates all downstream sub-skills.
 
-Next: Pass campaign brief to signal-detector for prospect validation.
+Next: Pass campaign brief to signal-detector for prospect validation, then wedge-generator for specific wedges, then asset-factory for production.

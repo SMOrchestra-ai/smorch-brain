@@ -1,3 +1,4 @@
+<!-- Copyright SMOrchestra.ai. All rights reserved. Proprietary and confidential. -->
 ---
 name: contabo-deployment
 description: Contabo VPS Deployment — nginx reverse proxy, pm2 process management, SSL certificates, health checks, and rollback procedures for SMOrchestra infrastructure

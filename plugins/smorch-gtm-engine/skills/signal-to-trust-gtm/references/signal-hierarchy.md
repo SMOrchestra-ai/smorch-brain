@@ -1,3 +1,4 @@
+<!-- IP:START - Signal hierarchy taxonomy -->
 # Signal Hierarchy Framework
 
 Complete taxonomy for the Signal-to-Trust GTM system.
@@ -371,3 +372,5 @@ This mapping helps determine lead magnet type and DSI scoring dimensions.
 4. Intent > Trust → Priority rule
 
 Use this hierarchy to systematically convert observed behaviors into precise, signal-based wedges.
+
+<!-- IP:END -->

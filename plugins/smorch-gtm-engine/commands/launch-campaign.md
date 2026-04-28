@@ -1,6 +1,7 @@
+<!-- IP:START - Command routing with methodology references -->
 ---
 description: Launch a full Signal-to-Trust campaign from a BRD
-argument-hint: [brd-file-path]
+argument-hint: "[brd-file-path]"
 allowed-tools: Read, Write, Edit, Bash, Grep, Glob, Task, AskUserQuestion
 ---
 
@@ -49,3 +50,4 @@ Create subdirectories: `week-1/`, `week-2/`, `week-3/` with assets organized by 
 
 Present a summary of the complete asset bundle for review before deployment.
 After approval, ask if they want to deploy using `/deploy-campaign`.
+<!-- IP:END -->

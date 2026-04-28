@@ -5,6 +5,18 @@ set -euo pipefail
 # Run on each server/team machine before first sync to deduplicate
 # skills that exist both as standalone files and inside plugins.
 
+# --- Prerequisite checks ---
+check_prereqs() {
+    local missing=()
+    command -v git &>/dev/null || missing+=("git")
+    if [ ${#missing[@]} -gt 0 ]; then
+        echo -e "\033[0;31mERROR: Missing required tools: ${missing[*]}\033[0m"
+        echo "Install them before running this script."
+        exit 1
+    fi
+}
+check_prereqs
+
 VERSION="1.0.0"
 SKILLS_DIR="$HOME/.claude/skills"
 PLUGINS_DIR="$HOME/.claude/plugins"

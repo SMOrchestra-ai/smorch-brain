@@ -1,3 +1,4 @@
+<!-- IP:START - LinkedIn content analysis signal framework -->
 # Content Analysis Framework
 
 ## Purpose
@@ -118,3 +119,5 @@ When analyzing content for multiple prospects:
 | Fatima K. | 1 week ago | Tier 2 - Topic | "Posted about scaling ops" | Engage → CR in 3d |
 | Mark R. | 2 months ago | None | Inactive | Email only, no LinkedIn |
 ```
+
+<!-- IP:END -->

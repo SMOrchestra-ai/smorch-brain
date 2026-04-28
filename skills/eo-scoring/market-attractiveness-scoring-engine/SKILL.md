@@ -1,3 +1,4 @@
+<!-- Copyright SMOrchestra.ai. All rights reserved. Proprietary and confidential. -->
 ---
 name: market-attractiveness-scoring-engine
 description: Scorecard 3 of 5 — Evaluates market attractiveness across 4 dimensions (Pain Reality, Purchasing Power, ICP Accessibility, Market Growth). Scores /100 with hybrid MC + AI-evaluated questions.

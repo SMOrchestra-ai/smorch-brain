@@ -1,7 +1,7 @@
 ---
 description: Run scorecards or import scorecard results
 allowed-tools: Read, Write, Edit, Glob, Grep, Bash(ls:*), Bash(wc:*)
-argument-hint: '[scorecard-number or import]'
+argument-hint: [scorecard-number or "import"]
 ---
 
 Entry point for EO Scorecard Assessment. Supports three input paths.

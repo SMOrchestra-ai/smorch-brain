@@ -1,3 +1,4 @@
+<!-- Copyright SMOrchestra.ai. All rights reserved. Proprietary and confidential. -->
 ---
 name: n8n-architect
 description: "Expert n8n workflow architect that designs, builds, deploys, debugs, and optimizes n8n workflows. Triggers on: n8n, workflow automation, flow building, connecting tools/platforms, signal scoring pipelines, lead routing, enrichment workflows, webhook processing, scheduled automations, orchestration between GHL/Instantly/HeyReach/Clay/Slack/Google Sheets. Also: 'build me a workflow', 'create an automation', 'debug my workflow', 'optimize this automation', 'deploy to n8n', 'connect X to Y', cron jobs, and any multi-tool data flow architecture request."

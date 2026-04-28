@@ -1,0 +1,163 @@
+{
+  "version": "1.0",
+  "description": "Timing constraints per channel, per market for outbound orchestration",
+
+  "global_rules": {
+    "max_touches_per_channel_per_day": 1,
+    "max_touches_per_lead_per_day": 2,
+    "min_gap_between_channels_hours": 24,
+    "reply_on_any_channel": "PAUSE_ALL_IMMEDIATELY",
+    "re_engagement_min_gap_days": 30,
+    "whatsapp_never_first_touch": true,
+    "whatsapp_never_outside_business_hours": true
+  },
+
+  "markets": {
+    "mena": {
+      "label": "MENA (UAE, Saudi, Qatar, Kuwait, Bahrain, Oman)",
+      "work_days": [0, 1, 2, 3, 4],
+      "work_days_names": ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday"],
+      "weekend": ["Friday", "Saturday"],
+      "timezone": "Asia/Dubai",
+      "utc_offset": "+04:00",
+      "business_hours": { "start": "08:00", "end": "17:00" },
+      "avoid_hours": { "start": "12:30", "end": "13:30", "reason": "Lunch break" },
+      "best_email_times": ["09:00-10:30", "14:00-15:00"],
+      "best_linkedin_times": ["08:00-09:00", "16:00-17:00"],
+      "whatsapp_hours": { "start": "09:00", "end": "16:00" },
+      "channel_priority": ["linkedin", "whatsapp", "email"],
+      "recommended_pattern": "C",
+      "seasonal_adjustments": {
+        "ramadan": {
+          "volume_reduction": 0.5,
+          "adjusted_hours": { "start": "10:00", "end": "14:00" },
+          "note": "Shorter work days, respect fasting hours"
+        },
+        "summer_jun_aug": {
+          "volume_reduction": 0.3,
+          "note": "Many execs travel, reduced response rates"
+        }
+      },
+      "cultural_notes": [
+        "Friday is sacred — never send on Friday",
+        "Mutual connections are highly valued — mention them",
+        "Gulf Arabic conversational tone for WhatsApp, not MSA",
+        "Reference shared geography for rapport"
+      ]
+    },
+    "us": {
+      "label": "United States",
+      "work_days": [1, 2, 3, 4, 5],
+      "work_days_names": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+      "weekend": ["Saturday", "Sunday"],
+      "timezone_default": "America/Chicago",
+      "timezones": {
+        "east": { "timezone": "America/New_York", "utc_offset": "-05:00" },
+        "central": { "timezone": "America/Chicago", "utc_offset": "-06:00" },
+        "mountain": { "timezone": "America/Denver", "utc_offset": "-07:00" },
+        "west": { "timezone": "America/Los_Angeles", "utc_offset": "-08:00" }
+      },
+      "business_hours": { "start": "09:00", "end": "17:00" },
+      "best_email_times": ["07:00-09:00", "13:00-14:00"],
+      "best_email_days": ["Tuesday", "Wednesday", "Thursday"],
+      "best_linkedin_times": ["07:00-08:00", "17:00-18:00"],
+      "sms_hours": { "start": "10:00", "end": "16:00", "note": "TCPA considerations" },
+      "channel_priority": ["email", "linkedin", "sms"],
+      "recommended_pattern": "A",
+      "seasonal_adjustments": {
+        "thanksgiving_week": { "blackout": true },
+        "dec_24_jan_2": { "blackout": true },
+        "july_4_week": { "volume_reduction": 0.5 }
+      },
+      "cultural_notes": [
+        "Direct and specific — brevity valued",
+        "Lead with data/metrics",
+        "Cold outreach is accepted and expected",
+        "Pattern interrupt subject lines work well"
+      ]
+    },
+    "eu": {
+      "label": "European Union",
+      "work_days": [1, 2, 3, 4, 5],
+      "work_days_names": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+      "weekend": ["Saturday", "Sunday"],
+      "timezone_default": "Europe/London",
+      "timezones": {
+        "uk": { "timezone": "Europe/London", "utc_offset": "+00:00" },
+        "central": { "timezone": "Europe/Berlin", "utc_offset": "+01:00" },
+        "eastern": { "timezone": "Europe/Helsinki", "utc_offset": "+02:00" }
+      },
+      "business_hours": { "start": "09:00", "end": "17:30" },
+      "best_email_times": ["09:00-10:00", "14:00-15:00"],
+      "best_email_days": ["Tuesday", "Wednesday", "Thursday"],
+      "best_linkedin_times": ["08:30-09:30", "17:00-18:00"],
+      "channel_priority": ["linkedin", "email"],
+      "recommended_pattern": "B",
+      "gdpr_rules": {
+        "basis": "legitimate_interest",
+        "opt_out_required": true,
+        "personal_emails_prohibited": true,
+        "right_to_be_forgotten_hours": 72
+      },
+      "cultural_notes": [
+        "GDPR compliance mandatory",
+        "LinkedIn-first approach suits most EU markets",
+        "UK closest to US patterns",
+        "DACH (Germany) more formal, reference credentials",
+        "Nordic markets: direct and brief"
+      ]
+    }
+  },
+
+  "pattern_timing": {
+    "A": {
+      "name": "Email-First → LinkedIn Follow",
+      "sequence": [
+        { "day": 0, "channel": "email", "action": "cold_email_step_1" },
+        { "day": 1, "channel": "linkedin", "action": "profile_view" },
+        { "day": 2, "channel": "linkedin", "action": "connection_request" },
+        { "day": 3, "channel": "email", "action": "follow_up_step_2" },
+        { "day": 5, "channel": "linkedin", "action": "message_if_connected", "condition": "connected" },
+        { "day": 6, "channel": "email", "action": "different_angle_step_3" },
+        { "day": 8, "channel": "linkedin", "action": "follow_up_message", "condition": "connected" },
+        { "day": 10, "channel": "email", "action": "breakup_email" }
+      ]
+    },
+    "B": {
+      "name": "LinkedIn-First → Email Follow",
+      "sequence": [
+        { "day": 0, "channel": "linkedin", "action": "connection_request_no_note" },
+        { "day": 1, "channel": "linkedin", "action": "message_with_value", "condition": "accepted" },
+        { "day": 2, "channel": "email", "action": "cold_email_reference_linkedin" },
+        { "day": 4, "channel": "linkedin", "action": "share_content" },
+        { "day": 6, "channel": "email", "action": "follow_up_step_2" },
+        { "day": 8, "channel": "linkedin", "action": "direct_ask", "condition": "engaged" },
+        { "day": 10, "channel": "email", "action": "breakup_email" }
+      ]
+    },
+    "C": {
+      "name": "Signal-Triggered Multi-Touch (MENA)",
+      "sequence": [
+        { "day": 0, "channel": "linkedin", "action": "connection_request" },
+        { "day": 0, "channel": "email", "action": "cold_email_step_1" },
+        { "day": "signal", "channel": "ghl", "action": "whatsapp_warm", "trigger": "connection_accepted OR email_opened" },
+        { "day": "signal", "channel": "all", "action": "pause_and_opportunity", "trigger": "reply_any_channel" },
+        { "day": 3, "channel": "email", "action": "follow_up_step_2", "condition": "no_signal" },
+        { "day": 5, "channel": "linkedin", "action": "message_or_inmail", "condition": "no_signal" },
+        { "day": 7, "channel": "email", "action": "step_3_or_nurture", "condition": "no_signal" }
+      ]
+    },
+    "D": {
+      "name": "Account-Based Multi-Thread",
+      "note": "Per-role timing, max 2 touches per company per day",
+      "role_channels": {
+        "technical": { "primary": "linkedin", "secondary": "email" },
+        "revenue": { "primary": "email", "secondary": "linkedin" },
+        "executive_mena": { "primary": "whatsapp", "secondary": "linkedin" },
+        "executive_us": { "primary": "linkedin", "secondary": "email" }
+      },
+      "stagger_days": 2,
+      "company_daily_limit": 2
+    }
+  }
+}

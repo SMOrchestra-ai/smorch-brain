@@ -1,3 +1,4 @@
+<!-- Copyright SMOrchestra.ai. All rights reserved. Proprietary and confidential. -->
 ---
 name: eo-security-hardener
 description: EO Security Hardener - security audit and hardening skill covering 7 domains (Auth, Authorization, Input Validation, Rate Limiting, Env Vars, HTTPS, Dependencies). Non-developer founders ship insecure by default because they don't know what they don't know. This skill closes that gap. Triggers on 'security audit', 'security check', 'harden', 'RLS audit', 'vulnerability scan', 'security headers', 'rate limiting', 'input validation', 'pre-launch security', 'penetration test'. This is a Step 5 skill of the EO Training System.

@@ -1,0 +1,19 @@
+# Dependabot configuration
+# Scans npm deps in active skills only. Archived plugins excluded.
+
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directory: "/skills/eo-training/eo-gtm-asset-builder"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+      - "security"
+
+  # NOTE: plugins/_archive/** excluded intentionally.
+  # Archived plugins are historical snapshots, not deployed.
+  # To force ignore security alerts on archived paths, dismiss them in
+  # github.com/SMOrchestra-ai/smorch-brain/security/dependabot with reason
+  # "tolerable_risk" or "inaccurate" (archived, not deployed).

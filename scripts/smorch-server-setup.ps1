@@ -13,7 +13,7 @@
     Override default repo URL.
 
 .PARAMETER Branch
-    Checkout specific branch (default: main).
+    Checkout specific branch (default: dev).
 
 .PARAMETER SkipCleanup
     Skip the duplicate cleanup step.
@@ -29,7 +29,7 @@ param(
 
     [string]$RepoUrl = "https://github.com/SMOrchestra-ai/smorch-brain.git",
 
-    [string]$Branch = "main",
+    [string]$Branch = "dev",
 
     [switch]$SkipCleanup,
 
@@ -37,9 +37,38 @@ param(
     [switch]$Help
 )
 
+# --- Prerequisite checks (early, before param-dependent code) ---
+function Test-ScriptPrerequisites {
+    $missing = @()
+    if (-not (Get-Command git -ErrorAction SilentlyContinue)) { $missing += "git" }
+    if ($missing.Count -gt 0) {
+        Write-Host "ERROR: Missing required tools: $($missing -join ', ')" -ForegroundColor Red
+        exit 1
+    }
+}
+Test-ScriptPrerequisites
+
+# --- Git retry helper ---
+function Invoke-GitWithRetry {
+    param([string[]]$GitArgs)
+    $attempts = 0
+    $max = 3
+    while ($attempts -lt $max) {
+        $result = & git @GitArgs 2>&1
+        if ($LASTEXITCODE -eq 0) { return $result }
+        $attempts++
+        if ($attempts -lt $max) {
+            Write-Host "  Network issue, retrying ($attempts/$max)..." -ForegroundColor Yellow
+            Start-Sleep -Seconds 5
+        }
+    }
+    Write-Host "  Failed after $max attempts. Check your network." -ForegroundColor Red
+    return $null
+}
+
 $VERSION = "1.0.0"
 # Auto-detect repo location (works on Windows, Mac via PowerShell Core, Linux)
-$cwPath = Join-Path $env:USERPROFILE "Desktop" "cowork-workspace" "smorch-brain"
+$cwPath = Join-Path (Join-Path (Join-Path $env:USERPROFILE "Desktop") "cowork-workspace") "smorch-brain"
 $homePath = Join-Path $env:USERPROFILE "smorch-brain"
 if (Test-Path $cwPath) {
     $REPO_DIR = $cwPath
@@ -72,7 +101,7 @@ Required:
 Options:
   -RepoUrl <url>      Override default repo URL
                       (default: https://github.com/SMOrchestra-ai/smorch-brain.git)
-  -Branch <name>      Checkout specific branch (default: main)
+  -Branch <name>      Checkout specific branch (default: dev)
   -SkipCleanup        Skip the duplicate cleanup step
   -Help               Show this help message
 
@@ -127,9 +156,9 @@ function Install-Repo {
     if (Test-Path $REPO_DIR) {
         Log-Info "Repository already exists at $REPO_DIR"
         Log-Info "Pulling latest changes..."
-        Push-Location $REPO_DIR
+        Push-Location "$REPO_DIR"
         try {
-            $result = git pull origin $Branch 2>&1
+            $result = Invoke-GitWithRetry @("pull", "origin", "$Branch")
             if ($LASTEXITCODE -ne 0) {
                 Log-Warn "Could not pull latest. Using existing local copy."
             }
@@ -143,7 +172,7 @@ function Install-Repo {
     }
     else {
         Log-Info "Cloning from $RepoUrl (branch: $Branch)..."
-        $result = git clone --branch $Branch $RepoUrl $REPO_DIR 2>&1
+        $result = Invoke-GitWithRetry @("clone", "--branch", "$Branch", "$RepoUrl", "$REPO_DIR")
         if ($LASTEXITCODE -ne 0) {
             Log-Error "Failed to clone repository from $RepoUrl"
             Log-Info "Check your network connection and repo access."
@@ -192,7 +221,7 @@ function Install-Profile {
     Log-Step 3 "Pulling profile: $Profile"
 
     try {
-        & $SMORCH_BIN pull --profile $Profile
+        & $SMORCH_BIN pull -Profile $Profile
         if ($LASTEXITCODE -ne 0) {
             Log-Error "Failed to pull profile '$Profile'"
             Log-Info "Check available profiles with: smorch.ps1 list --profiles"

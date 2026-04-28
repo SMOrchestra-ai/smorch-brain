@@ -1,6 +1,7 @@
+<!-- IP:START - Command routing with methodology references -->
 ---
 description: Deep signal-based research on a prospect company or person
-argument-hint: [company-name or person-name]
+argument-hint: "[company-name or person-name]"
 allowed-tools: Read, Write, Bash, Grep, Glob, Task, WebSearch, WebFetch, AskUserQuestion
 ---
 
@@ -51,3 +52,4 @@ Research a prospect using signal-based intelligence. Goes deeper than generic co
 - Prospect brief in structured format
 - Save to `prospects/[company-or-name]-brief-[date].md`
 - If the prospect fits an active campaign, offer to add them to the lead list
+<!-- IP:END -->

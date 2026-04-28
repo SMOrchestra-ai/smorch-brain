@@ -1,0 +1,9 @@
+{
+  "name": "smorch-context-brain",
+  "version": "1.0.0",
+  "description": "SMOrch context and identity management. Personal about-me context and project brain ingestion for maintaining consistent context across sessions.",
+  "author": {
+    "name": "Mamoun Alamouri",
+    "homepage": "https://smorchestra.ai"
+  }
+}

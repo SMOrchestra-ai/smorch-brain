@@ -1,3 +1,4 @@
+<!-- Copyright SMOrchestra.ai. All rights reserved. Proprietary and confidential. -->
 ---
 name: smorch-tool-super-admin-creator
 description: "Tech Tool Super Admin Creator - transforms any SaaS tool into a battle-tested operator skill with SOPs, reference docs, and MENA workflows. Triggers on: 'build operator skill for [tool]', 'create super admin for [tool]', 'make me a [tool] operator', 'I just connected [tool] MCP', 'build skill for [tool]', 'turn [tool] into a skill', 'create [tool] command center', 'I need a [tool] playbook', or any request to master a new SaaS tool. Also triggers on: super admin, power user, expert operator for any tool. Do NOT trigger for: using existing operator skills directly, campaign content (smorch-gtm-engine:signal-to-trust-gtm), automation strategy without a specific tool (smorch-gtm-engine:outbound-orchestrator)."

@@ -1,0 +1,9 @@
+{
+  "name": "smorch-dev-scoring",
+  "version": "1.0.0",
+  "description": "5-Hat Quality Scorecard System for scoring coding projects across Product, Architecture, Engineering, QA, and UX Frontend dimensions. Produces composite scores with hard stop quality gates.",
+  "author": {
+    "name": "SMOrchestra.ai"
+  },
+  "keywords": ["scoring", "quality", "code-review", "architecture", "testing", "ux", "product"]
+}

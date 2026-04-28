@@ -1,3 +1,4 @@
+<!-- Copyright SMOrchestra.ai. All rights reserved. Proprietary and confidential. -->
 ---
 name: eo-production-renderer
 description: "EO Production Renderer - Claude Code skill that takes a JSON Design Brief from eo-gtm-asset-factory and injects content into frozen reference templates. Pure mechanical slot injection: no design decisions, no content generation. Reads design-brief.json, reads reference templates, swaps slot content, outputs production files. Triggers on 'render assets', 'inject content', 'production render', 'slot injection', 'generate from brief', 'batch render', 'produce files from brief'. Used for scale: when multiple students need assets generated from their individual briefs."
@@ -304,13 +305,3 @@ Deployment targets:
 | Version | Date | Changes |
 |---------|------|---------|
 | 1.0 | 2026-03-20 | Initial: HTML slot injection + PPTX regeneration from JSON Design Brief |
-
----
-
-## HANDOFF PROTOCOL
-
-After assets are rendered:
-
-1. **Announce**: "Production render complete. [N] files generated from design brief."
-2. **Verify**: Confirm all slot injections succeeded, no empty placeholders remain
-3. **Next step**: "Assets are ready for deployment. Use them in your GTM tools (Instantly, HeyReach, GHL) or hand to student."

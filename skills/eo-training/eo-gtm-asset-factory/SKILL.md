@@ -1,3 +1,4 @@
+<!-- Copyright SMOrchestra.ai. All rights reserved. Proprietary and confidential. -->
 ---
 name: eo-gtm-asset-factory
 description: EO GTM Asset Factory - reads the 12 project brain files (especially gtm.md, positioning.md, icp.md, brandvoice.md) and produces a complete GTM asset bundle dynamically matched to the student's top-scoring GTM motions. Triggers on 'build my GTM assets', 'generate assets', 'create outreach sequences', 'GTM factory', 'produce my assets', 'launch assets', 'build campaign materials'. This is Skill 2 of the EO Training System.

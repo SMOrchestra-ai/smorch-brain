@@ -1,3 +1,4 @@
+<!-- Copyright SMOrchestra.ai. All rights reserved. Proprietary and confidential. -->
 ---
 name: saasfast-gating
 description: "SaaSFast v3 Auth + Payment Gating Deployer — takes any existing web app (HTML pages, dashboards, assessment tools) and wraps it behind SaaSFast v3's landing page, Stripe payment, and Supabase auth. Produces a deployable repo with correct checkout flow, webhook user creation, magic link auth, and access gating. Triggers on: 'gate this app', 'add payment wall', 'put behind auth', 'saasfast gating', 'wrap with SaaSFast', 'add Stripe subscription to', 'gate access to', 'deploy behind payment', or any request to add auth+payment to an existing web app. Also triggers when integrating SaaSFast with another repo, creating a paid landing page for an existing tool, or setting up subscription-based access to HTML content."

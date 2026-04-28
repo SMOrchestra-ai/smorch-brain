@@ -1,3 +1,4 @@
+<!-- Copyright SMOrchestra.ai. All rights reserved. Proprietary and confidential. -->
 ---
 name: ghl-operator
 description: "GHL/SalesMfast CRM Command Center where all outbound signals converge, leads are managed, and multi-channel nurture happens. Triggers on: GHL, GoHighLevel, SalesMfast, CRM, contacts, pipelines, opportunities, tags, custom fields, WhatsApp messaging, SMS, warm email, lead routing, contact management, pipeline analytics, booking meetings, nurture sequences, MENA WhatsApp outreach. Also: adding/updating/searching/tagging contacts, creating opportunities, sending WhatsApp/SMS/email, checking pipeline stats, merging duplicates, bulk imports."

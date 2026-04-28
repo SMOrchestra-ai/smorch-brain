@@ -1,3 +1,4 @@
+<!-- IP:START - Culture Map GTM adaptation framework -->
 # Culture Map Framework for GTM Messaging
 
 Based on Erin Meyer's "The Culture Map" adapted for Signal-to-Trust GTM campaigns.
@@ -461,3 +462,5 @@ When adapting messaging for different markets:
 - ☐ Include DACH-specific case studies
 
 **Result**: Culturally adapted messaging that resonates in each geographic market.
+
+<!-- IP:END -->

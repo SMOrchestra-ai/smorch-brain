@@ -1,16 +1,7 @@
+<!-- Copyright SMOrchestra.ai. All rights reserved. Proprietary and confidential. -->
 ---
 name: outbound-orchestrator
-description: >-
-  Multi-Channel Outbound Campaign Engine — orchestrates cold email (Instantly), LinkedIn (HeyReach),
-  and WhatsApp/SMS/CRM (GHL) into coordinated outbound campaigns. Use whenever the user mentions
-  multi-channel outbound, launching campaigns across email+LinkedIn+WhatsApp, channel sequencing,
-  cross-channel deduplication, signal scoring across channels, multi-touch sequences, coordinating
-  Instantly+HeyReach+GHL, campaign performance across all channels, channel selection for MENA or US,
-  preventing duplicate outreach, re-engaging cold leads, or deploying to multiple platforms. Triggers
-  on "launch outbound for [ICP]", "which channel should I use", "lead replied — what next", any
-  request involving 2+ outbound channels, or outbound strategy implying multi-channel execution. Do
-  NOT trigger for single-channel tasks (instantly-operator, heyreach-operator, ghl-operator), content
-  creation without execution (signal-to-trust-gtm), or n8n workflow building without campaign context.
+description: "Multi-Channel Outbound Campaign Engine - orchestrates cold email (Instantly), LinkedIn (HeyReach), and WhatsApp/SMS/CRM (GHL) into coordinated outbound campaigns. Use whenever the user mentions multi-channel outbound, launching campaigns across email+LinkedIn+WhatsApp, channel sequencing, cross-channel deduplication, signal scoring across channels, multi-touch sequences, coordinating Instantly+HeyReach+GHL, campaign performance across all channels, channel selection for MENA or US, preventing duplicate outreach, re-engaging cold leads, or deploying to multiple platforms. Triggers on 'launch outbound for [ICP]', 'which channel should I use', 'lead replied - what next', any request involving 2+ outbound channels, or outbound strategy implying multi-channel execution. Do NOT trigger for single-channel tasks (instantly-operator, heyreach-operator, ghl-operator), content creation without execution (signal-to-trust-gtm), or n8n workflow building without campaign context."
 ---
 
 # Outbound Orchestrator

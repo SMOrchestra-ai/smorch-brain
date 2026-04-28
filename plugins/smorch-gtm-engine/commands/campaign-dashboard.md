@@ -1,6 +1,6 @@
 ---
 description: Show cross-platform campaign metrics dashboard
-argument-hint: [campaign-name]
+argument-hint: "[campaign-name]"
 allowed-tools: Read, Write, Bash, Grep, Glob, Task
 ---
 
