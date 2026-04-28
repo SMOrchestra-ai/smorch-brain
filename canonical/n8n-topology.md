@@ -10,7 +10,7 @@
 | **flows** | smo-dev | `n8n` | 5170→5678 | flows.smorchestra.ai ⚠️ vhost pending | 235 | Dev primary |
 | **testflow** | smo-dev | (alias of `flows` container) | 5170 | testflow.smorchestra.ai | 235 | Dev alias |
 | **smo-brain** | eo-prod | `n8n` (n8n-docker-n8n) | 5678 | ai.mamounalamouri.smorchestra.com | **89** | EO orchestration — assessments, content vNext, ACE telegram, drift |
-| **qa** | smo-eo-qa | `n8n-n8n-1` via caddy | 5678 | qa.smorchestra.ai ⚠️ vhost pending | 0 (new) | QA automation — nightly smoke, MENA checks, axe scans |
+| **qa** | eo-dev | `n8n-n8n-1` via caddy | 5678 | qa.smorchestra.ai ⚠️ legacy vhost pending | 0 (new) | Legacy slot — server reclassified 2026-04-29 to eo-dev (EO Oasis dev VPS replica of smo-dev) |
 
 ---
 
