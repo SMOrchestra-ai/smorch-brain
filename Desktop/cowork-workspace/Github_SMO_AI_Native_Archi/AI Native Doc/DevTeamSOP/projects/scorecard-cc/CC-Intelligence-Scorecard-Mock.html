@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CC Intelligence Scorecard - Gulf National Bank</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root {
+  --bg: #0a0a0b;
+  --surface: #111113;
+  --card: #16161a;
+  --border: #222228;
+  --gold: #c8a24e;
+  --gold-dim: rgba(200,162,78,0.15);
+  --gold-glow: rgba(200,162,78,0.3);
+  --white: #f0ede6;
+  --gray: #8a8a96;
+  --light-gray: #b0b0ba;
+  --red: #ef4444;
+  --red-dim: rgba(239,68,68,0.12);
+  --green: #10b981;
+  --green-dim: rgba(16,185,129,0.12);
+  --blue: #3b82f6;
+  --blue-dim: rgba(59,130,246,0.12);
+  --teal: #14b8a6;
+  --teal-dim: rgba(20,184,166,0.12);
+  --amber: #f59e0b;
+  --amber-dim: rgba(245,158,11,0.12);
+  --purple: #8b5cf6;
+  --purple-dim: rgba(139,92,246,0.12);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  background: var(--bg);
+  color: var(--white);
+  font-family: 'DM Sans', sans-serif;
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+/* Subtle grid bg */
+body::before {
+  content:'';
+  position:fixed; top:0; left:0; right:0; bottom:0;
+  background-image:
+    linear-gradient(rgba(200,162,78,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(200,162,78,0.03) 1px, transparent 1px);
+  background-size: 60px 60px;
+  pointer-events:none;
+  z-index:0;
+}
+
+.container { max-width:1200px; margin:0 auto; padding:0 24px; position:relative; z-index:1; }
+
+/* ===== HEADER ===== */
+.header {
+  padding: 32px 0 24px;
+  border-bottom: 1px solid var(--border);
+}
+.header-top { display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; }
+.logo { display:flex; align-items:center; gap:12px; }
+.logo-mark {
+  width:36px; height:36px; border-radius:8px;
+  background: linear-gradient(135deg, var(--gold), #e8c86a);
+  display:flex; align-items:center; justify-content:center;
+  font-weight:700; font-size:14px; color:#0a0a0b;
+}
+.logo-text { font-family:'Playfair Display',serif; font-size:18px; font-weight:600; color:var(--white); }
+.logo-sub { font-size:11px; color:var(--gray); letter-spacing:2px; text-transform:uppercase; }
+.report-meta { text-align:right; font-size:12px; color:var(--gray); }
+.report-meta span { color:var(--gold); }
+
+.client-banner {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 28px 32px;
+  display:flex; justify-content:space-between; align-items:center;
+  margin-top:20px;
+}
+.client-info h1 {
+  font-family:'Playfair Display',serif;
+  font-size:28px; font-weight:700; color:var(--white);
+  margin-bottom:4px;
+}
+.client-info p { font-size:13px; color:var(--gray); }
+.client-info p span { color:var(--light-gray); }
+
+.overall-score-ring {
+  width:110px; height:110px; position:relative;
+}
+.score-ring-bg {
+  width:110px; height:110px; border-radius:50%;
+  background: conic-gradient(
+    var(--gold) 0deg, var(--gold) calc(var(--score) * 3.6deg),
+    var(--border) calc(var(--score) * 3.6deg), var(--border) 360deg
+  );
+  display:flex; align-items:center; justify-content:center;
+  animation: ringFill 1.5s ease-out;
+}
+.score-ring-inner {
+  width:88px; height:88px; border-radius:50%; background:var(--card);
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+}
+.score-ring-inner .num { font-size:32px; font-weight:700; color:var(--gold); line-height:1; }
+.score-ring-inner .lbl { font-size:9px; color:var(--gray); text-transform:uppercase; letter-spacing:1.5px; margin-top:2px; }
+
+@keyframes ringFill { from { opacity:0.3; transform:scale(0.9); } to { opacity:1; transform:scale(1); } }
+
+/* ===== SCORE BAND ===== */
+.score-band {
+  margin:24px 0;
+  background: var(--card);
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:20px 28px;
+}
+.score-band-label { font-size:11px; color:var(--gray); text-transform:uppercase; letter-spacing:1.5px; margin-bottom:12px; }
+.band-bar {
+  height:8px; border-radius:4px; display:flex; overflow:hidden; margin-bottom:8px;
+  background: var(--border);
+}
+.band-bar .seg { height:100%; transition:width 1s ease; }
+.band-labels { display:flex; justify-content:space-between; font-size:10px; color:var(--gray); }
+.band-marker {
+  position:relative; margin-top:-22px; margin-bottom:14px;
+  transition: margin-left 1s ease;
+}
+.band-marker::after {
+  content:''; display:block; width:0; height:0;
+  border-left:6px solid transparent; border-right:6px solid transparent;
+  border-top:8px solid var(--gold);
+}
+
+/* ===== DIMENSION GRID ===== */
+.section-title {
+  font-family:'Playfair Display',serif;
+  font-size:22px; font-weight:600; color:var(--white);
+  margin: 36px 0 4px;
+  display:flex; align-items:center; gap:10px;
+}
+.section-title::before {
+  content:''; display:block; width:3px; height:22px; background:var(--gold); border-radius:2px;
+}
+.section-sub { font-size:13px; color:var(--gray); margin-bottom:20px; }
+
+.dim-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:28px; }
+.dim-card {
+  background:var(--card); border:1px solid var(--border); border-radius:10px;
+  padding:20px 18px; position:relative; overflow:hidden;
+  transition: border-color 0.3s, transform 0.2s;
+  cursor:default;
+}
+.dim-card:hover { border-color: var(--gold-glow); transform:translateY(-2px); }
+.dim-card .accent-bar { position:absolute; top:0; left:0; right:0; height:3px; }
+.dim-card .dim-icon { font-size:20px; margin-bottom:10px; }
+.dim-card .dim-name { font-size:12px; color:var(--gray); text-transform:uppercase; letter-spacing:1px; margin-bottom:8px; }
+.dim-card .dim-score-row { display:flex; align-items:baseline; gap:6px; margin-bottom:10px; }
+.dim-card .dim-score { font-size:28px; font-weight:700; line-height:1; }
+.dim-card .dim-max { font-size:13px; color:var(--gray); }
+.dim-card .dim-bar { height:4px; border-radius:2px; background:var(--border); overflow:hidden; margin-bottom:10px; }
+.dim-card .dim-bar-fill { height:100%; border-radius:2px; transition:width 1.2s ease; }
+.dim-card .dim-verdict { font-size:11px; padding:3px 8px; border-radius:4px; display:inline-block; }
+
+.verdict-critical { background:var(--red-dim); color:var(--red); }
+.verdict-weak { background:var(--amber-dim); color:var(--amber); }
+.verdict-adequate { background:var(--blue-dim); color:var(--blue); }
+.verdict-strong { background:var(--green-dim); color:var(--green); }
+
+/* ===== DETAIL SECTIONS ===== */
+.detail-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:28px; }
+.detail-card {
+  background:var(--card); border:1px solid var(--border); border-radius:10px;
+  padding:24px; position:relative;
+}
+.detail-card h3 {
+  font-size:15px; font-weight:600; color:var(--white); margin-bottom:14px;
+  display:flex; align-items:center; gap:8px;
+}
+.detail-card h3 .badge {
+  font-size:11px; padding:2px 8px; border-radius:4px; font-weight:500;
+}
+
+.check-list { list-style:none; }
+.check-list li {
+  display:flex; align-items:flex-start; gap:10px;
+  padding:8px 0; border-bottom:1px solid var(--border);
+  font-size:13px; color:var(--light-gray);
+}
+.check-list li:last-child { border-bottom:none; }
+.check-icon { width:18px; height:18px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:10px; flex-shrink:0; margin-top:2px; }
+.check-pass { background:var(--green-dim); color:var(--green); }
+.check-fail { background:var(--red-dim); color:var(--red); }
+.check-warn { background:var(--amber-dim); color:var(--amber); }
+
+/* Chart containers */
+.chart-container { position:relative; height:260px; margin:10px 0; }
+.chart-container-sm { position:relative; height:200px; margin:10px 0; }
+
+/* ===== COMPETITOR TABLE ===== */
+.comp-table {
+  width:100%; border-collapse:collapse; font-size:13px; margin:10px 0;
+}
+.comp-table th {
+  text-align:left; padding:10px 12px; font-size:11px; color:var(--gray);
+  text-transform:uppercase; letter-spacing:1px; border-bottom:1px solid var(--border);
+  font-weight:500;
+}
+.comp-table td {
+  padding:10px 12px; border-bottom:1px solid var(--border); color:var(--light-gray);
+}
+.comp-table tr.highlight td { color:var(--gold); font-weight:600; }
+.comp-table .bar-cell { width:120px; }
+.mini-bar { height:6px; border-radius:3px; background:var(--border); overflow:hidden; }
+.mini-bar-fill { height:100%; border-radius:3px; }
+
+/* ===== FINDINGS ===== */
+.finding-row {
+  display:flex; gap:12px; padding:14px 0;
+  border-bottom:1px solid var(--border);
+  align-items:flex-start;
+}
+.finding-row:last-child { border-bottom:none; }
+.finding-sev {
+  width:6px; min-height:40px; border-radius:3px; flex-shrink:0; margin-top:4px;
+}
+.finding-content { flex:1; }
+.finding-content strong { font-size:14px; color:var(--white); display:block; margin-bottom:2px; }
+.finding-content p { font-size:12px; color:var(--gray); line-height:1.5; }
+.finding-tag {
+  font-size:10px; padding:2px 6px; border-radius:3px; margin-left:8px;
+  vertical-align:middle;
+}
+
+/* ===== OPPORTUNITY MAP ===== */
+.opp-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:12px; margin:16px 0; }
+.opp-card {
+  background: var(--surface);
+  border:1px solid var(--border);
+  border-radius:8px;
+  padding:16px 18px;
+  border-left:3px solid;
+}
+.opp-card .opp-label { font-size:10px; text-transform:uppercase; letter-spacing:1px; margin-bottom:6px; }
+.opp-card h4 { font-size:14px; color:var(--white); margin-bottom:4px; }
+.opp-card p { font-size:12px; color:var(--gray); }
+.opp-card .opp-impact { font-size:11px; margin-top:8px; font-weight:600; }
+
+/* ===== CTA FOOTER ===== */
+.cta-section {
+  background: linear-gradient(135deg, var(--card), #1a1812);
+  border:1px solid var(--gold-dim);
+  border-radius:12px;
+  padding:40px;
+  text-align:center;
+  margin:40px 0;
+}
+.cta-section h2 {
+  font-family:'Playfair Display',serif;
+  font-size:26px; color:var(--white); margin-bottom:8px;
+}
+.cta-section p { font-size:14px; color:var(--gray); margin-bottom:24px; max-width:600px; margin-left:auto; margin-right:auto; }
+.cta-btn {
+  display:inline-block;
+  background: linear-gradient(135deg, var(--gold), #e8c86a);
+  color:#0a0a0b; font-weight:700; font-size:14px;
+  padding:14px 36px; border-radius:8px;
+  text-decoration:none; letter-spacing:0.5px;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.cta-btn:hover { transform:translateY(-2px); box-shadow:0 8px 30px var(--gold-glow); }
+
+.footer {
+  padding:24px 0;
+  border-top:1px solid var(--border);
+  text-align:center;
+  font-size:11px; color:var(--gray);
+  margin-bottom:20px;
+}
+
+/* ===== SENTIMENT PILLS ===== */
+.sentiment-row { display:flex; gap:8px; flex-wrap:wrap; margin:10px 0; }
+.sent-pill {
+  font-size:11px; padding:5px 10px; border-radius:6px;
+  border:1px solid var(--border);
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width:900px) {
+  .dim-grid { grid-template-columns:repeat(2,1fr); }
+  .detail-grid { grid-template-columns:1fr; }
+  .opp-grid { grid-template-columns:1fr; }
+  .client-banner { flex-direction:column; gap:20px; text-align:center; }
+}
+
+/* Animations */
+.fade-up {
+  opacity:0; transform:translateY(20px);
+  animation: fadeUp 0.6s ease forwards;
+}
+@keyframes fadeUp { to { opacity:1; transform:translateY(0); } }
+.delay-1 { animation-delay:0.1s; }
+.delay-2 { animation-delay:0.2s; }
+.delay-3 { animation-delay:0.3s; }
+.delay-4 { animation-delay:0.4s; }
+.delay-5 { animation-delay:0.5s; }
+.delay-6 { animation-delay:0.6s; }
+.delay-7 { animation-delay:0.7s; }
+.delay-8 { animation-delay:0.8s; }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+<!-- ===== HEADER ===== -->
+<header class="header fade-up">
+  <div class="header-top">
+    <div class="logo">
+      <div class="logo-mark">LAB</div>
+      <div>
+        <div class="logo-text">LAB Experience</div>
+        <div class="logo-sub">CC Intelligence Practice</div>
+      </div>
+    </div>
+    <div class="report-meta">
+      Report ID: <span>CCI-2026-0147</span><br>
+      Generated: <span>March 21, 2026</span><br>
+      Classification: <span>Confidential</span>
+    </div>
+  </div>
+
+  <div class="client-banner">
+    <div class="client-info">
+      <h1>Gulf National Bank</h1>
+      <p>Contact Center Intelligence Scorecard</p>
+      <p style="margin-top:6px;">
+        <span>Abu Dhabi, UAE</span> &nbsp;|&nbsp;
+        <span>Banking & Financial Services</span> &nbsp;|&nbsp;
+        <span>Est. ~450 agents, 3 sites</span>
+      </p>
+    </div>
+    <div class="overall-score-ring">
+      <div class="score-ring-bg" style="--score:41">
+        <div class="score-ring-inner">
+          <div class="num">41</div>
+          <div class="lbl">Overall</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ===== SCORE BAND ===== -->
+<div class="score-band fade-up delay-1">
+  <div class="score-band-label">CC Intelligence Maturity Band</div>
+  <div class="band-bar">
+    <div class="seg" style="width:20%;background:var(--red);"></div>
+    <div class="seg" style="width:20%;background:var(--amber);"></div>
+    <div class="seg" style="width:20%;background:#eab308;"></div>
+    <div class="seg" style="width:20%;background:var(--blue);"></div>
+    <div class="seg" style="width:20%;background:var(--green);"></div>
+  </div>
+  <div class="band-marker" style="margin-left:calc(41% - 6px);"></div>
+  <div class="band-labels">
+    <span>0-20 Critical</span>
+    <span>21-40 Reactive</span>
+    <span>41-60 Developing</span>
+    <span>61-80 Optimized</span>
+    <span>81-100 Intelligent</span>
+  </div>
+</div>
+
+<!-- ===== 8 DIMENSION CARDS ===== -->
+<div class="section-title fade-up delay-2">Dimension Scores</div>
+<div class="section-sub fade-up delay-2">Automated analysis across 8 CC intelligence dimensions. Scored 0-100 based on publicly observable signals.</div>
+
+<div class="dim-grid">
+
+  <div class="dim-card fade-up delay-2">
+    <div class="accent-bar" style="background:var(--red);"></div>
+    <div class="dim-icon">📞</div>
+    <div class="dim-name">Channel Accessibility</div>
+    <div class="dim-score-row">
+      <div class="dim-score" style="color:var(--red);">28</div>
+      <div class="dim-max">/ 100</div>
+    </div>
+    <div class="dim-bar"><div class="dim-bar-fill" style="width:28%;background:var(--red);"></div></div>
+    <div class="dim-verdict verdict-critical">Critical Gap</div>
+  </div>
+
+  <div class="dim-card fade-up delay-3">
+    <div class="accent-bar" style="background:var(--amber);"></div>
+    <div class="dim-icon">🤖</div>
+    <div class="dim-name">AI Readiness</div>
+    <div class="dim-score-row">
+      <div class="dim-score" style="color:var(--amber);">35</div>
+      <div class="dim-max">/ 100</div>
+    </div>
+    <div class="dim-bar"><div class="dim-bar-fill" style="width:35%;background:var(--amber);"></div></div>
+    <div class="dim-verdict verdict-weak">Below Threshold</div>
+  </div>
+
+  <div class="dim-card fade-up delay-4">
+    <div class="accent-bar" style="background:var(--blue);"></div>
+    <div class="dim-icon">⭐</div>
+    <div class="dim-name">Reputation & Sentiment</div>
+    <div class="dim-score-row">
+      <div class="dim-score" style="color:var(--blue);">62</div>
+      <div class="dim-max">/ 100</div>
+    </div>
+    <div class="dim-bar"><div class="dim-bar-fill" style="width:62%;background:var(--blue);"></div></div>
+    <div class="dim-verdict verdict-adequate">Adequate</div>
+  </div>
+
+  <div class="dim-card fade-up delay-5">
+    <div class="accent-bar" style="background:var(--red);"></div>
+    <div class="dim-icon">🌐</div>
+    <div class="dim-name">Arabic CX Capability</div>
+    <div class="dim-score-row">
+      <div class="dim-score" style="color:var(--red);">22</div>
+      <div class="dim-max">/ 100</div>
+    </div>
+    <div class="dim-bar"><div class="dim-bar-fill" style="width:22%;background:var(--red);"></div></div>
+    <div class="dim-verdict verdict-critical">Critical Gap</div>
+  </div>
+
+  <div class="dim-card fade-up delay-3">
+    <div class="accent-bar" style="background:var(--amber);"></div>
+    <div class="dim-icon">🔍</div>
+    <div class="dim-name">Digital Self-Service</div>
+    <div class="dim-score-row">
+      <div class="dim-score" style="color:var(--amber);">38</div>
+      <div class="dim-max">/ 100</div>
+    </div>
+    <div class="dim-bar"><div class="dim-bar-fill" style="width:38%;background:var(--amber);"></div></div>
+    <div class="dim-verdict verdict-weak">Below Threshold</div>
+  </div>
+
+  <div class="dim-card fade-up delay-4">
+    <div class="accent-bar" style="background:var(--green);"></div>
+    <div class="dim-icon">🏗️</div>
+    <div class="dim-name">Technology Stack</div>
+    <div class="dim-score-row">
+      <div class="dim-score" style="color:var(--green);">71</div>
+      <div class="dim-max">/ 100</div>
+    </div>
+    <div class="dim-bar"><div class="dim-bar-fill" style="width:71%;background:var(--green);"></div></div>
+    <div class="dim-verdict verdict-strong">Strong Foundation</div>
+  </div>
+
+  <div class="dim-card fade-up delay-5">
+    <div class="accent-bar" style="background:var(--amber);"></div>
+    <div class="dim-icon">⚡</div>
+    <div class="dim-name">Response Velocity</div>
+    <div class="dim-score-row">
+      <div class="dim-score" style="color:var(--amber);">44</div>
+      <div class="dim-max">/ 100</div>
+    </div>
+    <div class="dim-bar"><div class="dim-bar-fill" style="width:44%;background:var(--amber);"></div></div>
+    <div class="dim-verdict verdict-weak">Below Threshold</div>
+  </div>
+
+  <div class="dim-card fade-up delay-6">
+    <div class="accent-bar" style="background:var(--amber);"></div>
+    <div class="dim-icon">📊</div>
+    <div class="dim-name">Competitive Position</div>
+    <div class="dim-score-row">
+      <div class="dim-score" style="color:var(--amber);">33</div>
+      <div class="dim-max">/ 100</div>
+    </div>
+    <div class="dim-bar"><div class="dim-bar-fill" style="width:33%;background:var(--amber);"></div></div>
+    <div class="dim-verdict verdict-weak">Below Peers</div>
+  </div>
+
+</div>
+
+<!-- ===== RADAR CHART + CHANNEL AUDIT ===== -->
+<div class="detail-grid">
+  <div class="detail-card fade-up delay-3">
+    <h3>Dimension Radar</h3>
+    <div class="chart-container">
+      <canvas id="radarChart"></canvas>
+    </div>
+  </div>
+
+  <div class="detail-card fade-up delay-4">
+    <h3>Channel Accessibility Audit <span class="badge" style="background:var(--red-dim);color:var(--red);">28/100</span></h3>
+    <ul class="check-list">
+      <li><span class="check-icon check-pass">&#10003;</span><span><strong style="color:var(--white);">Phone Support</strong> - Detected. IVR system active, estimated 4-level deep menu.</span></li>
+      <li><span class="check-icon check-fail">&#10007;</span><span><strong style="color:var(--white);">WhatsApp Business</strong> - Not detected. 87% of UAE banking customers prefer WhatsApp for quick inquiries.</span></li>
+      <li><span class="check-icon check-fail">&#10007;</span><span><strong style="color:var(--white);">Live Chat Widget</strong> - No chat widget found on main site or mobile app landing page.</span></li>
+      <li><span class="check-icon check-warn">!</span><span><strong style="color:var(--white);">Email Support</strong> - Generic info@ address only. No dedicated support channel found.</span></li>
+      <li><span class="check-icon check-pass">&#10003;</span><span><strong style="color:var(--white);">Mobile App</strong> - App detected (iOS/Android). In-app support unclear.</span></li>
+      <li><span class="check-icon check-fail">&#10007;</span><span><strong style="color:var(--white);">Social Media Support</strong> - No dedicated support handles. DMs closed on Instagram.</span></li>
+      <li><span class="check-icon check-fail">&#10007;</span><span><strong style="color:var(--white);">Arabic Chatbot</strong> - No Arabic conversational AI detected on any channel.</span></li>
+      <li><span class="check-icon check-warn">!</span><span><strong style="color:var(--white);">Callback Option</strong> - Not found. Competitors FAB and ADIB offer callback within IVR.</span></li>
+    </ul>
+  </div>
+</div>
+
+<!-- ===== REPUTATION + SENTIMENT ===== -->
+<div class="detail-grid">
+  <div class="detail-card fade-up delay-4">
+    <h3>Reputation Signal Analysis <span class="badge" style="background:var(--blue-dim);color:var(--blue);">62/100</span></h3>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px;">
+      <div style="background:var(--surface);padding:12px;border-radius:8px;text-align:center;">
+        <div style="font-size:24px;font-weight:700;color:var(--white);">3.4</div>
+        <div style="font-size:10px;color:var(--gray);text-transform:uppercase;">Google Rating</div>
+        <div style="font-size:11px;color:var(--gray);">1,247 reviews</div>
+      </div>
+      <div style="background:var(--surface);padding:12px;border-radius:8px;text-align:center;">
+        <div style="font-size:24px;font-weight:700;color:var(--white);">2.8</div>
+        <div style="font-size:10px;color:var(--gray);text-transform:uppercase;">Facebook</div>
+        <div style="font-size:11px;color:var(--gray);">89 reviews</div>
+      </div>
+      <div style="background:var(--surface);padding:12px;border-radius:8px;text-align:center;">
+        <div style="font-size:24px;font-weight:700;color:var(--amber);">47%</div>
+        <div style="font-size:10px;color:var(--gray);text-transform:uppercase;">Reply Rate</div>
+        <div style="font-size:11px;color:var(--gray);">8-14 day avg</div>
+      </div>
+    </div>
+    <div style="font-size:12px;color:var(--gray);margin-bottom:10px;">Top Complaint Themes (NLP Analysis)</div>
+    <div class="sentiment-row">
+      <span class="sent-pill" style="border-color:var(--red);color:var(--red);">Wait Times (34%)</span>
+      <span class="sent-pill" style="border-color:var(--red);color:var(--red);">IVR Frustration (21%)</span>
+      <span class="sent-pill" style="border-color:var(--amber);color:var(--amber);">Arabic Support (18%)</span>
+      <span class="sent-pill" style="border-color:var(--amber);color:var(--amber);">Transfer Loops (14%)</span>
+      <span class="sent-pill" style="border-color:var(--gray);color:var(--gray);">App Issues (8%)</span>
+      <span class="sent-pill" style="border-color:var(--gray);color:var(--gray);">Other (5%)</span>
+    </div>
+    <div class="chart-container-sm">
+      <canvas id="sentimentChart"></canvas>
+    </div>
+  </div>
+
+  <div class="detail-card fade-up delay-5">
+    <h3>Competitive Benchmark</h3>
+    <table class="comp-table">
+      <thead>
+        <tr><th>Organization</th><th>Overall</th><th>Channels</th><th>AI Ready</th><th>Arabic</th><th>Score</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Emirates NBD</td><td><div class="mini-bar"><div class="mini-bar-fill" style="width:76%;background:var(--green);"></div></div></td>
+          <td style="color:var(--green);">6/6</td><td style="color:var(--green);">High</td><td style="color:var(--green);">Strong</td><td style="color:var(--green);font-weight:600;">76</td>
+        </tr>
+        <tr>
+          <td>FAB</td><td><div class="mini-bar"><div class="mini-bar-fill" style="width:68%;background:var(--blue);"></div></div></td>
+          <td style="color:var(--blue);">5/6</td><td style="color:var(--blue);">Med</td><td style="color:var(--blue);">Good</td><td style="color:var(--blue);font-weight:600;">68</td>
+        </tr>
+        <tr>
+          <td>ADIB</td><td><div class="mini-bar"><div class="mini-bar-fill" style="width:61%;background:var(--blue);"></div></div></td>
+          <td style="color:var(--blue);">5/6</td><td style="color:var(--amber);">Low</td><td style="color:var(--green);">Strong</td><td style="color:var(--blue);font-weight:600;">61</td>
+        </tr>
+        <tr>
+          <td>Mashreq</td><td><div class="mini-bar"><div class="mini-bar-fill" style="width:54%;background:var(--amber);"></div></div></td>
+          <td style="color:var(--amber);">4/6</td><td style="color:var(--amber);">Med</td><td style="color:var(--amber);">Weak</td><td style="color:var(--amber);font-weight:600;">54</td>
+        </tr>
+        <tr class="highlight">
+          <td>Gulf National Bank</td><td><div class="mini-bar"><div class="mini-bar-fill" style="width:41%;background:var(--gold);"></div></div></td>
+          <td style="color:var(--red);">2/6</td><td style="color:var(--red);">Low</td><td style="color:var(--red);">Weak</td><td style="font-weight:700;">41</td>
+        </tr>
+        <tr>
+          <td>RAK Bank</td><td><div class="mini-bar"><div class="mini-bar-fill" style="width:39%;background:var(--amber);"></div></div></td>
+          <td style="color:var(--amber);">3/6</td><td style="color:var(--red);">Low</td><td style="color:var(--amber);">Weak</td><td style="color:var(--amber);font-weight:600;">39</td>
+        </tr>
+      </tbody>
+    </table>
+    <p style="font-size:11px;color:var(--gray);margin-top:10px;">Benchmark based on publicly observable signals only. Actual internal capabilities may differ.</p>
+  </div>
+</div>
+
+<!-- ===== KEY FINDINGS ===== -->
+<div class="section-title fade-up delay-5">Key Findings</div>
+<div class="section-sub fade-up delay-5">Prioritized by estimated revenue impact and implementation urgency.</div>
+
+<div class="detail-card fade-up delay-6" style="margin-bottom:20px;">
+  <div class="finding-row">
+    <div class="finding-sev" style="background:var(--red);"></div>
+    <div class="finding-content">
+      <strong>No WhatsApp or Chat Channel Available <span class="finding-tag" style="background:var(--red-dim);color:var(--red);">HIGH IMPACT</span></strong>
+      <p>87% of UAE banking customers under 40 prefer messaging for routine inquiries. Your competitors Emirates NBD and FAB both offer WhatsApp banking. Estimated 15-20% of inbound calls could be deflected to async messaging, reducing AHT by ~25% on those interactions.</p>
+    </div>
+  </div>
+  <div class="finding-row">
+    <div class="finding-sev" style="background:var(--red);"></div>
+    <div class="finding-content">
+      <strong>Arabic Conversational AI: Zero Capability Detected <span class="finding-tag" style="background:var(--red-dim);color:var(--red);">HIGH IMPACT</span></strong>
+      <p>No Arabic chatbot, no Arabic IVR NLU, no Arabic self-service detected. In a market where 60%+ of customer interactions are in Arabic (Gulf dialect), this forces all Arabic-speaking customers into agent-handled calls. Competitors ADIB and Emirates NBD have Arabic chatbots processing ~30% of routine queries.</p>
+    </div>
+  </div>
+  <div class="finding-row">
+    <div class="finding-sev" style="background:var(--amber);"></div>
+    <div class="finding-content">
+      <strong>Review Response Time: 8-14 Days Average <span class="finding-tag" style="background:var(--amber-dim);color:var(--amber);">MEDIUM</span></strong>
+      <p>Industry best practice is under 24 hours. Negative reviews mentioning "wait times" and "IVR frustration" account for 55% of 1-star reviews. 53% of reviews receive no response at all. This signals a disconnected QA-to-reputation feedback loop.</p>
+    </div>
+  </div>
+  <div class="finding-row">
+    <div class="finding-sev" style="background:var(--amber);"></div>
+    <div class="finding-content">
+      <strong>IVR Depth: 4+ Levels Detected <span class="finding-tag" style="background:var(--amber-dim);color:var(--amber);">MEDIUM</span></strong>
+      <p>Automated call testing detected a minimum 4-level IVR menu before reaching an agent. Best-in-class UAE banks use NLU-driven IVR with 1-2 levels maximum. Deep IVR trees correlate with 30-40% higher abandonment rates in MENA banking.</p>
+    </div>
+  </div>
+  <div class="finding-row">
+    <div class="finding-sev" style="background:var(--blue);"></div>
+    <div class="finding-content">
+      <strong>Strong Technology Foundation Under-Utilized <span class="finding-tag" style="background:var(--blue-dim);color:var(--blue);">OPPORTUNITY</span></strong>
+      <p>Genesys Cloud platform detected with modern API capabilities. Current utilization appears limited to voice routing. Platform supports AI-powered routing, agent assist, and analytics modules that are not activated. Estimated 40-60% of platform value is dormant.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ===== OPPORTUNITY MAP ===== -->
+<div class="section-title fade-up delay-6">Opportunity-to-Impact Map</div>
+<div class="section-sub fade-up delay-6">Ranked by estimated ROI and implementation feasibility.</div>
+
+<div class="opp-grid fade-up delay-7">
+  <div class="opp-card" style="border-left-color:var(--green);">
+    <div class="opp-label" style="color:var(--green);">Quick Win (0-3 months)</div>
+    <h4>WhatsApp Business Channel Launch</h4>
+    <p>Deploy WhatsApp Business API with automated FAQ handling. Deflect 15-20% of voice calls. No infrastructure change required.</p>
+    <div class="opp-impact" style="color:var(--green);">Est. Impact: $280K-$420K annual savings</div>
+  </div>
+  <div class="opp-card" style="border-left-color:var(--green);">
+    <div class="opp-label" style="color:var(--green);">Quick Win (0-3 months)</div>
+    <h4>Review Response Automation</h4>
+    <p>AI-drafted review responses with human approval. Reduce response time from 8-14 days to under 4 hours.</p>
+    <div class="opp-impact" style="color:var(--green);">Est. Impact: 0.4-0.6 star rating improvement in 90 days</div>
+  </div>
+  <div class="opp-card" style="border-left-color:var(--blue);">
+    <div class="opp-label" style="color:var(--blue);">Strategic (3-6 months)</div>
+    <h4>Arabic Conversational AI</h4>
+    <p>Gulf-dialect chatbot handling balance inquiries, card blocks, branch lookup, and complaint logging. Estimated 30% containment rate.</p>
+    <div class="opp-impact" style="color:var(--blue);">Est. Impact: $600K-$900K annual savings + CX score improvement</div>
+  </div>
+  <div class="opp-card" style="border-left-color:var(--blue);">
+    <div class="opp-label" style="color:var(--blue);">Strategic (3-6 months)</div>
+    <h4>IVR Modernization with NLU</h4>
+    <p>Replace 4-level tree with intent-based routing. Leverage existing Genesys Cloud capabilities. Reduce abandonment 30-40%.</p>
+    <div class="opp-impact" style="color:var(--blue);">Est. Impact: 25-35% reduction in call abandonment</div>
+  </div>
+  <div class="opp-card" style="border-left-color:var(--purple);">
+    <div class="opp-label" style="color:var(--purple);">Transformational (6-12 months)</div>
+    <h4>AI QA Scoring (100% Coverage)</h4>
+    <p>Move from 2% manual QA sampling to 100% AI-scored interactions. Real-time feedback loop to agent training.</p>
+    <div class="opp-impact" style="color:var(--purple);">Est. Impact: 20-30% improvement in FCR within 6 months</div>
+  </div>
+  <div class="opp-card" style="border-left-color:var(--purple);">
+    <div class="opp-label" style="color:var(--purple);">Transformational (6-12 months)</div>
+    <h4>AI Training Simulator Deployment</h4>
+    <p>Arabic-native agent training AI. Reduce onboarding from 6 weeks to 3 weeks. Continuous skills development linked to QA data.</p>
+    <div class="opp-impact" style="color:var(--purple);">Est. Impact: 50% reduction in agent ramp time</div>
+  </div>
+</div>
+
+<!-- ===== CTA ===== -->
+<div class="cta-section fade-up delay-8">
+  <h2>Your Contact Center Has Untapped Potential</h2>
+  <p>This scorecard is based on publicly observable signals only. A full L1 Diagnostic uncovers what the outside can't see: agent capability, process efficiency, QA maturity, and technology utilization. The gaps are almost always larger than what surfaces here.</p>
+  <a href="#" class="cta-btn">Schedule a Diagnostic Briefing</a>
+  <p style="margin-top:16px;font-size:12px;">15-minute call. No commitment. We walk you through these findings live.</p>
+</div>
+
+<footer class="footer">
+  <p>LAB Experience &nbsp;|&nbsp; CC Intelligence Practice &nbsp;|&nbsp; Confidential</p>
+  <p style="margin-top:4px;">Ladislau Szilagyi &nbsp;|&nbsp; Gabor Kocsis &nbsp;|&nbsp; Mamoun Alamouri</p>
+  <p style="margin-top:4px;">Generated using LAB Intelligence Engine v2.1 &nbsp;|&nbsp; Data sources: Public web, GMB, App Store, Social APIs</p>
+</footer>
+
+</div>
+
+<script>
+// ===== RADAR CHART =====
+const radarCtx = document.getElementById('radarChart').getContext('2d');
+new Chart(radarCtx, {
+  type: 'radar',
+  data: {
+    labels: ['Channel Access', 'AI Readiness', 'Reputation', 'Arabic CX', 'Self-Service', 'Tech Stack', 'Response Speed', 'Competitive'],
+    datasets: [
+      {
+        label: 'Gulf National Bank',
+        data: [28, 35, 62, 22, 38, 71, 44, 33],
+        borderColor: '#c8a24e',
+        backgroundColor: 'rgba(200,162,78,0.12)',
+        borderWidth: 2,
+        pointBackgroundColor: '#c8a24e',
+        pointRadius: 4,
+      },
+      {
+        label: 'Peer Average',
+        data: [65, 52, 58, 55, 54, 62, 56, 50],
+        borderColor: 'rgba(59,130,246,0.5)',
+        backgroundColor: 'rgba(59,130,246,0.05)',
+        borderWidth: 1.5,
+        borderDash: [5,5],
+        pointBackgroundColor: 'rgba(59,130,246,0.5)',
+        pointRadius: 3,
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    scales: {
+      r: {
+        beginAtZero: true, max: 100,
+        grid: { color: 'rgba(255,255,255,0.06)' },
+        angleLines: { color: 'rgba(255,255,255,0.06)' },
+        pointLabels: { color: '#8a8a96', font: { size: 10, family: 'DM Sans' } },
+        ticks: { display: false }
+      }
+    },
+    plugins: {
+      legend: {
+        labels: { color: '#8a8a96', font: { size: 11, family: 'DM Sans' }, boxWidth: 12, padding: 16 }
+      }
+    }
+  }
+});
+
+// ===== SENTIMENT TREND CHART =====
+const sentCtx = document.getElementById('sentimentChart').getContext('2d');
+new Chart(sentCtx, {
+  type: 'line',
+  data: {
+    labels: ['Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar'],
+    datasets: [
+      {
+        label: 'Positive',
+        data: [22, 18, 25, 20, 15, 19, 16],
+        borderColor: '#10b981',
+        backgroundColor: 'rgba(16,185,129,0.08)',
+        fill: true, tension: 0.4, borderWidth: 2, pointRadius: 3,
+      },
+      {
+        label: 'Negative',
+        data: [35, 42, 38, 45, 52, 48, 49],
+        borderColor: '#ef4444',
+        backgroundColor: 'rgba(239,68,68,0.08)',
+        fill: true, tension: 0.4, borderWidth: 2, pointRadius: 3,
+      },
+      {
+        label: 'Neutral',
+        data: [43, 40, 37, 35, 33, 33, 35],
+        borderColor: '#8a8a96',
+        backgroundColor: 'rgba(138,138,150,0.05)',
+        fill: true, tension: 0.4, borderWidth: 1.5, pointRadius: 2, borderDash: [4,4],
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    scales: {
+      x: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#8a8a96', font: { size: 10 } } },
+      y: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#8a8a96', font: { size: 10 }, callback: v => v+'%' }, max: 70 }
+    },
+    plugins: {
+      legend: { labels: { color: '#8a8a96', font: { size: 10, family: 'DM Sans' }, boxWidth: 10, padding: 12 } },
+      title: { display: true, text: 'Review Sentiment Trend (7 months)', color: '#8a8a96', font: { size: 11, family: 'DM Sans', weight: '400' }, padding: { bottom: 8 } }
+    }
+  }
+});
+</script>
+
+</body>
+</html>

@@ -1,5 +1,7 @@
 # Messaging Channels Reference
 
+> **v2 migration banner — 2026-04-26.** Bare tool names in this doc (e.g., `send_sms`, `send_email`, `search_conversations`) are now **operation names** under the new `mcp__salesmfast-ops__ghl-conversations-{reader,updater}` routers. Call shape: `{ selectSchema: { operation, params } }`. See `SKILL.md → MCP Tools Reference` or `salesmfast-ops-mcp/docs/MIGRATION.md` for the full mapping.
+
 ## Table of Contents
 1. [Channel Selection Matrix](#channel-selection-matrix)
 2. [WhatsApp (MENA Primary)](#whatsapp-mena-primary)

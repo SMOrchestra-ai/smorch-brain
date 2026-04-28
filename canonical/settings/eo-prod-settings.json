@@ -1,0 +1,78 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "CMD=$(jq -r '.tool_input.command' 2>/dev/null); if echo \"$CMD\" | grep -qiE '(rm -rf|git push --force|git push -f |git reset --hard|git checkout \\.|git restore \\.|git clean -f|drop table|truncate table)'; then echo '{\"hookSpecificOutput\":{\"hookEventName\":\"PreToolUse\",\"permissionDecision\":\"deny\",\"permissionDecisionReason\":\"BLOCKED: Destructive command detected. Ask Mamoun before running destructive operations.\"}}'; else echo '{\"hookSpecificOutput\":{\"hookEventName\":\"PreToolUse\",\"permissionDecision\":\"allow\"}}'; fi",
+            "statusMessage": "Checking for destructive commands..."
+          }
+        ]
+      },
+      {
+        "matcher": "mcp__cb73f37d*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "SQL=$(jq -r '.tool_input.query // .tool_input.sql // empty' 2>/dev/null); if [ -n \"$SQL\" ] && echo \"$SQL\" | grep -qiE '(DROP\\s+(TABLE|SCHEMA|DATABASE|INDEX|VIEW|FUNCTION|TRIGGER|POLICY)|TRUNCATE|DELETE\\s+FROM\\s+[a-z_]+\\s*(;|$)|ALTER\\s+TABLE\\s+[a-z_]+\\s+DROP|GRANT\\s+|REVOKE\\s+|CREATE\\s+ROLE|ALTER\\s+ROLE|UPDATE\\s+[a-z_]+\\s+SET\\s+.*WHERE\\s+1\\s*=\\s*1|DELETE\\s+FROM\\s+tenants|DELETE\\s+FROM\\s+company_entities|DELETE\\s+FROM\\s+individual_entities)'; then echo '{\"hookSpecificOutput\":{\"hookEventName\":\"PreToolUse\",\"permissionDecision\":\"deny\",\"permissionDecisionReason\":\"BLOCKED: Destructive SQL detected (DROP/TRUNCATE/mass DELETE/GRANT/REVOKE/protected table DELETE). Ask Mamoun before running DDL.\"}}'; else echo '{\"hookSpecificOutput\":{\"hookEventName\":\"PreToolUse\",\"permissionDecision\":\"allow\"}}'; fi",
+            "statusMessage": "Checking SQL for destructive operations..."
+          }
+        ]
+      },
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "CONTENT=$(jq -r '.tool_input.content // .tool_input.new_string // empty' 2>/dev/null); if [ -n \"$CONTENT\" ] && echo \"$CONTENT\" | grep -qiE '(sk-[a-zA-Z0-9]{20,}|AKIA[A-Z0-9]{16}|ghp_[a-zA-Z0-9]{36}|gho_[a-zA-Z0-9]{36}|xoxb-[a-zA-Z0-9]+|xoxp-[a-zA-Z0-9]+|sb-[a-zA-Z0-9]{20,}|supabase_service_role_key|SUPABASE_KEY=|N8N_TOKEN=|INSTANTLY_API_KEY=|HEYREACH_API_KEY=|GHL_API_KEY=|CLAY_API_KEY=|phc_[a-zA-Z0-9]{20,}|sntrys_[a-zA-Z0-9]{20,})'; then FILE=$(jq -r '.tool_input.file_path // empty' 2>/dev/null); if ! echo \"$FILE\" | grep -qiE '(\\.env\\.example|\\.env\\.template|CLAUDE\\.md|settings\\.json)'; then echo '{\"hookSpecificOutput\":{\"hookEventName\":\"PreToolUse\",\"permissionDecision\":\"deny\",\"permissionDecisionReason\":\"BLOCKED: Secret/credential detected. Use .env files.\"}}'; else echo '{\"hookSpecificOutput\":{\"hookEventName\":\"PreToolUse\",\"permissionDecision\":\"allow\"}}'; fi; else echo '{\"hookSpecificOutput\":{\"hookEventName\":\"PreToolUse\",\"permissionDecision\":\"allow\"}}'; fi",
+            "statusMessage": "Scanning for secrets..."
+          }
+        ]
+      },
+      {
+        "matcher": "mcp__supabase-eo*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "SQL=$(jq -r '.tool_input.query // .tool_input.sql // empty' 2>/dev/null); if [ -n \"$SQL\" ] && echo \"$SQL\" | grep -qiE '(DROP\\s+(TABLE|SCHEMA|DATABASE|INDEX|VIEW|FUNCTION|TRIGGER|POLICY)|TRUNCATE|DELETE\\s+FROM\\s+[a-z_]+\\s*(;|$)|ALTER\\s+TABLE\\s+[a-z_]+\\s+DROP|GRANT\\s+|REVOKE\\s+|CREATE\\s+ROLE|ALTER\\s+ROLE|UPDATE\\s+[a-z_]+\\s+SET\\s+.*WHERE\\s+1\\s*=\\s*1|DELETE\\s+FROM\\s+tenants|DELETE\\s+FROM\\s+company_entities|DELETE\\s+FROM\\s+individual_entities)'; then echo '{\"hookSpecificOutput\":{\"hookEventName\":\"PreToolUse\",\"permissionDecision\":\"deny\",\"permissionDecisionReason\":\"BLOCKED: Destructive SQL detected (DROP/TRUNCATE/mass DELETE/GRANT/REVOKE/protected table DELETE). Ask Mamoun before running DDL.\"}}'; else echo '{\"hookSpecificOutput\":{\"hookEventName\":\"PreToolUse\",\"permissionDecision\":\"allow\"}}'; fi",
+            "statusMessage": "Checking SQL for destructive operations..."
+          }
+        ]
+      }
+    ],
+    "PostCompact": [
+      {
+        "matcher": "manual|auto",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "BRANCH=$(git branch --show-current 2>/dev/null || echo unknown); DIR=$(pwd); echo \"{\\\"hookSpecificOutput\\\":{\\\"hookEventName\\\":\\\"PostCompact\\\",\\\"additionalContext\\\":\\\"CONTEXT RESTORE \u2014 Branch: $BRANCH | Dir: $DIR | Check CLAUDE.md Required Skills. Follow GitHub SOPs: conventional commits, branch naming, release protocol. Hooks active: destructive-blocker, SQL-guard, secret-scanner, auto-formatter, compaction-restorer.\\\"}}\"",
+            "statusMessage": "Restoring context..."
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "BRANCH=$(git branch --show-current 2>/dev/null || echo none); HOOKS=$(ls .git/hooks/commit-msg 2>/dev/null && echo ok || echo missing); DIR=$(pwd); TOPLEVEL=$(git rev-parse --show-toplevel 2>/dev/null || echo none); REMOTE=$(git remote get-url origin 2>/dev/null || echo none); WARN=''; if [ \"$TOPLEVEL\" = \"$HOME\" ] && [ \"$DIR\" != \"$HOME\" ]; then WARN='WARNING: You are inside smorch-brain repo (home dir). If this is NOT a smorch-brain task, cd into the correct project subfolder with .git.'; fi; BEHIND=$(git status -sb 2>/dev/null | grep -c behind || true); if [ \"$BEHIND\" -gt 0 ]; then WARN=\"$WARN | WARNING: Local branch is BEHIND remote. Run git pull before starting work.\"; fi; echo \"{\\\"hookSpecificOutput\\\":{\\\"hookEventName\\\":\\\"SessionStart\\\",\\\"additionalContext\\\":\\\"SESSION BOOTSTRAP \u2014 Branch: $BRANCH | Git root: $TOPLEVEL | Remote: $REMOTE | Git commit hook: $HOOKS | Hooks: destructive-blocker, SQL-guard-v2, secret-scanner-v2, auto-formatter, branch-protection-enforcer. $WARN\\\"}}\"",
+            "statusMessage": "Bootstrapping session + git sync check..."
+          }
+        ]
+      }
+    ]
+  },
+  "skipDangerousModePermissionPrompt": true,
+  "permissions": {
+    "allow": [
+      "Write",
+      "Edit",
+      "Bash"
+    ]
+  }
+}

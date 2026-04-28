@@ -466,3 +466,14 @@ After the student completes eo-skill-extractor:
 2. These skills are available in their Cowork environment
 3. eo-tech-architect can reference these skills when recommending integrations
 4. Step 5 development skills can invoke these tool skills during the build process
+
+---
+
+## HANDOFF PROTOCOL
+
+After skill extraction session is complete:
+
+1. **Announce**: "Skill extraction complete. You now have [N] operator skills for your tools."
+2. **Verify**: Confirm each extracted skill has a SKILL.md file
+3. **Next step**: "Your next step is Tech Architecture. Run /eo or say 'design my architecture'. It will read your project-brain/ files and recommend a complete tech stack."
+4. **If student asks 'do I need to extract every tool?'**: "Extract skills for tools you'll use in your top 2 GTM motions. Others can wait."

@@ -1,5 +1,7 @@
 # Tag Taxonomy Reference
 
+> **v2 migration banner — 2026-04-26.** Tag operations referenced in this doc (e.g., `add_contact_tags`, `remove_contact_tags`, `create_location_tag`) are now **operation names** under `mcp__salesmfast-ops__ghl-contacts-updater` and `ghl-location-updater`. Call shape: `{ selectSchema: { operation, params } }`. See `SKILL.md → MCP Tools Reference` or `salesmfast-ops-mcp/docs/MIGRATION.md` for the full mapping.
+
 ## Table of Contents
 1. [Tag Architecture](#tag-architecture)
 2. [Signal Tags](#signal-tags)

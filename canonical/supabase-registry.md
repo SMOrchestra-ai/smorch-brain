@@ -9,9 +9,9 @@
 
 | project_ref | Name | Region | Purpose | Consumer apps | Status |
 |---|---|---|---|---|---|
-| `ozylyahdhuueozqhxiwz` | SSE | ap-southeast-1 | Signal Sales Engine (canonical prod) + content_engine schema + ACE tables + email-verification edge function | signal-sales-engine, content-automation | **KEEP — primary prod** |
+| `ozylyahdhuueozqhxiwz` | SSE | ap-southeast-1 | Signal Sales Engine (canonical prod) + ACE tables + email-verification edge function | signal-sales-engine | **KEEP — primary prod** |
 | `lhmrqdvwtahpgunoyxso` | entrepreneursoasis | ap-northeast-1 | EO-MENA + EO-Scoring + EO-Scorecard + EO-Assessment | eo-mena, eo-scoring, eo-scorecard, eo-assessment-system | **KEEP — DO NOT TOUCH** |
-| `kyxiyvmqqohxpfuoansv` | Content Repurposing Engine | TBD | content repurposing pipeline (separate from content-automation) | TBD (inventory pending) | KEEP pending inventory |
+| `kyxiyvmqqohxpfuoansv` | content-engine | (IPv6-only direct, no Supavisor pooler) | Content automation runtime — `content_engine.{content_assets,content_runs,content_templates,dead_letter_queue}` schema + `public.{error_logs,idempotency_registry,provenance_log,dead_letter_queue}` ops tables. Migrations 001-005 applied 2026-04-28. | content-automation | **KEEP — primary canonical** (drift-fix shipped 2026-04-28) |
 | `cuzpbpegrqwsqomsrtye` | SAASNew | TBD | new SaaS product (pre-launch, discovery 2026-04-23) | TBD | KEEP — flag for Phase 6 inventory |
 
 ---
@@ -33,13 +33,17 @@
 
 ---
 
-## MCP wiring (as of 2026-04-23)
+## MCP wiring (as of 2026-04-28)
 
 Supabase MCP servers configured at `~/.claude/.mcp.json`:
 - `supabase-sse` → ozylyahdhuueozqhxiwz (uses `${SUPABASE_PAT}`)
-- `supabase-cre` → kyxiyvmqqohxpfuoansv
+- `supabase-cre` → kyxiyvmqqohxpfuoansv (renamed mentally to "content-engine"; MCP key kept for backward compat)
 - `supabase-saasnew` → cuzpbpegrqwsqomsrtye
 - `supabase-eo` → lhmrqdvwtahpgunoyxso (pre-existing)
+
+## Drift-fix history
+
+- **2026-04-28** content-automation runtime was talking to a local docker Postgres (`content-automation-postgres-1` on smo-prod) instead of canonical Supabase `kyxiyvmqqohxpfuoansv`. Root cause: `docker-compose.yml` constructed `DATABASE_URL` from legacy `POSTGRES_*` vars when `DATABASE_URL` was absent in `.env`. Fix: explicit `DATABASE_URL` in `docker-compose.override.yml:runtime.environment`, `network_mode: host` so container can reach Supabase IPv6 endpoint, migrations 001-005 applied to Supabase. Local Postgres container + volume torn down 2026-04-28. See `content-automation/docs/qa/2026-04-28-v1-stress-test-claude-self-qa.md` §4 for full chronicle.
 
 Credentials live at `~/.claude/secrets/supabase-creds.env` (600 perms, sourced via `~/.zshrc`). **NOT committed anywhere.**
 

@@ -1,43 +1,15 @@
 ---
-description: Start your guided EO MicroSaaS training journey
-allowed-tools: Read, Glob, Grep, Write, Edit, Bash(ls:*), Bash(find:*), Bash(wc:*), Bash(mkdir:*)
+description: Get guidance on your next step
 ---
 
-You are the EO MicroSaaS Claude OS Guide. The student just invoked /eo-guide to get pedagogical guidance through the training.
+Activate the **0-eo-guide** skill in **Mode 2 (Returning Student)**.
 
-First, read the guide skill for full context:
-@${CLAUDE_PLUGIN_ROOT}/skills/eo-guide/SKILL.md
+Execute the returning student sequence:
+1. Read `EO-Brain/_language-pref.md` for language
+2. Scan the entire EO-Brain workspace (count files per phase)
+3. Detect which phase the student is currently in
+4. Check quality (scores, completeness) per the phase-checklist.md reference
+5. Handle incomplete phases with coaching (Acknowledge-ROI-Options framework)
+6. Recommend the next specific action with time estimate
 
-Then detect the student's current progress by scanning the workspace using the Student Detection Protocol from the skill.
-
-Scan both step-folder structure AND legacy flat structure:
-
-Step folders:
-1. Glob: `**/step0/SC[1-5]*.md`
-2. Glob: `**/step1/project-brain/*.md`
-3. Glob: `**/step2/assets/**`
-4. Glob: `**/step3/skills/**/SKILL.md`
-5. Glob: `**/step4/architecture/brd.md`
-6. Glob: `**/step5/src/**/*.{ts,tsx,js,jsx}`
-
-Legacy (flat):
-7. Glob: `**/SC[1-5]*.md`
-8. Glob: `**/project-brain/*.md`
-9. Glob: `**/architecture/brd.md`
-
-Display the Progress Dashboard from the guide skill.
-
-Then:
-- Identify the student's current step
-- Brief them on which MODULE to watch
-- Tell them what ACTION to take
-- Tell them where to SAVE outputs
-- If they have outputs, run the quality check
-
-If the student provides arguments ($ARGUMENTS), interpret them:
-- "start" or "begin" = fresh start, show welcome + Step 0 briefing
-- "next" = detect status and advance to next step
-- "status" = show dashboard only
-- "step0" through "step5" = jump to that step's briefing (gates still enforced)
-- "check" = run quality check on current step
-- Any other text = interpret as a question about the training
+Read the 0-eo-guide SKILL.md for complete instructions on Mode 2 execution.

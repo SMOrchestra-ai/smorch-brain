@@ -1,0 +1,194 @@
+{
+  "name": "smorch-gtm-scoring",
+  "version": "1.0.0",
+  "description": "Evaluation test cases for all scoring systems",
+  "test_cases": [
+    {
+      "id": "orchestrator-routing-email",
+      "skill": "scoring-orchestrator",
+      "prompt": "Score this cold email: Subject: quick q about Acme expansion. Body: Noticed Acme just hired a VP of Sales. When companies scale their sales org, reply rates on existing outbound usually drop 40%. We built a signal engine for Gulf SaaS companies that detects these gaps before pipeline stalls. Did this for TechCo in Dubai — went from 2% to 8% reply rate in 6 weeks. Worth a 15-min call?",
+      "expected_behavior": "Routes to copywriting-scorer subsystem 3A (Cold Email). Does NOT invoke campaign-strategy-scorer or any other system.",
+      "validation_criteria": [
+        "Correctly identifies content as cold email",
+        "Routes to copywriting-scorer",
+        "Scores all 9 criteria in subsystem 3A",
+        "Subject line should score 8+",
+        "Opening line (timeline hook) should score 9+",
+        "Presents standard score report format",
+        "Offers fixes for any criteria below 7.0"
+      ]
+    },
+    {
+      "id": "orchestrator-routing-ambiguous",
+      "skill": "scoring-orchestrator",
+      "prompt": "Score this: We help B2B companies in the Gulf improve their outbound results using signal-based targeting and multi-channel orchestration.",
+      "expected_behavior": "Content is ambiguous — could be positioning statement (offer-positioning-scorer C10) or part of a campaign brief. Should ask for clarification: 'What are we scoring? (1) Campaign strategy, (2) Offer/positioning...'",
+      "validation_criteria": [
+        "Recognizes ambiguity",
+        "Asks clarifying question with numbered options",
+        "Does NOT default to a scorer without confirmation"
+      ]
+    },
+    {
+      "id": "campaign-strategy-strong",
+      "skill": "campaign-strategy-scorer",
+      "prompt": "Score this campaign strategy: Target ICP: Series A-B SaaS companies in UAE, 20-100 employees, recently hired VP Sales, using HubSpot. Signals: job change alerts via LinkedIn (48hr detection), funding rounds via Crunchbase, tech stack changes via BuiltWith. Channels: Cold email (Instantly, 3-day cadence, 5 emails), LinkedIn (HeyReach, staggered with email), WhatsApp (GHL, warm leads only after engagement). Wedge this week: 'Your new VP Sales is inheriting a pipeline with 23% stale data — here's how to clean it in 48 hours.' Q theme: Pipeline Efficiency. Monthly: New Sales Leader Playbook. Weekly wedges rotate persona. KPIs: 5% reply rate, 2% meeting rate, 15 meetings/month. DMARC configured, 2 backup domains warming. MENA: WhatsApp prioritized, Arabic option for warm leads, Sunday-Thursday timing.",
+      "expected_behavior": "Scores all 10 criteria. This is a well-crafted strategy that should score 8.5-9.5 on most criteria. Signal Clarity should score 9+, ICP Precision 9+, Channel-Market Fit 9+. Overall should be in ELITE or high STRONG band.",
+      "validation_criteria": [
+        "All 10 criteria scored",
+        "Overall score between 8.5 and 9.8",
+        "No hard stops triggered",
+        "MENA Contextualization scores 8+",
+        "Verdict is SHIP or TWEAK",
+        "Minimal fix actions (most criteria above 7.0)",
+        "Weighted average correctly calculated"
+      ]
+    },
+    {
+      "id": "campaign-strategy-weak",
+      "skill": "campaign-strategy-scorer",
+      "prompt": "Score this campaign strategy: We're going to send emails to B2B companies in the Middle East about our AI solutions. We'll use a tool to send them. Our target is companies that need digital transformation.",
+      "expected_behavior": "Scores very low across all criteria. Signal Clarity should score 1-3 (no signals defined). ICP Precision should score 1-3 (no specifics). Multiple hard stops expected. Overall should be in FAILED or BELOW STANDARD band.",
+      "validation_criteria": [
+        "All 10 criteria scored",
+        "Overall score between 2.0 and 4.5",
+        "Multiple hard stops triggered",
+        "Signal Clarity below 3.0",
+        "ICP Precision below 3.0",
+        "Verdict is RESTART or REWORK",
+        "Fix actions provided for all low criteria",
+        "Priority P0 or P1 assigned"
+      ]
+    },
+    {
+      "id": "offer-positioning-hormozi",
+      "skill": "offer-positioning-scorer",
+      "prompt": "Score this offer: We build signal-based outbound engines for B2B companies entering Gulf markets. Our clients go from 3 meetings/month from cold outbound to 15+ qualified meetings/month within 90 days. We handle everything: signal detection, copy, channels, optimization. Your team spends 30 minutes/week reviewing pipeline. Pricing: $5,000/month. Average client deal size is $50K, so ROI is 10x minimum in month 1. Guarantee: if we don't deliver 10+ meetings in 60 days, month 2 is free. Named framework: Signal-to-Trust Engine (detect → score → sequence → close). Proof: TechCo Dubai went from 2% to 8% reply rate. LogiStar Riyadh booked 47 meetings in Q3.",
+      "expected_behavior": "Strong offer that scores well on Hormozi Value Equation. Dream Outcome should score 9+ (specific numbers). Unique Mechanism 9+ (named). Risk Reversal 9+ (performance guarantee). Overall 8.5+.",
+      "validation_criteria": [
+        "All 10 criteria scored",
+        "Hormozi Value Equation calculated (numerator > 60, denominator < 15)",
+        "Dunford 5-Component check completed",
+        "Overall score between 8.5 and 9.8",
+        "Unique Mechanism scores 9+",
+        "Risk Reversal scores 8+"
+      ]
+    },
+    {
+      "id": "copywriting-3a-spam-check",
+      "skill": "copywriting-scorer",
+      "prompt": "Score this cold email: Subject: UNLOCK YOUR GROWTH POTENTIAL WITH AI!!! Body: Dear Sir/Madam, I hope this email finds you well. My name is Ahmed and I am the CEO of TechSolutions Inc., a leading provider of innovative AI-powered digital transformation solutions. We have helped 1000+ companies worldwide achieve unprecedented growth. Our cutting-edge platform leverages synergistic AI capabilities to deliver world-class results. Click here to schedule a FREE demo: https://calendly.com/ahmed. Don't miss this LIMITED TIME OFFER! Best regards, Ahmed.",
+      "expected_behavior": "Should score very low. Subject line 1-2 (all caps, exclamation, spam triggers). Opening line 1-2 (I hope this finds you well). Spam Filter Survival 1-3 (multiple triggers, link in first email, HTML-style). Every criterion should be low. Hard stops expected.",
+      "validation_criteria": [
+        "Routes to subsystem 3A",
+        "Subject Line scores 1-2",
+        "Spam Filter Survival scores 1-3",
+        "Body Value Density scores 1-3",
+        "Multiple hard stops triggered",
+        "Overall below 3.0",
+        "Specific spam trigger words identified in fix actions"
+      ]
+    },
+    {
+      "id": "copywriting-3d-whatsapp-mena",
+      "skill": "copywriting-scorer",
+      "prompt": "Score this WhatsApp message for Gulf market: السلام عليكم يا أخ محمد، أحمد هنا من SMOrchestra. خالد من أرابيا تك وصاني عليك. شفت إنكم توسعتوا الفريق مؤخراً. ساعدنا شركة مشابهة يحجزوا 12 ميتنق في 3 أسابيع من الصفر. يستاهل 15 دقيقة نتكلم؟",
+      "expected_behavior": "Strong WhatsApp message for MENA. Opening Greeting should score 9+ (Arabic greeting, mutual connection context). Brevity 9+ (under 60 words). CTA Simplicity 9+ (binary question). Overall should be 8.5+.",
+      "validation_criteria": [
+        "Routes to subsystem 3D",
+        "Opening Greeting scores 9+",
+        "Brevity scores 9+",
+        "Personalization scores 8+",
+        "CTA Simplicity scores 9+",
+        "Overall 8.0+"
+      ]
+    },
+    {
+      "id": "social-media-tofu",
+      "skill": "social-media-scorer",
+      "prompt": "Score this LinkedIn post for TOFU: I booked 47 meetings in 30 days in the Gulf market.\n\nHere's what I'd never do again:\n\n1. Send generic 'partnership opportunity' subject lines\n2. Use email-only in a WhatsApp-first market\n3. Pitch before proving competence\n\nThe fix was simple: detect buying signals first, then sequence proof at the exact moment intent surfaces.\n\nWe call it the Signal-to-Trust Engine.\n\nResult: reply rates went from 1.8% to 7.2% in 6 weeks.\n\nWhat's the biggest outbound mistake you've seen in MENA markets?",
+      "expected_behavior": "Strong TOFU post. Hook should score 9+ (specific number, contrarian). Value Density 9+ (every line teaches). Engagement Trigger 8+ (genuine question). Shareability 8+ (framework worth sharing). Overall 8.5+.",
+      "validation_criteria": [
+        "Identifies as TOFU stage",
+        "Scores all 6 universal + 4 TOFU criteria",
+        "Hook scores 9+",
+        "Value Density scores 8+",
+        "Overall 8.0+",
+        "Weight distribution correct (75% universal + 25% TOFU)"
+      ]
+    },
+    {
+      "id": "youtube-5a-thumbnail",
+      "skill": "youtube-scorer",
+      "prompt": "Score this YouTube thumbnail description: Close-up face with surprised expression, mouth slightly open. Bold yellow text '47 Meetings' in upper right. Dark navy background. Orange accent bar at bottom. Clean, 3 elements total. 2 A/B variants ready: one with face, one with graph showing upward trend.",
+      "expected_behavior": "Should route to subsystem 5A Thumbnail. Visual Clarity should score 9+ (3 elements, clean). Emotional Expression 9+ (surprised face). A/B Test Readiness 9+ (2 variants). Overall 8.5+.",
+      "validation_criteria": [
+        "Routes to subsystem 5A",
+        "All 7 thumbnail criteria scored",
+        "Visual Clarity scores 8+",
+        "Emotional Expression scores 8+",
+        "A/B Test Readiness scores 9+",
+        "Overall 8.0+"
+      ]
+    },
+    {
+      "id": "linkedin-branding-track-a",
+      "skill": "linkedin-branding-scorer",
+      "prompt": "Score this LinkedIn post for Track A (English B2B): I stopped sending connection requests for 30 days.\n\nInbound doubled.\n\nHere's why: every post I published was a free consulting session. Specific frameworks. Real numbers from Gulf campaigns. Named the problems my ICP recognized.\n\nWhen a VP of Sales in Riyadh sees you solve their exact problem in a post, they don't need a cold DM. They DM you.\n\n127 campaigns in Gulf markets taught me this: authority sells better than outreach.\n\nThe Signal-to-Trust framework isn't just for cold email. It works on LinkedIn too.\n\nDisagree? Tell me your best inbound strategy below.",
+      "expected_behavior": "Strong Track A post. Hook Power 9+. Authority Signal 9+ (specific number, framework named). Contrarian Angle 9+ (stops vs sends). Client Trigger 8+. MENA Specificity 8+. Overall 8.5+.",
+      "validation_criteria": [
+        "Identifies Track A",
+        "All 9 Track A criteria scored",
+        "Hook Power scores 9+",
+        "Authority Signal scores 8+",
+        "Contrarian Angle scores 8+",
+        "MENA Market Specificity scores 8+",
+        "Overall 8.5+"
+      ]
+    },
+    {
+      "id": "linkedin-branding-track-b-arabic",
+      "skill": "linkedin-branding-scorer",
+      "prompt": "Score this LinkedIn post for Track B (Arabic): بديت مشروعي بدون خبرة برمجة.\n\nبعد 30 يوم كان عندي SaaS شغال يدخل فلوس.\n\nالسر؟ 3 خطوات:\n1. لقيت 10 ناس عندهم المشكلة\n2. طلبت منهم يدفعوا قبل ما أبني\n3. 3 وافقوا = بنيت\n\nاستخدمت Claude + Cursor + Supabase.\n\nما احتجت أعرف JavaScript. احتجت أعرف أسأل الأسئلة الصح.\n\nإحنا جيل رواد الأعمال اللي يبنون بـ AI.\n\nهذا جزء صغير من اللي نغطيه بالتدريب. لينك التسجيل في أول تعليق.\n\nمين بدأ يبني مشروعه؟ شاركونا 👇",
+      "expected_behavior": "Strong Track B post. Hook Power Arabic 9+. Aspiration Trigger 9+. Practical Framework 9+ (numbered steps with tools). AI Demystification 9+. Training Funnel Integration 8+. Community Building 8+. Overall 8.5+.",
+      "validation_criteria": [
+        "Identifies Track B",
+        "All 8 Track B criteria scored",
+        "Hook Power Arabic scores 9+",
+        "Practical Framework scores 9+",
+        "AI Demystification scores 8+",
+        "Arabic Quality scores 8+",
+        "Overall 8.5+"
+      ]
+    },
+    {
+      "id": "composite-score-all",
+      "skill": "scoring-orchestrator",
+      "prompt": "Score all systems for Q2 MENA SaaS Campaign. Here are the individual scores: Campaign Strategy: 8.2, Offer/Positioning: 7.5, Copywriting (best subsystem - Cold Email): 7.8, Social Media: 7.0, LinkedIn Branding: 8.0",
+      "expected_behavior": "Computes Campaign Health using the composite formula: (8.2 x 0.25) + (7.5 x 0.20) + (7.8 x 0.25) + (7.0 x 0.15) + (8.0 x 0.15) = 2.05 + 1.50 + 1.95 + 1.05 + 1.20 = 7.75. Status: YELLOW. Priority: P5 (OPTIMIZATION). Weakest link: Social Media at 7.0.",
+      "validation_criteria": [
+        "Composite formula applied correctly",
+        "Campaign Health = approximately 7.75",
+        "Status is YELLOW (7.5-8.4 range)",
+        "Weakest link identified as Social Media",
+        "Strongest asset identified as Campaign Strategy",
+        "Cross-system dependencies checked",
+        "Priority P5 assigned",
+        "Improvement roadmap generated"
+      ]
+    },
+    {
+      "id": "hard-stop-enforcement",
+      "skill": "scoring-orchestrator",
+      "prompt": "A campaign scored: Campaign Strategy 8.5 overall, but Signal Clarity scored 4.5 (below 5.0 hard stop threshold). What happens?",
+      "expected_behavior": "Hard Stop Rule 1 triggers: any criterion below 5.0 = mandatory rework. Even though overall is 8.5, the 4.5 on Signal Clarity blocks deployment. Priority escalates to P0: EMERGENCY. Verdict changes to REWORK regardless of overall score.",
+      "validation_criteria": [
+        "Hard Stop Rule 1 correctly identified",
+        "Deployment blocked despite high overall",
+        "Priority escalated to P0",
+        "Verdict overridden to REWORK",
+        "Specific fix action for Signal Clarity provided"
+      ]
+    }
+  ]
+}

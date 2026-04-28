@@ -323,3 +323,14 @@ Development seed data with:
 | eo-qa-testing | Schema for database operation testing |
 | eo-security-hardener | RLS policies for security audit |
 | eo-api-connector | Schema for typed API client generation |
+
+---
+
+## HANDOFF PROTOCOL
+
+After schema and migrations are generated:
+
+1. **Announce**: "Database architecture complete. Schema, migrations, RLS policies, and seed data ready."
+2. **Verify**: Confirm database/ directory has schema.sql, migrations/, rls-policies.sql, seed.sql
+3. **Next step**: "Database is ready. Continue with eo-microsaas-dev for application code, or if build is already in progress, the dev engine will integrate this schema."
+4. **If student asks about Supabase setup**: "Apply migrations in Supabase dashboard or via CLI. RLS policies go in after tables are created. Test with seed data first."

@@ -165,6 +165,15 @@
 - **Enforcement:** SOP-35 (Dev → Prod Promotion) lists this as a blocked anti-pattern. Pre-commit hook in content-* app next.config.mjs rejects commits that reintroduce `basePath:` unless the app is genuinely a sub-route of a larger single-page shell.
 - **Last triggered:** 2026-04-23
 
+### L-027 — `docker-compose` silently constructs `DATABASE_URL` from `${POSTGRES_*}` fallback when `DATABASE_URL` is absent — runtime falls back to local Postgres with no warning
+
+- **Captured:** 2026-04-28
+- **Trigger:** content-automation runtime on smo-prod was writing to a local `postgres:16-alpine` container for ~5 days while canonical Supabase `kyxiyvmqqohxpfuoansv` sat empty. `.env` had `POSTGRES_DB/USER/PASSWORD` but NO `DATABASE_URL=`. compose's `environment: - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}` interpolated the legacy vars into a local-only URL. No log, no warning, no health-check flag. Mamoun: "i noticed you say content-automation is running on SSE engine DB. that is not true it has dedicated project."
+- **Rule:** When a `docker-compose.yml` `environment:` block constructs `DATABASE_URL` from `${X:-default}` substitutions, the app uses the fallback silently. Production startup MUST explicitly assert `DATABASE_URL` host matches the expected canonical (e.g. `*.supabase.co`, `*.pooler.supabase.com`, or a named external host) AND fail-fast if host resolves to `postgres`, `db`, `localhost`, `127.0.0.1`, or any docker-internal name.
+- **Check:** Add to `runtime/src/config/validate-env.ts`: in production, parse DATABASE_URL → throw if hostname is `postgres`, `db`, `localhost`, `127.0.0.1`, or matches `^[a-z0-9-]+_postgres_\d+$` (compose container name pattern). `/smorch-dev-start` Layer 4 should diff runtime DATABASE_URL host vs `.smorch/project.json:deploy.production.database_host`.
+- **Enforcement:** Pre-commit hook on `docker-compose*.yml` blocks `DATABASE_URL=...@(postgres|db|localhost|127\.0\.0\.1)` patterns when the file is in a repo whose `.smorch/project.json` declares a Supabase `project_ref`. Block message: "Local docker DB host detected — see L-027."
+- **Last triggered:** 2026-04-28
+
 ---
 
 ## How lessons compound

@@ -1,0 +1,14 @@
+-- Migration 012: Seed Data Reference
+--
+-- Seed data is maintained separately and should NOT be run as part of schema migrations.
+-- It contains test tenants, users, credit actions, signal weights, circuit breaker state, etc.
+--
+-- Location: DevTeamSOP/database/seed-data.sql
+--
+-- To apply seed data after migrations:
+--   psql $DATABASE_URL -f DevTeamSOP/database/seed-data.sql
+--
+-- Or via Supabase SQL Editor: copy-paste contents of seed-data.sql.
+--
+-- WARNING: Seed data uses INSERT ... ON CONFLICT DO NOTHING for idempotency.
+-- It is safe to re-run, but should only be applied to dev/staging environments.

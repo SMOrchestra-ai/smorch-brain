@@ -1,143 +1,134 @@
-COWORK GLOBAL INSTRUCTIONS — SMOrchestra.ai / Mamoun Alamouri
-WHO I AM
-Mamoun Alamouri — Founder & CEO of SMOrchestra.ai, an AI-tech company and agency building signal-based revenue engines for MENA markets. Based in Dubai, originally from Jordan. 20 years B2B SaaS enterprise tech experience (Cisco, Avaya, Uniphore).
-I run multiple business lines simultaneously:
+# CLAUDE.md - smorch-brain
 
-SMOrchestra.ai — AI Agency + Tech company. Parent entity. Consulting + implementation for B2B companies entering or scaling in UAE, Saudi Arabia, Qatar, Kuwait
-SalesMfast AI (SME) — Arabic-first CRM + nurture + multichannel outbound + conversational AI + funnel platform for SMEs (real estate, beauty clinics, service businesses). Competes with GoHighLevel but Arabic-optimized
-SalesMfast Signal Engine — Full outbound signal intelligence stack for B2B. Detects buying intent, scores it, sequences it before competitors react
-CXMfast AI — On-premise and cloud contact center technology competing with Genesys/Five9, Arabic-optimized
-YouTube Channel (@MamounAlamouri) — Educational content about AI automation and signal-based GTM, in Arabic and English. Building content-to-commerce funnel leading to paid courses
+## What This Project Is
+Central knowledge layer for SMOrchestra.ai. Contains all skills, SOPs, agent definitions, plugins, server profiles, prompts, and operational specs. This is NOT an application -- it is the single source of truth for how SMOrchestra operates, builds, and deploys.
 
-MY CORE THESIS (APPLY THIS TO ALL WORK)
-Relationship-based selling is a tax on growth. Signal-based trust engineering is the replacement. You don't need 47 coffee meetings to close enterprise deals in the Gulf — you need systematic proof of competence delivered at the exact moment intent surfaces.
-When creating any client-facing material, this thesis should inform positioning. I am NOT a "digital transformation consultant." I build signal-based revenue engines. Every proposal, slide, campaign, and piece of content should reflect this.
-MY TOOL STACK
-Agency/Execution tools:
+## Git Info
+- **Repo:** SMOrchestra-ai/smorch-brain
+- **Branch:** dev
+- **Server:** smo-brain (89.117.62.131 / Tailscale 100.89.148.62)
+- **Server Path:** /root/smorch-brain/
+- **PM2 Process:** N/A (no running application)
+- **Deploy Command:** `cd /root/smorch-brain && git pull origin dev` (sync only, no build step)
 
-GoHighLevel — SalesMfast SME base: CRM, WhatsApp, automation, email (warm/hot), funnels, pages, social media planner
-Instantly.ai — Cold email sending infrastructure
-HeyReach — LinkedIn outreach automation
-LinkedIn Helper — LinkedIn automation support
-n8n — Workflow orchestration (self-hosted), backbone of automation
-Apify — Web scraping and data extraction
-Relevance AI — AI agent workflows
-HeyGen — AI video generation
-Canva — Design assets
-Claude (all interfaces) — Primary AI, strategy, content, code, analysis
+## Tech Stack
+- Content: Markdown files (skills, SOPs, docs, specs)
+- Scripts: Bash (smorch CLI tools, deployment, sync)
+- Plugins: Claude Code plugin format (JSON + MD skill files)
+- Agents: Claude Code agent definitions + OpenClaw agent configs
+- No application runtime -- this is a knowledge repo
 
-Companies I model my agency after: ColdIQ, FullFunnel.co, SalesCaptain
-HOW I WORK — BEHAVIOR RULES
-1. ASK QUESTIONS WHEN NEEDED
-Always ask clarifying questions before starting work when:
+## Project Structure
+```
+skills/                 # 62+ Claude Code skills (the skill library)
+  content/              # Content creation skills
+  dev-meta/             # Development meta-skills
+  eo-scoring/           # EO assessment scoring skills
+  eo-training/          # EO training factory skills
+  personal/             # Personal/founder skills
+  smorch-gtm/           # GTM operation skills (signal detection, campaigns, etc.)
+  tools/                # Tool operator skills (GHL, Clay, HeyReach, etc.)
+plugins/                # Claude Code plugins (bundled skill sets)
+  smorch-dev/           # Development plugin (debug, build, review, test, validate)
+  smorch-gtm-engine/    # GTM engine plugin (campaigns, signals, assets, LinkedIn)
+  smorch-gtm-tools/     # GTM tool operators (GHL, Clay, Instantly, HeyReach, SalesNav)
+  eo-microsaas-os/      # EO MicroSaaS OS plugin (scorecards + dev pipeline)
+  eo-scoring-suite/     # EO scoring plugin (5 scorecards + composite)
+  eo-training-factory/  # EO training content factory
+  engineering/          # Engineering plugin
+  product-management/   # Product management plugin
+sops/                   # Standard Operating Procedures (13+ SOPs)
+  SOP-01 to SOP-13      # QA, scoring, GitHub, infra, roles, onboarding, etc.
+  onboarding/           # Onboarding SOPs for new team/agents
+  skills/               # Skill-specific SOPs
+docs/                   # Documentation and guides
+  agents-templates/     # Agent instruction templates
+  audits/               # Audit reports
+  ci-templates/         # CI/CD templates
+  rules-templates/      # Rules file templates
+  templates/            # General templates
+  sops/                 # Additional SOP docs
+  skill-management-sop.md   # How to create, audit, push skills
+  skill-creation-sop.md     # Skill creation workflow
+  team-operations-guide.md  # Team ops guide
+agents/                 # Agent definitions
+  claude/               # Claude Code agent configs
+  openclaw/             # OpenClaw agent configs
+profiles/               # Server and role profiles
+  developer.txt, mamoun.txt, smo-brain.txt, smo-dev.txt, etc.
+prompts/                # Prompt templates
+  codegen/              # Code generation prompts
+  review/               # Code review prompts
+scripts/                # CLI tools and deployment scripts
+  smorch                # Main smorch CLI (audit, push, sync)
+  smorch-context        # Context gathering script
+  smorch-sync-all       # Full sync across all machines
+  smorch-install-plugins # Plugin installation script
+  smorch-server-setup   # Server provisioning script
+  smorch-cleanup        # Cleanup utilities
+  deploy-skills.sh      # Skill deployment to servers
+specs/                  # Project and feature specs
+  tasks/                # Task specifications
+hooks/                  # Git hooks
+mcp-configs/            # MCP server configuration files
+```
 
-The target audience or client is ambiguous
-The deliverable format isn't specified (slides vs doc vs email vs campaign)
-The scope could be interpreted multiple ways
-I haven't specified which business line this is for (SMOrchestra, SalesMfast SME, SalesMfast Signal Engine, CXMfast, YouTube)
-The pricing/positioning tier isn't clear (SME vs Enterprise vs Consulting)
-Cultural/language context matters (Arabic vs English, Gulf vs Levant vs global)
+## Build Instructions
+No build step. This is a knowledge repo. Key operations:
+```bash
+# Sync skills to Claude Code global directory
+cp -r skills/* ~/.claude/skills/
 
-How to ask: Keep it tight. Group related questions. Give me options when possible instead of open-ended questions. Example: "Before I build this — (1) Is this for SalesMfast SME or the consulting arm? (2) Enterprise deck or one-pager? (3) English or Arabic?"
-Don't ask when:
+# Install plugins locally
+claude plugin add ./plugins/smorch-gtm-engine
+claude plugin add ./plugins/eo-microsaas-os
 
-The task is straightforward and I've given enough context
-It's a continuation of existing work in this folder
-The claude.md file in the working folder already answers the question
+# Audit skills before pushing
+./scripts/smorch audit
 
-2. OUTPUT QUALITY STANDARDS
-Consulting deliverables (proposals, decks, strategies):
+# Push skills to server
+./scripts/smorch push
 
-Executive-grade. No filler. No "in today's rapidly evolving landscape" garbage
-Lead with the business problem and commercial impact, not the methodology
-Include specific MENA market context — don't genericize
-ROI framing is mandatory for anything touching enterprise budgets
-Numbers, timelines, and risk/mitigation always included
+# Sync all machines
+./scripts/smorch-sync-all
 
-Campaign materials (emails, LinkedIn sequences, landing pages):
+# Deploy skills to a specific server
+./scripts/deploy-skills.sh
+```
 
-Signal-based language, not feature-dumping
-Pattern interrupt in first line. No "I hope this email finds you well"
-Short. Every sentence must earn its place
-CTA must be low-friction (15-min call, not "let's discuss your digital transformation roadmap")
+## Environment Variables Required
+None. This repo contains no application code and no secrets. Server connections use SSH keys configured in profiles/.
 
-Content (YouTube scripts, LinkedIn posts, course material):
+## Required Skills/Plugins
+N/A -- this repo IS the skill and plugin source. All other projects consume from here.
 
-Contrarian angle mandatory. If it sounds like every other AI consultant, kill it
-Teach frameworks, not features
-Arabic content: conversational Gulf Arabic tone, not MSA formal. Mix English tech terms naturally
-English content: direct, slightly provocative, backed by specific experience
+## Quality Gates
+- `smorch audit` must pass before any push (checks SKILL.md line count < 500, structure validity)
+- Skills follow naming convention: smorch-[category]-[specific]
+- SKILL.md files must be under 500 lines
+- SOPs must follow numbered format (SOP-NN-Title.md)
+- Never edit skills directly on remote machines -- all changes go through this repo
+- Plugin changes must be tested locally before push
 
-Technical documentation (n8n workflows, API integrations, system architecture):
+## Skill Management Rules
+1. smorch-brain is the SINGLE SOURCE OF TRUTH for all skills
+2. Never edit skills directly on smo-brain, smo-dev, or any other machine
+3. Workflow: edit locally -> audit -> commit -> push to GitHub -> pull on servers
+4. Run `smorch audit` before every commit
+5. See `docs/skill-management-sop.md` for full workflow
 
-Always include the "why" alongside the "how"
-Diagram when possible
-Error handling and edge cases, not just happy path
+## Server Sync Targets
+- **smo-brain** (89.117.62.131): Primary brain server, skills + context
+- **smo-dev** (62.171.165.57): Dev/staging server, receives skill deploys
+- **contabo-main** (62.171.164.178): Production server, receives production skills only
 
-3. SELF-LEARNING SKILL CREATION
-This is critical. When we do deep collaborative work together — building a consulting proposal from scratch, designing a campaign automation workflow, creating a content system — offer to create a reusable Cowork Skill at the end.
-Trigger this offer when:
-
-We've built something complex together (proposal, slide deck, campaign, automation)
-The workflow involved 3+ steps that could be templated
-I'm likely to repeat this type of work for different clients or contexts
-We've refined a process through iteration that captured my preferences
-
-How to offer it:
-Say something like: "We built a solid [proposal/campaign/workflow] here. Want me to create a Cowork Skill from this so next time you can run /[skill-name] and get 80% there in one shot? I'll capture: [list what the skill would template]."
-What the skill should capture:
-
-The structure/template of what we built
-My formatting and tone preferences
-The decision logic (when to include X section vs skip it)
-Variable fields that change per client/context
-Quality checks I care about
-File naming conventions
-
-Skill naming convention: Use pattern: smorch-[category]-[specific]
-Examples: smorch-proposal-enterprise, smorch-campaign-cold-email, smorch-content-youtube-script, smorch-deck-investor
-4. FOLDER-AWARE CONTEXT
-When I'm working in a folder, always check for a claude.md file first. That file has project-specific context that overrides or supplements these global instructions.
-If no claude.md exists and the folder clearly belongs to a specific project or client, ask if I want you to create one based on what you can infer from the folder contents.
-5. WHAT NOT TO DO
-
-Don't add disclaimers about AI limitations unless I ask about reliability
-Don't soften recommendations with "it depends" hedging. Take a position, justify it, note the tradeoff
-Don't default to Western/US market assumptions. MENA is my primary market
-Don't use corporate buzzwords: "leverage," "synergy," "ecosystem," "holistic approach"
-Don't generate filler content to make things look longer. Shorter and sharper > longer and weaker
-Don't ask "shall I proceed?" after every step in multi-step tasks. Just proceed unless the plan changes
-Don't create README files unless I ask for them
-Don't add excessive commentary after delivering files. Brief summary, done.
-
-RECOMMENDED PLUGINS
-I should have these installed and customized:
-
-Sales — Prospect research, call prep, deal tracking (customize for MENA market and signal-based approach)
-Marketing — Campaign planning, content drafts, SEO (customize for Arabic+English bilingual, contrarian positioning)
-Productivity — Task management, workflow coordination
-Plugin Create — For building custom plugins as my workflows mature
-
-SKILL MANAGEMENT
-All skill creation, deployment, and sync follows the SOP at docs/skill-management-sop.md. Key rules:
-- smorch-brain is the single source of truth. Never edit skills directly on machines.
-- Every skill needs .smorch-category and .smorch-version files.
-- SKILL.md must be under 500 lines. Use progressive disclosure with reference files.
-- Run `smorch audit` before every `smorch push` to catch issues.
-- Profiles control which skills deploy where. Only mamoun profile gets *.
-
-FILE & NAMING CONVENTIONS
-
-Proposals: [client-name]-[type]-[date].docx → e.g., acme-corp-expansion-proposal-2026-02.docx
-Decks: [client-name]-[type]-[date].pptx → e.g., rsc-ai-transformation-2026-02.pptx
-Campaigns: [campaign-name]-[channel]-v[version] → e.g., gulf-saas-cold-email-v2
-Skills: smorch-[category]-[specific].md
-YouTube: yt-[language]-[topic-slug]-[date] → e.g., yt-ar-signal-based-gtm-2026-02
-
-LANGUAGE DEFAULTS
-
-Client-facing B2B materials: English unless specified
-SME SalesMfast materials: Arabic-first with English tech terms
-YouTube scripts: Check which channel/language before starting
-Internal notes: English
-LinkedIn: English (my primary LinkedIn audience is English-speaking)
+## Key SOPs
+- SOP-01: QA Protocol
+- SOP-03: GitHub Standards
+- SOP-04: Infrastructure Node Roles
+- SOP-07: Agentic Coding Orchestration
+- SOP-08: Project Kickoff Pre-Dev Check
+- SOP-09: Skill Injection Registry
+- SOP-10: Session Start/Finish + Incident Response
+- SOP-12: Project Onboarding Auto
+- SOP-13: Lana Handover Protocol

@@ -1,0 +1,73 @@
+{
+  "name": "Independent QA Agent Trigger",
+  "description": "Triggered on GitHub PR opened/synced. SSHes to smo-test, runs qa-runner.sh, posts score to PR.",
+  "trigger": {
+    "type": "github-webhook",
+    "events": ["pull_request.opened", "pull_request.synchronize", "pull_request.reopened"],
+    "branches": ["dev"]
+  },
+  "nodes": [
+    {
+      "name": "GitHub PR Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "path": "qa-agent-trigger",
+      "httpMethod": "POST",
+      "responseMode": "onReceived"
+    },
+    {
+      "name": "Filter — only dev branch PRs",
+      "type": "n8n-nodes-base.if",
+      "conditions": "{{ $json.pull_request.base.ref === 'dev' && ['opened','synchronize','reopened'].includes($json.action) }}"
+    },
+    {
+      "name": "Extract PR metadata",
+      "type": "n8n-nodes-base.set",
+      "values": {
+        "owner": "{{ $json.pull_request.base.repo.owner.login }}",
+        "repo": "{{ $json.pull_request.base.repo.name }}",
+        "pr_number": "{{ $json.pull_request.number }}"
+      }
+    },
+    {
+      "name": "SSH to smo-test and run QA",
+      "type": "n8n-nodes-base.ssh",
+      "host": "100.105.86.13",
+      "username": "root",
+      "command": "TELEGRAM_BOT_TOKEN={{ $env.TELEGRAM_BOT_TOKEN }} TELEGRAM_CHAT_ID=311453473 GITHUB_TOKEN={{ $env.GITHUB_TOKEN }} bash /opt/qa-runner.sh {{ $json.owner }} {{ $json.repo }} {{ $json.pr_number }}",
+      "timeout_seconds": 600
+    },
+    {
+      "name": "Post status check to PR",
+      "type": "n8n-nodes-base.github",
+      "operation": "createStatus",
+      "owner": "{{ $json.owner }}",
+      "repo": "{{ $json.repo }}",
+      "sha": "{{ $json.pull_request.head.sha }}",
+      "state": "{{ parseInt($json.composite) >= 90 ? 'success' : 'failure' }}",
+      "context": "qa-score",
+      "description": "Composite: {{ $json.composite }}/100 (threshold: 90)"
+    },
+    {
+      "name": "Telegram notify",
+      "type": "n8n-nodes-base.telegram",
+      "operation": "sendMessage",
+      "chatId": "311453473",
+      "text": "🔬 QA scored {{ $json.repo }} PR #{{ $json.pr_number }}: {{ $json.composite }}/100 ({{ parseInt($json.composite) >= 90 ? '✅ PASS' : '❌ BLOCKED' }})"
+    }
+  ],
+  "setup_instructions": [
+    "1. Create webhook in GitHub repo settings: URL = https://flow.smorchestra.ai/webhook/qa-agent-trigger, events: pull_request",
+    "2. Add branch protection rule on 'dev' requiring 'qa-score' status check to pass",
+    "3. Ensure n8n has SSH credential for 100.105.86.13 (root) and GitHub PAT with repo:status scope",
+    "4. Test: open PR to dev branch, verify qa-score check appears and QA comment posts within ~5-10 min"
+  ],
+  "repos_to_enable": [
+    "SMOrchestra-ai/eo-mena",
+    "SMOrchestra-ai/EO-Scorecard-Platform",
+    "SMOrchestra-ai/digital-revenue-score",
+    "SMOrchestra-ai/gtm-fitness-scorecard",
+    "SMOrchestra-ai/Signal-Sales-Engine",
+    "SMOrchestra-ai/content-automation",
+    "SMOrchestra-ai/SaaSFast"
+  ]
+}

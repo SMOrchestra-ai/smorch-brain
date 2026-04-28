@@ -1,0 +1,87 @@
+name: Quality Gate
+
+on:
+  pull_request:
+    branches: [dev, main]
+
+jobs:
+  lint-and-typecheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install frontend dependencies
+        run: npm ci
+        working-directory: scrapmfast_frontend
+      - name: Lint
+        run: npm run lint
+        working-directory: scrapmfast_frontend
+      - name: Typecheck
+        run: npx tsc --noEmit
+        working-directory: scrapmfast_frontend
+
+  e2e-tests:
+    runs-on: ubuntu-latest
+    needs: lint-and-typecheck
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install E2E dependencies
+        run: npm ci
+        working-directory: e2e
+      - name: Install Playwright browsers
+        run: npx playwright install chromium --with-deps
+        working-directory: e2e
+      - name: Run E2E tests (chromium only in CI)
+        run: npx playwright test --project=chromium
+        working-directory: e2e
+        env:
+          BASE_URL: https://sse.smorchestra.ai
+          TEST_USER_EMAIL: ${{ secrets.TEST_USER_EMAIL }}
+          TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
+      - name: Upload test results on failure
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-report
+          path: e2e/test-results/
+          retention-days: 7
+
+  lighthouse:
+    runs-on: ubuntu-latest
+    needs: lint-and-typecheck
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install Lighthouse CI
+        run: npm install -g @lhci/cli@0.14.x
+      - name: Run Lighthouse CI
+        run: |
+          lhci autorun \
+            --collect.url=https://sse.smorchestra.ai/auth/login \
+            --collect.url=https://sse.smorchestra.ai/auth/signup \
+            --collect.numberOfRuns=3 \
+            --collect.settings.chromeFlags="--no-sandbox --disable-gpu --headless" \
+            --assert.preset=lighthouse:recommended \
+            --assert.assertions.categories:performance=["error",{"minScore":0.9}] \
+            --assert.assertions.categories:accessibility=["error",{"minScore":0.9}] \
+            --assert.assertions.categories:best-practices=["error",{"minScore":0.9}] \
+            --assert.assertions.categories:seo=["warn",{"minScore":0.8}] \
+            --assert.assertions.largest-contentful-paint=["error",{"maxNumericValue":2000}] \
+            --assert.assertions.cumulative-layout-shift=["error",{"maxNumericValue":0.1}] \
+            --assert.assertions.first-contentful-paint=["warn",{"maxNumericValue":1800}] \
+            --upload.target=filesystem \
+            --upload.outputDir=./lighthouse-results
+      - name: Upload Lighthouse reports
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: lighthouse-reports
+          path: ./lighthouse-results/
+          retention-days: 14

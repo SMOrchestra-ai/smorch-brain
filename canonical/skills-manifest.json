@@ -1,0 +1,373 @@
+{
+  "version": "1.0",
+  "generated_at": "2026-04-18",
+  "source": "smorch-brain/plugins/",
+  "plugins": {
+    "engineering": {
+      "hash": "91247d11ef56f886",
+      "path": "plugins/engineering"
+    },
+    "eo-microsaas-os": {
+      "hash": "55f883c44b4859ba",
+      "path": "plugins/eo-microsaas-os"
+    },
+    "eo-microsaas-os-backup-v1.0.0": {
+      "hash": "bd80f3c25c78f0dc",
+      "path": "plugins/eo-microsaas-os-backup-v1.0.0"
+    },
+    "eo-scoring-suite": {
+      "hash": "5c4c8151df5964bb",
+      "path": "plugins/eo-scoring-suite"
+    },
+    "eo-training-factory": {
+      "hash": "6fd086007ee47fd2",
+      "path": "plugins/eo-training-factory"
+    },
+    "product-management": {
+      "hash": "16bf07c4a6e5dacd",
+      "path": "plugins/product-management"
+    },
+    "smorch-gtm-engine": {
+      "hash": "b6bd4ded8d634e2d",
+      "path": "plugins/smorch-gtm-engine"
+    },
+    "smorch-gtm-engine-backup-v1.0.0": {
+      "hash": "a5293280ddbd3952",
+      "path": "plugins/smorch-gtm-engine-backup-v1.0.0"
+    },
+    "smorch-gtm-tools": {
+      "hash": "fa7c1b89035c8c9e",
+      "path": "plugins/smorch-gtm-tools"
+    },
+    "smorch-builders": {
+      "hash": "090ccfc20e5e447f",
+      "path": "plugins/smorch-builders"
+    }
+  },
+  "skills": {
+    "engineering/code-review": {
+      "hash": "bb7c3f709a5af910",
+      "plugin": "engineering"
+    },
+    "engineering/documentation": {
+      "hash": "c24a1672a7edad51",
+      "plugin": "engineering"
+    },
+    "engineering/incident-response": {
+      "hash": "03a51b74494741ad",
+      "plugin": "engineering"
+    },
+    "engineering/system-design": {
+      "hash": "5915b5f79ae74f20",
+      "plugin": "engineering"
+    },
+    "engineering/tech-debt": {
+      "hash": "3f0795a17cd18ea1",
+      "plugin": "engineering"
+    },
+    "engineering/testing-strategy": {
+      "hash": "2fe64e97a596e862",
+      "plugin": "engineering"
+    },
+    "eo-microsaas-os/0-eo-guide": {
+      "hash": "60382162d6858172",
+      "plugin": "eo-microsaas-os"
+    },
+    "eo-microsaas-os/1-eo-brain-ingestion": {
+      "hash": "d46f12b3ee4bde81",
+      "plugin": "eo-microsaas-os"
+    },
+    "eo-microsaas-os/1-eo-template-factory": {
+      "hash": "62791ef673eeaa51",
+      "plugin": "eo-microsaas-os"
+    },
+    "eo-microsaas-os/2-eo-gtm-asset-factory": {
+      "hash": "5942b2bc77d3bd0f",
+      "plugin": "eo-microsaas-os"
+    },
+    "eo-microsaas-os/3-eo-skill-extractor": {
+      "hash": "033b495ee489d9ca",
+      "plugin": "eo-microsaas-os"
+    },
+    "eo-microsaas-os/4-eo-code-handover": {
+      "hash": "1ba5f89c151d59fd",
+      "plugin": "eo-microsaas-os"
+    },
+    "eo-microsaas-os/4-eo-tech-architect": {
+      "hash": "ccdc6f2627b8cbc3",
+      "plugin": "eo-microsaas-os"
+    },
+    "eo-microsaas-os-backup-v1.0.0/eo-api-connector": {
+      "hash": "89df5fcad3cf7073",
+      "plugin": "eo-microsaas-os-backup-v1.0.0"
+    },
+    "eo-microsaas-os-backup-v1.0.0/eo-brain-ingestion": {
+      "hash": "59769ee3c8b39957",
+      "plugin": "eo-microsaas-os-backup-v1.0.0"
+    },
+    "eo-microsaas-os-backup-v1.0.0/eo-db-architect": {
+      "hash": "92ef3f06aa8c79f8",
+      "plugin": "eo-microsaas-os-backup-v1.0.0"
+    },
+    "eo-microsaas-os-backup-v1.0.0/eo-deploy-infra": {
+      "hash": "234d6d6f220a1f8f",
+      "plugin": "eo-microsaas-os-backup-v1.0.0"
+    },
+    "eo-microsaas-os-backup-v1.0.0/eo-gtm-asset-builder": {
+      "hash": "024473f3efe61bb5",
+      "plugin": "eo-microsaas-os-backup-v1.0.0"
+    },
+    "eo-microsaas-os-backup-v1.0.0/eo-gtm-asset-factory": {
+      "hash": "2a78a63dec666eaa",
+      "plugin": "eo-microsaas-os-backup-v1.0.0"
+    },
+    "eo-microsaas-os-backup-v1.0.0/eo-microsaas-dev": {
+      "hash": "6767ec4e553b720a",
+      "plugin": "eo-microsaas-os-backup-v1.0.0"
+    },
+    "eo-microsaas-os-backup-v1.0.0/eo-os-navigator": {
+      "hash": "9b704bd95a1c52cd",
+      "plugin": "eo-microsaas-os-backup-v1.0.0"
+    },
+    "eo-microsaas-os-backup-v1.0.0/eo-qa-testing": {
+      "hash": "587cb7959f1362fb",
+      "plugin": "eo-microsaas-os-backup-v1.0.0"
+    },
+    "eo-microsaas-os-backup-v1.0.0/eo-security-hardener": {
+      "hash": "f39daab87996deaf",
+      "plugin": "eo-microsaas-os-backup-v1.0.0"
+    },
+    "eo-microsaas-os-backup-v1.0.0/eo-skill-extractor": {
+      "hash": "a536020a286e3921",
+      "plugin": "eo-microsaas-os-backup-v1.0.0"
+    },
+    "eo-microsaas-os-backup-v1.0.0/eo-tech-architect": {
+      "hash": "b426d1f79840b1b2",
+      "plugin": "eo-microsaas-os-backup-v1.0.0"
+    },
+    "eo-microsaas-os-backup-v1.0.0/gtm-fitness-scoring-engine": {
+      "hash": "1b203600629d173d",
+      "plugin": "eo-microsaas-os-backup-v1.0.0"
+    },
+    "eo-microsaas-os-backup-v1.0.0/icp-clarity-scoring-engine": {
+      "hash": "7718bc6db6b1b9e8",
+      "plugin": "eo-microsaas-os-backup-v1.0.0"
+    },
+    "eo-microsaas-os-backup-v1.0.0/market-attractiveness-scoring-engine": {
+      "hash": "f5c3ce2bd3c5e8b2",
+      "plugin": "eo-microsaas-os-backup-v1.0.0"
+    },
+    "eo-microsaas-os-backup-v1.0.0/project-definition-scoring-engine": {
+      "hash": "512cd6adac423a2a",
+      "plugin": "eo-microsaas-os-backup-v1.0.0"
+    },
+    "eo-microsaas-os-backup-v1.0.0/strategy-selector-engine": {
+      "hash": "c1f776a855779236",
+      "plugin": "eo-microsaas-os-backup-v1.0.0"
+    },
+    "eo-scoring-suite/gtm-fitness-scoring-engine": {
+      "hash": "c88a7617d257dfbf",
+      "plugin": "eo-scoring-suite"
+    },
+    "eo-scoring-suite/icp-clarity-scoring-engine": {
+      "hash": "b493a8109e4ffe5b",
+      "plugin": "eo-scoring-suite"
+    },
+    "eo-scoring-suite/market-attractiveness-scoring-engine": {
+      "hash": "3446d2e23bdc331f",
+      "plugin": "eo-scoring-suite"
+    },
+    "eo-scoring-suite/project-definition-scoring-engine": {
+      "hash": "adc751aa49cedcff",
+      "plugin": "eo-scoring-suite"
+    },
+    "eo-scoring-suite/strategy-selector-engine": {
+      "hash": "977c9eba1a1d9f00",
+      "plugin": "eo-scoring-suite"
+    },
+    "eo-training-factory/eo-training-factory": {
+      "hash": "5cfc5b1bbd7769bc",
+      "plugin": "eo-training-factory"
+    },
+    "product-management/competitive-analysis": {
+      "hash": "a61b83f9ff68cc3d",
+      "plugin": "product-management"
+    },
+    "product-management/feature-spec": {
+      "hash": "3eaa2e4a4ee23b6f",
+      "plugin": "product-management"
+    },
+    "product-management/metrics-tracking": {
+      "hash": "d2bf397172c35db2",
+      "plugin": "product-management"
+    },
+    "product-management/roadmap-management": {
+      "hash": "3543363f4103f881",
+      "plugin": "product-management"
+    },
+    "product-management/stakeholder-comms": {
+      "hash": "4d5a89573f9897b2",
+      "plugin": "product-management"
+    },
+    "product-management/user-research-synthesis": {
+      "hash": "c9b26a42e6697e13",
+      "plugin": "product-management"
+    },
+    "smorch-builders/get-api-docs": {
+      "hash": "f8b7987f10bb726f",
+      "plugin": "smorch-builders"
+    },
+    "smorch-builders/mcp-builder": {
+      "hash": "fd5f1e86fd23ee76",
+      "plugin": "smorch-builders"
+    },
+    "smorch-builders/n8n-architect": {
+      "hash": "0b53c2ec2bde418b",
+      "plugin": "smorch-builders"
+    },
+    "smorch-builders/receiving-code-review": {
+      "hash": "2760c85d4f4117b0",
+      "plugin": "smorch-builders"
+    },
+    "smorch-builders/requesting-code-review": {
+      "hash": "c37d2cc841425bb5",
+      "plugin": "smorch-builders"
+    },
+    "smorch-builders/validation-sprint": {
+      "hash": "6075792e11cf505b",
+      "plugin": "smorch-builders"
+    },
+    "smorch-builders/webapp-testing": {
+      "hash": "c2973b5a42aa0949",
+      "plugin": "smorch-builders"
+    },
+    "smorch-gtm-engine/asset-factory": {
+      "hash": "1e588bc16ccfa96a",
+      "plugin": "smorch-gtm-engine"
+    },
+    "smorch-gtm-engine/campaign-strategist": {
+      "hash": "d16bb0b42f345884",
+      "plugin": "smorch-gtm-engine"
+    },
+    "smorch-gtm-engine/lead-research-assistant": {
+      "hash": "08cf5477dfdcbefa",
+      "plugin": "smorch-gtm-engine"
+    },
+    "smorch-gtm-engine/outbound-orchestrator": {
+      "hash": "e8c521161def32bd",
+      "plugin": "smorch-gtm-engine"
+    },
+    "smorch-gtm-engine/positioning-engine": {
+      "hash": "c71ca0a6d74dc5c7",
+      "plugin": "smorch-gtm-engine"
+    },
+    "smorch-gtm-engine/scraper-layer": {
+      "hash": "3f9c9e0a9562327d",
+      "plugin": "smorch-gtm-engine"
+    },
+    "smorch-gtm-engine/signal-detector": {
+      "hash": "0b6593aa6b8f2d12",
+      "plugin": "smorch-gtm-engine"
+    },
+    "smorch-gtm-engine/signal-to-trust-gtm": {
+      "hash": "fc19b22abe8b4b63",
+      "plugin": "smorch-gtm-engine"
+    },
+    "smorch-gtm-engine/smo-offer-assets": {
+      "hash": "c5fb1a555519ac27",
+      "plugin": "smorch-gtm-engine"
+    },
+    "smorch-gtm-engine/smo-skill-creator": {
+      "hash": "f03beaba88e857c5",
+      "plugin": "smorch-gtm-engine"
+    },
+    "smorch-gtm-engine/smorch-linkedin-intel": {
+      "hash": "65f7061c8eabcd2a",
+      "plugin": "smorch-gtm-engine"
+    },
+    "smorch-gtm-engine/smorch-perfect-webinar": {
+      "hash": "8288d4fd38b94c22",
+      "plugin": "smorch-gtm-engine"
+    },
+    "smorch-gtm-engine/wedge-generator": {
+      "hash": "1b82b7820b0d4bd4",
+      "plugin": "smorch-gtm-engine"
+    },
+    "smorch-gtm-engine-backup-v1.0.0/asset-factory": {
+      "hash": "1f348108609f5bd6",
+      "plugin": "smorch-gtm-engine-backup-v1.0.0"
+    },
+    "smorch-gtm-engine-backup-v1.0.0/campaign-strategist": {
+      "hash": "33f775aeda9fbec7",
+      "plugin": "smorch-gtm-engine-backup-v1.0.0"
+    },
+    "smorch-gtm-engine-backup-v1.0.0/clay-operator": {
+      "hash": "0a1a9c412b4e5d70",
+      "plugin": "smorch-gtm-engine-backup-v1.0.0"
+    },
+    "smorch-gtm-engine-backup-v1.0.0/ghl-operator": {
+      "hash": "bf470c2b7947b3b4",
+      "plugin": "smorch-gtm-engine-backup-v1.0.0"
+    },
+    "smorch-gtm-engine-backup-v1.0.0/heyreach-operator": {
+      "hash": "5943feb5eafdbcba",
+      "plugin": "smorch-gtm-engine-backup-v1.0.0"
+    },
+    "smorch-gtm-engine-backup-v1.0.0/instantly-operator": {
+      "hash": "1638aa0f817f329c",
+      "plugin": "smorch-gtm-engine-backup-v1.0.0"
+    },
+    "smorch-gtm-engine-backup-v1.0.0/n8n-architect": {
+      "hash": "c537e7d831fd904f",
+      "plugin": "smorch-gtm-engine-backup-v1.0.0"
+    },
+    "smorch-gtm-engine-backup-v1.0.0/outbound-orchestrator": {
+      "hash": "e8c521161def32bd",
+      "plugin": "smorch-gtm-engine-backup-v1.0.0"
+    },
+    "smorch-gtm-engine-backup-v1.0.0/positioning-engine": {
+      "hash": "c71ca0a6d74dc5c7",
+      "plugin": "smorch-gtm-engine-backup-v1.0.0"
+    },
+    "smorch-gtm-engine-backup-v1.0.0/scraper-layer": {
+      "hash": "3f9c9e0a9562327d",
+      "plugin": "smorch-gtm-engine-backup-v1.0.0"
+    },
+    "smorch-gtm-engine-backup-v1.0.0/signal-detector": {
+      "hash": "9b56f13222b7f643",
+      "plugin": "smorch-gtm-engine-backup-v1.0.0"
+    },
+    "smorch-gtm-engine-backup-v1.0.0/signal-to-trust-gtm": {
+      "hash": "2d580235b56a853a",
+      "plugin": "smorch-gtm-engine-backup-v1.0.0"
+    },
+    "smorch-gtm-engine-backup-v1.0.0/wedge-generator": {
+      "hash": "bd7ce385a9c5dbc0",
+      "plugin": "smorch-gtm-engine-backup-v1.0.0"
+    },
+    "smorch-gtm-tools/clay-operator": {
+      "hash": "b0780cf19c94fb06",
+      "plugin": "smorch-gtm-tools"
+    },
+    "smorch-gtm-tools/ghl-operator": {
+      "hash": "3f0d178f4d50e7a5",
+      "plugin": "smorch-gtm-tools"
+    },
+    "smorch-gtm-tools/heyreach-operator": {
+      "hash": "a49a946a71e495bc",
+      "plugin": "smorch-gtm-tools"
+    },
+    "smorch-gtm-tools/instantly-operator": {
+      "hash": "379fd15614c44297",
+      "plugin": "smorch-gtm-tools"
+    },
+    "smorch-gtm-tools/smorch-salesnav-operator": {
+      "hash": "ceb0658755aca617",
+      "plugin": "smorch-gtm-tools"
+    },
+    "smorch-gtm-tools/smorch-tool-super-admin-creator": {
+      "hash": "3c1a339967902154",
+      "plugin": "smorch-gtm-tools"
+    }
+  }
+}

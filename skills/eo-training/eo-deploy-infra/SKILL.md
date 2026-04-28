@@ -19,7 +19,7 @@ version: "1.0"
 
 1. [Role Definition](#role-definition)
 2. [Input Requirements](#input-requirements)
-3. [Deployment Pipeline](#deployment-pipeline)
+3. [The 6-Step Deployment Pipeline](#the-6-step-deployment-pipeline)
 4. [Infrastructure Defaults](#infrastructure-defaults)
 5. [Output Files](#output-files)
 6. [Execution Flow](#execution-flow)
@@ -32,9 +32,10 @@ version: "1.0"
 ## ROLE DEFINITION
 
 You are the **EO DevOps Engineer**, a specialized Step 5 skill that handles deployment and infrastructure. You are the LAST skill in the launch sequence:
-1. eo-qa-testing -> PASS required
-2. eo-security-hardener -> PASS required
-3. **eo-deploy-infra** (this skill) -> Deploy to production
+
+```
+eo-qa-testing [PASS] -> eo-security-hardener [PASS] -> eo-deploy-infra [DEPLOY]
+```
 
 Every infrastructure decision traces back to:
 - Budget constraints from companyprofile.md (typically $10-15/mo)
@@ -71,275 +72,57 @@ Every infrastructure decision traces back to:
 | qa-report.md | eo-qa-testing | Must be PASS status before deployment proceeds |
 
 ### Hard Stop Rule
+
 **Do NOT proceed with deployment if qa-report.md shows FAIL status or if security-audit.md has unresolved CRITICAL findings.** Send the student back to fix issues first.
 
 ---
 
-## DEPLOYMENT PIPELINE
+## THE 6-STEP DEPLOYMENT PIPELINE
 
 ### Step 1: VPS Setup
-
-**Default: Contabo or Hetzner VPS** (cheapest reliable option for MENA-serving apps)
-
-#### Server Provisioning
-```bash
-# Recommended starter spec
-# Contabo VPS S: 4 vCPU, 8GB RAM, 200GB SSD - ~$6.99/mo
-# Hetzner CX31: 2 vCPU, 8GB RAM, 80GB SSD - ~$7.49/mo
-
-# OS: Ubuntu 22.04 LTS (most Coolify-compatible)
-```
-
-#### OS Hardening
-```bash
-# 1. Update system
-apt update && apt upgrade -y
-
-# 2. Create non-root user
-adduser deploy
-usermod -aG sudo deploy
-
-# 3. SSH key setup (disable password auth)
-# Copy student's public key to /home/deploy/.ssh/authorized_keys
-sed -i 's/PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config
-systemctl restart sshd
-
-# 4. Firewall rules
-ufw default deny incoming
-ufw default allow outgoing
-ufw allow 22/tcp    # SSH
-ufw allow 80/tcp    # HTTP
-ufw allow 443/tcp   # HTTPS
-ufw allow 8000/tcp  # Coolify
-ufw enable
-
-# 5. Fail2ban for brute force protection
-apt install fail2ban -y
-systemctl enable fail2ban
-```
-
-#### SSH Key Management
-- Generate ED25519 key pair for the student
-- Document the key location and backup procedure
-- Set up SSH config alias for easy access
-
----
+Provision a server and harden the OS. Default: Contabo or Hetzner (cheapest reliable option for MENA-serving apps).
+- Server provisioning: Ubuntu 22.04 LTS
+- OS hardening: user creation, SSH key setup, firewall configuration
+- See references/deployment-and-execution.md for exact commands
 
 ### Step 2: Docker Containerization
-
-#### Dockerfile (Next.js default)
-```dockerfile
-# Multi-stage build for minimal image size
-FROM node:20-alpine AS deps
-WORKDIR /app
-COPY package.json package-lock.json ./
-RUN npm ci --only=production
-
-FROM node:20-alpine AS builder
-WORKDIR /app
-COPY --from=deps /app/node_modules ./node_modules
-COPY . .
-RUN npm run build
-
-FROM node:20-alpine AS runner
-WORKDIR /app
-ENV NODE_ENV=production
-RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 nextjs
-
-COPY --from=builder /app/public ./public
-COPY --from=builder /app/.next/standalone ./
-COPY --from=builder /app/.next/static ./.next/static
-
-USER nextjs
-EXPOSE 3000
-ENV PORT=3000
-CMD ["node", "server.js"]
-```
-
-#### docker-compose.yml (multi-service apps)
-```yaml
-version: '3.8'
-
-services:
-  app:
-    build: .
-    ports:
-      - "3000:3000"
-    env_file:
-      - .env.production
-    depends_on:
-      - redis
-    restart: unless-stopped
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-
-  redis:
-    image: redis:7-alpine
-    ports:
-      - "6379:6379"
-    volumes:
-      - redis-data:/data
-    restart: unless-stopped
-
-volumes:
-  redis-data:
-```
-
-#### Container Optimization Rules
-- Multi-stage builds: separate deps, build, and runtime stages
-- Alpine base images (smaller attack surface, faster pulls)
-- Non-root user inside container
-- Health check endpoint required
-- `.dockerignore` to exclude node_modules, .git, .env files
-
----
+Containerize the application for consistent, reproducible deployments.
+- Multi-stage Dockerfile for minimal image size
+- docker-compose.yml for multi-service setups (app + Redis, etc.)
+- Container optimization rules: Alpine images, health checks, non-root user
+- See references/deployment-and-execution.md for template Dockerfile and docker-compose
 
 ### Step 3: Coolify PaaS Setup
-
-**Coolify** = self-hosted Vercel/Heroku alternative. Free, runs on the student's VPS.
-
-#### Installation
-```bash
-# One-line Coolify install (on the VPS)
-curl -fsSL https://cdn.coollabs.io/coolify/install.sh | bash
-```
-
-#### Configuration
-1. Access Coolify dashboard at `http://[VPS-IP]:8000`
-2. Create new project
-3. Connect GitHub repository
-4. Configure environment variables (from .env.production)
-5. Set build command: `npm run build`
-6. Set start command: `npm start` or use Dockerfile
-7. Enable auto-deploy on push to `main` branch
-
-#### Environment Variable Management
-- All secrets managed through Coolify UI (never in code)
-- Separate environments: staging and production
-- Required variables checklist generated from .env.example
-- Supabase connection strings, API keys, payment gateway secrets
-
----
+Self-hosted Vercel/Heroku alternative running on the student's VPS.
+- Install Coolify with one-liner command
+- Connect GitHub repository for auto-deploy on push
+- Configure environment variables (all secrets managed through Coolify UI, never in code)
+- Set build and start commands
+- See references/deployment-and-execution.md for complete setup steps
 
 ### Step 4: Domain and SSL
-
-#### DNS Configuration (Cloudflare)
-```
-# A records
-@ -> [VPS-IP] (proxied)
-www -> [VPS-IP] (proxied)
-
-# If using subdomains
-app -> [VPS-IP] (proxied)
-api -> [VPS-IP] (proxied)
-```
-
-#### SSL Certificates
-- Coolify handles SSL via Let's Encrypt (automatic)
-- Cloudflare SSL mode: Full (strict)
-- Force HTTPS redirect enabled
-- HSTS header configured (from eo-security-hardener)
-
-#### Subdomain Routing
-- `app.domain.com` -> Main application
-- `api.domain.com` -> API (if separated)
-- Wildcard `*.domain.com` for multi-tenant subdomains (if needed)
-
----
+Configure domain routing and automated SSL certificates.
+- DNS A records pointing VPS IP (via Cloudflare for proxying)
+- SSL via Let's Encrypt (automatic through Coolify)
+- HTTPS redirect + HSTS header (from eo-security-hardener)
+- Subdomain routing for multi-service apps
+- See references/deployment-and-execution.md for DNS and SSL configuration
 
 ### Step 5: CI/CD Pipeline
-
-#### GitHub Actions Workflow
-```yaml
-# .github/workflows/deploy.yml
-name: Deploy to Production
-
-on:
-  push:
-    branches: [main]
-
-jobs:
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'npm'
-      - run: npm ci
-      - run: npm run lint
-      - run: npm run type-check
-      - run: npm run test
-      - run: npm run build
-
-  deploy:
-    needs: test
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
-    steps:
-      - name: Trigger Coolify Deploy
-        run: |
-          curl -X POST "${{ secrets.COOLIFY_WEBHOOK_URL }}" \
-            -H "Authorization: Bearer ${{ secrets.COOLIFY_TOKEN }}"
-```
-
-#### Pipeline Stages
-1. **Lint**: ESLint + Prettier check
-2. **Type Check**: `tsc --noEmit`
-3. **Test**: Run test suite
-4. **Build**: Production build
-5. **Deploy**: Trigger Coolify webhook (only on main branch, only if tests pass)
-
-#### Rollback Strategy
-- Coolify maintains previous deployments
+Automated testing and deployment on every push to main.
+- GitHub Actions workflow: lint → type-check → test → build → deploy
+- Deploy only if tests pass and on main branch only
+- Coolify webhook triggered by GitHub Actions
 - One-click rollback in Coolify dashboard
-- Document: "If deployment breaks, click Rollback in Coolify -> Deployments"
-
----
+- See references/deployment-and-execution.md for complete GitHub Actions YAML
 
 ### Step 6: Monitoring and Alerting
-
-#### Uptime Monitoring (Uptime Kuma)
-```bash
-# Install Uptime Kuma via Docker on the same VPS
-docker run -d \
-  --name uptime-kuma \
-  -p 3001:3001 \
-  -v uptime-kuma:/app/data \
-  --restart unless-stopped \
-  louislam/uptime-kuma:1
-```
-
-Configure monitors:
-- HTTP(S) check on main domain (every 60 seconds)
-- API health endpoint check (every 60 seconds)
-- SSL certificate expiry (every 24 hours)
-- Alert channels: email + Telegram/WhatsApp webhook
-
-#### Product Analytics (PostHog)
-- Self-hosted PostHog or PostHog Cloud free tier
-- Track: page views, feature usage, user journeys, errors
-- Key events to track from Day 1:
-  - Signup completed
-  - First meaningful action (product-specific)
-  - Subscription started
-  - Subscription cancelled
-
-#### Error Tracking
-- Sentry free tier for error tracking
-- Source maps uploaded during build
-- Alert on new errors and error rate spikes
-
-#### Resource Monitoring
-- VPS CPU, memory, disk usage
-- Docker container health
-- Database connection pool status
-- Alert thresholds: CPU > 80%, Memory > 85%, Disk > 90%
+Proactive monitoring so student learns about issues before users do.
+- Uptime Kuma for HTTP/HTTPS and health checks
+- PostHog or self-hosted analytics for user behavior
+- Sentry for error tracking and alerting
+- Resource monitoring (CPU, memory, disk) with alert thresholds
+- See references/deployment-and-execution.md for setup and configuration
 
 ---
 
@@ -347,12 +130,12 @@ Configure monitors:
 
 | Component | Default Choice | Monthly Cost | When to Change |
 |-----------|---------------|-------------|----------------|
-| VPS | Contabo VPS S | $6.99 | > 5000 DAU: upgrade to VPS M or Hetzner CPX |
-| PaaS | Coolify (self-hosted) | $0 | Never (for this stage) |
-| DNS/CDN | Cloudflare Free | $0 | Never (for this stage) |
+| VPS | Contabo VPS S | $6.99 | > 5000 DAU: upgrade to VPS M |
+| PaaS | Coolify (self-hosted) | $0 | Never (for MVP) |
+| DNS/CDN | Cloudflare Free | $0 | Never (for MVP) |
 | SSL | Let's Encrypt via Coolify | $0 | Never |
-| CI/CD | GitHub Actions Free | $0 | > 2000 build minutes/mo: add paid plan |
-| Monitoring | Uptime Kuma (self-hosted) | $0 | Never (for this stage) |
+| CI/CD | GitHub Actions Free | $0 | > 2000 build min/mo: add paid plan |
+| Monitoring | Uptime Kuma (self-hosted) | $0 | Never (for MVP) |
 | Analytics | PostHog Cloud Free | $0 | > 1M events/mo: self-host |
 | Errors | Sentry Free | $0 | > 5K errors/mo: paid plan |
 | **Total** | | **~$7-15/mo** | |
@@ -361,110 +144,223 @@ Configure monitors:
 
 ## OUTPUT FILES
 
-### deployment-guide.md
-Step-by-step deployment runbook the student follows:
-```markdown
-# Deployment Guide: [Product Name]
+After deployment, the student has:
 
-## Prerequisites
-- [ ] VPS provisioned and accessible via SSH
-- [ ] Domain registered and DNS pointed to VPS
-- [ ] GitHub repository with code
-- [ ] Supabase project created with production credentials
-- [ ] Payment gateway sandbox/production credentials (if applicable)
-
-## First-Time Setup
-[Numbered steps with exact commands]
-
-## Regular Deployment
-[How to deploy updates: push to main]
-
-## Rollback
-[How to rollback if something breaks]
-
-## Environment Variables
-[Complete list from .env.example with descriptions]
-
-## Troubleshooting
-[Common issues and fixes]
-```
-
-### Dockerfile
-Production-optimized Dockerfile (see Step 2 above).
-
-### docker-compose.yml
-Multi-service composition if the app needs Redis, workers, etc.
-
-### .github/workflows/deploy.yml
-CI/CD pipeline (see Step 5 above).
-
-### monitoring-setup.md
-```markdown
-# Monitoring Setup: [Product Name]
-
-## Uptime Monitoring
-- URL: [Uptime Kuma dashboard URL]
-- Monitors configured: [list]
-- Alert channels: [list]
-
-## Analytics
-- Dashboard: [PostHog URL]
-- Key events tracked: [list]
-
-## Error Tracking
-- Dashboard: [Sentry URL]
-- Alert rules: [list]
-
-## Resource Alerts
-- CPU threshold: 80%
-- Memory threshold: 85%
-- Disk threshold: 90%
-- Alert channels: [list]
-```
+1. **deployment-guide.md** - Step-by-step runbook for deploying updates and troubleshooting
+2. **Dockerfile** - Production-optimized container configuration
+3. **docker-compose.yml** - Multi-service composition (if applicable)
+4. **.github/workflows/deploy.yml** - CI/CD pipeline configuration
+5. **monitoring-setup.md** - Monitoring dashboard URLs and alert channel configuration
+6. **Environment variables documentation** - Complete list with descriptions
 
 ---
 
 ## EXECUTION FLOW
 
 ### Phase 1: Pre-Flight Check (5 minutes)
-1. Verify qa-report.md status is PASS
-2. Verify security-audit.md has no unresolved CRITICAL findings
-3. Read tech-stack-decision.md for hosting choice and budget
-4. Read architecture-diagram.md for service topology
-5. Confirm: student has domain registered and VPS access
+
+**Hard Stop Rules - Check These First:**
+1. **QA Status:** Open qa-report.md. If status ≠ "PASS", stop. Tell student: "Fix the QA issues first, then come back to deploy."
+2. **Security Status:** Open security-audit.md. If any CRITICAL findings are unresolved, stop. Tell student: "Resolve critical security issues first."
+
+**If Both Clear, Proceed:**
+3. Read tech-stack-decision.md. Extract:
+   - Selected framework (Next.js, Django, Rails, etc.)
+   - Selected database (Supabase, PostgreSQL, MongoDB, etc.)
+   - Hosting choice (Contabo, Hetzner, DigitalOcean, etc.)
+   - Budget allocation
+4. Read architecture-diagram.md. Understand:
+   - How many services (single app, microservices, background workers)?
+   - Any external dependencies (Redis, payment gateways, webhooks)?
+   - Data flow topology (will inform docker-compose needs)
+5. Confirm with student:
+   - "Do you have a domain registered? (You'll need it for DNS setup)"
+   - "Do you have access to Contabo/Hetzner account? (For VPS provisioning)"
+   - "Do you have GitHub repo pushed? (For Coolify to pull from)"
+
+**Student Confirms Ready** → Proceed to Phase 2
 
 ### Phase 2: Infrastructure Setup (20-30 minutes)
-1. VPS hardening (if first deployment)
-2. Install Coolify (if first deployment)
-3. Configure Docker
-4. Set up DNS and SSL
+
+**Step 1: VPS Provisioning (if first deployment)**
+1. Guide student through Contabo or Hetzner signup
+2. Select VPS S (Contabo) or CX31 (Hetzner) - both ~$7/mo
+3. Install Ubuntu 22.04 LTS
+4. Provide SSH command for student to connect
+
+**Step 2: OS Hardening (execute as student follows along)**
+```bash
+# Run these commands on the VPS as root or with sudo
+
+# 1. Update system
+apt update && apt upgrade -y
+
+# 2. Create deploy user
+adduser deploy
+usermod -aG sudo deploy
+
+# 3. SSH key setup (student provides their public key)
+# Copy student's public key to /home/deploy/.ssh/authorized_keys
+sed -i 's/PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config
+systemctl restart sshd
+
+# 4. Firewall
+ufw default deny incoming
+ufw default allow outgoing
+ufw allow 22/tcp    # SSH
+ufw allow 80/tcp    # HTTP
+ufw allow 443/tcp   # HTTPS
+ufw allow 8000/tcp  # Coolify
+ufw enable
+
+# 5. Fail2ban
+apt install fail2ban -y
+systemctl enable fail2ban
+```
+
+**Step 3: Install Coolify**
+```bash
+curl -fsSL https://cdn.coollabs.io/coolify/install.sh | bash
+```
+- Guide student to http://[VPS-IP]:8000
+- Walk through Coolify initial setup
 
 ### Phase 3: Application Deployment (10-15 minutes)
-1. Create Dockerfile (or validate existing one)
-2. Create docker-compose.yml (if multi-service)
-3. Configure Coolify with GitHub repo
-4. Set environment variables
-5. Trigger first deployment
-6. Verify app is accessible at domain
+
+**Step 1: Validate/Create Dockerfile**
+- Check if codebase already has Dockerfile
+- If not: Generate production-optimized Dockerfile from template
+- If yes: Validate it's multi-stage, uses Alpine, has health check
+
+**Step 2: Create docker-compose.yml (if needed)**
+- If single app: only use Dockerfile
+- If app + Redis/workers: create docker-compose.yml with services
+
+**Step 3: Configure Coolify**
+1. In Coolify dashboard: Create new project
+2. Connect GitHub repository
+3. Select main branch for production
+4. Set build command: `npm run build` (or appropriate for stack)
+5. Set start command: `npm start` or use Dockerfile
+6. Configure environment variables:
+   - Copy all from .env.example
+   - Fill in production values (Supabase URL, API keys, etc.)
+   - All secrets go through Coolify UI (never in code)
+
+**Step 4: First Deployment**
+1. Click "Deploy" in Coolify
+2. Watch build logs (student sees this)
+3. Verify deployment succeeds
+4. Visit the production domain
+5. Confirm app loads and core workflow works (signup, core action, result)
 
 ### Phase 4: CI/CD Setup (10 minutes)
-1. Create .github/workflows/deploy.yml
-2. Add Coolify webhook URL and token to GitHub Secrets
-3. Test pipeline with a small commit
-4. Verify auto-deploy works
+
+**Step 1: Create GitHub Actions Workflow**
+- Generate .github/workflows/deploy.yml
+- Includes: lint → type-check → test → build → deploy
+- Deploy only on main branch if all tests pass
+
+**Step 2: Add GitHub Secrets**
+1. In GitHub repo settings → Secrets and variables
+2. Add:
+   - `COOLIFY_WEBHOOK_URL` (from Coolify deployment settings)
+   - `COOLIFY_TOKEN` (from Coolify API)
+
+**Step 3: Test Pipeline**
+1. Make a small commit to main
+2. Watch GitHub Actions run
+3. Verify it auto-deploys to production
+4. Confirm deployment succeeded in Coolify dashboard
 
 ### Phase 5: Monitoring Setup (10-15 minutes)
-1. Install and configure Uptime Kuma
-2. Set up monitors and alert channels
-3. Configure PostHog tracking
-4. Set up Sentry error tracking
-5. Document all monitoring URLs and access
+
+**Step 1: Install Uptime Kuma (on same VPS)**
+```bash
+docker run -d \
+  --name uptime-kuma \
+  -p 3001:3001 \
+  -v uptime-kuma:/app/data \
+  --restart unless-stopped \
+  louislam/uptime-kuma:1
+```
+- Access at http://[VPS-IP]:3001
+
+**Step 2: Configure Uptime Kuma Monitors**
+- HTTP(S) check on main domain (every 60 seconds)
+- API health endpoint (every 60 seconds)
+- SSL certificate expiry (every 24 hours)
+- Alert channels: email + Telegram/WhatsApp webhook
+
+**Step 3: Configure PostHog (Analytics)**
+- Use free cloud tier or self-host
+- Track key events:
+  - Signup completed
+  - First meaningful action (product-specific)
+  - Subscription started/cancelled
+- Share dashboard link with student
+
+**Step 4: Configure Sentry (Error Tracking)**
+- Create Sentry project for this app
+- Upload source maps during build
+- Configure alerts for:
+  - New errors
+  - Error rate spikes
+- Share dashboard link with student
 
 ### Phase 6: Documentation (10 minutes)
-1. Generate deployment-guide.md
-2. Generate monitoring-setup.md
-3. Walk student through rollback procedure
-4. Confirm student can independently deploy and monitor
+
+**Step 1: Generate deployment-guide.md**
+```markdown
+# [Product Name] - Deployment Guide
+
+## Prerequisites
+- [ ] VPS provisioned and accessible via SSH
+- [ ] Domain registered and DNS pointed
+- [ ] GitHub repo with code
+- [ ] Supabase/database setup complete
+- [ ] Payment gateway credentials (if applicable)
+
+## First-Time Setup
+1. SSH into VPS: ssh deploy@[VPS-IP]
+2. Harden OS: [copy commands from references/]
+3. Install Coolify: [copy command]
+4. Configure Coolify: [step-by-step]
+...
+
+## Regular Deployment
+- Just push to main branch
+- GitHub Actions runs tests → builds → deploys
+- Monitor deployment in Coolify dashboard
+
+## Rollback
+1. Go to Coolify → Deployments
+2. Click Rollback next to previous version
+3. Confirm rollback
+4. Check production app
+
+## Environment Variables
+[Complete list with descriptions]
+
+## Troubleshooting
+[Common issues and fixes]
+```
+
+**Step 2: Generate monitoring-setup.md**
+- Document all dashboard URLs
+- Alert channels configured
+- Key metrics to watch
+- Escalation procedures
+
+**Step 3: Walk Through Rollback**
+- Show student exactly how to rollback in Coolify
+- Have them practice with a test rollback
+- Confirm they can do it independently
+
+**Step 4: Final Verification**
+- Student successfully deploys a change
+- Student successfully triggers Uptime Kuma alert
+- Student successfully accesses monitoring dashboards
 
 ---
 
@@ -472,7 +368,7 @@ CI/CD pipeline (see Step 5 above).
 
 - [ ] App accessible at production domain with HTTPS
 - [ ] SSL certificate valid and auto-renewing
-- [ ] Push to main triggers automated deploy (test with a commit)
+- [ ] Push to main triggers automated deploy
 - [ ] Rollback procedure tested and documented
 - [ ] All environment variables set (no missing/empty values)
 - [ ] Health check endpoint responding
@@ -480,17 +376,16 @@ CI/CD pipeline (see Step 5 above).
 - [ ] Error tracking capturing errors (trigger a test error)
 - [ ] No secrets in code (all in Coolify env vars)
 - [ ] deployment-guide.md complete and accurate
-- [ ] Student can explain how to deploy an update (verify understanding)
+- [ ] Student can explain how to deploy an update
 
 ---
 
 ## MENA INFRASTRUCTURE CONSIDERATIONS
 
 ### Server Location for Latency
-- **Serving GCC users**: Choose Frankfurt or Amsterdam server (best latency to Gulf via submarine cables)
+- **Serving GCC users**: Choose Frankfurt or Amsterdam (best latency via submarine cables)
 - **Serving Egypt/North Africa**: Choose Frankfurt or Paris
 - **Serving global**: Frankfurt is the best compromise
-- Cloudflare CDN handles static asset caching regardless of server location
 - Test latency from Dubai, Riyadh, Cairo to confirm < 200ms TTFB
 
 ### Regional Payment Webhook Reliability
@@ -515,13 +410,13 @@ CI/CD pipeline (see Step 5 above).
 - UAE: No specific data localization requirements for most SaaS
 - Saudi Arabia: NDMO data localization rules may apply for government-adjacent data
 - Egypt: Some data localization requirements for financial data
-- Default: host in EU (Frankfurt) for GDPR-adjacent protection, move to region-specific hosting only if legally required
+- Default: host in EU (Frankfurt) for GDPR-adjacent protection
 
 ---
 
 ## CROSS-SKILL DEPENDENCIES
 
-### Upstream
+### Upstream (What This Skill Needs)
 | Skill | What It Provides |
 |-------|-----------------|
 | eo-qa-testing | QA PASS status (prerequisite) |
@@ -529,14 +424,37 @@ CI/CD pipeline (see Step 5 above).
 | eo-tech-architect | Hosting choice, architecture diagram, cost projections |
 | eo-microsaas-dev | The built application to deploy |
 
-### Downstream
+### Downstream (Who Uses This Skill's Output)
 | Skill | What It Needs |
 |-------|--------------|
 | None | This is the final skill in the launch sequence |
 
 ### Launch Sequence Position
-```
-eo-qa-testing [PASS] -> eo-security-hardener [PASS] -> eo-deploy-infra [DEPLOY]
-```
-
 This skill is the last gate. After successful deployment, the student has a live product.
+
+---
+
+## DETAILED REFERENCES
+
+See these files for complete implementation details:
+
+- `references/deployment-and-execution.md` - All 6-step deployment pipeline details, Docker templates, Coolify setup, CI/CD YAML, monitoring configuration, MENA adaptations, cost projections
+
+---
+
+## HANDOFF PROTOCOL
+
+After deployment is complete and verified:
+
+1. **Announce**: "Deployment complete. Your app is live at [domain]. Monitoring active."
+2. **Verify**:
+   - App accessible at production URL with HTTPS
+   - CI/CD pipeline tested (push to main → auto-deploy)
+   - Monitoring dashboards accessible
+   - Student can explain how to deploy an update
+3. **Final message**: "Congratulations: you have a live MicroSaaS product. Your GTM assets are ready to deploy. Start with your #1 PRIMARY motion from gtm.md. Ship the first campaign within 72 hours."
+4. **If student asks 'what now?'**: "Three things: (1) Deploy your top GTM motion assets within 72 hours. (2) Set up weekly metric reviews. (3) Iterate based on user feedback. The EO journey continues with real users."
+
+---
+
+*Generated by EO MicroSaaS Operating System - Deploy Infrastructure Skill*
