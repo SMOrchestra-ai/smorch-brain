@@ -12,7 +12,7 @@
 | **smo-prod** | 100.108.44.127 | 62.171.164.178 | Production apps + prod n8n | flow.smorchestra.ai, score.smorchestra.ai, gtm.smorchestra.ai, sse.smorchestra.ai, content.smorchestra.ai, saasfast.smorchestra.ai |
 | **smo-dev** | 100.83.242.99 | 62.171.165.57 | Dev / staging + dev n8n | flows.smorchestra.ai, testflow.smorchestra.ai, staging-*.smorchestra.ai |
 | **eo-prod** | 100.89.148.62 | 89.117.62.131 | EO-MENA prod + smo-brain n8n + openclaw | entrepreneursoasis.me, score.entrepreneursoasis.me, ai.mamounalamouri.smorchestra.com, sulaiman.smorchestra.com |
-| **smo-eo-qa** | 100.99.145.22 | 84.247.172.113 | External QA environment | qa.smorchestra.ai |
+| **eo-dev** | 100.99.145.22 | 84.247.172.113 | EO Oasis dev VPS (replica of smo-dev), renamed 2026-04-29 from smo-eo-qa | qa.smorchestra.ai (legacy), eo-staging.* (planned) |
 
 ---
 
@@ -36,10 +36,12 @@
 - **systemd:** openclaw-chat (18789), openclaw-coding (port pending vhost)
 - **Perfctl sentinel:** ✅
 
-### smo-eo-qa (Lana's QA)
-- **pm2:** empty (QA tooling pending provisioning — Phase L)
-- **n8n:** `n8n-n8n-1` via caddy — 0 workflows (new, for QA smoke/nightly)
+### eo-dev (EO Oasis dev VPS, formerly smo-eo-qa)
+- **Renamed:** 2026-04-29 (hostname + Tailscale + canonical registry). Replica of smo-dev for EO Oasis development.
+- **pm2:** empty (EO dev tooling pending provisioning)
+- **n8n:** `n8n-n8n-1` via caddy — 0 workflows (legacy QA staging)
 - **Perfctl sentinel:** ✅
+- **L3 stack:** gstack(29) + superpowers(14) + smorch-dev v1.5.0 + smorch-ops v1.1.0, strict mode (`SMORCH_STRICT_L3=1`) since 2026-04-29 (per SOP-37)
 
 ---
 
@@ -80,9 +82,10 @@ UFW + fail2ban + SSH key-only + unattended-upgrades + swap + perfctl-sentinel. E
 | moltbot | /root/moltbot pm2 | — |
 | n8n `smo-brain` | docker 5678 | ai.mamounalamouri.smorchestra.com (89 workflows — EO orchestration only) |
 
-### smo-eo-qa
-- External QA env — caddy + n8n `qa` on qa.smorchestra.ai (unprovisioned)
-- Lana's playground for independent QA per SOP-13
+### eo-dev (formerly smo-eo-qa)
+- EO Oasis dev VPS (replica of smo-dev). Caddy + n8n on legacy qa.smorchestra.ai vhost (unprovisioned).
+- L3 stack matches smo-dev + laptop. Used for EO Oasis development per SOP-37 (server-side parity).
+- Old role: external QA env / Lana's playground per SOP-13. Reclassified 2026-04-29 — Lana QA continues from her Windows laptop.
 
 ---
 

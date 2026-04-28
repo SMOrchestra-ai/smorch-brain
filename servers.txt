@@ -8,7 +8,7 @@ root@100.108.44.127:prod-server     # smo-prod (SalesMfast, SaaS)
 
 # Dev + staging servers (dev-server profile)
 root@100.83.242.99:dev-server       # smo-dev
-root@100.99.145.22:dev-server       # smo-eo-qa
+root@100.99.145.22:dev-server       # eo-dev (renamed 2026-04-29 from smo-eo-qa)
 
 # Engineering desktops (eng-desktop profile)
 mamounalamouri@100.100.239.103:eng-desktop  # smo-desktop (Mamoun Mac)

@@ -22,8 +22,8 @@ NOTE: Signal-Sales-Engine and content-automation are NOT deployed here yet. SSE 
 |--------|----|-----------|------|
 | eo-prod | 89.117.62.131 | 100.89.148.62 | EO production |
 | smo-dev | 62.171.165.57 | 100.83.242.99 | Dev/staging (THIS SERVER) |
-| smo-prod | 62.171.164.178 | 100.84.76.35 | SMO production |
-| smo-eo-qa | 84.247.172.113 | 100.99.145.22 | Test/QA |
+| smo-prod | 62.171.164.178 | 100.108.44.127 | SMO production |
+| eo-dev | 84.247.172.113 | 100.99.145.22 | EO Oasis dev VPS (replica of smo-dev) |
 
 ## Dev Tools (installed at ~/.claude/skills/)
 
