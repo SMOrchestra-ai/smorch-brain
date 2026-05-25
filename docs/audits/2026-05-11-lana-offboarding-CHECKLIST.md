@@ -1,11 +1,19 @@
 # Lana Offboarding — Consolidated Checklist
 
-**Date:** 2026-05-11
-**Status:** Phase 1 (Claude-executable surfaces) complete. Phase 2 (manual surfaces) pending Mamoun.
+**Date:** 2026-05-11 (revised 2026-05-11 after Mamoun gained mailbox control)
+**Status:** Phase 1 (Claude-executable surfaces) complete. Phase 2 (manual surfaces) pending Mamoun — urgency downgraded after mailbox takeover.
 **Subject:** lana@smorchestra.com (GitHub: `lanaalkurdsmo`, n8n user: `lana lana`, SSH key: `lana@lana-desktop-2026`)
-**Reason:** Left the company. 2FA prevented password rotation, so access revoked via removal across every surface.
+**Reason:** Left the company.
 
-> **Read this top-down.** Section 1 is what's already done — verify if you want. Section 2 is what only you can do — work it in priority order, top is highest blast-radius. Section 3 is the secret-rotation list.
+> **POSTURE UPDATE — 2026-05-11:** Mamoun now controls the `lana@smorchestra.com` mailbox AND has reset its password. This is a major risk reduction:
+>
+> - Any service that uses email for password reset → Mamoun can lock her out at any time by initiating a reset.
+> - Any service that uses email-delivered 2FA → Mamoun receives the codes.
+> - Authenticator-app 2FA (Google Authenticator, Authy on her phone) is NOT covered — those still need explicit revocation per service.
+>
+> **What this changes in this doc:** the *future-access* concern collapses for most services. The *ownership-on-paper* (Supabase org name, n8n credential owner) can stay as-is — Mamoun can log in as her any time. The remaining real risk is **local copies of secrets she made during her tenure** (the §3 rotation list). That risk is unchanged.
+
+> **Read this top-down.** Section 1 is what's already done. Section 2 is what only Mamoun can do — most items downgraded from 🚨 to ⚠️ after the mailbox takeover. Section 3 (secrets rotation) is the only thing that retains full urgency, because rotation defends against her local copies, not against future logins.
 
 ---
 
@@ -14,20 +22,22 @@
 | Surface | Status | Notes |
 |---|---|---|
 | GitHub (org + repos + teams) | ✅ **Removed** | Commit `f957ff9` on smorch-brain main |
-| Server SSH (all 4 hosts) | ✅ **Removed** | Backups left at `/root/.ssh/authorized_keys.bak-20260525-152406` on each host |
+| Server SSH (all 4 hosts) | ✅ **Removed** | Backups at `/root/.ssh/authorized_keys.bak-20260525-152406` on each host |
+| **lana@smorchestra.com mailbox** | ✅ **Taken over + password reset by Mamoun** | Recovery flows now route to Mamoun |
 | Notion workspace | ✅ **Already clean** | No user with name/email matching "lana" |
-| Canva | ✅ **No API surface** | 5 brand kits found, no member-listing API. Manual UI check needed (§2.7) |
+| Canva | ✅ **No API surface** | 5 brand kits found, no member-listing API. Manual UI check (§2.7) |
 | Gamma | ✅ **No lana-owned content** | Search returned 0 gammas |
 | Instantly | ✅ **No lana-named account** | 0 accounts matched "lana" search |
 | Ahrefs | ✅ **No API access** | API plan returns `Insufficient plan` for management. Manual UI (§2.7) |
-| **Supabase smo org** | 🚨 **CRITICAL — Lana OWNS the org with all SMO production data** | §2.1 |
-| **n8n smo-prod credentials** | 🚨 **44/100 credentials owned by Lana**, including all production API keys | §2.2 |
+| Supabase smo org | ⚠️ **Keep as-is (per Mamoun)** — Lana still listed as Owner on paper, but mailbox-controlled = effectively neutralized | §2.1 — ownership transfer is optional cleanup, NOT urgent |
+| n8n smo-prod credentials | ⚠️ **Keep as-is (per Mamoun)** — 44 credentials still owned by Lana, but she can't log in without email-based reset (which routes to Mamoun) | §2.2 — ownership transfer is optional cleanup |
 | n8n smo-dev | ⚠️ **API key broken** (auth error) | §2.3 |
 | n8n smo-brain (eo-prod) | ⚠️ **API method-not-allowed** | §2.3 |
 | GHL (SalesMfast SME) users | ⚠️ **Not exposed by salesmfast-ops MCP** | §2.4 |
 | Linear, Slack, Telegram, WhatsApp, registrar, Cloudflare, Contabo control panel | ⚠️ **No MCP/connector** | §2.5–2.9 |
+| Authenticator-app 2FA on her phone (Google Auth / Authy) | 🟡 **Still exists** | Per-service revocation needed in §2 — only matters for services where she set up authenticator-app 2FA |
 
-**Bottom line:** **GitHub is locked, SSH is locked, but Lana legally owns one of your three Supabase orgs (the one with SMO production data) AND owns 44 n8n credentials in smo-prod.** Treat as time-sensitive — even though her *daily-use* access is gone, the ownership records are structural and need to be transferred or her leverage continues to exist.
+**Bottom line:** **GitHub locked. SSH locked. Mailbox controlled. The remaining real risk is what she copied locally during her tenure — addressed by §3 (secrets rotation). Ownership-on-paper at Supabase + n8n can be left as-is per Mamoun's decision (mailbox control is sufficient deterrent).**
 
 ---
 
@@ -74,11 +84,11 @@ Found the same SSH key (`ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMoRkZzWT8qsUiZWOZz
 
 ## 2. What only you can do (work top-down)
 
-### 2.1 🚨 Supabase smo org — Lana OWNS it. TRANSFER OWNERSHIP THIS WEEK.
+### 2.1 ⚠️ Supabase smo org — keep as-is per Mamoun (mailbox control = sufficient deterrent)
 
-**Severity:** Highest. She can delete the org (and 3 production databases) at any time from her Supabase login until ownership is moved.
+**Severity:** Downgraded from CRITICAL → optional cleanup. Mamoun's decision (2026-05-11): keep the org structure intact, since he now controls `lana@smorchestra.com` and can password-reset her Supabase login at any time. Her name on the paper is fine.
 
-**Finding:** Supabase organization `caszzfthymlmrxnwxlan` is named **`lana@smorchestra.com's Org`** and contains:
+**Finding (for the record):** Supabase organization `caszzfthymlmrxnwxlan` is named **`lana@smorchestra.com's Org`** and contains:
 
 | Project | Status | DB host | Created |
 |---|---|---|---|
@@ -86,19 +96,19 @@ Found the same SSH key (`ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMoRkZzWT8qsUiZWOZz
 | `claude campaign` (`ihfojxanjvysoacmpjxs`) | INACTIVE | `db.ihfojxanjvysoacmpjxs.supabase.co` | 2026-03-02 |
 | `Content Repurposing Engine` (`kyxiyvmqqohxpfuoansv`) | ACTIVE_HEALTHY | `db.kyxiyvmqqohxpfuoansv.supabase.co` | 2026-04-01 |
 
-**Actions for you (in order):**
-1. Log into Supabase as Mamoun (mamoun@smorchestra.com).
-2. Go to https://supabase.com/dashboard/org/caszzfthymlmrxnwxlan/team — verify Mamoun is at minimum a member of this org. **If not, you cannot proceed without Lana's cooperation — escalate to her 2FA recovery (or contact Supabase support with proof of company ownership).**
-3. Open https://supabase.com/dashboard/org/caszzfthymlmrxnwxlan/settings → "Transfer Organization" — transfer ownership from Lana → Mamoun.
-4. Once you are Owner, go to Team → remove `lana@smorchestra.com` as a member.
-5. **Rotate every service-role key and anon key** for the 3 projects in this org (see §3).
-6. Consider: rename the org to something less Lana-specific (e.g. "SMOrchestra Production").
+**What you should still do (lower priority):**
+1. **Defensive lockout** — log into Supabase as `lana@smorchestra.com` using your reset password. Add 2FA tied to YOUR authenticator app (not hers). Add Mamoun's primary email as a recovery email. This ensures her authenticator app — if she still has it — can be overridden.
+2. **Rotate service-role keys** for `SSE` + `Content Repurposing Engine` per §3 priority 1 — this is the real protection (against secrets she may have copied locally).
+3. **Optional later:** transfer org ownership to Mamoun via Supabase UI (Settings → Transfer Organization). Cosmetic / documentation cleanup. Not urgent.
+4. **Optional later:** rename the org to "SMOrchestra Production" or similar. Cosmetic.
 
-**Risk if you delay:** Lana could log in, click "Delete project" or "Delete organization," and your SSE database is gone. Restore would require Supabase support + the most recent backup (point-in-time recovery is 7 days on Pro plan).
+**What this posture does NOT cover:** if Lana set up authenticator-app 2FA (Google Authenticator on her phone) AND Supabase doesn't allow email-based recovery override, she could still log in despite Mamoun controlling email. Mitigation: do step 1 above today.
 
-### 2.2 🚨 n8n smo-prod — 44 of 100 credentials owned by Lana. TRANSFER OWNERSHIP.
+### 2.2 ⚠️ n8n smo-prod — keep ownership as-is per Mamoun (mailbox control = sufficient deterrent)
 
-**Severity:** Highest. Each credential holds an actual production secret (API keys, OAuth tokens, DB connection strings). If Lana logs into n8n at `flows.smorchestra.ai`, she sees + can edit + can copy out all 44.
+**Severity:** Downgraded from CRITICAL → optional cleanup. Mamoun's decision (2026-05-11): keep the credential ownership intact, since he controls `lana@smorchestra.com` and can password-reset her n8n login at any time. Transferring ownership of 44 credentials in the UI is tedious and offers no security gain beyond what email control already provides.
+
+**Real risk that remains:** the underlying secret values inside these credentials. Even though she can't log in (Mamoun controls the recovery path), she likely copied the values locally during her tenure. That risk is addressed by §3 (rotation), NOT by transferring ownership.
 
 **Finding:** Lana's n8n user (`lana lana <lana@smorchestra.com>`, id `GpCTwbFy0QbwQBlH`) is `credential:owner` on:
 
@@ -149,17 +159,13 @@ hxjYvE5j7zNKgZko  Relevance Ai Agent                  httpBearerAuth
 o4hkHsKkY1ckDhLE  Unnamed credential 2                httpBasicAuth
 ```
 
-**I did NOT delete any of these** because deletion immediately breaks every workflow that uses them — production damage. Transfer-ownership in n8n UI is non-destructive.
+**I did NOT delete or transfer any of these** — deletion would break every workflow that uses them (production damage), and per Mamoun's 2026-05-11 decision, ownership transfer is unnecessary given mailbox control.
 
-**Actions for you (in order):**
-1. Log into n8n at `https://flows.smorchestra.ai` as Mamoun.
-2. Settings → Users → find `lana lana <lana@smorchestra.com>` (id `GpCTwbFy0QbwQBlH`).
-3. For each of the 44 credentials above:
-   - Open the credential
-   - Add Mamoun as a shared user with `credential:owner` role
-   - Then remove Lana from sharing
-4. Once all 44 are transferred, **delete Lana's n8n user account** from Settings → Users.
-5. Rotate the actual secret values in §3 (the n8n ownership transfer doesn't change the underlying API keys).
+**What you should still do (lower priority):**
+1. **Defensive lockout** — log into n8n at `https://flows.smorchestra.ai` using Lana's email + your reset password. Settings → Personal → set up authenticator-app 2FA tied to YOUR device. Removes her authenticator-app fallback if she had one.
+2. **Rotate the underlying secrets** per §3 — this is the real protection. The n8n credential entries will still say "owned by Lana" but the *values* will be new keys she doesn't have.
+3. **Optional cleanup later:** in n8n UI, transfer each of the 44 credentials' ownership from Lana → Mamoun. Tedious (44 manual clicks). Pure documentation hygiene. Defer.
+4. **Optional cleanup later:** delete Lana's n8n user account. Only do this AFTER all 44 credentials have been transferred — otherwise n8n may orphan them.
 
 ### 2.3 n8n smo-dev + smo-brain — both MCPs broken, manual audit needed
 
@@ -193,16 +199,21 @@ Linear MCP is disconnected in this session, but Lana likely had Linear access (t
 - **Cloudflare** (if SMO uses Cloudflare for DNS/WAF) — account members → remove.
 - **Domain registrar** (name.com / GoDaddy / Cloudflare Registrar) — account access list → remove. **High blast radius** — domain control = root.
 
-### 2.9 Email + identity hygiene
+### 2.9 ✅ Email + identity hygiene — mailbox handled, residual cleanup remains
 
-- **`lana@smorchestra.com` mailbox** — Google Workspace / Outlook 365 admin → suspend account first (preserves data + recovers any 2FA SMS that comes in), then in 30 days delete + forward archive to ops mailbox.
-- **Google Workspace** — admin → users → suspend. Removes Gmail/Drive/Calendar access in one shot.
-- **Removal from group aliases** — sales@, support@, team@, etc.
-- **Any third-party login that uses "Sign in with Google" via her email** — those need explicit revocation at the third-party side.
+- ✅ **`lana@smorchestra.com` mailbox** — Mamoun took control + reset password (2026-05-11). This is the load-bearing move that downgrades most of the rest of this doc.
+- ⚠️ **Removal from group aliases** — sales@, support@, team@, etc. — still TODO. With mailbox under your control, you can do this calmly.
+- ⚠️ **Inbound 2FA codes / password resets currently routing to her mailbox** — review the inbox for any pending password resets she may have initiated (intent signal), and clear her notification preferences on third-party services so resets don't flood your inbox indefinitely.
+- ⚠️ **Any third-party login that uses "Sign in with Google" via lana@smorchestra.com** — these need explicit revocation at each third-party. Inside her Google account (now yours): https://myaccount.google.com/permissions → revoke each.
+- ⚠️ **OAuth tokens issued to apps via her Google identity** — even after revoking the Google grant, some apps cache long-lived refresh tokens. Cross-check with the §3 rotation list.
+
+**Recommended hardening:** while you have her email + password, log into every service in this doc (Supabase, n8n, Linear, GHL, Notion, etc.) AS her, enable authenticator-app 2FA tied to YOUR phone (overriding hers if any), and add Mamoun's primary email as a recovery channel. This makes the mailbox-control posture durable against future password / 2FA tricks she might try.
 
 ---
 
-## 3. Secrets rotation list (do this AFTER §2.1 + §2.2, NOT before)
+## 3. Secrets rotation list — the main remaining risk
+
+> **Why this section retains full urgency despite mailbox control:** locking her future logins does NOT invalidate API keys she may have copied to her personal machine during her tenure. A copied Anthropic key works from anywhere until it's rotated, regardless of whether she can still log into n8n. **This is the one thing the mailbox takeover does NOT solve. Work it down the priority list.**
 
 Lana had n8n ownership on credentials containing these production secrets. Assume she has copies locally. Rotate in this priority order:
 
