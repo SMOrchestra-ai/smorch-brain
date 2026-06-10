@@ -1,0 +1,342 @@
+===== AUDIT START host=eo-dev at 2026-05-01T13:50:55Z =====
+
+===== A1. uptime / load =====
+ 15:50:55 up 7 days, 13:50,  2 users,  load average: 0.18, 0.20, 0.40
+
+===== A2. df -h =====
+Filesystem     Type     Size  Used Avail Use% Mounted on
+/dev/sda1      ext4     193G   13G  181G   7% /
+/dev/sda16     ext4     881M  117M  703M  15% /boot
+/dev/sda15     vfat     105M  6.2M   99M   6% /boot/efi
+
+===== A3. free -m =====
+               total        used        free      shared  buff/cache   available
+Mem:           11960         945        8151           1        3186       11014
+Swap:           4095           0        4095
+
+===== A4. pm2 list =====
+
+===== A5. systemctl is-active (key services) =====
+  sshd                      inactive
+missing
+  nginx                     active
+  fail2ban                  active
+  ufw                       active
+  postgresql                inactive
+missing
+  docker                    active
+  n8n                       inactive
+missing
+  unattended-upgrades       active
+
+===== A6. nginx -t =====
+nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
+nginx: configuration file /etc/nginx/nginx.conf test is successful
+
+===== A7. local /api/health smoke (loopback for installed apps) =====
+
+===== A8. Postgres reachability (if local) =====
+  pg_isready: not installed (likely no local PG — uses Supabase)
+
+===== B1. ufw status verbose =====
+Status: active
+Logging: on (low)
+Default: deny (incoming), allow (outgoing), deny (routed)
+New profiles: skip
+
+To                         Action      From
+--                         ------      ----
+22/tcp (OpenSSH)           ALLOW IN    Anywhere                  
+80/tcp                     ALLOW IN    Anywhere                  
+443/tcp                    ALLOW IN    Anywhere                  
+Anywhere on tailscale0     ALLOW IN    Anywhere                  
+22/tcp                     ALLOW IN    Anywhere                  
+22/tcp (OpenSSH (v6))      ALLOW IN    Anywhere (v6)             
+80/tcp (v6)                ALLOW IN    Anywhere (v6)             
+443/tcp (v6)               ALLOW IN    Anywhere (v6)             
+Anywhere (v6) on tailscale0 ALLOW IN    Anywhere (v6)             
+22/tcp (v6)                ALLOW IN    Anywhere (v6)             
+
+
+===== B2. fail2ban status =====
+Status
+|- Number of jail:	1
+`- Jail list:	sshd
+Status for the jail: sshd
+|- Filter
+|  |- Currently failed:	2
+|  |- Total failed:	3838
+|  `- Journal matches:	_SYSTEMD_UNIT=sshd.service + _COMM=sshd
+`- Actions
+   |- Currently banned:	0
+   |- Total banned:	58
+   `- Banned IP list:	
+
+===== B3. sshd config (PermitRootLogin / PasswordAuth / PubkeyAuth) =====
+maxauthtries 3
+permitrootlogin without-password
+pubkeyauthentication yes
+passwordauthentication no
+x11forwarding yes
+permitemptypasswords no
+
+===== B4. unattended-upgrades =====
+● unattended-upgrades.service - Unattended Upgrades Shutdown
+     Loaded: loaded (/usr/lib/systemd/system/unattended-upgrades.service; enabled; preset: enabled)
+     Active: active (running) since Fri 2026-04-24 02:00:45 CEST; 1 week 0 days ago
+       Docs: man:unattended-upgrade(8)
+   Main PID: 906 (unattended-upgr)
+      Tasks: 2 (limit: 14306)
+     Memory: 9.4M (peak: 9.7M)
+        CPU: 253ms
+--- last unattended-upgrades log ---
+-rw-r--r-- 1 root adm  1.8K May  1 06:29 unattended-upgrades-dpkg.log
+-rw-r--r-- 1 root adm  1.7K Apr 30 07:00 unattended-upgrades-dpkg.log.1.gz
+-rw-r--r-- 1 root root    0 Apr 18 23:47 unattended-upgrades-shutdown.log
+-rw-r--r-- 1 root root 1.4K May  1 06:29 unattended-upgrades.log
+-rw-r--r-- 1 root root 1.6K Apr 30 07:00 unattended-upgrades.log.1.gz
+2026-05-01 00:11:05,281 WARNING Could not figure out development release: Distribution data outdated. Please check for an update for distro-info-data. See /usr/share/doc/distro-info-data/README.Debian for details.
+2026-05-01 00:11:05,282 INFO Starting unattended upgrades script
+2026-05-01 00:11:05,282 INFO Allowed origins are: o=Ubuntu,a=noble, o=Ubuntu,a=noble-security, o=UbuntuESMApps,a=noble-apps-security, o=UbuntuESM,a=noble-infra-security
+2026-05-01 00:11:05,283 INFO Initial blacklist: 
+2026-05-01 00:11:05,283 INFO Initial whitelist (not strict): 
+2026-05-01 06:28:49,169 WARNING Could not figure out development release: Distribution data outdated. Please check for an update for distro-info-data. See /usr/share/doc/distro-info-data/README.Debian for details.
+2026-05-01 06:28:49,171 INFO Starting unattended upgrades script
+2026-05-01 06:28:49,172 INFO Allowed origins are: o=Ubuntu,a=noble, o=Ubuntu,a=noble-security, o=UbuntuESMApps,a=noble-apps-security, o=UbuntuESM,a=noble-infra-security
+2026-05-01 06:28:49,172 INFO Initial blacklist: 
+2026-05-01 06:28:49,172 INFO Initial whitelist (not strict): 
+2026-05-01 06:28:59,407 INFO Packages that will be upgraded: kmod libkmod2
+2026-05-01 06:28:59,407 INFO Writing dpkg log to /var/log/unattended-upgrades/unattended-upgrades-dpkg.log
+2026-05-01 06:29:48,157 INFO All upgrades installed
+
+===== B5. world-writable files (bounded 60s, exclude /tmp /proc /sys /run /dev) =====
+  1841100      4 -rw-rw-rw-   2 root     root         1109 May  1 15:33 /root/.bun/install/cache/strip-ansi@6.0.1@@@1/license
+  1841111      4 -rw-rw-rw-   2 root     root         1599 May  1 15:33 /root/.bun/install/cache/strip-ansi@6.0.1@@@1/readme.md
+  1841102      4 -rw-rw-rw-   2 root     root          154 May  1 15:33 /root/.bun/install/cache/strip-ansi@6.0.1@@@1/index.js
+  1841103      4 -rw-rw-rw-   2 root     root          798 May  1 15:33 /root/.bun/install/cache/strip-ansi@6.0.1@@@1/package.json
+  1841113      4 -rw-rw-rw-   2 root     root          369 May  1 15:33 /root/.bun/install/cache/strip-ansi@6.0.1@@@1/index.d.ts
+  1839362      4 -rw-rw-rw-   2 root     root         1701 May  1 15:33 /root/.bun/install/cache/end-of-stream@1.4.5@@@1/README.md
+  1839355      4 -rw-rw-rw-   2 root     root         1078 May  1 15:33 /root/.bun/install/cache/end-of-stream@1.4.5@@@1/LICENSE
+  1839358      4 -rw-rw-rw-   2 root     root         2739 May  1 15:33 /root/.bun/install/cache/end-of-stream@1.4.5@@@1/index.js
+  1839359      4 -rw-rw-rw-   2 root     root          777 May  1 15:33 /root/.bun/install/cache/end-of-stream@1.4.5@@@1/package.json
+  1840073     80 -rw-rw-rw-   2 root     root        78593 May  1 15:33 /root/.bun/install/cache/diff@7.0.0@@@1/dist/diff.js
+  1840075     24 -rw-rw-rw-   2 root     root        24327 May  1 15:33 /root/.bun/install/cache/diff@7.0.0@@@1/dist/diff.min.js
+  1840057     24 -rw-rw-rw-   2 root     root        24275 May  1 15:33 /root/.bun/install/cache/diff@7.0.0@@@1/README.md
+  1840098      4 -rw-rw-rw-   2 root     root         3312 May  1 15:33 /root/.bun/install/cache/diff@7.0.0@@@1/lib/convert/xml.js
+  1840096      4 -rw-rw-rw-   2 root     root         2206 May  1 15:33 /root/.bun/install/cache/diff@7.0.0@@@1/lib/convert/dmp.js
+  1840189      8 -rw-rw-rw-   2 root     root         5953 May  1 15:33 /root/.bun/install/cache/diff@7.0.0@@@1/lib/patch/reverse.js
+  1840111     40 -rw-rw-rw-   2 root     root        37188 May  1 15:33 /root/.bun/install/cache/diff@7.0.0@@@1/lib/patch/apply.js
+  1840177     20 -rw-rw-rw-   2 root     root        16439 May  1 15:33 /root/.bun/install/cache/diff@7.0.0@@@1/lib/patch/parse.js
+  1840112     40 -rw-rw-rw-   2 root     root        37607 May  1 15:33 /root/.bun/install/cache/diff@7.0.0@@@1/lib/patch/create.js
+  1840113     12 -rw-rw-rw-   2 root     root        12136 May  1 15:33 /root/.bun/install/cache/diff@7.0.0@@@1/lib/patch/line-endings.js
+  1840116     52 -rw-rw-rw-   2 root     root        52115 May  1 15:33 /root/.bun/install/cache/diff@7.0.0@@@1/lib/patch/merge.js
+  1840192      8 -rw-rw-rw-   2 root     root         4652 May  1 15:33 /root/.bun/install/cache/diff@7.0.0@@@1/lib/util/distance-iterator.js
+  1840191      4 -rw-rw-rw-   2 root     root         2013 May  1 15:33 /root/.bun/install/cache/diff@7.0.0@@@1/lib/util/array.js
+  1840194     16 -rw-rw-rw-   2 root     root        13916 May  1 15:33 /root/.bun/install/cache/diff@7.0.0@@@1/lib/util/string.js
+  1840193      4 -rw-rw-rw-   2 root     root         1734 May  1 15:33 /root/.bun/install/cache/diff@7.0.0@@@1/lib/util/params.js
+  1840080     72 -rw-rw-rw-   2 root     root        72221 May  1 15:33 /root/.bun/install/cache/diff@7.0.0@@@1/lib/index.es6.js
+  1840086     72 -rw-rw-rw-   2 root     root        72221 May  1 15:33 /root/.bun/install/cache/diff@7.0.0@@@1/lib/index.mjs
+  1840108      4 -rw-rw-rw-   2 root     root         2358 May  1 15:33 /root/.bun/install/cache/diff@7.0.0@@@1/lib/diff/sentence.js
+  1840104      4 -rw-rw-rw-   2 root     root         2239 May  1 15:33 /root/.bun/install/cache/diff@7.0.0@@@1/lib/diff/css.js
+  1840106     12 -rw-rw-rw-   2 root     root        11226 May  1 15:33 /root/.bun/install/cache/diff@7.0.0@@@1/lib/diff/line.js
+  1840105     16 -rw-rw-rw-   2 root     root        13558 May  1 15:33 /root/.bun/install/cache/diff@7.0.0@@@1/lib/diff/json.js
+  1840102     36 -rw-rw-rw-   2 root     root        36205 May  1 15:33 /root/.bun/install/cache/diff@7.0.0@@@1/lib/diff/base.js
+  1840101      4 -rw-rw-rw-   2 root     root         2574 May  1 15:33 /root/.bun/install/cache/diff@7.0.0@@@1/lib/diff/array.js
+  1840103      4 -rw-rw-rw-   2 root     root         1943 May  1 15:33 /root/.bun/install/cache/diff@7.0.0@@@1/lib/diff/character.js
+  1840109     48 -rw-rw-rw-   2 root     root        46886 May  1 15:33 /root/.bun/install/cache/diff@7.0.0@@@1/lib/diff/word.js
+  1840084     12 -rw-rw-rw-   2 root     root         8469 May  1 15:33 /root/.bun/install/cache/diff@7.0.0@@@1/lib/index.js
+  1840055      4 -rw-rw-rw-   2 root     root         1546 May  1 15:33 /root/.bun/install/cache/diff@7.0.0@@@1/LICENSE
+  1840070     32 -rw-rw-rw-   2 root     root        29766 May  1 15:33 /root/.bun/install/cache/diff@7.0.0@@@1/release-notes.md
+  1840071      4 -rw-rw-rw-   2 root     root           67 May  1 15:33 /root/.bun/install/cache/diff@7.0.0@@@1/runtime.js
+  1839929      4 -rw-rw-rw-   2 root     root         1241 May  1 15:33 /root/.bun/install/cache/diff@7.0.0@@@1/CONTRIBUTING.md
+  1840069      4 -rw-rw-rw-   2 root     root         2310 May  1 15:33 /root/.bun/install/cache/diff@7.0.0@@@1/package.json
+
+===== B6. tailscale status =====
+100.99.145.22    eo-dev        smorchestra.ai@  linux    -  
+100.89.148.62    eo-prod       smorchestra.ai@  linux    -  
+100.107.217.31   lana-desktop  smorchestra.ai@  windows  -  
+100.100.239.103  smo-desktop   smorchestra.ai@  macOS    -  
+100.83.242.99    smo-dev       smorchestra.ai@  linux    -  
+100.108.44.127   smo-prod      smorchestra.ai@  linux    -  
+--- tailscale ip ---
+100.99.145.22
+fd7a:115c:a1e0::c233:9116
+
+===== B7. kernel version =====
+6.8.0-110-generic
+--- pending linux-image upgrades ---
+linux-headers-generic/noble-updates 6.8.0-111.111 amd64 [upgradable from: 6.8.0-110.110]
+linux-headers-virtual/noble-updates 6.8.0-111.111 amd64 [upgradable from: 6.8.0-110.110]
+linux-image-virtual/noble-updates 6.8.0-111.111 amd64 [upgradable from: 6.8.0-110.110]
+
+===== B8. listening ports (ss -tlnp) =====
+State  Recv-Q Send-Q               Local Address:Port  Peer Address:PortProcess                                                                                                                                                                                
+LISTEN 0      4096                    127.0.0.54:53         0.0.0.0:*    users:(("systemd-resolve",pid=83187,fd=17))                                                                                                                                           
+LISTEN 0      4096                 127.0.0.53%lo:53         0.0.0.0:*    users:(("systemd-resolve",pid=83187,fd=15))                                                                                                                                           
+LISTEN 0      4096                 100.99.145.22:41569      0.0.0.0:*    users:(("tailscaled",pid=840,fd=19))                                                                                                                                                  
+LISTEN 0      511                        0.0.0.0:80         0.0.0.0:*    users:(("nginx",pid=60174,fd=5),("nginx",pid=60173,fd=5),("nginx",pid=60172,fd=5),("nginx",pid=60171,fd=5),("nginx",pid=60170,fd=5),("nginx",pid=60169,fd=5),("nginx",pid=60168,fd=5))
+LISTEN 0      4096                       0.0.0.0:22         0.0.0.0:*    users:(("sshd",pid=70674,fd=3),("systemd",pid=1,fd=231))                                                                                                                              
+LISTEN 0      511                           [::]:80            [::]:*    users:(("nginx",pid=60174,fd=6),("nginx",pid=60173,fd=6),("nginx",pid=60172,fd=6),("nginx",pid=60171,fd=6),("nginx",pid=60170,fd=6),("nginx",pid=60169,fd=6),("nginx",pid=60168,fd=6))
+LISTEN 0      4096                          [::]:22            [::]:*    users:(("sshd",pid=70674,fd=4),("systemd",pid=1,fd=232))                                                                                                                              
+LISTEN 0      4096   [fd7a:115c:a1e0::c233:9116]:36049         [::]:*    users:(("tailscaled",pid=840,fd=20))                                                                                                                                                  
+
+===== C1. masquerade processes (binary in /tmp /var/tmp /dev/shm) =====
+  (none found above is OK)
+
+===== C2. perfctl-class IOCs =====
+  1574179      4 drwxrwxrwt   2 root     root         4096 Apr 24 02:00 /tmp/.XIM-unix
+  1574177      4 drwxrwxrwt   2 root     root         4096 Apr 24 02:00 /tmp/.X11-unix
+  1572909      4 -rwxr-xr-x   1 root     root         1594 Apr 22 22:30 /root/smorch-dev/scripts/sentinel/perfctl-sentinel.sh
+  ---
+/tmp/.X11-unix:
+total 8
+drwxrwxrwt  2 root root 4096 Apr 24 02:00 .
+drwxrwxrwt 16 root root 4096 May  1 15:37 ..
+
+/tmp/.XIM-unix:
+total 8
+drwxrwxrwt  2 root root 4096 Apr 24 02:00 .
+drwxrwxrwt 16 root root 4096 May  1 15:37 ..
+
+===== C3. LD_PRELOAD injection =====
+--- /etc/ld.so.preload ---
+  (not present — good)
+--- env LD_* ---
+  (empty above is good)
+
+===== C4. cron sweep =====
+--- per-user crontabs ---
+  [user=root]
+    
+    
+    # smorch-dev auto-sync (generated by install-cron-sync.sh)
+    */30 * * * * /opt/scripts/perfctl-sentinel.sh >> /var/log/perfctl-sentinel.log 2>&1
+    0 * * * * /opt/scripts/infra-drift.sh >> /var/log/infra-drift.log 2>&1
+    */30 * * * * /opt/scripts/sync-from-github.sh >> /var/log/sync-from-github.log 2>&1
+    0 2 * * * /opt/scripts/backup-n8n.sh >> /var/log/backup-n8n.log 2>&1
+    30 2 * * * /opt/scripts/backup-env.sh >> /var/log/backup-env.log 2>&1
+--- /etc/cron.d/ ---
+total 28
+drwxr-xr-x   2 root root 4096 Apr 19 00:04 .
+drwxr-xr-x 118 root root 4096 May  1 15:37 ..
+-rw-r--r--   1 root root  102 Mar 31  2024 .placeholder
+-rw-r--r--   1 root root  802 Apr 16  2023 certbot
+-rw-r--r--   1 root root  201 Apr  8  2024 e2scrub_all
+-rw-r--r--   1 root root  263 Apr 18 23:47 staticroute
+-rw-r--r--   1 root root  396 Jan  9  2024 sysstat
+--- /var/spool/cron/crontabs/ ---
+total 12
+drwx-wx--T 2 root crontab 4096 Apr 23 09:40 .
+drwxr-xr-x 3 root root    4096 Mar 21 14:06 ..
+-rw------- 1 root crontab  614 Apr 23 09:40 root
+
+===== C5. authorized_keys audit =====
+--- /root/.ssh/authorized_keys ---
+  ssh-ed25519 mamounalamouri@Mamouns-MacBook-Pro.local
+  ssh-ed25519 lana@lana-desktop-2026
+  fingerprints:
+    256 SHA256:tdV3xPz/r6yMCkZ550jKmOcrqV8zcfmGziLlqyEscjs mamounalamouri@Mamouns-MacBook-Pro.local (ED25519)
+    256 SHA256:7JXRQ+zpYADo+tSR/E8Ez2GpIs2yqCNg0ifTm5HMcYs lana@lana-desktop-2026 (ED25519)
+
+===== C6. recent /etc /usr/bin /usr/sbin changes (last 30 days) =====
+/etc/cloud/cloud.cfg.d/99-ssh.cfg
+/etc/ufw/user.rules
+/etc/ufw/after6.rules
+/etc/ufw/after.rules
+/etc/ufw/ufw.conf
+/etc/ufw/user6.rules
+/etc/fstab
+/etc/systemd/system/pm2-root.service
+/etc/shadow
+/etc/hostname
+/etc/aliases.db
+/etc/mailname
+/etc/containerd/config.toml
+/etc/motd.d/90-n8n
+/etc/cron.d/staticroute
+/etc/sysctl.d/10-panic.conf
+/etc/aliases
+/etc/timezone
+/etc/modprobe.d/disable-algif_aead.conf
+/etc/multipath/bindings
+/etc/multipath/wwids
+/etc/group-
+/etc/xml/catalog.old
+/etc/xml/polkitd.xml.old
+/etc/xml/catalog
+/etc/xml/polkitd.xml
+/etc/passwd
+/etc/apparmor.d/tunables/home.d/ubuntu
+/etc/logrotate.d/smo-apps
+/etc/default/ufw
+/etc/default/docker
+/etc/apt/keyrings/docker.gpg
+/etc/apt/sources.list.d/github-cli.list
+/etc/apt/sources.list.d/tailscale.list
+/etc/apt/sources.list.d/nodesource.sources
+/etc/apt/sources.list.d/docker.list
+/etc/apt/sources.list.d/ubuntu.sources
+/etc/apt/apt.conf.d/52unattended-reboot
+/etc/apt/preferences.d/nodejs
+/etc/apt/preferences.d/nsolid
+/etc/sudoers.d/90-cloud-init-users
+/etc/postfix/master.cf.proto
+/etc/postfix/master.cf
+/etc/postfix/dynamicmaps.cf
+/etc/postfix/main.cf.proto
+/etc/postfix/main.cf
+/etc/motd
+/etc/ssl/private/ssl-cert-snakeoil.key
+/etc/ssl/certs/ssl-cert-snakeoil.pem
+/etc/gshadow
+
+===== C7. established outbound connections =====
+
+
+===== C8. /etc/passwd / sudoers integrity =====
+--- non-system users (UID >= 1000) ---
+--- users with sudo/admin group ---
+sudo:x:27:
+admin:x:110:
+--- /etc/sudoers.d/ ---
+total 16
+drwxr-x---   2 root root 4096 Apr 18 23:47 .
+drwxr-xr-x 118 root root 4096 May  1 15:37 ..
+-r--r-----   1 root root  135 Apr 18 23:47 90-cloud-init-users
+-r--r-----   1 root root 1068 Jan 29  2024 README
+
+===== D1. apt security upgrades pending =====
+
+===== D2. debsecan (if installed) =====
+  debsecan NOT INSTALLED — recommend installing for CVE coverage
+
+===== D3. OS version =====
+Distributor ID:	Ubuntu
+Description:	Ubuntu 24.04.4 LTS
+Release:	24.04
+Codename:	noble
+PRETTY_NAME="Ubuntu 24.04.4 LTS"
+NAME="Ubuntu"
+VERSION_ID="24.04"
+VERSION="24.04.4 LTS (Noble Numbat)"
+VERSION_CODENAME=noble
+ID=ubuntu
+ID_LIKE=debian
+HOME_URL="https://www.ubuntu.com/"
+
+===== E1. drift cron last-run =====
+0 * * * * /opt/scripts/infra-drift.sh >> /var/log/infra-drift.log 2>&1
+
+===== E2. PM2 process restart count anomalies =====
+  no PM2 restart anomalies (>50)
+
+===== F1. .env file inventory + age =====
+  /root/.claude/skills/gstack/.env.example                               age=  33d size=  171b
+  /root/smorch-brain/.env.template                                       age=  11d size=  484b
+
+===== F2. SSH key age =====
+-rw------- 1 root root  505 Apr 18 23:47 /etc/ssh/ssh_host_ecdsa_key
+-rw------- 1 root root  411 Apr 18 23:47 /etc/ssh/ssh_host_ed25519_key
+-rw------- 1 root root 2602 Apr 18 23:47 /etc/ssh/ssh_host_rsa_key
+
+===== AUDIT END host=eo-dev =====
