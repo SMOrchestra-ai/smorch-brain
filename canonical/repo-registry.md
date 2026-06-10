@@ -1,12 +1,13 @@
 # SMOrchestra Repo Registry — Canonical
 
-**Last updated:** 2026-04-22
+**Last updated:** 2026-06-10 (added `lab-brain` standalone project — SUK Contabo account)
 **Source of truth for:** which repos exist, which org, what tags, what branch model, deploy target
 
 ## SMOrchestra-ai org — 15 repos (PRIMARY / INTERNAL / CANONICAL)
 
 | Repo | Domain | Lifecycle | Distribution | Default | Has main | Has dev | Description |
 |---|---|---|---|---|---|---|---|
+| lab-brain | lab | status-dev | distribution-internal | — need create | — need create | — need create | Standalone microsaas — hosted on SUK Contabo account (cust 15046524), VPS 13.140.136.148 V91 NVMe. Separate fleet from SMO/EO. Repo not yet created. |
 | smorch-dev | smo | status-dev | distribution-internal | main | ✅ | — need create | Internal dev+ops plugins for Claude Code |
 | smorch-brain | smo | status-dev | distribution-internal | **→ main** | ✅ | ✅ | Skills registry, 48+ skills, MCP configs, canonical source |
 | Signal-Sales-Engine | smo | status-beta | distribution-internal | main | ✅ | ✅ | SSE V3 — signal-based B2B stack (scrape+score+campaign) |
